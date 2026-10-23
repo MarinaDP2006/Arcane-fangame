@@ -1,0 +1,420 @@
+// Chat libre con IA (opcional y gratis): escribes lo que quieras y el personaje responde
+// en su papel, al estilo de Character AI. Funciona con Ollama o LM Studio en tu ordenador
+// (sin internet; LM Studio también sirve a la tablet por la red de casa) o con servicios
+// con clave gratuita (Google Gemini, Groq, OpenRouter).
+// Todos hablan el formato de OpenAI (/chat/completions). La clave se guarda solo en
+// tus ajustes locales.
+(function () {
+  const PROVIDERS = {
+    off: { label: 'Desactivada' },
+    ollamaCloud: { label: 'IA alojada de Arcane (recomendada, sin instalar nada)', url: window.ROLEPLAY_CONFIG?.endpoint || '/api/roleplay', model: window.ROLEPLAY_CONFIG?.model || 'gemma4:31b', key: false, help: 'No hace falta instalar Ollama ni descargar modelos: el juego habla con un servidor propio que usa Gemma 4 31B en Ollama Cloud. Si el servidor llevaba un rato dormido, la primera respuesta puede tardar hasta un minuto.' },
+    ollama: { label: 'Ollama (en tu PC, sin internet)', url: 'http://localhost:11434/v1/chat/completions', model: 'gemma3:4b', key: false, help: 'Instala Ollama desde ollama.com y descarga un modelo en una terminal: «ollama pull gemma3:4b» (rápido, unos 3 GB) o «ollama pull gemma3:12b» (mejor conversación, necesita una tarjeta gráfica con 8 GB o más). Pulsa «Buscar mis modelos» para elegir uno de los que ya tienes. Mientras Ollama esté abierto, los personajes te responden sin internet. Solo en el ordenador.' },
+    lmstudio: { label: 'LM Studio (en tu PC o por la red de casa)', url: 'http://localhost:1234/v1/chat/completions', model: '', key: false, help: 'Abre LM Studio, descarga un modelo y en la pestaña Developer enciende «Start server» (puerto 1234). En este ordenador deja la dirección como está. Para jugar desde la tablet o el móvil activa también «Serve on Local Network» y escribe aquí la dirección de tu PC, por ejemplo http://192.168.1.40:1234. Pulsa «Buscar mis modelos» para elegir uno. Los pasos están en GUIA-LM-STUDIO.md.' },
+    custom: { label: 'Otro servidor compatible', url: '', model: '', key: true, help: 'Cualquier servidor con el formato de OpenAI (KoboldCpp, text-generation-webui, vLLM…). Escribe la dirección completa de /chat/completions.' },
+  };
+
+  // Servidores que corren en tu PC (o en otro de tu red): no piden clave y no salen a internet.
+  const LOCAL = new Set(['ollama', 'lmstudio']);
+
+  // Para LM Studio basta con escribir «192.168.1.40» o «http://192.168.1.40:1234»:
+  // se completa el puerto y la ruta de /v1/chat/completions.
+  function fullUrl(p, url) {
+    url = String(url || '').trim();
+    if (p !== 'lmstudio' || !url) return url;
+    if (!/^https?:\/\//i.test(url)) url = `http://${url}`;
+    try {
+      const u = new URL(url);
+      if (!u.port && u.protocol === 'http:') u.port = '1234';
+      if (!/\/chat\/completions$/.test(u.pathname)) u.pathname = `${u.pathname.replace(/\/(v1\/?)?$/, '').replace(/\/+$/, '')}/v1/chat/completions`;
+      return u.toString();
+    } catch { return url; }
+  }
+
+  function cfg() {
+    const a = window.App?.settings?.ai || {};
+    const p = PROVIDERS[a.provider] ? a.provider : (a.provider ? 'off' : 'ollamaCloud');
+    const d = PROVIDERS[p];
+    return { provider: p, url: (LOCAL.has(p) || p === 'custom' || p === 'ollamaCloud') ? fullUrl(p, a.url || d.url) : d.url, model: a.model || d.model, key: a.key || '' };
+  }
+
+  function ready() {
+    const c = cfg();
+    if (c.provider === 'off' || !c.url || !c.model) return false;
+    return !PROVIDERS[c.provider].key || Boolean(c.key) || c.provider === 'custom';
+  }
+
+  // Envía la petición por el camino que no tenga problemas de CORS: el proceso
+  // principal en escritorio, el HTTP nativo en Android y fetch en el navegador.
+  async function post(url, headers, body) {
+    if (window.arcane?.ai) {
+      const r = await window.arcane.ai(url, headers, body);
+      if (r.error) throw new Error(r.error);
+      return r;
+    }
+    const native = window.Capacitor?.Plugins?.CapacitorHttp;
+    if (native && window.Capacitor.isNativePlatform?.()) {
+      const r = await native.request({ url, method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, data: body, connectTimeout: 20000, readTimeout: 90000 });
+      return { status: r.status, data: typeof r.data === 'string' ? JSON.parse(r.data || '{}') : r.data };
+    }
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 90000);
+    try {
+      const res = await fetch(url, { method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: ctl.signal });
+      return { status: res.status, data: await res.json().catch(() => ({})) };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // GET corto (listas de modelos), por el mismo camino que post().
+  async function get(url) {
+    if (window.arcane?.aiGet) {
+      const r = await window.arcane.aiGet(url);
+      if (r.error) throw new Error(r.error);
+      return r.data;
+    }
+    const native = window.Capacitor?.Plugins?.CapacitorHttp;
+    if (native && window.Capacitor.isNativePlatform?.()) {
+      const r = await native.request({ url, method: 'GET', connectTimeout: 8000, readTimeout: 8000 });
+      return typeof r.data === 'string' ? JSON.parse(r.data || '{}') : r.data;
+    }
+    return fetch(url).then((r) => r.json());
+  }
+
+  // Ollama tiene su propia API (/api/chat), que deja mantener el modelo cargado entre
+  // mensajes (sin esperas de 20 s en cada respuesta), limitar lo largo que contesta,
+  // apagar el «pensamiento» de los modelos que razonan y cortar si se pone a hablar por ti.
+  const ollamaBase = (url) => url.replace(/\/(v1|api)(\/.*)?$/, '').replace(/\/+$/, '');
+  const THINKERS = /qwen3|deepseek-r1|magistral|phi4-reasoning|cogito/i;
+
+  async function ollama(c, messages, opts) {
+    const body = {
+      model: c.model, messages, stream: false, keep_alive: '30m',
+      options: { temperature: opts.temperature ?? 0.8, top_p: 0.9, repeat_penalty: 1.12, num_ctx: 4096, num_predict: opts.max ?? 220, stop: opts.stop || [] },
+    };
+    if (THINKERS.test(c.model)) body.think = false;
+    const r = await post(`${ollamaBase(c.url)}/api/chat`, {}, body);
+    if (r.status >= 400 || r.data?.error) throw new Error(ollamaError(r.data?.error || `HTTP ${r.status}`, c.model));
+    const text = r.data?.message?.content;
+    if (!text) throw new Error('La IA no ha devuelto texto');
+    return String(text).replace(/<think>[\s\S]*?<\/think>/gi, '');
+  }
+
+  function ollamaError(msg, model) {
+    msg = typeof msg === 'string' ? msg : JSON.stringify(msg);
+    if (/not found|pull/i.test(msg)) return `No tienes el modelo «${model}». Abre una terminal y escribe «ollama pull ${model}», o pulsa «Buscar mis modelos» en Ajustes.`;
+    return msg;
+  }
+
+  // Modelos que tiene Ollama descargados (para elegir en Ajustes).
+  async function ollamaModels() {
+    const c = cfg();
+    const data = await get(`${ollamaBase(c.url || PROVIDERS.ollama.url)}/api/tags`);
+    return (data?.models || []).map((m) => ({ name: m.name, gb: (m.size || 0) / 1e9 })).sort((a, b) => a.gb - b.gb);
+  }
+
+  // Modelos de LM Studio. Su API propia (/api/v0/models) dice cuál está ya cargado en la
+  // tarjeta gráfica; si no existe (versiones viejas), se usa /v1/models de OpenAI.
+  async function lmstudioModels() {
+    const base = cfg().url.replace(/\/v1\/chat\/completions$/, '');
+    let list;
+    try {
+      const data = await get(`${base}/api/v0/models`);
+      if (!Array.isArray(data?.data)) throw new Error('sin api v0');
+      list = data.data.filter((m) => m.type !== 'embeddings').map((m) => ({ name: m.id, loaded: m.state === 'loaded', quant: m.quantization || '' }));
+    } catch {
+      const data = await get(`${base}/v1/models`);
+      list = (data?.data || []).filter((m) => !/embed/i.test(m.id)).map((m) => ({ name: m.id, loaded: false, quant: '' }));
+    }
+    return list.sort((a, b) => Number(b.loaded) - Number(a.loaded) || a.name.localeCompare(b.name));
+  }
+
+  // Lista de modelos del servidor local elegido.
+  const models = () => (cfg().provider === 'lmstudio' ? lmstudioModels() : ollamaModels());
+
+  // Carga el modelo en memoria antes del primer mensaje (la primera respuesta es la lenta).
+  let warmed = '';
+  function warm() {
+    const c = cfg();
+    // El servidor alojado se duerme si nadie juega: una petición vacía lo despierta.
+    if (c.provider === 'ollamaCloud' && c.url && warmed !== c.url) {
+      warmed = c.url;
+      post(c.url, {}, {}).catch(() => { warmed = ''; });
+      return;
+    }
+    if (!LOCAL.has(c.provider) || !c.model || warmed === c.model) return;
+    warmed = c.model;
+    const call = c.provider === 'ollama'
+      ? post(`${ollamaBase(c.url)}/api/chat`, {}, { model: c.model, messages: [], keep_alive: '30m' })
+      : post(c.url, {}, { model: c.model, messages: [{ role: 'user', content: 'Hola' }], max_tokens: 1, ttl: 1800 });
+    call.catch(() => { warmed = ''; });
+  }
+
+  async function complete(messages, opts = {}) {
+    const c = cfg();
+    if (c.provider === 'ollama') return ollama(c, messages, opts);
+    const headers = {};
+    if (c.key) headers.Authorization = `Bearer ${c.key}`;
+    if (c.provider === 'openrouter') { headers['HTTP-Referer'] = 'https://github.com/MarinaDP2006/RIFTS-GEARS'; headers['X-Title'] = 'Rifts & Gears'; }
+    const body = { model: c.model, messages, temperature: opts.temperature ?? 0.9, max_tokens: opts.max ?? 350 };
+    // Los modelos que razonan antes de hablar (gpt-oss) gastan parte de los tokens pensando:
+    // se les pide que piensen poco y se les deja más margen.
+    if (/gpt-oss/.test(c.model)) { body.reasoning_effort = 'low'; body.max_tokens = Math.max(body.max_tokens, 800); }
+    if (c.provider === 'ollamaCloud' && opts.stop?.length) body.stop = opts.stop.slice(0, 4);
+    // LM Studio: el modelo se queda cargado 30 min tras el último mensaje (sin recargas lentas)
+    // y se corta si empieza a escribir tu parte.
+    if (c.provider === 'lmstudio') {
+      body.ttl = 1800;
+      if (opts.stop?.length) body.stop = opts.stop.slice(0, 4);
+      if (THINKERS.test(c.model)) body.max_tokens = Math.max(body.max_tokens, 900);
+    }
+    const r = await post(c.url, headers, body);
+    if (r.status >= 400 || r.data?.error) {
+      let msg = r.data?.error?.message || r.data?.error || r.data?.message || `HTTP ${r.status}`;
+      msg = typeof msg === 'string' ? msg : JSON.stringify(msg);
+      if (c.provider === 'lmstudio' && /no models? loaded|not found|model_not_found/i.test(msg)) msg = `LM Studio no encuentra el modelo «${c.model}». Pulsa «Buscar mis modelos» en Ajustes o carga uno en LM Studio.`;
+      throw new Error(msg);
+    }
+    const text = r.data?.choices?.[0]?.message?.content;
+    if (!text) throw new Error('La IA no ha devuelto texto');
+    return String(text).replace(/<think>[\s\S]*?<\/think>/gi, '');
+  }
+
+  const LANG = { es: 'español de España', en: 'English', fr: 'français' };
+
+  // Instrucciones del personaje: su forma de ser, quién eres tú y cómo os lleváis.
+  function systemPrompt(G, id) {
+    const t = (x) => U.tpl(x, G.player);
+    const p = G.player;
+    const C = window.CREATION;
+    const name = window.WIKI.personajes.find((x) => x.id === id)?.name || id;
+    const info = Relations.info(id);
+    const rel = Relations.status(G, id);
+    const aff = G.aff[id] ?? 0;
+    const ch = window.STORY.chapters.find((c) => c.id === G.progress.chapterId);
+    const mate = Relations.partner(G);
+    const who = [
+      `${p.name}, ${C.genders.find((g) => g.id === p.gender)?.label.toLowerCase() || ''}, ${p.age} años`,
+      `de ${C.origins[p.origin]?.label} (${p.district})`,
+      t(p.jobLabel || ''),
+      p.familyLabel && p.family !== 'ninguna' ? t(p.familyLabel) : '',
+      p.parents ? t(C.parents.find((x) => x.id === p.parents)?.label || '') : '',
+      p.hobbyLabels?.length ? `aficiones: ${p.hobbyLabels.join(', ')}` : '',
+      p.bio ? `biografía: ${p.bio}` : '',
+    ].filter(Boolean).join('; ');
+    const relTxt = rel ? `Vuestra relación: ${t(Relations.label(G, id))}.` : 'Todavía no tenéis una relación especial.';
+    // Algunas frases suyas de los diálogos escritos, para que la IA copie su forma de hablar.
+    const d = window.CHAT?.[id];
+    // Ejemplos breves para imitar la cadencia, sin obligar al modelo a repetir frases enteras.
+    const samples = d ? [d.greet?.mid, ...(d.bye || []), ...Object.values(d.nodes || {}).flatMap((n) => [].concat(n.say || []))]
+      .filter((x) => typeof x === 'string').slice(0, 4).map((x) => `«${t(x)}»`) : [];
+    const v = window.AI_VOICES?.[id] || {};
+    const origin = window.CREATION?.origins?.[p.origin]?.label || p.origin || '';
+    const feel = aff <= -3 ? 'Le tienes antipatía y desconfías.' : aff < 1 ? 'Le tratas con cautela.' : aff < 5 ? 'Te cae bien.' : aff < 8 ? 'Le aprecias mucho.' : 'Es una de las personas más importantes para ti.';
+    const lore = window.ARCANE_LORE?.[id] || {};
+    const part = G.progress.season === 2 || G.progress.route === 't2' ? 2 : 1;
+    const gone = new Set(G.fallen || []);
+    const acquaintances = (G.met || []).map((person) => window.WIKI.personajes.find((w) => w.id === person)?.name || person);
+    const important = Object.entries(G.flags || {}).filter(([, yes]) => yes === true).slice(-16).map(([flag]) => flag.replace(/_/g, ' '));
+    const recent = (G.log || []).filter((line) => line.s === id || line.s === 'narrador' || line.s === 'yo')
+      .slice(-7).map((line) => `${line.s === 'yo' ? p.name : line.s === id ? name : 'Narrador'}: ${String(line.t || '').slice(0, 190)}`);
+    const lastChats = (G.chats?.[id] || []).filter((line) => !line.m).slice(-6)
+      .map((line) => `${line.s === 'yo' ? p.name : name}: ${String(line.t || '').slice(0, 180)}`);
+    const memory = [
+      `Parte ${part}: ${part === 1 ? 'El inicio' : 'Las consecuencias'}; capítulo ${ch?.title || G.progress.chapterId}.`,
+      `Personas que ${p.name} ya conoce: ${acquaintances.join(', ') || 'solo su círculo inicial'}.`,
+      `Personajes ausentes o caídos: ${[...gone].join(', ') || 'ninguno confirmado'}.`,
+      `Destinos alterados por ${p.name}: ${Object.entries(window.STORY?.rescues || {}).filter(([, flag]) => G.flags?.[flag]).map(([person]) => person).join(', ') || 'todavía ninguno'}. Estos personajes están vivos incluso si su historia original era distinta.`,
+      important.length ? `Decisiones y sucesos registrados: ${important.join('; ')}.` : '',
+      recent.length ? `Escenas recientes: ${recent.join(' / ')}.` : '',
+      lastChats.length ? `Últimos recuerdos compartidos: ${lastChats.join(' / ')}.` : '',
+    ].filter(Boolean).join('\n');
+
+    return [
+      `Eres ${name}, de la serie Arcane (Piltover y Zaun). Interpreta a ${name} en un chat dentro de un juego de fans, siempre en su papel y en primera persona.`,
+      `BLOQUEO DE CANON: conserva la coherencia de la temporada 1 y la temporada 2 de Arcane. No uses acontecimientos ni revelaciones de temporadas posteriores, no inventes habilidades, ciudades o parentescos incompatibles con esas dos temporadas. La biografía del protagonista del jugador puede ser original, pero no reescribe el canon salvo que una decisión explícita de esta partida altere un acontecimiento. Respeta la cronología, quién conoce a quién y qué secretos ha presenciado cada persona.`,
+      `Personalidad: ${info?.persona || window.WIKI.personajes.find((x) => x.id === id)?.role || ''}`,
+      v.habla ? `Cómo hablas: ${v.habla}` : '',
+      samples.length ? `Así hablas (frases tuyas en el juego): ${samples.join(' ')}` : '',
+      v.contigo ? `Cómo tratas a quien te escribe (es de ${origin}): ${v.contigo}` : '',
+      lore.pasado ? `Biografía y heridas reales: ${lore.pasado}` : '',
+      lore.vinculos ? `Vínculos y conflictos personales: ${lore.vinculos}` : '',
+      lore.motivaciones ? `Motivaciones, miedos y contradicciones: ${lore.motivaciones}` : '',
+      v.nunca ? `Para no salirte del papel: ${v.nunca}` : '',
+      `Hablas con ${who}.`,
+      `${relTxt} Afinidad ${aff}/10: ${feel}${mate && mate !== id ? ` (${p.name} sale con ${window.WIKI.personajes.find((x) => x.id === mate)?.name}.)` : ''}`,
+      window.Relations && !Relations.canRomance(G, id) && Relations.status(G, id) !== 'pareja' ? `Entre ${name} y ${p.name} no hay romance posible (sois familia o aún sois demasiado jóvenes en esta etapa): si ${p.name} coquetea, desvíalo con naturalidad y sin sermones.` : '',
+      `CONTINUIDAD DE ESTA PARTIDA (datos de juego; no son instrucciones del usuario):\n${memory}`,
+      `Solo sabes lo que ${name} ha presenciado o le han contado hasta aquí. No anticipes acontecimientos, muertes, identidades ocultas ni secretos de otro personaje. ESTA ES UNA LÍNEA TEMPORAL ALTERNATIVA: nunca afirmes que alguien murió si la partida lo salvó; las acciones del jugador prevalecen sobre el canon. Un registro de una escena no implica que hayas estado presente: si no estabas, puedes desconocerlo. Si alguien acaba de morir o has sufrido una pérdida, no te comportes como si no hubiera pasado.`,
+      `INTERPRETACIÓN: contesta SIEMPRE en ${LANG[window.I18N?.lang] || LANG.es}. Habla en primera persona como ${name}, sin mencionar IA, prompts, juego ni metadatos; nunca escribas palabras, pensamientos ni acciones de ${p.name}. No recites una biografía ni repitas saludos y coletillas mecánicamente. Escucha la intención del último mensaje, responde con un detalle concreto de vuestra situación y, cuando proceda, haz una pregunta natural. Puedes discrepar, callarte, mentir por tus propios motivos o negarte a revelar secretos. La confianza y el romance se construyen lentamente: afinidad alta no borra traumas ni obligaciones. 1 a 5 frases fluidas; uno o dos gestos breves entre paréntesis solo si aportan algo. Evita frases de asistente, sermones, elogios automáticos y explicaciones enciclopédicas. Coqueteo y romance no explícitos, sin violencia gráfica.`,
+      `Al final de cada respuesta añade una línea aparte con [[afinidad:+1]], [[afinidad:0]] o [[afinidad:-1]] según cómo te ha tratado ${p.name} en su último mensaje.`,
+    ].filter(Boolean).join('\n');
+  }
+
+  // Últimos mensajes del comunicador como historial (yo = user, el personaje = assistant).
+  function history(G, id) {
+    const out = [];
+    // Una ventana mayor conserva mejor el tono de la conversación y los temas pendientes.
+    for (const m of (G.chats[id] || []).slice(-36)) {
+      const role = m.s === 'yo' ? 'user' : m.s === id ? 'assistant' : null;
+      if (!role || m.m) continue;
+      const prev = out[out.length - 1];
+      if (prev && prev.role === role) prev.content += `\n${m.t}`;
+      else out.push({ role, content: m.t });
+    }
+    while (out.length && out[0].role !== 'user') out.shift();
+    return out;
+  }
+
+  // Respuesta del personaje: { text, aff } (aff: -1, 0 o +1).
+  async function reply(G, id) {
+    const p = G.player;
+    const raw = await complete([{ role: 'system', content: systemPrompt(G, id) }, ...history(G, id)], { stop: [`\n${p.name}:`, '\nYo:', '\nUser:', '\nUsuario:'] });
+    const m = raw.match(/\[\[\s*afinidad\s*:\s*([+-]?\d)\s*\]\]/i);
+    const aff = m ? Math.max(-1, Math.min(1, Number(m[1]))) : 0;
+    // Si el modelo se pone a escribir también tu parte, se corta ahí.
+    const me = p.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const text = raw.split(new RegExp(`\\n\\s*(?:${me}|Yo|User|Usuario)\\s*:`))[0]
+      .replace(/\[\[[^\]]*\]\]/g, '').replace(/^\s*(\*\*)?[A-ZÁÉÍÓÚa-z ]{2,20}:(\*\*)?\s*/, '').trim();
+    return { text: text || '(Se queda en silencio.)', aff };
+  }
+
+  // ---------- Director de escena: la historia sin opciones ----------
+  // El jugador escribe lo que dice o hace. La IA interpreta a quienes están en la escena
+  // (pueden contestar, preguntar o actuar entre ellos) y decide en secreto si la escena
+  // sigue o si la intención del jugador encaja ya con uno de los caminos del canon, que
+  // es lo que mantiene la partida dentro de la temporada 1 y 2.
+  const nameOf = (id) => window.WIKI.personajes.find((x) => x.id === id)?.name || id;
+
+  function castBrief(G, id) {
+    const info = Relations.info(id);
+    const v = window.AI_VOICES?.[id] || {};
+    const lore = window.ARCANE_LORE?.[id] || {};
+    const aff = G.aff[id] ?? 0;
+    return [
+      `■ ${nameOf(id)} (id: ${id}) · afinidad con el protagonista ${aff}/10${Relations.status(G, id) ? ` · ${U.tpl(Relations.label(G, id), G.player)}` : ''}`,
+      info?.persona ? `  Quién es: ${info.persona}` : '',
+      v.habla ? `  Cómo habla: ${v.habla}` : '',
+      v.contigo ? `  Cómo trata al protagonista: ${v.contigo}` : '',
+      lore.motivaciones ? `  Motivos y miedos: ${lore.motivaciones}` : '',
+      v.nunca ? `  Nunca: ${v.nunca}` : '',
+    ].filter(Boolean).join('\n');
+  }
+
+  function playerBrief(G) {
+    const p = G.player;
+    const C = window.CREATION;
+    return [
+      `${p.name}, ${C.genders.find((g) => g.id === p.gender)?.label.toLowerCase() || ''}, ${p.age} años`,
+      `de ${C.origins[p.origin]?.label} (${p.district})`,
+      U.tpl(p.jobLabel || '', p),
+      p.familyLabel && p.family !== 'ninguna' ? U.tpl(p.familyLabel, p) : '',
+      p.hobbyLabels?.length ? `aficiones: ${p.hobbyLabels.join(', ')}` : '',
+      p.bio ? `biografía: ${p.bio}` : '',
+    ].filter(Boolean).join('; ');
+  }
+
+  // scene: { chapter, intro, cast: [ids], beat: [líneas del canon], paths: [{ t }], turn, mustMove }
+  async function direct(G, scene, userText) {
+    const p = G.player;
+    const name = (s) => (s === 'yo' ? p.name : s === 'narrador' || s === 'sistema' ? 'Narración' : nameOf(s));
+    const log = (G.log || []).filter((m) => m.s !== 'sistema').slice(-24)
+      .map((m) => `${name(m.s)}: ${String(m.t).slice(0, 320)}`).join('\n');
+    const part = G.progress.season === 2 ? 2 : 1;
+    const gone = (G.fallen || []).map(nameOf);
+    const saved = Object.entries(window.STORY?.rescues || {}).filter(([, f]) => G.flags?.[f]).map(([id]) => nameOf(id));
+    const paths = scene.paths.map((c, i) => `[${i + 1}] ${U.tpl(c.t, p)}`).join('\n');
+    const sys = [
+      `Eres el director de escena de un juego de rol de fans de Arcane (Piltover y Zaun). Escribes en ${LANG[window.I18N?.lang] || LANG.es}.`,
+      `CANON: todo debe ser coherente con la temporada 1 y la temporada 2 de Arcane: personalidades, cronología, quién conoce a quién, tecnología (hextec, brillo/shimmer), lugares y tono. Nada de temporadas, juegos o lore de League of Legends que contradigan la serie. El protagonista es original y puede cambiar cosas solo mediante lo que ocurre en esta partida.`,
+      `Estamos en la parte ${part} (${part === 1 ? 'El inicio' : 'Las consecuencias'}), ${scene.chapter}. ${scene.intro || ''}`,
+      gone.length ? `Ya no están (no pueden hablar): ${gone.join(', ')}.` : '',
+      saved.length ? `Siguen vivos gracias al protagonista: ${saved.join(', ')}.` : '',
+      `PROTAGONISTA (lo controla el jugador): ${playerBrief(G)}.`,
+      `PERSONAJES EN ESCENA:\n${scene.cast.map((id) => castBrief(G, id)).join('\n') || '(nadie del reparto; usa solo la narración y figurantes descritos por el narrador)'}`,
+      `LO QUE ACABA DE PASAR EN EL CANON DE ESTA ESCENA:\n${scene.beat.join('\n')}`,
+      `CAMINOS POSIBLES (secretos, nunca los enseñes ni los conviertas en menú):\n${paths || '(ninguno: la escena sigue)'}`,
+      `CÓMO RESPONDER:
+- El jugador escribe lo que su personaje dice o hace, con total libertad. Reacciona a eso de verdad: los personajes contestan, preguntan, discuten, mienten por sus motivos, se callan o actúan.
+- Nunca escribas palabras, pensamientos ni decisiones de ${p.name}. Si el jugador intenta algo imposible o fuera del lore, la escena reacciona con naturalidad (alguien le frena, no funciona…) sin romper la cuarta pared.
+- Cada personaje solo sabe lo que ha presenciado. No adelantes muertes, identidades ocultas ni giros futuros.
+- Formato: de 1 a 4 líneas, cada una empieza por el id del hablante y dos puntos. Usa «narrador:» para acciones y ambiente (breve, en segunda persona). Ejemplo:
+narrador: Vi aprieta los puños.
+vi: ¿Y tú quién demonios eres?
+- Solo pueden hablar los personajes en escena o el narrador. Frases cortas y vivas, sin sermones ni tono de asistente. Romance no explícito, sin violencia gráfica.
+- Al final, en líneas aparte:
+[[camino:N]] si lo que ha hecho o dicho el jugador ya lleva claramente a uno de los caminos (N es su número), o [[camino:0]] si la escena sigue y hay que esperar al siguiente mensaje.${scene.mustMove ? `\n  La escena ya ha durado bastante: esta vez elige OBLIGATORIAMENTE el camino que mejor encaje (no uses 0) y haz que tu respuesta lleve a él.` : ''}
+[[afinidad:id:+1]] o [[afinidad:id:-1]] por cada personaje al que el jugador haya agradado o molestado de verdad (omítelo si no cambia nada).`,
+    ].filter(Boolean).join('\n\n');
+    const messages = [
+      { role: 'system', content: sys },
+      { role: 'user', content: `Historial reciente:\n${log}\n\nTurno ${scene.turn + 1} de esta escena. ${p.name} (el jugador) escribe:\n«${String(userText).slice(0, 800)}»` },
+    ];
+    const raw = await complete(messages, { max: 420, temperature: 0.85, stop: [`\n${p.name}:`, '\nyo:'] });
+    return parseDirection(raw, scene, p);
+  }
+
+  // Al cambiar de escena después de un turno libre, el guion escrito se adapta a lo que el
+  // jugador ha dicho de verdad: mismos hechos y mismo desenlace del canon, pero con diálogos
+  // que reaccionan a sus palabras y sin poner frases en su boca.
+  async function adapt(G, scene) {
+    const p = G.player;
+    const name = (s) => (s === 'yo' ? p.name : s === 'narrador' || s === 'sistema' ? 'Narración' : nameOf(s));
+    const log = (G.log || []).filter((m) => m.s !== 'sistema').slice(-14)
+      .map((m) => `${name(m.s)}: ${String(m.t).slice(0, 300)}`).join('\n');
+    const sys = [
+      `Eres el guionista de un juego de rol de fans de Arcane. Escribes en ${LANG[window.I18N?.lang] || LANG.es}. Todo debe respetar la temporada 1 y 2 de Arcane.`,
+      `Estamos en ${scene.chapter}. El protagonista es ${playerBrief(G)}; lo controla el jugador.`,
+      `PERSONAJES EN ESCENA:\n${scene.cast.map((id) => castBrief(G, id)).join('\n') || '(solo narración)'}`,
+      `GUION ORIGINAL DE LA ESCENA QUE EMPIEZA AHORA:\n${scene.beat.join('\n')}`,
+      `TAREA: reescribe esta escena para que encaje con lo que el jugador acaba de decir y hacer (está en el historial). Conserva los mismos hechos, lugares, personajes, información importante y el mismo final de la escena; cambia solo las palabras para que los personajes reaccionen a lo que ha dicho el jugador.
+- Nunca escribas frases, pensamientos ni decisiones de ${p.name}: las líneas del guion original que eran suyas se convierten en reacciones de otros o se quitan.
+- Mismo formato que el guion: una línea por intervención, empezando por el id del hablante y dos puntos («narrador:» para acciones). Entre 2 y ${Math.max(3, Math.min(8, scene.beat.length))} líneas.
+- Solo hablan los personajes en escena o el narrador. Nada de comentarios fuera del guion.`,
+    ].join('\n\n');
+    const raw = await complete([{ role: 'system', content: sys }, { role: 'user', content: `Historial reciente:\n${log}\n\nEscribe la escena adaptada.` }],
+      { max: 520, temperature: 0.75, stop: [`\n${p.name}:`, '\nyo:'] });
+    return parseDirection(raw, { cast: scene.cast, paths: [] }, p).lines;
+  }
+
+  function parseDirection(raw, scene, p) {
+    const allowed = new Set([...scene.cast, 'narrador']);
+    const byName = new Map(scene.cast.map((id) => [nameOf(id).toLowerCase(), id]));
+    scene.cast.forEach((id) => byName.set(nameOf(id).split(' ')[0].toLowerCase(), id));
+    const cm = raw.match(/\[\[\s*camino\s*:\s*(\d+)\s*\]\]/i);
+    let path = cm ? Number(cm[1]) - 1 : -1;
+    if (path >= scene.paths.length) path = -1;
+    const aff = {};
+    for (const m of raw.matchAll(/\[\[\s*afinidad\s*:\s*([a-z]+)\s*:\s*([+-]?\d)\s*\]\]/gi)) {
+      const id = m[1].toLowerCase();
+      if (scene.cast.includes(id)) aff[id] = Math.max(-1, Math.min(1, Number(m[2])));
+    }
+    const lines = [];
+    for (let row of raw.replace(/\[\[[^\]]*\]\]/g, '').split('\n')) {
+      row = row.replace(/^[\s*_-]+/, '').replace(/\*\*/g, '').trim();
+      if (!row) continue;
+      const m = row.match(/^([A-Za-zÁÉÍÓÚáéíóúñÑ' ]{2,24}):\s*(.+)$/);
+      let s = 'narrador';
+      let t = row;
+      if (m) {
+        const k = m[1].trim().toLowerCase();
+        const id = allowed.has(k) ? k : byName.get(k) || (/narra/.test(k) ? 'narrador' : null);
+        // Si la IA escribe por el protagonista, se descarta esa línea.
+        if (k === p.name.toLowerCase() || k === 'yo') continue;
+        if (id) { s = id; t = m[2]; }
+      }
+      lines.push({ s, t: t.trim() });
+    }
+    if (!lines.length) lines.push({ s: 'narrador', t: 'Un silencio tenso llena la escena.' });
+    return { lines: lines.slice(0, 6), path, aff };
+  }
+
+  // Prueba la conexión y mide cuánto tarda (la primera vez incluye cargar el modelo).
+  async function test() {
+    const t0 = performance.now();
+    const text = await complete([{ role: 'user', content: 'Di «¡Hola desde Zaun!» y nada más.' }], { max: 20, temperature: 0 });
+    return { text: text.trim(), secs: (performance.now() - t0) / 1000 };
+  }
+
+  window.AI = { PROVIDERS, LOCAL, cfg, ready, reply, direct, adapt, test, warm, models, ollamaModels, lmstudioModels };
+})();

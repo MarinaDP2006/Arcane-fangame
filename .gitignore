@@ -1,0 +1,23 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+www/
+android/app/release/
+*.keystore
+*.jks
+keystore.properties
+/i18n/
+!android/app/debug.keystore
+
+# Partidas exportadas: son personales, no se suben
+grietas-partida-*.json
+
+# Partidas personales: nunca se suben a GitHub (solo el LEEME de la carpeta de resúmenes).
+arcaneData/partidas/
+arcaneData/partidas guardadas/*
+!arcaneData/partidas guardadas/LEEME.md
+arcaneData/ajustes.json
+
+# Web montada (se genera con npm run web)
+web-dist/
