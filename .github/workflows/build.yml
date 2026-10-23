@@ -1,11 +1,16 @@
 # Versión de escritorio: instalador y portable de Windows + DMG/ZIP de Mac.
-# Se compila desde la rama Arcane, con etiquetas arcane-v* o manualmente; sin tocar main.
+# Se compila desde main, con etiquetas arcane-v* o manualmente (con «publicar» crea la Release).
 name: Compilar escritorio (Windows y Mac)
 on:
   push:
     branches: [main]
     tags: ['arcane-v*']
   workflow_dispatch:
+    inputs:
+      publicar:
+        description: "Publicar la Release arcane-v<versión de package.json> con lo compilado"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -24,8 +29,6 @@ jobs:
         run: npm ci
       - name: Comprobar datos del juego
         run: npm run check
-      - name: Construir web y demo
-        run: npm run web
       - name: Construir web y demo
         run: npm run web
       - name: Verificar sintaxis del motor
@@ -94,10 +97,14 @@ jobs:
             dist/*.zip
           if-no-files-found: error
   release:
-    if: startsWith(github.ref, 'refs/tags/arcane-v')
+    if: startsWith(github.ref, 'refs/tags/arcane-v') || inputs.publicar
     needs: [build-windows, build-mac]
     runs-on: ubuntu-latest
     steps:
+      # Sin etiqueta (publicación manual), la Release crea la etiqueta arcane-v<versión> en este commit.
+      - uses: actions/checkout@v4
+      - id: ver
+        run: echo "tag=arcane-v$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
       - uses: actions/download-artifact@v4
         with:
           pattern: arcane-fangame-*
@@ -105,6 +112,14 @@ jobs:
           merge-multiple: true
       - uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/arcane-v') && github.ref_name || steps.ver.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: Arcane Fangame ${{ startsWith(github.ref, 'refs/tags/arcane-v') && github.ref_name || steps.ver.outputs.tag }}
+          body: |
+            Instaladores del fangame de Arcane (no oficial).
+            - Windows: el `Setup` (instalador) o el `portable` (sin instalar).
+            - Mac: `arm64` (Apple Silicon) o `x64` (Intel). Sin firmar: la primera vez, clic derecho → Abrir.
+            - Android: `arcane-fangame-*-tablet.apk`.
           files: |
             dist/*.exe
             dist/*.dmg
