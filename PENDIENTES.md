@@ -1,11 +1,10 @@
 # Pendientes de la rama de Arcane
 
-Lista viva de lo que falta en `arcane/fangame-actualizado`. Lo del mundo nuevo va en el `PENDIENTES.md` de `main`.
+Lista viva de lo que falta en el fangame de Arcane. Lo del mundo nuevo va en el repo RIFTS-GEARS.
 Marca con `[x]` lo que se vaya cerrando.
 
 ## Para Nina (no se puede hacer sin ti)
 
-- [ ] **Acceso a `Arcane-fangame`.** Instalar la app de Claude en GitHub en ese repo para poder subir la rama.
 
 - [ ] **Clave de Ollama Cloud.** Crea una cuenta gratis en ollama.com y una clave en Settings → Keys.
       No la pegues en chats ni en GitHub.
