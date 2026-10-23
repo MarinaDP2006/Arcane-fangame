@@ -5,8 +5,10 @@ El fangame de Arcane vive en este repositorio (`MarinaDP2006/Arcane-fangame`, ra
 ## 1. Lanzar una versión
 
 1. Sube el número de `version` en `package.json`, por ejemplo `1.28.0`, y fusiónalo en `main`.
-2. En GitHub, abre **Releases → Draft a new release → Choose a tag** y escribe `arcane-v1.28.0` (el mismo número). Elige `main` como destino y pulsa **Create new tag**.
-3. Publica la release. Eso dispara las compilaciones de escritorio y Android.
+2. En **Actions**, abre «Compilar escritorio (Windows y Mac)», pulsa **Run workflow**, marca **publicar** y ejecútalo. Haz lo mismo con «Compilar móvil (Android)».
+3. Se crea la etiqueta `arcane-v1.28.0` y la Release con los instaladores y el APK.
+
+También vale crear a mano la etiqueta `arcane-v<versión>` desde **Releases → Draft a new release**.
 
 ## 2. Crear los releases
 

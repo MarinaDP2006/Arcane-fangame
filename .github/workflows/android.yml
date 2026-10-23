@@ -9,6 +9,11 @@ on:
     branches: [main]
     tags: ['arcane-v*']
   workflow_dispatch:
+    inputs:
+      publicar:
+        description: "Publicar la Release arcane-v<versión de package.json> con lo compilado"
+        type: boolean
+        default: false
 permissions:
   contents: write
 concurrency:
@@ -65,11 +70,13 @@ jobs:
           name: arcane-fangame-android
           path: apk/*
           if-no-files-found: error
+      - id: ver
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
       - name: Adjuntar APK a la Release creada por el workflow de escritorio
-        if: startsWith(github.ref, 'refs/tags/arcane-v')
+        if: startsWith(github.ref, 'refs/tags/arcane-v') || inputs.publicar
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ startsWith(github.ref, 'refs/tags/arcane-v') && github.ref_name || format('arcane-v{0}', steps.ver.outputs.version) }}
         run: |
           # El build de escritorio crea la Release; espera a que exista para evitar una carrera.
           for i in $(seq 1 60); do
