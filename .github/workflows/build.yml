@@ -3,7 +3,7 @@
 name: Compilar escritorio (Windows y Mac)
 on:
   push:
-    branches: [main, claude/project-thread-9huivc-arcane]
+    branches: [main]
     tags: ['arcane-v*']
   workflow_dispatch:
 permissions:
