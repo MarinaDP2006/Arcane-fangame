@@ -1,0 +1,100 @@
+{
+  "name": "rifts-gears-umbral",
+  "productName": "Las ciudades del Umbral",
+  "version": "1.27.0",
+  "description": "Aventura narrativa original de fantasía industrial, Resonancia y dos ciudades conectadas por una red de ascensores.",
+  "main": "main.js",
+  "author": "MarinaDP2006",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "node scripts/asegurar-electron.js",
+    "check": "node scripts/check.js && node scripts/check-runtime.js",
+    "dist": "electron-builder --win",
+    "dist:win": "electron-builder --win",
+    "android:sync": "node scripts/build-mobile.js && cap sync android",
+    "dist:mac": "electron-builder --mac",
+    "web": "node scripts/build-web.js",
+    "serve:web": "node server/index.js"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/share": "^8.0.3",
+    "electron": "^44.9.1",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.marinadp2006.ciudadesdelumbral",
+    "productName": "Las ciudades del Umbral",
+    "files": [
+      "main.js",
+      "modelos.js",
+      "preload.js",
+      "src/**/*",
+      "build/icon.png",
+      "package.json",
+      "assets/music/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Las ciudades del Umbral",
+      "artifactName": "Rifts-and-Gears-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Ciudades-del-Umbral-${version}-portable.${ext}"
+    },
+    "mac": {
+      "category": "public.app-category.role-playing-games",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "identity": null,
+      "artifactName": "Ciudades-del-Umbral-${version}-mac-${arch}.${ext}"
+    },
+    "dmg": {
+      "title": "Rifts & Gears ${version}"
+    },
+    "artifactName": "Ciudades-del-Umbral-Setup-${version}.${ext}"
+  }
+}
