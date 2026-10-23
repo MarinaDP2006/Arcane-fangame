@@ -6,7 +6,8 @@ Marca con `[x]` lo que se vaya cerrando.
 ## Para Nina (no se puede hacer sin ti)
 
 
-- [ ] **Clave de Ollama Cloud.** Crea una cuenta gratis en ollama.com y una clave en Settings → Keys.
+- [ ] **Clave de Ollama Cloud** (mientras tanto, la IA local con KoboldCpp ya funciona: ver `GUIA-KOBOLDCPP.md`).
+      Crea una cuenta gratis en ollama.com y una clave en Settings → Keys.
       No la pegues en chats ni en GitHub.
 - [ ] **Servicio en Render.** Crear el web service `rifts-gears-arcane` (plan Free) desde esta rama y poner
       la clave como variable secreta `OLLAMA_API_KEY`. Los pasos están en [`server/LEEME.md`](server/LEEME.md).
