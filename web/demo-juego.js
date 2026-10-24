@@ -9,7 +9,7 @@
   const app = document.getElementById('demo-app');
   if (!D || !app) return;
 
-  const KOBOLD_DEF = 'http://localhost:5001';
+  const KOBOLD_DEF = 'http://192.168.1.139:5001';
   const KOBOLD_KEY = 'demo-kobold-url';
   const KOBOLD_PASS_KEY = 'demo-kobold-password';
   const KEY = 'demo-' + D.id;
@@ -19,7 +19,7 @@
   const gen = (txt, i) => String(txt).replace(/\{g:([^}]*)\}/g, (m, opts) => opts.split('|')[i] ?? opts.split('|')[0]);
   const pick = (arr, n) => arr[Math.abs(n) % arr.length];
 
-  // Dirección de KoboldCpp: «192.168.1.40», «localhost:5001» o «https://xxx.trycloudflare.com»
+  // Dirección de KoboldCpp: «192.168.1.139:5001» o «localhost:5001»
   // se completan hasta /v1/chat/completions (puerto 5001 si es http sin puerto).
   function koboldBase(url) {
     url = String(url || '').trim();
