@@ -1433,6 +1433,72 @@
     },
   };
 
+  // ---------- Clasificación de chatarra (actividad exclusiva de Zaun) ----------
+  GAMES.chatarra = {
+    title: 'Clasificación de chatarra', icon: '', scene: 'sumidero', grade: 'zaun',
+    backdrops: ['sumidero', 'fabrica', 'mercado', 'zaun'],
+    desc: 'Benzo paga por piezas reutilizables, pero solo si separas metal, cristal hextec y residuos peligrosos. Clasifica las piezas antes de que se acabe el tiempo.',
+    controls: 'Pulsa 1, 2 o 3, o haz clic en el contenedor correcto.',
+    touchControls: 'Toca el contenedor correcto. No mezcles cristal hextec con residuos.',
+    touchKeys: [['1', 'Metal'], ['2', 'Hextec'], ['3', 'Residuos']], touchLayout: 'column',
+    goal: 'Clasifica correctamente 7 piezas con un máximo de 2 errores.',
+    winText: 'Benzo revisa las cajas y te paga por las piezas aprovechables.',
+    loseText: 'Una pieza peligrosa acaba en el contenedor equivocado. Benzo te retira el trabajo.',
+    create(w, h, o = {}) {
+      const types = [
+        { name: 'Metal', color: '#d8aa50', key: '1', x: 0.2 },
+        { name: 'Hextec', color: '#3fd0ff', key: '2', x: 0.5 },
+        { name: 'Residuos', color: '#7de0a1', key: '3', x: 0.8 },
+      ];
+      const target = 7;
+      const maxErrors = 2 + Math.max(0, o.bonus || 0);
+      let current = Math.floor(Math.random() * 3), sorted = 0, errors = 0, feedback = 'Clasifica la pieza', feedbackT = 0;
+      let result = null;
+      const next = () => { current = Math.floor(Math.random() * 3); };
+      const choose = (idx) => {
+        if (result != null) return;
+        if (idx === current) { sorted++; feedback = ['Correcto: metal recuperable.', 'El cristal conserva su carga.', 'Residuo aislado con seguridad.'][idx]; FX.burst(w * types[idx].x, h * 0.62, 12, { color: [types[idx].color, '#fff3c0'], kind: 'shard', speed: 180, size: 3, life: 0.5 }); }
+        else { errors++; feedback = 'Mal clasificado. Comprueba el material antes de seguir.'; FX.shake(5); }
+        feedbackT = 1.2;
+        if (sorted >= target) result = true;
+        else if (errors >= maxErrors) result = false;
+        else next();
+      };
+      return {
+        result,
+        update(dt, inp) {
+          feedbackT = Math.max(0, feedbackT - dt);
+          for (const k of inp.pressed) { const i = types.findIndex((t) => t.key === k); if (i >= 0) choose(i); }
+          for (const p of inp.mouse.clicks) {
+            const i = types.findIndex((t) => p.x >= w * (t.x - 0.14) && p.x <= w * (t.x + 0.14) && p.y >= h * 0.48 && p.y <= h * 0.86);
+            if (i >= 0) choose(i);
+          }
+          this.result = result;
+        },
+        draw(ctx, t) {
+          stageLight(ctx, w, h, t, { center: 0.5, ray: '70,210,190', fog: '70,160,130' });
+          glowText(ctx, 'TALLER DE RECUPERACIÓN', w / 2, h * 0.12, Math.min(22, w * 0.035), '#ffe08a');
+          const item = types[current];
+          ctx.save(); ctx.translate(w / 2, h * 0.32); ctx.rotate(Math.sin(t * 1.8) * 0.06);
+          ctx.shadowColor = item.color; ctx.shadowBlur = 22; ctx.fillStyle = item.color;
+          if (current === 0) { ctx.fillRect(-38, -24, 76, 48); ctx.fillStyle = '#49391f'; ctx.fillRect(-25, -12, 50, 24); }
+          else if (current === 1) { hexPath(ctx, 0, 0, 36, t * 0.6); ctx.fill(); ctx.fillStyle = '#e5fbff'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); ctx.fill(); }
+          else { ctx.beginPath(); ctx.moveTo(-28, -28); ctx.lineTo(24, -20); ctx.lineTo(35, 18); ctx.lineTo(-18, 30); ctx.closePath(); ctx.fill(); }
+          ctx.restore();
+          types.forEach((type, i) => {
+            const x = w * type.x, y = h * 0.66, bw = Math.min(150, w * 0.27), bh = Math.min(100, h * 0.2);
+            plate(ctx, x - bw / 2, y - bh / 2, bw, bh, { top: '#383329', bot: '#14120f', edge: type.color, cut: 10, lw: 2 });
+            glowText(ctx, type.name, x, y - 4, Math.min(18, w * 0.035), type.color, 'system-ui, sans-serif');
+            glowText(ctx, String(i + 1), x, y + bh * 0.28, 13, '#f4efe6', 'system-ui, sans-serif');
+          });
+          plate(ctx, w * 0.08, h * 0.83, w * 0.84, 44, { top: 'rgba(18,15,12,.95)', bot: 'rgba(8,8,8,.95)', edge: 'rgba(216,170,80,.45)' });
+          glowText(ctx, feedbackT > 0 ? feedback : '¿De qué material está hecha la pieza?', w / 2, h * 0.83 + 22, Math.min(16, w * 0.03), '#f4efe6', 'system-ui, sans-serif');
+        },
+        hud() { return bar('Piezas', sorted, target, '#3fbf9f') + bar('Errores', errors, maxErrors, '#e0457b') + '<span class="mg-num">' + sorted + '/' + target + '</span>'; },
+      };
+    },
+  };
+
   // ---------- 6. Regateo en el mercado ----------
   GAMES.regateo = {
     title: 'Regateo en el mercado', icon: '', scene: 'mercado', grade: 'zaun', backdrops: ['mercado', 'callejones', 'tienda-benzo', 'ultima-gota', 'zaun'],
@@ -1617,8 +1683,8 @@
     'mansion-kiramman': ['francotiradora', 'tiro'], plaza: ['regateo', 'francotiradora'], artesanos: ['circuito', 'regateo'],
     hexpuertas: ['circuito', 'francotiradora'], 'muelle-stillwater': ['francotiradora', 'persecucion'], puente: ['persecucion', 'francotiradora'],
     'puente-zaun': ['persecucion', 'chompers'], fabrica: ['chompers', 'persecucion'], foso: ['foso'], tejados: ['tejados', 'francotiradora'],
-    'ultima-gota': ['foso', 'regateo'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['circuito', 'regateo'], mercado: ['regateo', 'chompers'],
-    sumidero: ['aerotabla', 'persecucion'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['aerotabla', 'runas'], arbol: ['aerotabla', 'chompers'],
+    'ultima-gota': ['foso', 'regateo'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['circuito', 'regateo', 'chatarra'], mercado: ['regateo', 'chompers'],
+    sumidero: ['aerotabla', 'persecucion', 'chatarra'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['aerotabla', 'runas'], arbol: ['aerotabla', 'chompers'],
   };
   // Lista de minijuegos con lo necesario para pintar un botón o una tarjeta.
   function list(ids = Object.keys(GAMES)) {
