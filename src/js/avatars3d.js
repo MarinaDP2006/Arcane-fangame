@@ -11,9 +11,9 @@
 (function () {
   if (!window.THREE) return;
   const T = window.THREE;
-  // Altura de una persona adulta en unidades del mapa. Algo más grande que la escala real de
-  // las calles (como en los juegos de vista aérea) para que se vean bien desde la cámara.
-  const H = 64;
+  // Altura de una persona adulta en unidades del mapa. Cerca de la escala de las calles (74 de
+  // ancho) y de la esfera del jugador para que los personajes no parezcan gigantes en el mapa.
+  const H = 20;
   const DOLL = H / 44; // el muñeco se modela con 44 unidades de alto
   const WALK = 230; // velocidad de andar del jugador (world.js)
 
@@ -798,11 +798,11 @@
     model.updateMatrixWorld(true);
     model.traverse((o) => {
       if (!o.isMesh) return;
-      part.setFromObject(o).getSize(s);
+      part.setFromObject(o, true).getSize(s);
       if (s.y < 0.2 * Math.max(s.x, s.z)) return; // pieza plana
       total.union(part);
     });
-    return total.isEmpty() ? new T.Box3().setFromObject(model).getSize(new T.Vector3()) : total.getSize(new T.Vector3());
+    return total.isEmpty() ? new T.Box3().setFromObject(model, true).getSize(new T.Vector3()) : total.getSize(new T.Vector3());
   }
 
   /** Construye un avatar a partir de un modelo externo. */
@@ -833,11 +833,19 @@
         }
       }
     });
-    const box = new T.Box3().setFromObject(model);
+    // Se mide el modelo tal como se dibuja (con los huesos aplicados), no la malla en reposo:
+    // en algunos modelos con esqueleto la malla en reposo está tumbada o a otra escala, y el
+    // personaje salía gigante (Jinx, los guardias) o diminuto (Ekko). La medida se guarda en el
+    // modelo leído porque todas sus copias miden lo mismo.
+    if (!gltf.measure) {
+      model.updateMatrixWorld(true);
+      gltf.measure = { box: new T.Box3().setFromObject(model, true), body: bodySize(model) };
+    }
+    const box = gltf.measure.box;
     const size = box.getSize(new T.Vector3());
     // Un busto (solo cabeza y torso, más ancho que alto en proporción) no se estira hasta la
     // altura de una persona: se coloca sobre un pedestal, como una escultura del personaje.
-    const body = bodySize(model);
+    const body = gltf.measure.body;
     const bust = body.y > 0 && body.y / Math.max(body.x, body.z, 1e-6) < 1.3;
     const plinth = bust ? H * scale * 0.55 : 0;
     const k = size.y > 0 ? (H * scale * (bust ? 0.45 : 1)) / size.y : 1;
