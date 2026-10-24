@@ -1551,13 +1551,13 @@
           g.hover = btns.find((b) => m.x > b.x && m.x < b.x + b.w && m.y > b.y && m.y < b.y + b.h)?.id || null;
           for (const k of inp.pressed) {
             if (k === 'arrowleft' || k === 'a') g.offer = Math.max(10, g.offer - 2);
-            if (k === 'arrowright' || k === 'd') g.offer = Math.min(openingAsk, g.offer + 2);
+            if (k === 'arrowright' || k === 'd') g.offer = Math.min(100, g.offer + 2);
             if (k === ' ' || k === 'enter') { g.offerNow(); if (g.result != null) return; }
           }
           for (const c of inp.mouse.clicks) {
             const b = btns.find((bb) => c.x > bb.x && c.x < bb.x + bb.w && c.y > bb.y && c.y < bb.y + bb.h);
             if (b?.id === 'minus') g.offer = Math.max(10, g.offer - 5);
-            else if (b?.id === 'plus') g.offer = Math.min(openingAsk, g.offer + 5);
+            else if (b?.id === 'plus') g.offer = Math.min(100, g.offer + 5);
             else if (b?.id === 'offer') { g.offerNow(); if (g.result != null) return; }
           }
         },
