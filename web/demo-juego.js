@@ -1,7 +1,7 @@
 // Demo de rol libre en el navegador. Sin opciones fijas: escribes lo que tu personaje dice o
 // hace y el narrador y los personajes te contestan. Los datos del mundo vienen de window.DEMO
-// (demo-datos.js). La única IA es KoboldCpp, abierto en tu ordenador (http://localhost:5001)
-// o en la dirección https que da su túnel (--remotetunnel). Se puede cambiar en «Conectar IA» o
+// (demo-datos.js). La única IA es KoboldCpp, abierto en tu ordenador o en la IP local del PC.
+// No necesita Remote Tunnel; se puede cambiar en «Conectar IA» o
 // abriendo la demo con ?kobold=<dirección>. Si no responde, un narrador local mantiene la escena.
 (() => {
   'use strict';
@@ -22,7 +22,7 @@
   // Dirección de KoboldCpp: «192.168.1.139:5001» o «localhost:5001»
   // se completan hasta /v1/chat/completions (puerto 5001 si es http sin puerto).
   function koboldBase(url) {
-    url = String(url || '').trim();
+    url = String(url || '').trim().replaceAll('192.168.1.40', '192.168.1.139');
     if (!url) return KOBOLD_DEF;
     if (!/^https?:\/\//i.test(url)) url = 'http://' + url;
     try {
@@ -163,7 +163,7 @@
     const f = make('form', 'dj-ia-form');
     const l = make('label', 'dj-campo'); const inp = make('input');
     inp.value = kobold; inp.autocomplete = 'off'; inp.spellcheck = false; inp.inputMode = 'url';
-    inp.placeholder = '192.168.1.139 o localhost:5001';
+    inp.placeholder = 'http://192.168.1.139:5001';
     l.append(make('span', '', 'Dirección de KoboldCpp'), inp);
     const lp = make('label', 'dj-campo'); const inpPass = make('input');
     inpPass.type = 'password'; inpPass.autocomplete = 'off'; inpPass.spellcheck = false; inpPass.value = koboldPassword;

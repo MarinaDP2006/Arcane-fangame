@@ -14,7 +14,7 @@
   // Basta con escribir «192.168.1.139» o «http://192.168.1.139:5001»: se completa el puerto
   // y la ruta de /v1/chat/completions.
   function fullUrl(url) {
-    url = String(url || '').trim();
+    url = String(url || '').trim().replaceAll('192.168.1.40', '192.168.1.139');
     if (!url) return url;
     if (!/^https?:\/\//i.test(url)) url = `http://${url}`;
     try {

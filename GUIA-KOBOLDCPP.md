@@ -1,99 +1,78 @@
-# KoboldCpp 1.123.1 en Windows: Qwen/Llama en PC, móvil y tablet
+# Guía de KoboldCpp para Rifts & Gears: Arcane
 
-Esta configuración usa **KoboldCpp en el PC de casa**, sin Remote Tunnel, Cloudflare ni servicios externos. La misma instancia sirve al juego de escritorio y a los juegos web abiertos desde Render.
+Esta guía configura KoboldCpp en Windows para usar Qwen o Llama desde el juego instalado y desde la demo web. El modelo se ejecuta en tu PC; no necesitas Remote Tunnel ni abrir puertos del router para jugar en la misma Wi-Fi.
 
 ## Dirección predeterminada de este PC
 
-- PC con KoboldCpp: **192.168.1.139**
-- Dirección base: `http://192.168.1.139:5001`
-- API compatible con OpenAI: `http://192.168.1.139:5001/v1`
-- Chat completions: `http://192.168.1.139:5001/v1/chat/completions`
-- Lista de modelos: `http://192.168.1.139:5001/v1/models`
+- **IP del PC:** `192.168.1.139`
+- **Puerto de KoboldCpp:** `5001`
+- **Dirección base:** `http://192.168.1.139:5001`
+- **Comprobación de la API:** `http://192.168.1.139:5001/v1/models`
 
-La dirección `192.168.1.139` es la IP privada actual de la red local. Si Windows asigna otra IP al PC, vuelve a ejecutar `ipconfig` y actualiza la dirección en Ajustes del juego y en el panel de la demo.
+La demo y el juego usan esa dirección como valor inicial. Solo funciona mientras el PC tenga esa IPv4 y el dispositivo esté conectado a la misma red local. Si la IP cambia, actualízala en Ajustes → IA o en «Conectar IA». En el mismo PC también puedes usar `http://localhost:5001`.
 
-## 1. Preparar KoboldCpp
+## 1. Descargar KoboldCpp
 
-1. Abre KoboldCpp **1.123.1** desde su ejecutable.
-2. En **Model / Quick Launch**, selecciona un solo archivo GGUF.
-3. En **Network**, deja **Host** vacío, pon **Port: 5001** y mantén **Remote Tunnel desactivado**.
-4. Configura una contraseña en **Password**. El juego y la demo tienen un campo opcional para esa contraseña; escríbela allí también. No publiques la contraseña.
-5. Pulsa **Launch** y espera a que el modelo termine de cargar.
+1. Descarga el ejecutable únicamente desde [KoboldCpp Releases](https://github.com/LostRuins/koboldcpp/releases).
+2. Guárdalo, por ejemplo, en `C:\\Kobold`. Puedes conservar los modelos en `C:\\Kobold\\models`.
+3. Elige la versión compatible con tu hardware: CUDA para una GPU NVIDIA compatible, Vulkan/no-CUDA para otras GPU compatibles, o CPU si corresponde.
 
-KoboldCpp admite una sola instancia/modelo cargado a la vez en esta configuración: selecciona Qwen o Llama, no ambos a la vez.
+## 2. Cargar Qwen o Llama
 
-## 2. Modelo Qwen o Llama
+KoboldCpp necesita un modelo GGUF. Para empezar, descarga una cuantización Q4_K_M de un solo modelo:
 
-Empieza con un único GGUF cuantizado **Q4_K_M**:
+- [Qwen3 8B GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
+- [Llama 3.1 8B Instruct GGUF](https://huggingface.co/gaianet/Meta-Llama-3.1-8B-Instruct-GGUF)
 
-- **Qwen3 8B:** [Qwen/Qwen3-8B-GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF).
-- **Llama 3.1 8B Instruct:** [Meta-Llama-3.1-8B-Instruct-GGUF](https://huggingface.co/gaianet/Meta-Llama-3.1-8B-Instruct-GGUF).
+En KoboldCpp, usa **HF Search**, selecciona el archivo `.gguf`, confirma la selección y pulsa **Launch**. Carga un modelo cada vez. Mantén KoboldCpp abierto mientras juegas.
 
-En KoboldCpp puedes usar **HF Search**, elegir el repositorio y el archivo Q4_K_M, pulsar **Confirm Selection** y después **Launch**. Si falta memoria, reduce GPU Layers, conserva el contexto predeterminado o prueba un modelo más pequeño.
+## 3. Ajustes de red (sin Remote Tunnel)
 
-## 3. Conectar el juego en el PC
+En KoboldCpp, antes de **Launch**, abre **Network** y configura:
 
-1. Deja KoboldCpp abierto con el modelo listo.
-2. Abre el juego de Arcane.
-3. Entra en **Ajustes → IA de la historia y los chats**.
-4. Selecciona/activa **KoboldCpp**. La dirección predeterminada es `http://192.168.1.139:5001/v1/chat/completions`.
-5. Si configuraste Password, introdúcela en el campo de contraseña.
-6. Pulsa **Buscar mi modelo** y después **Probar conexión**.
+- **Host:** vacío (o `0.0.0.0` para escuchar en la red local).
+- **Port:** `5001`.
+- **Remote Tunnel:** desactivado.
+- **Password:** recomendable; si la configuras, introduce la misma contraseña en el juego/demo.
 
-Si estás usando el mismo PC donde ejecutas KoboldCpp, la IP local de arriba también debe funcionar. No necesitas cargar una tarjeta de personaje en KoboldAI Lite: Arcane envía su propio contexto desde el juego.
+No expongas el puerto 5001 a Internet ni configures port forwarding en el router.
 
-## 4. Conectar desde el móvil o la tablet
+## 4. Permitir la conexión en Windows y la Wi-Fi
 
-1. Conecta el dispositivo a la **misma Wi-Fi** que el PC.
-2. En el juego, abre **Ajustes → IA** y usa la dirección predeterminada `http://192.168.1.139:5001/v1/chat/completions`.
-3. Introduce la contraseña de KoboldCpp, si configuraste una, y pulsa **Probar conexión**.
-4. Si no conecta, comprueba el cortafuegos de Windows y que la red no tenga aislamiento entre dispositivos.
+1. En el PC, ejecuta `ipconfig` y comprueba que la IPv4 de la conexión usada sigue siendo `192.168.1.139`.
+2. Marca la red de Windows como **Privada** si es tu red doméstica de confianza.
+3. Si Windows Firewall pregunta, permite KoboldCpp solo en redes privadas. Si hace falta una regla manual, abre PowerShell como administrador y ejecuta:
+   ```powershell
+   New-NetFirewallRule -DisplayName "KoboldCpp LAN 5001" -Direction Inbound -Action Allow -Protocol TCP -LocalPort 5001 -Profile Private
+   ```
+4. En el PC y el móvil/tablet, abre `http://192.168.1.139:5001/v1/models`. Debe aparecer JSON. En el móvil no uses `localhost`, porque apuntaría al propio móvil.
 
-No uses `localhost` en el móvil/tablet: allí significa el propio teléfono/tablet, no el PC.
+## 5. Conectar la demo web
 
-## 5. Usar la demo publicada en Render (HTTPS), sin túneles
+Abre la demo web publicada de Arcane (usa la URL de Render configurada para este proyecto), entra en la partida y abre **Conectar IA**. La dirección inicial es `http://192.168.1.139:5001`; pulsa **Probar conexión**. Si Chrome/Edge muestra el permiso **Acceso a la red local**, pulsa **Permitir**. Si antes lo bloqueaste, abre la información del sitio → configuración/permisos del sitio → Acceso a la red local → Permitir. Si activaste **Password** en KoboldCpp, introduce esa contraseña en el campo correspondiente.
 
-La demo tiene como dirección predeterminada `http://192.168.1.139:5001`.
+La prueba se inicia mediante el botón para respetar el permiso del navegador. Si el JSON de `/v1/models` no abre desde el móvil, primero resuelve la Wi-Fi/firewall; cambiar la configuración de la demo no arreglará la conexión de red.
 
-1. Abre la web de Arcane desde Chrome actualizado.
-2. En la demo, abre **Conectar IA**.
-3. Selecciona o deja **Mi KoboldCpp** e introduce `http://192.168.1.139:5001`.
-4. Si activaste Password en KoboldCpp, escribe la contraseña en su campo.
-5. Pulsa **Probar conexión**. En Chrome 142 o posterior puede aparecer un permiso llamado **Acceso a la red local**; elige **Permitir**.
-6. Haz una prueba de conversación y confirma que el estado indica conexión, no narrador local.
+## 6. Conectar el juego instalado
 
-Para cambiar el permiso en Chrome: icono a la izquierda de la barra de direcciones → **Configuración de sitios** → **Acceso a la red local** → **Permitir**. Debes concederlo por separado en cada dispositivo/navegador.
+En **Ajustes → IA**, activa KoboldCpp. La dirección inicial es `http://192.168.1.139:5001`; pulsa **Probar conexión**. En el mismo PC, `http://localhost:5001` también sirve. Introduce la contraseña si configuraste Password en KoboldCpp.
 
-**Compatibilidad:** no todos los navegadores ni todas las versiones permiten desde una web HTTPS conectarse a una IP HTTP privada. Si el navegador sigue bloqueando la llamada después de autorizar el acceso local, esta configuración sin túnel no puede forzar ese permiso. En ese caso usa el juego instalado o sirve la web desde tu PC en la red local por HTTP. No abras el puerto 5001 del router ni publiques KoboldCpp en Internet.
+## 7. Problemas frecuentes
 
-## 6. Cortafuegos de Windows
-
-En el primer inicio, permite KoboldCpp en **redes privadas** cuando Windows Firewall lo pregunte. Si no aparece la pregunta, abre **Seguridad de Windows → Firewall y protección de red → Permitir una aplicación a través del firewall** y permite KoboldCpp en perfil **Privado**.
-
-Para comprobar la dirección en Windows:
-
-```bat
-ipconfig
-```
-
-Busca **Dirección IPv4** en el adaptador Wi-Fi/Ethernet conectado a tu red. La IP de esta guía es `192.168.1.139`; si cambia, reemplázala en los ajustes.
-
-## 7. Diagnóstico rápido
-
-| Síntoma | Qué revisar |
+| Problema | Qué comprobar |
 |---|---|
-| `/v1/models` no abre en el PC | Espera a que el modelo termine de cargar y comprueba el puerto 5001. |
-| Funciona en el PC, pero no en móvil/tablet | Misma Wi-Fi, Host vacío, cortafuegos privado y sin aislamiento de clientes en el router. |
-| La demo en Render muestra error de red local | Acepta **Acceso a la red local** en Chrome moderno. Si el navegador no permite HTTPS → IP privada HTTP, usa el juego instalado o web local; no actives túneles. |
-| Error de autenticación | Introduce la misma contraseña de KoboldCpp en el campo de contraseña de la demo/juego. |
-| La demo sigue respondiendo pero parece desconectada | Comprueba el indicador: una respuesta del narrador local no demuestra que KoboldCpp esté conectado. |
-| Respuestas lentas o falta de memoria | Q4_K_M, GPU Layers automático o modelo más pequeño. |
+| `/v1/models` no abre | Modelo cargado, Host vacío/`0.0.0.0`, puerto 5001, firewall privado y misma Wi-Fi. |
+| El móvil no llega | No uses `localhost`; revisa que no sea una Wi-Fi de invitados con aislamiento de dispositivos. |
+| La web HTTPS pide permiso | Permite Acceso a la red local para la web y vuelve a pulsar Probar conexión. |
+| La demo contesta sin IA | Comprueba el estado de conexión; el narrador local no demuestra que KoboldCpp esté conectado. |
+| Error de contraseña | Usa exactamente la contraseña configurada en Network → Password. |
+| Cambió la IP | Actualiza el campo de dirección; `192.168.1.139` es la IPv4 actual conocida, no una dirección fija garantizada por el router. |
 
-## Enlaces útiles
+## Enlaces oficiales
 
-- [Descargas oficiales de KoboldCpp](https://github.com/LostRuins/koboldcpp/releases)
-- [Documentación oficial de KoboldCpp](https://koboldcpp.net/docs/)
-- [Modelo Qwen3 8B GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
-- [Modelo Llama 3.1 8B Instruct GGUF](https://huggingface.co/gaianet/Meta-Llama-3.1-8B-Instruct-GGUF)
-- [Releases de Arcane-fangame](https://github.com/MarinaDP2006/Arcane-fangame/releases)
-- [Problemas de Arcane-fangame](https://github.com/MarinaDP2006/Arcane-fangame/issues)
+- [Descargas y versiones de KoboldCpp](https://github.com/LostRuins/koboldcpp/releases)
+- [Documentación de KoboldCpp](https://koboldcpp.net/docs/)
+- [Qwen3 8B GGUF](https://huggingface.co/Qwen/Qwen3-8B-GGUF)
+- [Llama 3.1 8B Instruct GGUF](https://huggingface.co/gaianet/Meta-Llama-3.1-8B-Instruct-GGUF)
+
+Los Save Slots de KoboldAI Lite solo guardan sesiones de Lite; el juego envía su propio contexto de Arcane. No hace falta cargar una tarjeta de personaje en Lite.
