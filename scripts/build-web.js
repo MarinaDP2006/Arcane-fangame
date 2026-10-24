@@ -73,7 +73,16 @@ function demoData(w) {
 // Tarjetas de personajes para la portada (sin spoilers: solo el resumen).
 const CIUDADES = { zaun: 'Zaun', piltover: 'Piltover', noxus: 'Noxus' };
 function repartoHtml(personajes) {
-  return personajes.map((p) => `<article class="ficha ficha-${esc(p.origin)}"><p class="ficha-ciudad">${esc(CIUDADES[p.origin] || p.origin)}</p><h3>${esc(p.name)}</h3><p class="ficha-alias">${esc(p.role)}</p><p>${esc(p.summary)}</p></article>`).join('');
+  const portraits = {
+    caitlyn: 'arte-propio/caitlyn-menu.png',
+    jinx: 'arte-propio/jinx-menu.png',
+  };
+  return personajes.map((p) => {
+    const art = portraits[p.id] ? '<img class="ficha-retrato" src="' + portraits[p.id] + '" alt="" loading="lazy">' : '';
+    return '<article class="ficha ficha-' + esc(p.origin) + (portraits[p.id] ? ' ficha-con-retrato' : '') + '">' + art +
+      '<p class="ficha-ciudad">' + esc(CIUDADES[p.origin] || p.origin) + '</p><h3>' + esc(p.name) + '</h3>' +
+      '<p class="ficha-alias">' + esc(p.role) + '</p><p>' + esc(p.summary) + '</p></article>';
+  }).join('');
 }
 
 function build() {
