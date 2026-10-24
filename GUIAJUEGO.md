@@ -148,6 +148,8 @@ Evita escribir información privada en un chat conectado a un servicio externo. 
 
 El proyecto incluye una pantalla de actividades/minijuegos. Entra, lee las reglas que se muestran en cada uno y prueba más de una actividad. Los controles pueden variar según el minijuego y la plataforma.
 
+En pantalla táctil, los minijuegos de teclado muestran botones grandes. En **Pelea en el foso** y **Regateo en el mercado** también puedes deslizar el dedo: un deslizamiento de unos 32 píxeles o más hacia un lado equivale a la flecha de esa dirección, y un toque corto sigue siendo un toque normal. Con ratón y teclado no cambia nada.
+
 No des por hecho que la captura antigua representa la lista exacta de actividades de la versión descargada. Úsala para reconocer visualmente la sección.
 
 ### Paso 9. Guarda tu progreso
@@ -267,6 +269,7 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 
 - [ ] Abre el Salón de minijuegos.
 - [ ] Inicia un minijuego y sigue las reglas que aparecen.
+- [ ] En móvil o tableta: en Pelea en el foso, desliza en la dirección de la flecha; en Regateo, desliza a izquierda o derecha para bajar o subir la oferta.
 - [ ] Comprueba que se puede completar o salir sin dejar la interfaz bloqueada.
 - [ ] Abre el atlas/códice y verifica que los artículos se pueden consultar.
 - [ ] Comprueba que la información no se pierde al volver a la historia.
