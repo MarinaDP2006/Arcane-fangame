@@ -1,8 +1,13 @@
 # Web del fangame de Arcane
 
-- `index.html`: portada (intro para quien no conoce Arcane, ciudades, personajes, cómo se juega, demo). Sin sección de descargas.
-- `demo.html` + `demo-juego.js`: demo de rol libre sin opciones fijas. Pregunta si conoces Arcane, crea el personaje y abre una escena en Zaun o Piltover. Usa KoboldCpp en `http://localhost:5001` (la única IA del juego) y, si no está abierto, un narrador local.
-- `demo-base.json`: introducción, bloqueo de canon (temporadas 1 y 2) y escenas. Los personajes y las ciudades salen de `src/data` al generar.
+La portada pública presenta la historia, Piltover, Zaun, los personajes y el arte oficial de referencia usado por el proyecto. No incluye un enlace público directo a la demo jugable: las únicas acciones externas del sitio son **Releases** y **Problemas**.
+
+- `index.html`: portada, ciudades, personajes, guía y sección de arte oficial.
+- `demo.html` + `demo-juego.js`: demo mantenida en el repositorio para desarrollo y pruebas; no está enlazada desde la portada pública.
+- `arte-oficial/`: carpeta generada al compilar la web con imágenes de lugares y retratos procedentes de `src/img/arte/`.
+- `arte-propio/`: recursos gráficos propios de la interfaz web.
 - `estilos.css`, `menu.js`, `privacidad.html`.
 
-`npm run web` crea `web-dist/`. La web no usa arte oficial de la serie.
+`npm run web` crea `web-dist/`. El generador copia una selección de arte oficial ya presente en el juego a `web-dist/arte-oficial/`; las fuentes y créditos quedan documentados en `arcaneData/arte/FUENTES.json`.
+
+Arcane © Riot Games / Fortiche Production. Proyecto de fans no oficial; las imágenes son material de referencia de sus respectivos propietarios.

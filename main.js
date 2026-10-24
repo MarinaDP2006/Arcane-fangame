@@ -367,11 +367,11 @@ function aiNetError(err, slow) {
 }
 
 // Modelo abierto en KoboldCpp: solo servidores de este ordenador o de la red de casa.
-ipcMain.handle('ai:get', async (_e, url) => {
+ipcMain.handle('ai:get', async (_e, url, headers = {}) => {
   try {
     const u = new URL(String(url));
     if (!LAN_HOST.test(u.hostname)) return { error: NOT_LAN };
-    const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
+    const res = await fetch(u, { headers, signal: AbortSignal.timeout(8000) });
     return { status: res.status, data: await res.json() };
   } catch (err) {
     return { error: aiNetError(err, 'El servidor no contesta') };
