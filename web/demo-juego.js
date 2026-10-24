@@ -220,14 +220,17 @@
     if (!st.offline && !bloqueada(kobold)) {
       try {
         const historial = st.log.slice(-16).map(m => ({ role: m.role, content: m.content }));
-        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
+        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.65, max_tokens: 420 }) });
         const j = await r.json().catch(() => ({}));
         const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
         if (r.ok && c && c.trim()) return c.trim();
-      } catch { /* KoboldCpp no está abierto: pasamos al narrador local */ }
+      } catch (err) {
+        st.offline = true;
+        return 'Narrador: [KoboldCpp no ha devuelto una respuesta. No se ha inventado diálogo. Abre «Conectar IA», pulsa «Probar conexión» y revisa la dirección del túnel. Detalle: ' + String(err.message || err).slice(0, 180) + ']';
+      }
       st.offline = true;
     }
-    return local(txt);
+    return 'Narrador: [La IA está desconectada; no se ha generado diálogo. Abre «Conectar IA» y pulsa «Probar conexión».]';
   }
 
   // Narrador local: no entiende como una IA, pero reacciona a lo que escribes y hace avanzar la escena.
