@@ -1,63 +1,50 @@
 # Rifts & Gears · Fangame de Arcane
 
-Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o en Zaun y entras en la historia. No hay respuestas prefabricadas: escribes lo que tu personaje dice o hace, y los personajes de la serie te contestan, te preguntan y reaccionan como lo harían ellos, sin salirse del lore.
-
+Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o Zaun y escribes lo que dice o hace. Los personajes responden dentro del canon de la serie.
 
 ## Cómo funciona
-1. **¿Conoces Arcane?** Antes de crear el personaje el juego lo pregunta. Si dices que no, te da una introducción breve. Si dices que sí, pasas directo a la creación.
-2. **Creación de personaje:** nombre, pronombres, ciudad, oficio y lo que quieras contar de ti con tus palabras.
-3. **Rol libre:** escribes y te contestan. Los personajes solo saben lo que han vivido hasta tu momento de la historia y respetan el canon de las temporadas 1 y 2.
-4. **Una sola IA, KoboldCpp:** el diálogo lo genera KoboldCpp en tu PC (puerto 5001), sin internet ni claves. La tablet o el móvil lo usan por la red de casa. No hay más proveedores de IA. Pasos en [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 
-## Web y demo
-La carpeta `web/` tiene la web pública del fangame, con una sección de descargas que enlaza al repositorio independiente:
-- `index.html`: portada, introducción para quien no conoce Arcane, ciudades, personajes, cómo se juega y demo.
-- `demo.html` + `demo-juego.js`: demo de rol libre. Escena en La Última Gota (Zaun) o en el taller de hextec de la Academia (Piltover), en la temporada 1, acto 2.
-- `demo-base.json`: introducción, bloqueo de canon y escenas. Los personajes y las ciudades salen de `src/data` al generar.
-- `estilos.css`, `menu.js` y `privacidad.html`.
+1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
+2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
+3. **IA local:** KoboldCpp carga un modelo Qwen o Llama GGUF en tu PC. La dirección LAN predeterminada para esta instalación es `http://192.168.1.139:5001` (API OpenAI: `http://192.168.1.139:5001/v1`). Si Windows cambia la IP, actualiza Ajustes → IA.
+4. **PC, móvil y tablet:** el juego instalado usa la IP del PC en la red de casa. Para la demo web en Render/HTTPS, Chrome moderno puede pedir el permiso **Acceso a la red local**. No usamos Remote Tunnel ni Cloudflare. Si un navegador no permite esta conexión, usa el juego instalado o una web servida en tu red local.
 
-`npm run web` genera `web-dist/`. La web no publica arte oficial de la serie.
+Pasos en [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 
-La demo habla con KoboldCpp en ` https://review-tonight-solaris-council.trycloudflare.com/lcpp/` (en el mismo ordenador que abre la web). Si KoboldCpp no está abierto, entra un narrador local sencillo para que la escena no se quede muda.
+## Web y arte
+
+La web pública presenta la historia, ciudades, personajes y una galería de concept art oficial de Arcane. El acceso directo a la demo no aparece en la portada pública; las acciones externas allí son Releases y Problemas.
+
+- `web/index.html`: landing page, ciudades, galería de arte y personajes.
+- `scripts/build-web.js`: copia una selección de imágenes oficiales de entorno y retratos desde `src/img/arte/` a `web-dist/arte-oficial/`.
+- `arcaneData/arte/FUENTES.json`: fuentes, créditos, nombres de archivos y procedencia de los recursos.
+- `web/demo.html` + `web/demo-juego.js`: demo mantenida en el repositorio para desarrollo/pruebas; no enlazada desde la portada.
+- `web/arte-propio/`: recursos gráficos propios de la interfaz.
+
+`npm run web` genera la carpeta `web-dist/` con el contenido listo para Render. Las imágenes de Arcane son propiedad de Riot Games / Fortiche Production; el proyecto es un fangame no oficial.
 
 ## Desarrollo
+
 ```bash
 npm ci
-npm run check      # comprobaciones de datos y scripts
-npm start          # versión de escritorio (Electron)
-npm run web        # genera la web en web-dist/
+npm run check
+npm start
+npm run web
 ```
 
-`render.yaml` despliega la web en un servicio Node (`node scripts/build-web.js` y después `node server/roleplay-server.js`). El servidor solo sirve la página: no hace de puente con ninguna IA ni necesita claves.
-
-## Estado
-
-- **Hecho:** historia, personajes de Piltover, Zaun y Noxus, rol libre con bloqueo de canon, web y demo nuevas.
-- **Prototipo:** modelos 3D de fan-art en `src/models/` (sin rig ni animaciones finales).
-- **Compilación en GitHub Actions:** el workflow «Compilar Arcane» comprueba el juego y compila Windows, macOS (Intel y Apple Silicon) y Android en cada push a `main`, en cada pull request y a mano. Nada se publica solo: la Release se crea únicamente a mano marcando «publicar» ([cómo](docs/RELEASES-ARCANE.md)).
+El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y Android. Las releases se publican manualmente; revisa los artefactos disponibles en Releases.
 
 ## Guías
 
 - [Guía completa del código](GUIA.md) y [guía de juego](GUIAJUEGO.md)
-- [IA local con KoboldCpp](GUIA-KOBOLDCPP.md) y [IA y campaña](GUIA-IA-Y-CAMPANA.md)
-- [Prompts 3D de fan-art](docs/PROMPTS-3D-ARCANE-FAN-GAME.md)
-- [Partidas guardadas](partidas-guardadas-guia.md)
+- [KoboldCpp: Qwen/Llama en PC y LAN](GUIA-KOBOLDCPP.md)
+- [Releases y compilaciones](docs/RELEASES-ARCANE.md)
+
+## Enlaces del proyecto
+
+- [Releases](https://github.com/MarinaDP2006/Arcane-fangame/releases)
+- [Problemas / Issues](https://github.com/MarinaDP2006/Arcane-fangame/issues)
 
 ## Aviso legal
 
-Proyecto de fans gratuito, sin ánimo de lucro y no respaldado por Riot Games. Arcane, League of Legends, Piltover, Zaun y sus personajes pertenecen a Riot Games. El código está bajo licencia MIT, que no da derechos sobre esas marcas ni personajes. Consulta las [condiciones legales de Riot Games](https://www.riotgames.com/es/legal).
-
-
-## IA para el juego y la web demo
-
-La única IA del juego es **KoboldCpp** (gratis, en tu ordenador). No hay servicios en la nube, ni claves, ni otros proveedores.
-
-- **Escritorio (Windows/macOS):** abre KoboldCpp con un modelo `.gguf`; el juego le habla en `http://localhost:5001`.
-- **Android (móvil o tablet):** en Ajustes → IA escribe la dirección de tu PC en la wifi de casa, por ejemplo `192.168.1.40` (el puerto 5001 se pone solo). Mientras no la escribas, el juego usa los diálogos escritos.
-- **Web y demo:** solo llegan a KoboldCpp abierto en el mismo ordenador; desde una web `https` el navegador no deja hablar con otro PC de la red.
-
-Los pasos están en [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
-
-## Publicación independiente
-
-- [Compilar con GitHub Actions y crear releases](docs/RELEASES-ARCANE.md)
+Proyecto de fans gratuito y no respaldado por Riot Games. Arcane, League of Legends, Piltover, Zaun, sus personajes y su arte pertenecen a sus respectivos propietarios. El código está bajo licencia MIT, que no concede derechos sobre marcas ni personajes de terceros.
