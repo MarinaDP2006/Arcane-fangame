@@ -5,13 +5,13 @@
 (function () {
   const PROVIDERS = {
     off: { label: 'Desactivada' },
-    koboldcpp: { label: 'KoboldCpp (en tu PC o por la red de casa)', url: 'http://localhost:5001/v1/chat/completions', model: 'koboldcpp', help: 'Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.40:5001. Los pasos están en GUIA-KOBOLDCPP.md.' },
+    koboldcpp: { label: 'KoboldCpp (en tu PC o por la red de casa)', url: 'http://192.168.1.139:5001/v1/chat/completions', model: 'koboldcpp', help: 'Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.139:5001. Los pasos están en GUIA-KOBOLDCPP.md.' },
   };
 
-  // KoboldCpp corre en tu PC (o en otro de tu red): no pide clave y no sale a internet.
+  // KoboldCpp corre en tu PC y puede ser accesible en la red local. Configura Password si lo compartes con otros dispositivos.
   const LOCAL = new Set(['koboldcpp']);
 
-  // Basta con escribir «192.168.1.40» o «http://192.168.1.40:5001»: se completa el puerto
+  // Basta con escribir «192.168.1.139» o «http://192.168.1.139:5001»: se completa el puerto
   // y la ruta de /v1/chat/completions.
   function fullUrl(url) {
     url = String(url || '').trim();
