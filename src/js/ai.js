@@ -76,7 +76,7 @@
   // GET corto (lista de modelos), por el mismo camino que post().
   async function get(url, headers = {}) {
     if (window.arcane?.aiGet) {
-      const r = await window.arcane.aiGet(url);
+      const r = await window.arcane.aiGet(url, headers);
       if (r.error) throw new Error(r.error);
       return r.data;
     }
