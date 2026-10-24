@@ -62,8 +62,8 @@
   // Menú principal: Piltover (cielo) y Zaun (cueva) pintadas a la vez, separadas por una grieta
   // de luz que sigue al ratón o al dedo. Los efectos viven en js/title-fx.js.
   const TITLE_ART = {
-    pilt: [['piltover', '50% 40%'], ['hexpuertas', '50% 30%']],
-    zaun: [['zaun', '50% 45%'], ['comuna-viktor', '50% 50%']],
+    pilt: [['piltover', '50% 40%'], ['hexpuertas', '50% 30%'], ['academia', '50% 35%'], ['consejo', '50% 30%']],
+    zaun: [['zaun', '50% 45%'], ['comuna-viktor', '50% 50%'], ['ultima-gota', '50% 45%'], ['stillwater', '50% 50%']],
   };
   let stopTitleFx = null;
 
