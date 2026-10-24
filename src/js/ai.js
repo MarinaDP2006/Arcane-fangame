@@ -74,7 +74,7 @@
   }
 
   // GET corto (lista de modelos), por el mismo camino que post().
-  async function get(url) {
+  async function get(url, headers = {}) {
     if (window.arcane?.aiGet) {
       const r = await window.arcane.aiGet(url);
       if (r.error) throw new Error(r.error);
@@ -82,10 +82,10 @@
     }
     const native = window.Capacitor?.Plugins?.CapacitorHttp;
     if (native && window.Capacitor.isNativePlatform?.()) {
-      const r = await native.request({ url, method: 'GET', connectTimeout: 8000, readTimeout: 8000 });
+      const r = await native.request({ url, method: 'GET', headers, connectTimeout: 8000, readTimeout: 8000 });
       return typeof r.data === 'string' ? JSON.parse(r.data || '{}') : r.data;
     }
-    return fetch(url).then((r) => r.json());
+    return fetch(url, { headers }).then((r) => r.json());
   }
 
   // Modelos que razonan antes de hablar: necesitan más margen de tokens.
@@ -93,7 +93,8 @@
 
   // KoboldCpp sirve un solo modelo a la vez: el que se eligió al abrirlo.
   async function models() {
-    const data = await get(`${cfg().url.replace(/\/v1\/chat\/completions$/, '')}/v1/models`);
+    const c = cfg();
+    const data = await get(`${c.url.replace(/\/v1\/chat\/completions$/, '')}/v1/models`, c.password ? { Authorization: `Bearer ${c.password}` } : {});
     return (data?.data || []).map((m) => ({ name: m.id, loaded: true, quant: '' }));
   }
 
