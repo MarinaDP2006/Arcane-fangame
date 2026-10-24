@@ -106,7 +106,7 @@
   async function complete(messages, opts = {}) {
     const c = cfg();
     if (c.provider === 'off') throw new Error('La IA está desactivada en Ajustes.');
-    const body = { model: c.model, messages, temperature: opts.temperature ?? 0.72, max_tokens: opts.max ?? 350 };
+    const body = { model: c.model, messages, temperature: opts.temperature ?? 0.9, max_tokens: opts.max ?? 350 };
     // Se corta si empieza a escribir tu parte; los modelos que piensan antes de hablar tienen más margen.
     if (opts.stop?.length) body.stop = opts.stop.slice(0, 4);
     if (THINKERS.test(c.model)) body.max_tokens = Math.max(body.max_tokens, 900);
@@ -271,7 +271,7 @@
     const paths = scene.paths.map((c, i) => `[${i + 1}] ${U.tpl(c.t, p)}`).join('\n');
     const sys = [
       `Eres el director de escena de un juego de rol de fans de Arcane (Piltover y Zaun). Escribes en ${LANG[window.I18N?.lang] || LANG.es}.`,
-      `CANON: todo debe ser coherente con la temporada 1 y la temporada 2 de Arcane: personalidades, cronología, quién conoce a quién, tecnología (hextec, brillo/shimmer), lugares y tono. Nada de temporadas, juegos o lore de League of Legends que contradigan la serie. El protagonista es original y puede cambiar cosas solo mediante lo que ocurre en esta partida. No existe ningún elemento de Las ciudades del Umbral en este universo; no mezcles Aurelia, Nácar ni la Resonancia con Piltover y Zaun.`,
+      `CANON: todo debe ser coherente con la temporada 1 y la temporada 2 de Arcane: personalidades, cronología, quién conoce a quién, tecnología (hextec, brillo/shimmer), lugares y tono. Nada de temporadas, juegos o lore de League of Legends que contradigan la serie. El protagonista es original y puede cambiar cosas solo mediante lo que ocurre en esta partida.`,
       `Estamos en la parte ${part} (${part === 1 ? 'El inicio' : 'Las consecuencias'}), ${scene.chapter}. ${scene.intro || ''}`,
       gone.length ? `Ya no están (no pueden hablar): ${gone.join(', ')}.` : '',
       saved.length ? `Siguen vivos gracias al protagonista: ${saved.join(', ')}.` : '',
@@ -346,8 +346,7 @@ vi: ¿Y tú quién demonios eres?
         const id = allowed.has(k) ? k : byName.get(k) || (/narra/.test(k) ? 'narrador' : null);
         // Si la IA escribe por el protagonista, se descarta esa línea.
         if (k === p.name.toLowerCase() || k === 'yo') continue;
-        if (!id) continue; // No convertir nombres inventados en narración: solo reparto permitido.
-        s = id; t = m[2];
+        if (id) { s = id; t = m[2]; }
       }
       lines.push({ s, t: t.trim() });
     }

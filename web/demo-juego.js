@@ -206,7 +206,7 @@
 
   function sistema() {
     const esc = D.escenas[st.pj.ciudad]; const pj = st.pj;
-    const fichas = esc.presentes.map(id => { const p = D.reparto.find(x => x.id === id); if (!p) return ''; const v = p.voice || {}; const l = p.lore || {}; return [`- ${p.name} (${p.role}): ${p.summary}`, p.details?.length ? `  Datos conocidos: ${p.details.join(' ')}` : '', p.quote ? `  Frase de referencia: «${p.quote}»` : '', v.habla ? `  Voz y ritmo: ${v.habla}` : '', v.contigo ? `  Trato al jugador: ${v.contigo}` : '', v.nunca ? `  Límites de personaje: ${v.nunca}` : '', l.pasado ? `  Pasado: ${l.pasado}` : '', l.vinculos ? `  Relaciones: ${l.vinculos}` : '', l.motivaciones ? `  Motivaciones: ${l.motivaciones}` : ''].filter(Boolean).join('\n'); }).join('\n');
+    const fichas = esc.presentes.map(id => { const p = D.reparto.find(x => x.id === id); return p ? `- ${p.name} (${p.role}): ${p.summary} Frase típica: «${p.quote}»` : ''; }).join('\n');
     return [
       D.canon,
       `ESCENA: ${esc.titulo}, en ${esc.lugar} (${D.ciudades[pj.ciudad].label}). ${esc.contexto}`,
@@ -220,17 +220,14 @@
     if (!st.offline && !bloqueada(kobold)) {
       try {
         const historial = st.log.slice(-16).map(m => ({ role: m.role, content: m.content }));
-        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.65, max_tokens: 420 }) });
+        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
         const j = await r.json().catch(() => ({}));
         const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
         if (r.ok && c && c.trim()) return c.trim();
-      } catch (err) {
-        st.offline = true;
-        return 'Narrador: [KoboldCpp no ha devuelto una respuesta. No se ha inventado diálogo. Abre «Conectar IA», pulsa «Probar conexión» y revisa la dirección del túnel. Detalle: ' + String(err.message || err).slice(0, 180) + ']';
-      }
+      } catch { /* KoboldCpp no está abierto: pasamos al narrador local */ }
       st.offline = true;
     }
-    return 'Narrador: [La IA está desconectada; no se ha generado diálogo. Abre «Conectar IA» y pulsa «Probar conexión».]';
+    return local(txt);
   }
 
   // Narrador local: no entiende como una IA, pero reacciona a lo que escribes y hace avanzar la escena.
