@@ -70,16 +70,45 @@ function demoData(w) {
   return '// Generado por scripts/build-web.js a partir de src/data y web/demo-base.json. No editar a mano.\nwindow.DEMO = ' + JSON.stringify(datos) + ';\n';
 }
 
-// Tarjetas de personajes para la portada (sin spoilers: solo el resumen).
+// Copia una selección del arte oficial de Arcane que ya está documentado en arcaneData/arte/FUENTES.json.
+// Se conserva separado del arte propio de la interfaz; el pie de la web informa de los derechos.
+function copyOfficialArt() {
+  const faceDir = path.join(root, 'src', 'img', 'arte', 'caras');
+  if (fs.existsSync(faceDir)) {
+    for (const file of fs.readdirSync(faceDir).filter((name) => /\.webp$/i.test(name))) {
+      copy(path.join(faceDir, file), path.join(out, 'arte-oficial', 'personajes', file));
+    }
+  }
+  const places = [
+    ['s1/piltover.webp', 'piltover-s1.webp'],
+    ['s1/plaza.webp', 'plaza-piltover-s1.webp'],
+    ['s1/hexpuertas.webp', 'hexpuertas-piltover-s1.webp'],
+    ['s1/puente.webp', 'puente-piltover-s1.webp'],
+    ['s1/taller-jayce.webp', 'taller-piltover-s1.webp'],
+    ['s1/zaun.webp', 'zaun-s1.webp'],
+    ['s1/mercado.webp', 'mercado-zaun-s1.webp'],
+    ['s1/arbol.webp', 'firelights-zaun-s1.webp'],
+    ['s1/ultima-gota.webp', 'ultima-gota-zaun-s1.webp'],
+    ['s1/fabrica.webp', 'fabrica-zaun-s1.webp'],
+    ['s2/piltover.webp', 'piltover-s2.webp'],
+    ['s2/zaun.webp', 'zaun-s2.webp'],
+    ['s2/escondite-jinx.webp', 'escondite-jinx-s2.webp'],
+  ];
+  const placesDir = path.join(root, 'src', 'img', 'arte', 'lugares');
+  for (const [src, dest] of places) {
+    const full = path.join(placesDir, src);
+    if (fs.existsSync(full)) copy(full, path.join(out, 'arte-oficial', 'lugares', dest));
+  }
+}
+
+// Tarjetas de personajes con los retratos oficiales que existen para su ID (sin spoilers: solo el resumen).
 const CIUDADES = { zaun: 'Zaun', piltover: 'Piltover', noxus: 'Noxus' };
 function repartoHtml(personajes) {
-  const portraits = {
-    caitlyn: 'arte-propio/caitlyn-menu.png',
-    jinx: 'arte-propio/jinx-menu.png',
-  };
   return personajes.map((p) => {
-    const art = portraits[p.id] ? '<img class="ficha-retrato" src="' + portraits[p.id] + '" alt="" loading="lazy">' : '';
-    return '<article class="ficha ficha-' + esc(p.origin) + (portraits[p.id] ? ' ficha-con-retrato' : '') + '">' + art +
+    const portrait = path.join(root, 'src', 'img', 'arte', 'caras', p.id + '.webp');
+    const hasPortrait = fs.existsSync(portrait);
+    const art = hasPortrait ? '<img class="ficha-retrato" src="arte-oficial/personajes/' + esc(p.id) + '.webp" alt="Retrato de referencia de ' + esc(p.name) + '" loading="lazy">' : '';
+    return '<article class="ficha ficha-' + esc(p.origin) + (hasPortrait ? ' ficha-con-retrato' : '') + '">' + art +
       '<p class="ficha-ciudad">' + esc(CIUDADES[p.origin] || p.origin) + '</p><h3>' + esc(p.name) + '</h3>' +
       '<p class="ficha-alias">' + esc(p.role) + '</p><p>' + esc(p.summary) + '</p></article>';
   }).join('');
@@ -92,7 +121,8 @@ function build() {
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
 
-  // La web no publica arte de Arcane: solo ilustraciones propias (web/arte-propio) y el icono.
+  // La web combina arte propio de interfaz con una selección del arte oficial documentado del juego.
+  copyOfficialArt();
   const personajes = WIKI.personajes;
   copy(path.join(root, 'build', 'icon.png'), path.join(out, 'icono.png'));
   const lugares = ATLAS.places.map((l) => `<li class="lugar-${esc(l.city)}">${esc(l.name)}</li>`).join('');
