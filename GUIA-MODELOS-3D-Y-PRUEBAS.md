@@ -88,3 +88,11 @@ Se escriben en `dist/`. Si `npm ci` falla, no intentes usar un instalador antigu
 
 ## Limitaciones todavía pendientes
 No se ha confirmado el resultado de una compilación Windows completa en Actions, ni se ha probado un instalador en una máquina Windows real desde esta conversación. También faltan una prueba integral de todas las rutas narrativas y un examen gráfico de los seis ZIP reales. Estas verificaciones deben completarse antes de declarar terminada la versión estable.
+
+## Tamaño de los personajes en el mapa 3D
+
+Todos los personajes del mapa (Caitlyn y los guardias en Piltover; Jinx, Vi y Ekko en Zaun) se ajustan a **20 unidades del mapa** de alto, más o menos la talla de la esfera del jugador. Las calles miden 74 de ancho y los edificios de 60 a 400 de alto.
+
+El juego mide cada modelo **tal como se dibuja**, con los huesos aplicados, y no la malla en reposo. Antes se medía la malla en reposo, y en los modelos con esqueleto eso fallaba: Jinx venía tumbada y se tomaba por un busto (salía con unas 135 unidades de alto), el guardia de Piltover venía a otra escala (más de 6000) y Ekko quedaba diminuto. Los archivos `.glb` no se modifican; solo cambia cómo los mide el juego.
+
+Para comprobarlo: entra en Piltover (Jefatura de los Ejecutores) y en Zaun (los Callejones, el Escondite de Jinx y el Árbol de las Luciérnagas) y comprueba que los personajes están de pie, con los pies en el suelo y del tamaño de la esfera.
