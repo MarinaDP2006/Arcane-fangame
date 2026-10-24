@@ -255,8 +255,8 @@ em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240
 .retrato-jinx { right: 0; width: min(70%, 520px); }
 @media (max-width: 760px) { .retrato-ciudad { right: -10%; width: 74%; height: 60%; opacity: .58; } .retrato-jinx { right: -16%; width: 84%; } }
 /* Fondos basados en concept art publicado de Arcane. Se enlaza a las fichas de referencia y no se redistribuyen copias de las imágenes protegidas. */
-.lado-piltover { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .7)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E08_Concept_05.jpg") center 44% / cover no-repeat, linear-gradient(180deg, #1c2033, #0b0d14); }
-.lado-zaun { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .72)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E07_Concept_14.jpg") center 44% / cover no-repeat, linear-gradient(180deg, #0e1a17, #0b0d14); }
+.lado-piltover { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .7)), url("arte-oficial/lugares/piltover-s1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #1c2033, #0b0d14); }
+.lado-zaun { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .72)), url("arte-oficial/lugares/zaun-s1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #0e1a17, #0b0d14); }
 .portada-fondo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11, 13, 20, .92) 0%, rgba(11, 13, 20, .55) 55%, rgba(11, 13, 20, .2) 100%), repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .015) 3px 4px); }
 .portada-fondo .lado-zaun::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--laton), var(--reso)); box-shadow: 0 0 18px var(--reso); }
 
@@ -358,3 +358,19 @@ em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240
   .dj-ciudades { grid-template-columns: 1fr; }
   .dj-ciudad { min-height: 130px; }
 }
+
+
+/* Galería de concept art oficial y retratos: imágenes locales copiadas desde src/img/arte/. */
+.ficha-retrato { display: block; width: calc(100% + 2.6rem); max-width: none; height: 250px; object-fit: cover; object-position: center 24%; margin: -1.3rem -1.3rem 1rem; border-bottom: 1px solid var(--linea); background: #101522; }
+.ficha-con-retrato { overflow: hidden; }
+.arte-galeria { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.arte-card { min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--panel); }
+.arte-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .45s, filter .45s; }
+.arte-card:hover img { transform: scale(1.035); filter: saturate(1.08); }
+.arte-card figcaption { display: grid; gap: .2rem; padding: .85rem 1rem 1rem; }
+.arte-card strong { font: 600 .95rem var(--serif); color: var(--texto); }
+.arte-card span, .nota-arte { color: var(--suave); font-size: .86rem; }
+.nota-arte { margin-top: 1rem; }
+.nota-arte code { color: var(--hextec); }
+@media (max-width: 960px) { .arte-galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .arte-galeria { grid-template-columns: 1fr; } .ficha-retrato { height: 290px; } }
