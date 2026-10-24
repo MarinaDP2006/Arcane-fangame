@@ -426,8 +426,24 @@
       const pos = (e) => { const r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; };
       // Eventos de puntero: valen igual para ratón y para dedo (móvil).
       canvas.addEventListener('pointermove', pos);
-      canvas.addEventListener('pointerdown', (e) => { e.preventDefault(); pos(e); mouse.down = true; mouse.clicks.push({ x: mouse.x, y: mouse.y }); });
-      const up = () => { mouse.down = false; };
+      // Deslizar el dedo (solo en los minijuegos con «swipe») equivale a pulsar una flecha;
+      // un toque corto sigue siendo un clic. El ratón no cambia.
+      let swipe = null;
+      canvas.addEventListener('pointerdown', (e) => {
+        e.preventDefault(); pos(e); mouse.down = true; mouse.clicks.push({ x: mouse.x, y: mouse.y });
+        swipe = def.swipe && e.pointerType !== 'mouse' ? { x: e.clientX, y: e.clientY, id: e.pointerId } : null;
+      });
+      const up = (e) => {
+        mouse.down = false;
+        if (!swipe || e?.pointerId !== swipe.id) return;
+        const dx = e.clientX - swipe.x;
+        const dy = e.clientY - swipe.y;
+        swipe = null;
+        if (e.type === 'pointercancel' || !running || Math.max(Math.abs(dx), Math.abs(dy)) < 32) return;
+        const k = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'arrowleft' : 'arrowright') : (dy < 0 ? 'arrowup' : 'arrowdown');
+        pressed.push(k);
+        buzz(10);
+      };
       window.addEventListener('pointerup', up);
       window.addEventListener('pointercancel', up);
 
@@ -664,10 +680,10 @@
   const ARROWS = { arrowup: '▲', arrowdown: '▼', arrowleft: '◀', arrowright: '▶' };
   const ARROW_ANG = { arrowup: -Math.PI / 2, arrowdown: Math.PI / 2, arrowleft: Math.PI, arrowright: 0 };
   GAMES.foso = {
-    touchKeys: [['arrowup', '▲'], ['arrowleft', '◀'], ['arrowdown', '▼'], ['arrowright', '▶']], touchLayout: 'dpad',
+    touchKeys: [['arrowup', '▲'], ['arrowleft', '◀'], ['arrowdown', '▼'], ['arrowright', '▶']], touchLayout: 'dpad', swipe: true,
     title: 'Pelea en el foso', icon: '', scene: 'foso', grade: 'foso', backdrops: ['foso', 'ultima-gota', 'callejones', 'zaun', 'sumidero'],
     desc: 'La multitud ruge. Tu rival ataca rápido: responde con la flecha correcta antes de que el anillo se cierre para esquivar y contraatacar.',
-    controls: 'Flechas del teclado (o W A S D).', touchControls: 'Pulsa la flecha que aparece con los botones de la derecha.', goal: 'Deja a tu rival sin energía antes de que te pase a ti.',
+    controls: 'Flechas del teclado (o W A S D).', touchControls: 'Desliza el dedo en la dirección de la flecha que aparece, o pulsa los botones de la derecha.', goal: 'Deja a tu rival sin energía antes de que te pase a ti.',
     winText: 'Tu rival besa la lona. El foso corea tu nombre.', loseText: 'Acabas en el suelo. Levántate e inténtalo otra vez.',
     create(w, h, o) {
       const map = { w: 'arrowup', s: 'arrowdown', a: 'arrowleft', d: 'arrowright' };
@@ -1418,8 +1434,8 @@
   GAMES.regateo = {
     title: 'Regateo en el mercado', icon: '', scene: 'mercado', grade: 'zaun', backdrops: ['mercado', 'callejones', 'tienda-benzo', 'ultima-gota', 'zaun'],
     desc: 'La vendedora pide 100 monedas por un cachivache que vale mucho menos. Haz ofertas: si te pasas de lista se enfadará, si ofreces poco perderá la paciencia.',
-    controls: 'Flechas ← → (o los botones − y +) para ajustar tu oferta, Espacio, Intro o «Ofrecer» para ofrecer.', touchControls: 'Botones − y + para ajustar tu oferta, «Ofrecer» para ofrecer.',
-    touchKeys: [['arrowright', '+'], [' ', 'Ofrecer'], ['arrowleft', '−']], touchLayout: 'column', goal: 'Cierra el trato por 60 monedas o menos.',
+    controls: 'Flechas ← → (o los botones − y +) para ajustar tu oferta, Espacio, Intro o «Ofrecer» para ofrecer.', touchControls: 'Botones − y + (o desliza el dedo a izquierda o derecha) para ajustar tu oferta, «Ofrecer» para ofrecer.',
+    touchKeys: [['arrowright', '+'], [' ', 'Ofrecer'], ['arrowleft', '−']], touchLayout: 'column', swipe: true, goal: 'Cierra el trato por 60 monedas o menos.',
     winText: '«Trato hecho… me has desplumado», ríe la vendedora.', loseText: '«Fuera de mi puesto», te dice cruzándose de brazos.',
     create(w, h, o = {}) {
       const min = 38 + Math.floor(Math.random() * 18);
