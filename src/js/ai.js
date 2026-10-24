@@ -33,8 +33,11 @@
     if (a.provider === 'off') return { provider: 'off', url: '', model: '' };
     const d = PROVIDERS.koboldcpp;
     const mine = !a.provider || a.provider === 'koboldcpp';
-    return { provider: 'koboldcpp', url: fullUrl((mine && a.url) || d.url), model: (mine && a.model) || d.model };
+    return { provider: 'koboldcpp', url: fullUrl((mine && a.url) || d.url), model: (mine && a.model) || d.model, password: (mine && typeof a.password === 'string' ? a.password : '') };
   }
+
+  // KoboldCpp accepts the OpenAI-compatible Bearer key when a Network password is configured.
+  const authHeaders = () => { const password = cfg().password; return password ? { Authorization: `Bearer ${password}` } : {}; };
 
   // En el móvil o la tablet, «localhost» es el propio aparato y no el PC donde corre KoboldCpp:
   // hasta que se escriba la dirección del PC se juega con los diálogos escritos.
@@ -100,7 +103,7 @@
     const c = cfg();
     if (!ready() || warmed === `${c.url}|${c.model}`) return;
     warmed = `${c.url}|${c.model}`;
-    post(c.url, {}, { model: c.model, messages: [{ role: 'user', content: 'Hola' }], max_tokens: 1 }).catch(() => { warmed = ''; });
+    post(c.url, c.password ? { Authorization: `Bearer ${c.password}` } : {}, { model: c.model, messages: [{ role: 'user', content: 'Hola' }], max_tokens: 1 }).catch(() => { warmed = ''; });
   }
 
   async function complete(messages, opts = {}) {
@@ -112,7 +115,7 @@
     if (THINKERS.test(c.model)) body.max_tokens = Math.max(body.max_tokens, 900);
     let r;
     try {
-      r = await post(c.url, {}, body);
+      r = await post(c.url, c.password ? { Authorization: `Bearer ${c.password}` } : {}, body);
     } catch (err) {
       throw new Error(`No se puede conectar con KoboldCpp en ${c.url}. Comprueba que está abierto y que la dirección es la de tu PC. (${err.message})`);
     }
