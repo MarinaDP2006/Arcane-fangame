@@ -324,12 +324,17 @@ ipcMain.handle('map:images', (_e, region) => {
   return { images, own };
 });
 
-// ---------- IA para los chats (opcional) ----------
-// La petición sale desde aquí para no chocar con CORS (Ollama local, Gemini, Groq…).
+// ---------- IA para los chats (opcional): KoboldCpp ----------
+// La única IA del juego es KoboldCpp, en este ordenador o en otro de la red de casa.
+// La petición sale desde aquí para no chocar con CORS.
+const LAN_HOST = /^(localhost|127\.0\.0\.1|\[::1\]|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|[\w-]+\.local)$/i;
+const NOT_LAN = 'KoboldCpp tiene que estar en este ordenador o en otro de tu red de casa';
+
 ipcMain.handle('ai:chat', async (_e, url, headers, body) => {
   try {
     const u = new URL(String(url));
     if (!/^https?:$/.test(u.protocol)) return { error: 'Dirección no válida' };
+    if (!LAN_HOST.test(u.hostname)) return { error: NOT_LAN };
     const res = await fetch(u, {
       method: 'POST',
       headers: { ...(headers || {}), 'Content-Type': 'application/json' },
@@ -347,18 +352,17 @@ ipcMain.handle('ai:chat', async (_e, url, headers, body) => {
 
 function aiNetError(err, slow) {
   const code = err?.cause?.code;
-  if (code === 'ECONNREFUSED') return 'No hay nada escuchando en esa dirección (¿está abierto Ollama o el servidor de LM Studio?)';
+  if (code === 'ECONNREFUSED') return 'No hay nada escuchando en esa dirección (¿está abierto KoboldCpp y ha terminado de cargar el modelo?)';
   if (code === 'EHOSTUNREACH' || code === 'ENETUNREACH' || code === 'UND_ERR_CONNECT_TIMEOUT') return 'No se llega a ese ordenador: revisa la IP y que estéis en la misma red wifi';
   if (err?.name === 'TimeoutError') return slow;
   return String(err?.message || err);
 }
 
-// Lista de modelos de Ollama o LM Studio: solo servidores de este ordenador o de la red de casa.
-const LAN_HOST = /^(localhost|127\.0\.0\.1|\[::1\]|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|[\w-]+\.local)$/i;
+// Modelo abierto en KoboldCpp: solo servidores de este ordenador o de la red de casa.
 ipcMain.handle('ai:get', async (_e, url) => {
   try {
     const u = new URL(String(url));
-    if (!LAN_HOST.test(u.hostname)) return { error: 'Solo se pueden mirar servidores de este ordenador o de tu red de casa' };
+    if (!LAN_HOST.test(u.hostname)) return { error: NOT_LAN };
     const res = await fetch(u, { signal: AbortSignal.timeout(8000) });
     return { status: res.status, data: await res.json() };
   } catch (err) {
@@ -366,7 +370,7 @@ ipcMain.handle('ai:get', async (_e, url) => {
   }
 });
 
-// IP de este PC en la red de casa, para escribirla en la tablet (LM Studio en red local).
+// IP de este PC en la red de casa, para escribirla en la tablet (KoboldCpp en red local).
 ipcMain.handle('net:ips', () => Object.values(os.networkInterfaces()).flat()
   .filter((n) => n && n.family === 'IPv4' && !n.internal && LAN_HOST.test(n.address)).map((n) => n.address));
 

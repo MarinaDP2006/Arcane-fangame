@@ -1,4 +1,7 @@
 3D, LM Studio y audio
+
+> **Nota (v1.30.0):** la única IA del juego es KoboldCpp ([GUIA-KOBOLDCPP.md](../GUIA-KOBOLDCPP.md)). Lo que este documento dice de LM Studio u otros servicios es histórico y ya no está en el juego.
+
 Comprueba el código actual y ejecuta pruebas en la plataforma objetivo antes de dar una tarea por completada.
 
 ## Estado conocido

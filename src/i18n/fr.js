@@ -5165,5 +5165,14 @@ window.I18N_DATA.fr = {
   "¡Reventado!": "Éclatée !",
   "¡Un farol!": "Une lanterne !",
   "Dianas hextec aparecen y desaparecen. Dispara a las dianas azules y no rompas los faroles de gas.": "Des cibles hextech apparaissent et disparaissent. Tire sur les cibles bleues et ne casse pas les lanternes à gaz.",
-  "-3 ¡Un farol!": "-3 Une lanterne !"
+  "-3 ¡Un farol!": "-3 Une lanterne !",
+  "KoboldCpp (en tu PC o por la red de casa)": "KoboldCpp (sur ton PC ou via le réseau de la maison)",
+  "Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.40:5001. Los pasos están en GUIA-KOBOLDCPP.md.": "Ouvre KoboldCpp (koboldcpp.exe, ou koboldcpp-oldpc.exe sur les vieux PC), choisis ton modèle .gguf dans «Model» et appuie sur «Launch». Quand il indique qu'il est prêt sur le port 5001, laisse l'adresse telle quelle et appuie sur «Tester la connexion». Pour jouer depuis la tablette ou le téléphone, écris l'adresse de ton PC, par exemple http://192.168.1.40:5001. Les étapes sont dans GUIA-KOBOLDCPP.md.",
+  "Roleplay libre fiel a la temporada 1 y 2: escribes como tu personaje y el reparto te responde, te pregunta y la historia avanza según lo que hagas. La única IA del juego es KoboldCpp, que corre gratis en tu ordenador. Si alguna vez no responde, el juego te ofrece los diálogos escritos para no quedarte atascada.": "Jeu de rôle libre fidèle aux saisons 1 et 2 : tu écris comme ton personnage et la distribution te répond, te pose des questions et l'histoire avance selon ce que tu fais. La seule IA du jeu est KoboldCpp, qui tourne gratuitement sur ton ordinateur. Si elle ne répond pas, le jeu te propose les dialogues écrits pour ne jamais rester bloquée.",
+  "Usar KoboldCpp": "Utiliser KoboldCpp",
+  "Activada": "Activée",
+  "Desactivada: solo diálogos escritos": "Désactivée : dialogues écrits seulement",
+  "Ver el modelo abierto": "Voir le modèle ouvert",
+  "En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».": "Sur le téléphone ou la tablette, écris l'adresse de ton PC (celle affichée dans les Réglages du jeu sur le PC), pas «localhost».",
+  "Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.": "Confidentialité : le jeu ne collecte ni n'envoie de données personnelles. Tes parties et réglages sont enregistrés uniquement sur ton appareil. Si tu actives l'IA, ce que tu écris dans l'histoire et le communicateur (et le contexte du personnage) ne va qu'à KoboldCpp, sur ton ordinateur ou un autre de ton réseau domestique : rien ne part sur internet."
 };

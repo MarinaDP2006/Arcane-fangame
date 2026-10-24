@@ -27,17 +27,16 @@ El módulo `src/js/audio.js` genera sonido en tiempo real mediante Web Audio; no
 
 La API global es `Audio2`: `configure(...)`, `playMusic(mood)`, `stopMusic()`, `previewCity(city)` y `step(city, run)`. Los controles de volumen y silencio deben respetarse en todas las plataformas. El sistema actual es audio procedural, no tres pistas exportadas como archivos de audio independientes.
 
-## 5. IA opcional y LM Studio
-El código del prompt se encuentra en `src/js/ai.js`; la configuración y el proveedor disponible dependen de la versión. La guía específica está en `GUIA-LM-STUDIO.md`.
+## 5. IA opcional: KoboldCpp
+La única IA del juego es KoboldCpp. El código del prompt está en `src/js/ai.js` y la guía en `GUIA-KOBOLDCPP.md`.
 
 Flujo recomendado:
-1. Instala LM Studio y descarga un modelo que quepa en la memoria del equipo.
-2. Inicia el servidor local, normalmente en el puerto 1234.
-3. En Ajustes → IA para los chats, elige LM Studio y prueba la conexión.
-4. En PC y modelo local, usa la dirección local. En tablet/móvil conectado al PC, usa la IP LAN del PC, misma Wi-Fi y acceso solo por red privada.
-5. Si la IA no está disponible, continúa con el diálogo local.
+1. Abre KoboldCpp en el PC con un modelo `.gguf` que quepa en la memoria del equipo y pulsa «Launch» (puerto 5001).
+2. En Ajustes → IA de la historia y los chats, deja activado «Usar KoboldCpp» y pulsa «Probar conexión».
+3. En PC usa la dirección local. En tablet/móvil (app de Android) escribe la IP del PC en la misma wifi.
+4. Si la IA no está disponible, continúa con el diálogo escrito.
 
-La IA genera texto; la lógica del juego debe validar inventario, misiones, colisiones y finales. No expongas el servidor local a Internet ni ejecutes código recibido como respuesta del modelo.
+La IA genera texto; la lógica del juego debe validar inventario, misiones, colisiones y finales. No expongas KoboldCpp a Internet ni ejecutes código recibido como respuesta del modelo.
 
 ## 6. Modelos 3D personales
 La guía del proyecto indica soporte para ZIP, FBX, OBJ y GLB con texturas. Los archivos Blender deben exportarse a GLB. Usa Ajustes → Arte personal → modelos para abrir la carpeta indicada por el juego. Comprueba escala, orientación, materiales, rig, rendimiento y licencias. No incluyas modelos privados en el repositorio.
@@ -50,7 +49,7 @@ Para mover una partida: exporta el JSON desde Partidas, transfiérelo de forma p
 ## 8. Solución de problemas
 - **3D lento:** baja los ajustes gráficos, optimiza GLB/texturas y cierra procesos que consuman GPU.
 - **Audio ausente:** revisa volumen, silencio, salida de audio y desbloqueo de AudioContext con una interacción.
-- **LM Studio no conecta:** comprueba servidor, modelo, URL, puerto, IP LAN y firewall privado.
+- **KoboldCpp no conecta:** comprueba que está abierto con un modelo cargado, la dirección, el puerto 5001, la IP LAN y el cortafuegos privado.
 - **No carga la partida:** conserva una copia de la carpeta, comprueba el JSON y revisa el backup .bak.
 - **Problema de interfaz:** registra plataforma, resolución, versión, pasos para reproducir y consola.
 
@@ -58,4 +57,4 @@ Para mover una partida: exporta el JSON desde Partidas, transfiérelo de forma p
 Prueba arranque, creación de personaje, exploración, cambios de ciudad, colisiones, capítulos, relaciones, minijuegos, guardado/carga, exportación/importación, audio, IA activa/inactiva y diseño adaptable a 360 px, tablet y escritorio.
 
 ## Referencias
-`README.md`, `GUIA-IA-Y-CAMPANA.md`, `GUIA-LM-STUDIO.md`, `GUIA-MODELOS-3D-Y-PRUEBAS.md`, `src/js/audio.js`, `src/js/ai.js`, `src/js/world3d.js` y `package.json`.
+`README.md`, `GUIA-IA-Y-CAMPANA.md`, `GUIA-KOBOLDCPP.md`, `GUIA-MODELOS-3D-Y-PRUEBAS.md`, `src/js/audio.js`, `src/js/ai.js`, `src/js/world3d.js` y `package.json`.

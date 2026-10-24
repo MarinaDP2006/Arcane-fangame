@@ -79,7 +79,7 @@ Estas imágenes son capturas reales almacenadas en el repositorio. Algunas puede
 - Node.js compatible con las dependencias fijadas por el proyecto.
 - Un editor como Visual Studio Code (opcional, pero útil).
 - Para compilar Android: Android Studio y las herramientas del SDK correspondientes.
-- Para probar el chat local: Ollama o LM Studio y un modelo compatible, si vas a utilizar un proveedor local.
+- Para probar la IA: KoboldCpp y un modelo `.gguf` (la única IA del juego).
 
 ### Clonar, instalar, comprobar y arrancar
 
@@ -211,9 +211,9 @@ Los diálogos escritos en los archivos de datos no necesitan instalar un modelo 
 
 ### Con IA local
 
-El módulo <code>src/js/ai.js</code> declara opciones para Ollama y LM Studio, además de un proveedor personalizado compatible. El modelo se ejecuta por separado y no viene incluido en el repositorio.
+La única IA del juego es KoboldCpp. El módulo <code>src/js/ai.js</code> solo habla con KoboldCpp (<code>http://localhost:5001/v1/chat/completions</code> o la IP del PC en la red de casa); en escritorio, <code>main.js</code> rechaza cualquier dirección que no sea de este ordenador o de la red local. El modelo se ejecuta por separado y no viene incluido en el repositorio. Las partidas con otro servicio elegido en versiones anteriores pasan solas a KoboldCpp.
 
-- Para LM Studio, sigue [GUIA-LM-STUDIO.md](GUIA-LM-STUDIO.md).
+- Para KoboldCpp, sigue [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 - Para el prompt, voces y campaña, sigue [GUIA-IA-Y-CAMPANA.md](GUIA-IA-Y-CAMPANA.md).
 - La configuración exacta que aparece en pantalla depende de la versión del juego.
 
@@ -222,7 +222,7 @@ El módulo <code>src/js/ai.js</code> declara opciones para Ollama y LM Studio, a
 Este ejemplo sirve para entender el formato; no sustituye a la configuración interna ni contiene una clave real:
 
 ~~~javascript
-const response = await fetch("http://localhost:1234/v1/chat/completions", {
+const response = await fetch("http://localhost:5001/v1/chat/completions", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -429,7 +429,7 @@ No uses un nombre de rama de ejemplo si ya existe; comprueba el listado local an
 ## 17. Documentación adicional
 
 - [GUIAJUEGO.md · Guía de usuario y testing](GUIAJUEGO.md)
-- [Guía de LM Studio](GUIA-LM-STUDIO.md)
+- [IA local con KoboldCpp](GUIA-KOBOLDCPP.md)
 - [IA y campaña](GUIA-IA-Y-CAMPANA.md)
 - [Modelos 3D y pruebas de Windows](GUIA-MODELOS-3D-Y-PRUEBAS.md)
 - [Partidas guardadas](partidas-guardadas-guia.md)

@@ -140,7 +140,7 @@ El juego tiene conversaciones con opciones escritas y una opción de chat libre 
 - **Chat libre con IA:** permite escribir texto propio, pero depende de que haya proveedor, servidor y modelo disponibles. Puede responder lento o inventarse detalles; la calidad no está garantizada.
 - Si la IA no está configurada, utiliza los diálogos escritos. No necesitas resolver la IA para completar una prueba básica de interfaz e historia.
 
-Evita escribir información privada en un chat conectado a un servicio externo. Para IA local, la privacidad depende del equipo y de la configuración de red. Consulta [GUIA-LM-STUDIO.md](GUIA-LM-STUDIO.md) antes de permitir conexiones entre dispositivos.
+La única IA del juego es KoboldCpp, en tu ordenador: lo que escribes no sale a internet. Consulta [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md) antes de permitir conexiones entre dispositivos.
 
 ### Paso 8. Prueba el Salón de minijuegos
 
@@ -357,7 +357,7 @@ Para ver el historial de imágenes y su versión de origen, abre [capturasjuego/
 ## 11. Si quieres continuar después de la primera partida
 
 - Para mover o recuperar guardados: [partidas-guardadas-guia.md](partidas-guardadas-guia.md).
-- Para habilitar la IA con un modelo local: [GUIA-LM-STUDIO.md](GUIA-LM-STUDIO.md).
+- Para habilitar la IA (KoboldCpp, la única del juego): [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 - Para entender cómo está programado el juego: [GUIA.md](GUIA.md).
 - Para probar modelos 3D personales: [GUIA-MODELOS-3D-Y-PRUEBAS.md](GUIA-MODELOS-3D-Y-PRUEBAS.md).
 
