@@ -24,21 +24,21 @@
       <a href="#nuevo">¿Nuevo en Arcane?</a>
       <a href="#ciudades">Ciudades</a>
       <a href="#personajes">Personajes</a>
+      <a href="#arte-oficial">Arte oficial</a>
       <a href="#como-se-juega">Cómo se juega</a>
       <a href="#descargas">Descargas</a>
-      <a class="btn btn-primario btn-sm" href="demo.html">Jugar la demo</a>
     </nav>
   </header>
 
   <main id="contenido">
     <section class="portada" id="inicio">
-      <div class="portada-fondo" aria-hidden="true"><span class="lado-piltover"><img class="retrato-ciudad retrato-caitlyn" src="arte-propio/caitlyn-menu.png" alt=""></span><span class="lado-zaun"><img class="retrato-ciudad retrato-jinx" src="arte-propio/jinx-menu.png" alt=""></span></div>
+      <div class="portada-fondo" aria-hidden="true"><span class="lado-piltover"><img class="retrato-ciudad retrato-caitlyn" src="arte-oficial/personajes/caitlyn.webp" alt=""></span><span class="lado-zaun"><img class="retrato-ciudad retrato-jinx" src="arte-oficial/personajes/jinx.webp" alt=""></span></div>
       <div class="portada-texto">
         <p class="kicker">Fangame gratuito · rol libre · canon de las temporadas 1 y 2</p>
         <h1>Arriba, el progreso. Abajo, la supervivencia. <em>En medio, tú.</em></h1>
         <p class="entradilla">Crea tu personaje en Piltover o en Zaun y entra en la historia de Arcane. No hay respuestas prefabricadas: escribes lo que dices o haces, y Jinx, Silco, Jayce, Caitlyn y compañía te contestan como lo harían ellos.</p>
         <div class="acciones">
-          <a class="btn btn-primario" href="demo.html">Probar la demo</a>
+          <a class="btn btn-primario" href="#descargas">Ver versiones</a>
           <a class="btn btn-borde" href="#nuevo">No conozco Arcane</a>
         </div>
         <dl class="cifras">
@@ -49,8 +49,8 @@
         </dl>
       </div>
       <figure class="portada-arte">
-        <img src="capturasjuego/07-version-actual-mapa-3d-de-zaun.webp" alt="Captura del prototipo 3D del mapa de Zaun dentro del fangame" loading="eager" />
-        <figcaption>Captura real del prototipo jugable · los modelos y animaciones siguen en desarrollo.</figcaption>
+        <img src="arte-oficial/lugares/zaun-s1.webp" alt="Arte oficial de entorno de Zaun de Arcane, temporada 1" loading="eager" />
+        <figcaption>Concept art de entorno de Zaun · Arcane © Riot Games / Fortiche Production.</figcaption>
       </figure>
     </section>
 
@@ -95,6 +95,25 @@
       </div>
     </section>
 
+    <section class="seccion arte-oficial" id="arte-oficial" aria-labelledby="t-arte-oficial">
+      <header class="seccion-cabeza">
+        <p class="kicker">03 · Arte de referencia oficial</p>
+        <h2 id="t-arte-oficial">Los escenarios reales de Arcane.</h2>
+        <p>Una selección de concept art de entorno y localizaciones de las temporadas 1 y 2, organizada por ciudad y lugar. Las imágenes pertenecen a Riot Games / Fortiche Production; no son ilustraciones inventadas ni generadas para sustituir el arte de la serie.</p>
+      </header>
+      <div class="arte-galeria">
+        <figure class="arte-card"><img src="arte-oficial/lugares/piltover-s1.webp" alt="Vista de la ciudad de Piltover, Arcane temporada 1" loading="lazy"><figcaption><strong>Piltover</strong><span>Vista panorámica · temporada 1</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/plaza-piltover-s1.webp" alt="Calles y plaza de Piltover, Arcane temporada 1" loading="lazy"><figcaption><strong>Plaza de Piltover</strong><span>Concept art de entorno · temporada 1</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/hexpuertas-piltover-s1.webp" alt="Hexpuertas de Piltover, Arcane" loading="lazy"><figcaption><strong>Hexpuertas</strong><span>Localización de Piltover</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/zaun-s1.webp" alt="Vista panorámica de Zaun, Arcane temporada 1" loading="lazy"><figcaption><strong>Zaun</strong><span>Vista panorámica · temporada 1</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/mercado-zaun-s1.webp" alt="Mercado de Zaun, Arcane temporada 1" loading="lazy"><figcaption><strong>Mercado de Zaun</strong><span>Concept art de entorno · temporada 1</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/firelights-zaun-s1.webp" alt="Árbol del refugio de los Firelights en Zaun, Arcane" loading="lazy"><figcaption><strong>Refugio de los Firelights</strong><span>Localización de Zaun</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/taller-piltover-s1.webp" alt="Taller de Jayce en Piltover, Arcane temporada 1" loading="lazy"><figcaption><strong>Taller de Jayce</strong><span>Concept art de entorno · temporada 1</span></figcaption></figure>
+        <figure class="arte-card"><img src="arte-oficial/lugares/ultima-gota-zaun-s1.webp" alt="La Última Gota en Zaun, Arcane temporada 1" loading="lazy"><figcaption><strong>La Última Gota</strong><span>Localización de Zaun</span></figcaption></figure>
+      </div>
+      <p class="nota-arte">Créditos de cada archivo y enlace a su fuente original: <code>arcaneData/arte/FUENTES.json</code>. Arcane © Riot Games / Fortiche Production. Proyecto de fans no oficial.</p>
+    </section>
+
     <section class="seccion" id="personajes" aria-labelledby="t-personajes">
       <header class="seccion-cabeza">
         <p class="kicker">03 · Con quién hablas</p>
@@ -119,22 +138,6 @@
       </div>
     </section>
 
-    <section class="seccion demo-cta" aria-labelledby="t-demo">
-      <div>
-        <p class="kicker">Demo en el navegador</p>
-        <h2 id="t-demo">Una noche en La Última Gota, o una tarde en la Academia.</h2>
-        <p>La demo te deja crear tu personaje y vivir la primera escena en Zaun o en Piltover hablando con libertad.</p>
-        <a class="btn btn-primario" href="demo.html">Abrir la demo</a>
-      </div>
-      <ul class="estado">
-        <li><span class="punto punto-listo"></span><strong>Historia y personajes</strong> Piltover, Zaun y {{PERSONAJES}} fichas de personaje.</li>
-        <li><span class="punto punto-listo"></span><strong>Rol libre</strong> Sin opciones fijas, con bloqueo de canon de las temporadas 1 y 2.</li>
-        <li><span class="punto punto-proto"></span><strong>IA local con KoboldCpp</strong> La única IA del juego. Funciona cuando KoboldCpp está abierto en tu ordenador.</li>
-        <li><span class="punto punto-proto"></span><strong>Modelos 3D</strong> Prototipos de fan-art, sin rig ni animaciones finales.</li>
-        <li><span class="punto punto-info"></span><strong>Versión</strong> {{VERSION}} · en desarrollo.</li>
-      </ul>
-    </section>
-
     <section class="seccion" id="descargas" aria-labelledby="t-descargas">
       <header class="seccion-cabeza">
         <p class="kicker">05 · Versiones</p>
@@ -146,14 +149,17 @@
         <article><span class="paso-num">Mac</span><h3>macOS</h3><p>Paquetes DMG y ZIP para Intel y Apple Silicon.</p></article>
         <article><span class="paso-num">APK</span><h3>Android</h3><p>APK de prueba; una versión para tienda requiere firma de publicación.</p></article>
       </div>
-      <p><a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Ver Releases de Arcane-fangame</a></p>
+      <div class="acciones">
+        <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Ver Releases</a>
+        <a class="btn btn-borde" href="https://github.com/MarinaDP2006/Arcane-fangame/issues">Problemas</a>
+      </div>
     </section>
   </main>
 
   <footer class="pie">
     <div class="logo"><span class="logo-sello" aria-hidden="true">R&amp;G</span><span class="logo-texto"><strong>Rifts &amp; Gears</strong><small>Fangame de Arcane</small></span></div>
     <p>Proyecto de fans gratuito y no oficial creado por MarinaDP2006. No está respaldado por Riot Games. Arcane, League of Legends, Piltover, Zaun y sus personajes pertenecen a Riot Games.</p>
-    <nav aria-label="Enlaces del pie"><a href="demo.html">Demo</a><a href="privacidad.html">Privacidad y aviso legal</a><a href="https://github.com/MarinaDP2006/Arcane-fangame">Código</a><a href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Releases</a></nav>
+    <nav aria-label="Enlaces del pie"><a href="privacidad.html">Privacidad y aviso legal</a><a href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Releases</a><a href="https://github.com/MarinaDP2006/Arcane-fangame/issues">Problemas</a></nav>
     <small>© {{ANIO}} Rifts &amp; Gears · fan game</small>
   </footer>
   <script src="menu.js" defer></script>
