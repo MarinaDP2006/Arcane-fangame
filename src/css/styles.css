@@ -1562,3 +1562,114 @@ html[data-tema="zaun"] #view-settings .settings h2 { color: #8af1cc; }
   .btn:active:not(:disabled) { transform: translateY(2px); }
   .choice:active:not(.locked) { border-color: rgba(var(--gold-rgb), 0.5); background: rgba(var(--acc-rgb, var(--gold-rgb)), 0.18); }
 }
+
+
+/* ---------- Direccion artistica cinematografica v1.30 ---------- */
+#view-home .home { isolation: isolate; background: #05060b; }
+#view-home .home-slide { background-size: cover; background-position: center; filter: saturate(1.12) contrast(1.08); }
+#view-home .home-art.pilt .home-art-in::before,
+#view-home .home-art.zaun .home-art-in::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(4,7,14,.12), transparent 34%, rgba(4,5,8,.22));
+}
+#view-home .home-panel { max-width: min(740px, 62vw); }
+#view-home .home-logo { filter: drop-shadow(0 16px 28px rgba(0,0,0,.48)); }
+#view-home .home-menu { gap: .38rem; margin-top: clamp(1.4rem, 3vh, 3rem); }
+#view-home .home-btn {
+  min-height: 48px; padding: .72rem .9rem; border: 1px solid transparent;
+  background: linear-gradient(90deg, rgba(9,13,24,.36), rgba(9,13,24,0));
+  backdrop-filter: blur(3px); letter-spacing: .16em;
+}
+#view-home .home-btn.primary {
+  border-color: rgba(232,207,138,.38);
+  background: linear-gradient(90deg, rgba(232,207,138,.19), rgba(9,13,24,.1) 72%);
+}
+#view-home .home-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+#view-home .home-hint { text-shadow: 0 2px 10px #000; }
+
+#view-creator { isolation: isolate; background: #050811; }
+#view-creator .creator-bg {
+  filter: blur(3px) brightness(.46) saturate(1.18) contrast(1.06);
+  transform: scale(1.065);
+}
+#view-creator .creator-bg::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 76% 28%, rgba(127,208,255,.15), transparent 34%),
+    linear-gradient(90deg, rgba(4,7,14,.8), rgba(4,7,14,.18) 65%, rgba(4,7,14,.5)),
+    linear-gradient(0deg, rgba(4,7,14,.72), transparent 50%);
+  pointer-events: none;
+}
+#view-creator .creator { padding: clamp(.5rem, 2vw, 1.4rem); }
+#view-creator .creator-side { filter: drop-shadow(0 20px 34px rgba(0,0,0,.35)); }
+#view-creator .creator-body {
+  background: linear-gradient(145deg, rgba(9,14,25,.94), rgba(8,10,18,.88));
+  border: 1px solid rgba(181,202,230,.25);
+  box-shadow: inset 0 1px rgba(255,255,255,.04), 0 22px 60px rgba(0,0,0,.46);
+  backdrop-filter: blur(14px);
+}
+#view-creator .creator-body h2 { color: #f4e7c5; text-shadow: 0 0 22px rgba(127,208,255,.12); }
+#view-creator .creator-side .splash { border-radius: 3px; box-shadow: 0 0 0 1px rgba(232,207,138,.65), 0 22px 58px rgba(0,0,0,.62); }
+#view-creator .origin-card { border-radius: 4px; }
+#view-creator .origin-card::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, rgba(2,4,10,.04) 25%, rgba(2,4,10,.84));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+}
+#view-creator .origin-info { z-index: 2; background: none; }
+#view-creator .origin-card.origin-piltover { border-color: rgba(232,207,138,.22); }
+#view-creator .origin-card.origin-zaun { border-color: rgba(103,236,190,.22); }
+#view-creator .origin-card.active { border-color: var(--gold); box-shadow: 0 0 0 2px var(--gold), 0 0 34px rgba(127,208,255,.2); }
+#view-creator .steps li.active span { box-shadow: 0 0 20px rgba(127,208,255,.28); }
+
+#view-game .chat-stage { gap: clamp(.7rem, 1.6vw, 1.2rem); }
+#view-game .chat-portrait, #view-game .chat-convo {
+  border: 1px solid rgba(181,202,230,.22); box-shadow: 0 20px 52px rgba(0,0,0,.3);
+}
+#view-game .chat-portrait {
+  background: linear-gradient(165deg, rgba(16,24,40,.94), rgba(5,9,17,.97));
+}
+#view-game .cp-frame { border-radius: 3px; overflow: hidden; }
+#view-game .cp-frame img { filter: saturate(1.08) contrast(1.03); }
+#view-game .cp-plate { border-top: 1px solid rgba(232,207,138,.26); }
+#view-game .chat-convo { background: linear-gradient(160deg, rgba(10,15,26,.95), rgba(5,8,15,.96)); }
+#view-game .chat-head {
+  background: linear-gradient(90deg, rgba(232,207,138,.09), transparent 75%);
+  border-bottom: 1px solid rgba(181,202,230,.2);
+}
+#view-game #chat-log { background: radial-gradient(ellipse at 12% 5%, rgba(127,208,255,.07), transparent 48%); }
+#view-game .msg.them .bubble {
+  background: linear-gradient(145deg, rgba(27,36,55,.94), rgba(12,17,29,.96));
+  border-color: rgba(181,202,230,.2); border-radius: 3px 12px 12px 12px;
+}
+#view-game .msg.me .bubble {
+  background: linear-gradient(135deg, #f0d990, #b98a39);
+  box-shadow: 0 6px 24px rgba(201,154,59,.12); border-radius: 12px 3px 12px 12px;
+}
+#view-game .choices { background: rgba(5,8,15,.92); border-top-color: rgba(232,207,138,.2); }
+#view-game .choice { border-radius: 3px; border-color: rgba(181,202,230,.18); background: rgba(255,255,255,.035); }
+#view-game .choice:hover:not(.locked) { border-color: var(--gold); background: rgba(232,207,138,.1); }
+
+@media (max-width: 900px) {
+  #view-home .home-panel { max-width: 84vw; padding-left: clamp(1.1rem, 5vw, 3rem); }
+  #view-creator .creator-grid { grid-template-columns: minmax(0, 1fr) minmax(260px, .8fr); }
+  #view-game .chat-stage { grid-template-columns: minmax(160px, .7fr) minmax(0, 1.3fr); }
+}
+@media (max-width: 650px) {
+  #view-home .home-panel { max-width: 100%; padding: 1rem; justify-content: flex-end; padding-bottom: 4.6rem; }
+  #view-home .home-title { white-space: normal; font-size: clamp(2rem, 10vw, 3.6rem); }
+  #view-home .home-menu { width: min(390px, 92vw); }
+  #view-creator .creator { padding: .4rem; }
+  #view-creator .creator-grid { grid-template-columns: minmax(0,1fr); }
+  #view-creator .creator-body { max-height: none; }
+  #view-creator .creator-stage { position: relative; order: -1; width: min(100%, 460px); margin: 0 auto .8rem; }
+  #view-creator #stage-splash .splash { max-height: 48vh; }
+  #view-game .chat-stage { display: flex; flex-direction: column; }
+  #view-game .chat-portrait { width: 100%; display: grid; grid-template-columns: 86px 1fr; align-items: center; gap: .6rem; }
+  #view-game .cp-frame { grid-row: span 3; width: 86px; height: 108px; }
+  #view-game .cp-plate { border: 0; }
+  #view-game .chat-convo { min-height: 60vh; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #view-home .home-slide, #view-creator *, #view-game .chat-stage * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}

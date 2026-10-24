@@ -290,3 +290,71 @@ em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+
+/* ---------- Direccion artistica: portadas ilustradas y seleccion con atmosfera ---------- */
+.portada { position: relative; min-height: min(790px, calc(100svh - 68px)); align-items: center; }
+.portada-fondo { opacity: .98; }
+.portada-fondo .lado-piltover,
+.portada-fondo .lado-zaun { background-size: cover; background-blend-mode: normal; }
+.portada-fondo .lado-piltover { background-position: center 42%; }
+.portada-fondo .lado-zaun { background-position: center 42%; }
+.portada-fondo::after {
+  background:
+    linear-gradient(90deg, rgba(7,9,16,.92) 0%, rgba(7,9,16,.67) 38%, rgba(7,9,16,.22) 70%, rgba(7,9,16,.15)),
+    linear-gradient(0deg, rgba(7,9,16,.78), transparent 42%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.012) 3px 4px);
+}
+.portada-texto { position: relative; z-index: 2; text-shadow: 0 3px 18px rgba(0,0,0,.45); }
+.portada-texto h1 { max-width: 780px; text-wrap: balance; }
+.portada-texto .kicker { color: #e8cf8a; }
+.portada-texto .acciones .btn { min-height: 50px; box-shadow: 0 8px 28px rgba(0,0,0,.22); }
+.portada-arte { position: relative; z-index: 2; border-radius: 3px; border-color: rgba(232,207,138,.32); }
+.portada-arte::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; border: 1px solid rgba(255,255,255,.07); }
+.portada-arte figcaption { background: rgba(5,8,15,.82); }
+.ciudad-arte { min-height: clamp(250px, 32vw, 410px); background-size: cover !important; background-position: center !important; position: relative; }
+.ciudad-arte::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,8,15,.75), transparent 72%), linear-gradient(90deg, rgba(5,8,15,.14), transparent); }
+.ciudad-piltover .ciudad-arte {
+  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E08_Concept_05.jpg") !important;
+}
+.ciudad-zaun .ciudad-arte {
+  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E07_Concept_14.jpg") !important;
+}
+.ciudad { border-radius: 3px; background: linear-gradient(160deg, rgba(20,25,37,.98), rgba(7,9,16,.98)); }
+.ficha { border-radius: 3px; background: linear-gradient(160deg, rgba(20,25,37,.94), rgba(7,9,16,.98)); }
+.ficha:hover { border-color: rgba(232,207,138,.42); }
+.seccion-cabeza h2 { text-wrap: balance; }
+.demo-cta { align-items: stretch; }
+.dj-card, .dj-escena, .dj-msg { border-radius: 3px; }
+.dj-card {
+  position: relative; overflow: hidden;
+  background: linear-gradient(145deg, rgba(19,25,39,.96), rgba(6,9,16,.97));
+  border-color: rgba(181,202,230,.22);
+  box-shadow: 0 22px 58px rgba(0,0,0,.34);
+}
+.dj-card::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 100% 0%, rgba(127,208,255,.1), transparent 48%);
+}
+.dj-form > *, .dj-centro > * { position: relative; }
+.dj-ciudades { gap: .9rem; }
+.dj-ciudad { min-height: 150px; align-items: flex-end; position: relative; overflow: hidden; border-radius: 3px; background-size: cover; background-position: center; }
+.dj-ciudad-piltover { background-image: linear-gradient(0deg, rgba(5,8,15,.94), rgba(5,8,15,.08)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E08_Concept_05.jpg"); }
+.dj-ciudad-zaun { background-image: linear-gradient(0deg, rgba(5,8,15,.94), rgba(5,8,15,.08)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E07_Concept_14.jpg"); }
+.dj-ciudad > span { position: relative; z-index: 1; }
+.dj-ciudad strong { text-shadow: 0 2px 12px #000; }
+.dj-ciudad:has(input:checked) { box-shadow: inset 0 0 0 2px var(--gold), 0 0 28px rgba(127,208,255,.14); }
+.dj-escena { min-height: 170px; padding: clamp(1.2rem, 3vw, 2.3rem); border-color: rgba(181,202,230,.25); background-size: cover; }
+.dj-escena-piltover { background-image: linear-gradient(90deg, rgba(5,8,15,.92), rgba(5,8,15,.35)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E08_Concept_05.jpg"); }
+.dj-escena-zaun { background-image: linear-gradient(90deg, rgba(5,8,15,.92), rgba(5,8,15,.35)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E07_Concept_14.jpg"); }
+.dj-msg { box-shadow: 0 5px 20px rgba(0,0,0,.15); }
+.dj-entrada textarea { border-radius: 3px; background: rgba(6,9,16,.9); }
+@media (max-width: 760px) {
+  .portada { min-height: auto; grid-template-columns: 1fr; padding-block: 5rem 2rem; }
+  .portada-arte { max-width: 620px; }
+  .portada-fondo { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .retrato-ciudad { height: 55%; opacity: .5; }
+  .ciudades { gap: 1rem; }
+  .dj-ciudades { grid-template-columns: 1fr; }
+  .dj-ciudad { min-height: 130px; }
+}

@@ -11,6 +11,7 @@
 
   const KOBOLD_DEF = 'http://localhost:5001';
   const KOBOLD_KEY = 'demo-kobold-url';
+  const KOBOLD_PASS_KEY = 'demo-kobold-password';
   const KEY = 'demo-' + D.id;
   const PRONOMBRES = [['el', 'Él'], ['ella', 'Ella'], ['elle', 'Elle']];
 
@@ -31,8 +32,8 @@
     } catch { return KOBOLD_DEF; }
   }
   const esLocal = (url) => { try { return ['localhost', '127.0.0.1', '[::1]'].includes(new URL(url).hostname); } catch { return false; } };
-  // Una web https no puede pedir nada a http://192.168.x (contenido mixto); localhost sí.
-  const bloqueada = (url) => location.protocol === 'https:' && /^http:/i.test(url) && !esLocal(url);
+  let koboldPassword = ''; try { koboldPassword = localStorage.getItem(KOBOLD_PASS_KEY) || ''; } catch { /* sin almacenamiento */ }
+  const authHeaders = () => koboldPassword ? { Authorization: 'Bearer ' + koboldPassword } : {};
   let kobold = koboldBase((() => {
     let q = null; try { q = new URLSearchParams(location.search).get('kobold'); } catch { /* sin parámetros */ }
     if (q) { try { localStorage.setItem(KOBOLD_KEY, q); } catch { /* sin almacenamiento */ } return q; }
@@ -152,8 +153,7 @@
   }
 
   function textoEstado() {
-    if (bloqueada(kobold)) return 'Narrador local: desde esta web https no se llega a ' + kobold + '. Usa localhost o el túnel https de KoboldCpp.';
-    return st.offline ? 'Narrador local: abre KoboldCpp (' + kobold + ') para jugar con IA.' : 'IA local con KoboldCpp · ' + kobold;
+    return st.offline ? 'Narrador local: abre KoboldCpp (' + kobold + ') y revisa el permiso «Acceso a la red local» del navegador.' : 'KoboldCpp · ' + kobold;
   }
 
   // «Conectar IA»: cambia la dirección de KoboldCpp y prueba que contesta (/v1/models).
@@ -163,18 +163,22 @@
     const f = make('form', 'dj-ia-form');
     const l = make('label', 'dj-campo'); const inp = make('input');
     inp.value = kobold; inp.autocomplete = 'off'; inp.spellcheck = false; inp.inputMode = 'url';
-    inp.placeholder = 'http://localhost:5001 o https://….trycloudflare.com';
+    inp.placeholder = '192.168.1.139 o localhost:5001';
     l.append(make('span', '', 'Dirección de KoboldCpp'), inp);
+    const lp = make('label', 'dj-campo'); const inpPass = make('input');
+    inpPass.type = 'password'; inpPass.autocomplete = 'off'; inpPass.spellcheck = false; inpPass.value = koboldPassword;
+    inpPass.placeholder = 'Opcional: la contraseña Password de KoboldCpp';
+    lp.append(make('span', '', 'Contraseña de KoboldCpp (opcional)'), inpPass);
     const probar = make('button', 'btn btn-borde', 'Probar conexión'); probar.type = 'submit';
-    const msg = make('p', 'dj-estado', 'En el PC donde está abierto KoboldCpp vale http://localhost:5001. Desde otro aparato usa la dirección https del túnel de KoboldCpp (--remotetunnel).');
+    const msg = make('p', 'dj-estado', 'En el mismo PC: localhost:5001. Desde móvil/tablet: IP local del PC, por ejemplo 192.168.1.139:5001. En Chrome/Edge, pulsa «Permitir» cuando la web solicite acceso a la red local.');
     msg.setAttribute('aria-live', 'polite');
-    f.append(l, probar, msg); det.append(f);
+    f.append(l, lp, probar, msg); det.append(f);
     f.addEventListener('submit', async e => {
       e.preventDefault();
       kobold = koboldBase(inp.value); inp.value = kobold;
-      try { localStorage.setItem(KOBOLD_KEY, kobold); } catch { /* sin almacenamiento */ }
-      if (bloqueada(kobold)) { st.offline = true; msg.textContent = 'Esta web va por https y el navegador no deja llamar a ' + kobold + '. Usa http://localhost:5001 en el PC de KoboldCpp o la dirección https de su túnel.'; estado.textContent = textoEstado(); return; }
-      probar.disabled = true; msg.textContent = 'Probando ' + kobold + '…';
+      koboldPassword = inpPass.value.trim();
+      try { localStorage.setItem(KOBOLD_KEY, kobold); localStorage.setItem(KOBOLD_PASS_KEY, koboldPassword); } catch { /* sin almacenamiento */ }
+      probar.disabled = true; msg.textContent = 'Probando ' + kobold + '… Si Chrome/Edge pregunta por acceso a la red local, pulsa «Permitir».';
       try {
         const r = await fetch(kobold + '/v1/models', { signal: AbortSignal.timeout(8000) });
         const j = await r.json();
@@ -182,7 +186,7 @@
         st.offline = false; msg.textContent = 'Conectado' + (modelo ? ' a ' + modelo : '') + '. Los personajes ya contestan con KoboldCpp.';
       } catch {
         st.offline = true;
-        msg.textContent = 'No contesta ' + kobold + '. Comprueba que KoboldCpp está abierto' + (esLocal(kobold) ? ' en este ordenador' : '') + ' y, si el navegador pregunta, permite el acceso a la red local.';
+        msg.textContent = 'No contesta ' + kobold + '. Comprueba que el modelo está cargado, que la IP es la del PC, que el puerto 5001 está permitido en la red privada y que Chrome/Edge tiene «Acceso a la red local» en Permitir. Si configuraste Password en KoboldCpp, introduce esa contraseña arriba.';
       }
       probar.disabled = false; estado.textContent = textoEstado();
     });
@@ -217,10 +221,10 @@
   }
 
   async function responder(txt) {
-    if (!st.offline && !bloqueada(kobold)) {
+    if (!st.offline) {
       try {
         const historial = st.log.slice(-16).map(m => ({ role: m.role, content: m.content }));
-        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
+        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json', ...authHeaders() }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.65, max_tokens: 420 }) });
         const j = await r.json().catch(() => ({}));
         const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
         if (r.ok && c && c.trim()) return c.trim();
