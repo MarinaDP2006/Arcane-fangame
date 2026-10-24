@@ -13,7 +13,7 @@ const out = path.join(root, 'web-dist');
 function loadData() {
   const ctx = { window: {} };
   vm.createContext(ctx);
-  for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'atlas.js', 'ai-voices.js', 'arcane-lore.js']) {
+  for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'atlas.js']) {
     vm.runInContext(fs.readFileSync(path.join(root, 'src', 'data', f), 'utf8'), ctx, { filename: f });
   }
   return ctx.window;
@@ -65,7 +65,7 @@ function demoData(w) {
   const datos = {
     ...base,
     ciudades: Object.fromEntries(Object.entries(o).map(([id, c]) => [id, { label: c.label, tagline: c.tagline, distritos: c.districts, oficios: c.jobs.map((j) => j.label) }])),
-    reparto: w.WIKI.personajes.map((p) => ({ id: p.id, name: p.name, alias: p.alias, origin: p.origin, role: p.role, summary: p.summary, details: p.details, quote: p.quote || '', voice: w.AI_VOICES?.[p.id] || null, lore: w.ARCANE_LORE?.[p.id] || null })),
+    reparto: w.WIKI.personajes.map((p) => ({ id: p.id, name: p.name, alias: p.alias, origin: p.origin, role: p.role, summary: p.summary, details: p.details, quote: p.quote || '' })),
   };
   return '// Generado por scripts/build-web.js a partir de src/data y web/demo-base.json. No editar a mano.\nwindow.DEMO = ' + JSON.stringify(datos) + ';\n';
 }
