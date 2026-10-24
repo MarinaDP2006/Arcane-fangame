@@ -40,7 +40,7 @@ npm run web        # genera la web en web-dist/
 - **Hecho:** historia, personajes de Piltover, Zaun y Noxus, rol libre con bloqueo de canon, web y demo nuevas.
 - **Prototipo:** modelos 3D de fan-art en `src/models/` (sin rig ni animaciones finales).
 - **Pendiente de configurar:** el servidor publicado con la clave de Ollama Cloud.
-- **Releases automatizadas:** Windows, macOS y Android se compilan con etiquetas `arcane-v*`. La primera etiqueta la publica el workflow de sincronización del repositorio `RIFTS-GEARS`.
+- **Compilación en GitHub Actions:** el workflow «Compilar Arcane» comprueba el juego y compila Windows, macOS (Intel y Apple Silicon) y Android en cada push a `main`, en cada pull request y a mano. Nada se publica solo: la Release se crea únicamente a mano marcando «publicar» ([cómo](docs/RELEASES-ARCANE.md)).
 
 ## Guías
 
@@ -71,4 +71,4 @@ Para un proveedor remoto compatible con OpenAI, usa `AI_BASE_URL`, `AI_MODEL` y 
 
 ## Publicación independiente
 
-- [Copiar esta rama a Arcane-fangame y crear releases](docs/RELEASES-ARCANE.md)
+- [Compilar con GitHub Actions y crear releases](docs/RELEASES-ARCANE.md)
