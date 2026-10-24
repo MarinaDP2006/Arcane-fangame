@@ -147,7 +147,7 @@
           el('input', { type: 'checkbox', checked: on, onchange: (e) => save(e.target.checked ? { provider: 'koboldcpp' } : { provider: 'off' }) })),
         on ? el('p', { class: 'small ai-help' }, d.help) : null,
         on ? el('label', { class: 'field' }, el('span', {}, 'Dirección'),
-          el('input', { class: 'input', value: App.settings.ai?.provider === 'koboldcpp' && App.settings.ai.url ? App.settings.ai.url : d.url, placeholder: 'http://192.168.1.40:5001', inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
+          el('input', { class: 'input', value: App.settings.ai?.provider === 'koboldcpp' && App.settings.ai.url ? App.settings.ai.url : d.url, placeholder: 'http://192.168.1.139:5001', inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
         on && !window.AI.ready() ? el('p', { class: 'small ai-help' }, 'En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».') : null,
         on ? lan : null,
         on ? el('label', { class: 'field' }, el('span', {}, 'Contraseña de KoboldCpp (opcional)'),
