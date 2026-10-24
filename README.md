@@ -2,19 +2,15 @@
 
 Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o en Zaun y entras en la historia. No hay respuestas prefabricadas: escribes lo que tu personaje dice o hace, y los personajes de la serie te contestan, te preguntan y reaccionan como lo harían ellos, sin salirse del lore.
 
-> **Repositorio independiente:** este proyecto se publica en [MarinaDP2006/Arcane-fangame](https://github.com/MarinaDP2006/Arcane-fangame). Su fuente de desarrollo está en la rama `claude/project-thread-9huivc-arcane` de `RIFTS-GEARS`; `RIFTS-GEARS/main` pertenece al universo original *Las ciudades del Umbral* y no se incluye en este repositorio.
 
 ## Cómo funciona
-
 1. **¿Conoces Arcane?** Antes de crear el personaje el juego lo pregunta. Si dices que no, te da una introducción breve. Si dices que sí, pasas directo a la creación.
 2. **Creación de personaje:** nombre, pronombres, ciudad, oficio y lo que quieras contar de ti con tus palabras.
 3. **Rol libre:** escribes y te contestan. Los personajes solo saben lo que han vivido hasta tu momento de la historia y respetan el canon de las temporadas 1 y 2.
 4. **Una sola IA, KoboldCpp:** el diálogo lo genera KoboldCpp en tu PC (puerto 5001), sin internet ni claves. La tablet o el móvil lo usan por la red de casa. No hay más proveedores de IA. Pasos en [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 
 ## Web y demo
-
 La carpeta `web/` tiene la web pública del fangame, con una sección de descargas que enlaza al repositorio independiente:
-
 - `index.html`: portada, introducción para quien no conoce Arcane, ciudades, personajes, cómo se juega y demo.
 - `demo.html` + `demo-juego.js`: demo de rol libre. Escena en La Última Gota (Zaun) o en el taller de hextec de la Academia (Piltover), en la temporada 1, acto 2.
 - `demo-base.json`: introducción, bloqueo de canon y escenas. Los personajes y las ciudades salen de `src/data` al generar.
@@ -22,10 +18,9 @@ La carpeta `web/` tiene la web pública del fangame, con una sección de descarg
 
 `npm run web` genera `web-dist/`. La web no publica arte oficial de la serie.
 
-La demo habla con KoboldCpp en `http://localhost:5001` (en el mismo ordenador que abre la web). Si KoboldCpp no está abierto, entra un narrador local sencillo para que la escena no se quede muda.
+La demo habla con KoboldCpp en ` https://review-tonight-solaris-council.trycloudflare.com/lcpp/` (en el mismo ordenador que abre la web). Si KoboldCpp no está abierto, entra un narrador local sencillo para que la escena no se quede muda.
 
 ## Desarrollo
-
 ```bash
 npm ci
 npm run check      # comprobaciones de datos y scripts
