@@ -134,7 +134,7 @@
       const c = window.AI.cfg();
       const on = c.provider !== 'off';
       const d = P.koboldcpp;
-      const save = (patch) => set({ ai: { provider: 'koboldcpp', url: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.url : '', model: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.model : '', ...patch } }).then(draw);
+      const save = (patch) => set({ ai: { provider: 'koboldcpp', url: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.url : '', model: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.model : '', password: App.settings.ai?.provider === 'koboldcpp' ? (App.settings.ai.password || '') : '', ...patch } }).then(draw);
       const status = el('small', { class: 'muted ai-status' });
       const models = el('div', { class: 'chips ai-models' });
       const lan = el('small', { class: 'muted ai-lan' });
@@ -150,6 +150,9 @@
           el('input', { class: 'input', value: App.settings.ai?.provider === 'koboldcpp' && App.settings.ai.url ? App.settings.ai.url : d.url, placeholder: 'http://192.168.1.40:5001', inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
         on && !window.AI.ready() ? el('p', { class: 'small ai-help' }, 'En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».') : null,
         on ? lan : null,
+        on ? el('label', { class: 'field' }, el('span', {}, 'Contraseña de KoboldCpp (opcional)'),
+          el('input', { class: 'input', type: 'password', autocomplete: 'off', value: App.settings.ai?.provider === 'koboldcpp' ? (App.settings.ai.password || '') : '', placeholder: 'Déjala vacía si no configuraste Password', onchange: (e) => save({ password: e.target.value }) })) : null,
+        on ? el('p', { class: 'small ai-help' }, 'Si abres KoboldCpp por la red de casa, Chrome puede pedir permiso para acceder a la red local. Pulsa «Permitir» cuando conectes la IA desde esta web.') : null,
         on ? el('label', { class: 'field' }, el('span', {}, 'Modelo'),
           el('input', { class: 'input', value: c.model, placeholder: 'koboldcpp', onchange: (e) => save({ model: e.target.value.trim() }) })) : null,
         on ? models : null,
@@ -213,7 +216,7 @@
   async function exportData() {
     const slots = {};
     for (const s of await store.listSlots()) if (!s.empty) slots[s.slot] = await store.load(s.slot);
-    const settings = { ...App.settings, ai: App.settings.ai ? { ...App.settings.ai, key: '' } : undefined };
+    const settings = { ...App.settings, ai: App.settings.ai ? { ...App.settings.ai, key: '', password: '' } : undefined };
     const blob = new Blob([JSON.stringify({ game: 'grietas-and-gears', version: 1, date: new Date().toISOString(), slots, settings }, null, 2)], { type: 'application/json' });
     const a = el('a', { href: URL.createObjectURL(blob), download: `grietas-and-gears-copia-${new Date().toISOString().slice(0, 10)}.json` });
     document.body.append(a);
