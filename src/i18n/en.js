@@ -5173,5 +5173,14 @@ window.I18N_DATA.en = {
   "¡Reventado!": "Burst!",
   "¡Un farol!": "A lamp!",
   "Dianas hextec aparecen y desaparecen. Dispara a las dianas azules y no rompas los faroles de gas.": "Hextech targets pop up and vanish. Shoot the blue targets and don't break the gas lamps.",
-  "-3 ¡Un farol!": "-3 A lamp!"
+  "-3 ¡Un farol!": "-3 A lamp!",
+  "KoboldCpp (en tu PC o por la red de casa)": "KoboldCpp (on your PC or over your home network)",
+  "Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.40:5001. Los pasos están en GUIA-KOBOLDCPP.md.": "Open KoboldCpp (koboldcpp.exe, or koboldcpp-oldpc.exe on older PCs), pick your .gguf model under «Model» and press «Launch». When it says it is ready on port 5001, leave the address as it is and press «Test connection». To play from your tablet or phone, type your PC's address, for example http://192.168.1.40:5001. The steps are in GUIA-KOBOLDCPP.md.",
+  "Roleplay libre fiel a la temporada 1 y 2: escribes como tu personaje y el reparto te responde, te pregunta y la historia avanza según lo que hagas. La única IA del juego es KoboldCpp, que corre gratis en tu ordenador. Si alguna vez no responde, el juego te ofrece los diálogos escritos para no quedarte atascada.": "Free roleplay faithful to seasons 1 and 2: you write as your character and the cast answers you, asks you questions and the story moves on according to what you do. The game's only AI is KoboldCpp, which runs for free on your computer. If it ever doesn't answer, the game offers you the written dialogue so you never get stuck.",
+  "Usar KoboldCpp": "Use KoboldCpp",
+  "Activada": "On",
+  "Desactivada: solo diálogos escritos": "Off: written dialogue only",
+  "Ver el modelo abierto": "Show the open model",
+  "En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».": "On your phone or tablet type your PC's address (the one shown in the game's Settings on the PC), not «localhost».",
+  "Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.": "Privacy: the game does not collect or send personal data. Your saves and settings are stored only on your device. If you turn on the AI, what you write in the story and the communicator (and the character's context) only travels to KoboldCpp, on your computer or another one on your home network: it never goes out to the internet."
 };

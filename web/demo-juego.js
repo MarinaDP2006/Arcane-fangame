@@ -1,15 +1,14 @@
 // Demo de rol libre en el navegador. Sin opciones fijas: escribes lo que tu personaje dice o
 // hace y el narrador y los personajes te contestan. Los datos del mundo vienen de window.DEMO
-// (demo-datos.js). La IA corre en el servidor (/api/roleplay, Ollama Cloud): no hay que instalar
-// nada. Si el servidor no responde, un narrador local mantiene la escena para que la demo no se
-// quede muda.
+// (demo-datos.js). La única IA es KoboldCpp, abierto en tu ordenador (http://localhost:5001).
+// Si no está abierto, un narrador local mantiene la escena para que la demo no se quede muda.
 (() => {
   'use strict';
   const D = window.DEMO;
   const app = document.getElementById('demo-app');
   if (!D || !app) return;
 
-  const ENDPOINT = (window.ROLEPLAY_CONFIG && window.ROLEPLAY_CONFIG.endpoint) || (location.protocol === 'file:' ? '' : '/api/roleplay');
+  const ENDPOINT = 'http://localhost:5001/v1/chat/completions';
   const KEY = 'demo-' + D.id;
   const PRONOMBRES = [['el', 'Él'], ['ella', 'Ella'], ['elle', 'Elle']];
 
@@ -18,7 +17,7 @@
   const pick = (arr, n) => arr[Math.abs(n) % arr.length];
 
   let st = load() || { paso: 'pregunta' };
-  st.offline = false; // en cada visita se vuelve a probar la IA del servidor
+  st.offline = false; // en cada visita se vuelve a probar KoboldCpp
   function load() { try { return JSON.parse(localStorage.getItem(KEY)); } catch { return null; } }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch { /* sin almacenamiento: la demo sigue */ } }
   function go(paso) { st.paso = paso; save(); render(); app.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
@@ -100,7 +99,7 @@
     st.log.forEach(m => log.append(burbuja(m)));
     wrap.append(log);
 
-    const estado = make('p', 'dj-estado', st.offline ? 'Narrador local: la IA del servidor no está disponible ahora mismo.' : 'IA en servidor · sin instalar nada');
+    const estado = make('p', 'dj-estado', st.offline ? 'Narrador local: abre KoboldCpp en tu PC para jugar con IA.' : 'IA local con KoboldCpp');
     const form = make('form', 'dj-entrada');
     const ta = make('textarea'); ta.rows = 2; ta.maxLength = 600; ta.required = true;
     ta.placeholder = 'Escribe lo que dices o haces. Por ejemplo: «Me acerco a ' + nombreDe(esc.presentes[0]) + ' y le pregunto qué ha visto».';
@@ -118,7 +117,7 @@
       pensando.remove();
       const a = { role: 'assistant', content: r }; st.log.push(a); st.turno++; save();
       log.append(burbuja(a)); bajar(log);
-      estado.textContent = st.offline ? 'Narrador local: la IA del servidor no está disponible ahora mismo.' : 'IA en servidor · sin instalar nada';
+      estado.textContent = st.offline ? 'Narrador local: abre KoboldCpp en tu PC para jugar con IA.' : 'IA local con KoboldCpp';
       send.disabled = ta.disabled = false; ta.focus();
     });
 
@@ -160,12 +159,11 @@
     if (ENDPOINT && !st.offline) {
       try {
         const historial = st.log.slice(-16).map(m => ({ role: m.role, content: m.content }));
-        const r = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
+        const r = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
         const j = await r.json().catch(() => ({}));
         const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
         if (r.ok && c && c.trim()) return c.trim();
-        if (r.status === 429) return 'Narrador: La escena se detiene un momento: el servidor pide un respiro. Espera un minuto y vuelve a escribir.';
-      } catch { /* sin red o sin servidor: pasamos al narrador local */ }
+              } catch { /* KoboldCpp no está abierto: pasamos al narrador local */ }
       st.offline = true;
     }
     return local(txt);

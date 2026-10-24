@@ -6,24 +6,14 @@ Marca con `[x]` lo que se vaya cerrando.
 ## Para Nina (no se puede hacer sin ti)
 
 
-- [ ] **Clave de Ollama Cloud** (mientras tanto, la IA local con KoboldCpp ya funciona: ver `GUIA-KOBOLDCPP.md`).
-      Crea una cuenta gratis en ollama.com y una clave en Settings → Keys.
-      No la pegues en chats ni en GitHub.
-- [ ] **Servicio en Render.** Crear el web service `rifts-gears-arcane` (plan Free) desde esta rama y poner
-      la clave como variable secreta `OLLAMA_API_KEY`. Los pasos están en [`server/LEEME.md`](server/LEEME.md).
-      Hasta entonces la historia libre no tiene IA y el juego ofrece los diálogos escritos como respaldo.
-- [ ] **Decidir si pagar algo** (solo si hace falta):
-      Render Starter, 7 $/mes, para que el servidor no se duerma.
-      Ollama Pro, 20 $/mes, si se gastan los créditos gratis.
 - [ ] Borrar la rama `docs/guia-tecnica-completa-arcane`, que es una copia antigua de main.
 
 ## Historia libre con IA
 
-- [ ] Probar con la IA de verdad (Gemma 4 31B) una partida completa de la ruta de Zaun y otra de la de Piltover.
+- [ ] Probar con KoboldCpp y un modelo real una partida completa de la ruta de Zaun y otra de la de Piltover.
 - [ ] Ajustar cuántos turnos dura una escena antes de avanzar (ahora como máximo 4 o 6) según cómo se sienta jugando.
 - [ ] Revisar que los finales y los minijuegos se disparan bien cuando la IA elige el camino.
 - [ ] Traducir al inglés y al francés los textos nuevos de la historia libre.
-- [ ] Opcional: probar `mistral-large-3:675b` si Gemma se queda corta narrando.
 
 ## Juego
 
@@ -35,7 +25,7 @@ Marca con `[x]` lo que se vaya cerrando.
 - [ ] Modelos 3D fieles para el resto del reparto (Vi, Jayce, Viktor, Mel, Silco…), que siguen siendo prototipos.
 - [x] Música en MP3 (menú, Piltover y Zaun en `assets/music`).
 - [ ] Volver a activar los fondos 3D de los menús cuando se arreglen sus errores gráficos.
-- [ ] Revisar la interfaz en el móvil (Android en horizontal) con la caja de texto nueva de la historia.
+- [x] Revisar la interfaz en el móvil (Android en horizontal) con la caja de texto nueva de la historia (v1.30.0).
 
 ## Web
 

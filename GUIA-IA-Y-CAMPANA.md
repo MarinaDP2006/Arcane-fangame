@@ -2,7 +2,7 @@
 
 ## Dónde está el prompt de IA
 
-El prompt que se envía a Ollama o a otro servidor se construye en **`src/js/ai.js`**, dentro de **`systemPrompt(G, id)`**.
+El prompt que se envía a KoboldCpp (la única IA del juego) se construye en **`src/js/ai.js`**, dentro de **`systemPrompt(G, id)`**.
 
 La información que utiliza está dividida en:
 
@@ -18,7 +18,7 @@ La IA recibe los datos del personaje creado (nombre, procedencia, familia, traba
 
 **Editar la interpretación:** para cambiar cómo reacciona Jinx, modifica `ARCANE_LORE.jinx` y `AI_VOICES.jinx`. Para modificar normas compartidas, edita `systemPrompt` de `src/js/ai.js`. Para cambiar diálogos con botones, modifica `chat.js` o `chat-expansion.js`. No pegues claves privadas en estos archivos.
 
-El modelo de Ollama condiciona los resultados. Un modelo pequeño puede desobedecer el tono o las reglas, incluso con un prompt mejorado. El modo de diálogos escritos sigue disponible sin IA.
+El modelo que abras en KoboldCpp condiciona los resultados. Un modelo pequeño puede desobedecer el tono o las reglas, incluso con un prompt mejorado. El modo de diálogos escritos sigue disponible sin IA.
 
 ## Estructura de la campaña
 
@@ -69,4 +69,4 @@ npm start
 
 Prueba ambos orígenes, decisiones nuevas, conversación libre con varios personajes, diálogos escritos desbloqueables, historial, cambios de afinidad, guardado/carga en capítulos previos y transición a Parte II.
 
-La IA debe probarse con el servidor elegido: Ollama es local y opcional; el juego no lleva un modelo de lenguaje integrado.
+La IA debe probarse con KoboldCpp: es local y opcional; el juego no lleva un modelo de lenguaje integrado.

@@ -47,7 +47,8 @@
       n.dataset.tilt = '1';
       n.classList.add('tilt3d');
       n.addEventListener('pointermove', (e) => {
-        if (App.settings.reduceMotion) return;
+        // Con el dedo el panel se quedaba torcido al soltar: la inclinación es solo para el ratón.
+        if (App.settings.reduceMotion || e.pointerType !== 'mouse') return;
         const r = n.getBoundingClientRect();
         const x = (e.clientX - r.left) / r.width - 0.5;
         const y = (e.clientY - r.top) / r.height - 0.5;
@@ -125,62 +126,58 @@
     });
   }
 
-  // IA opcional para el chat libre con los personajes.
+  // IA opcional para la historia libre y el chat con los personajes: solo KoboldCpp.
   function aiSettings(set) {
     const box = el('div', { class: 'ai-settings' });
     const draw = () => {
-      const a = { provider: 'ollamaCloud', ...(App.settings.ai || {}) };
       const P = window.AI.PROVIDERS;
-      const d = P[a.provider] || P.off;
-      const save = (patch) => set({ ai: { ...a, ...patch } }).then(draw);
+      const c = window.AI.cfg();
+      const on = c.provider !== 'off';
+      const d = P.koboldcpp;
+      const save = (patch) => set({ ai: { provider: 'koboldcpp', url: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.url : '', model: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.model : '', ...patch } }).then(draw);
       const status = el('small', { class: 'muted ai-status' });
-      // Modelos que ya tiene Ollama o LM Studio: se elige uno con un clic.
       const models = el('div', { class: 'chips ai-models' });
-      const local = window.AI.LOCAL.has(a.provider);
       const lan = el('small', { class: 'muted ai-lan' });
       box.innerHTML = '';
-      box.append(
+      // DOM append escribe «null» con los huecos: se quitan antes.
+      box.append(...[
         el('h3', {}, 'IA de la historia y los chats'),
-        el('p', { class: 'muted small' }, 'Roleplay libre fiel a la temporada 1 y 2: escribes como tu personaje y el reparto te responde, te pregunta y la historia avanza según lo que hagas. La opción recomendada ya viene puesta: una IA alojada en internet, sin instalar nada. Si alguna vez no responde, el juego te ofrece los diálogos escritos para no quedarte atascada.'),
-        el('label', { class: 'field' }, el('span', {}, 'Servicio'),
-          el('select', { class: 'input', onchange: (e) => save({ provider: e.target.value, model: '', url: '' }) },
-            Object.entries(P).map(([id, p]) => el('option', { value: id, selected: id === a.provider }, p.label)))),
-        a.provider !== 'off' ? el('p', { class: 'small ai-help' }, d.help) : null,
-        d.key ? el('label', { class: 'field' }, el('span', {}, 'Clave (API key)'),
-          el('input', { class: 'input', type: 'password', autocomplete: 'off', value: a.key || '', placeholder: 'Pega aquí tu clave', onchange: (e) => save({ key: e.target.value.trim() }) })) : null,
-        (local || a.provider === 'custom') ? el('label', { class: 'field' }, el('span', {}, 'Dirección'),
-          el('input', { class: 'input', value: a.url || d.url, placeholder: a.provider === 'lmstudio' ? 'http://192.168.1.40:1234' : a.provider === 'koboldcpp' ? 'http://192.168.1.40:5001' : a.provider === 'ollamaCloud' ? 'https://tu-servicio.onrender.com/api/roleplay' : 'http://localhost:1234/v1/chat/completions', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
-        (a.provider === 'lmstudio' || a.provider === 'koboldcpp') ? lan : null,
-        a.provider !== 'off' ? el('label', { class: 'field' }, el('span', {}, 'Modelo'),
-          el('input', { class: 'input', value: a.model || d.model, placeholder: a.provider === 'lmstudio' ? 'Pulsa «Buscar mis modelos»' : '', onchange: (e) => save({ model: e.target.value.trim() }) })) : null,
-        local ? models : null,
-        a.provider !== 'off' ? el('div', { class: 'row gap' },
-          local ? el('button', { class: 'btn small', onclick: findModels }, 'Buscar mis modelos') : null,
+        el('p', { class: 'muted small' }, 'Roleplay libre fiel a la temporada 1 y 2: escribes como tu personaje y el reparto te responde, te pregunta y la historia avanza según lo que hagas. La única IA del juego es KoboldCpp, que corre gratis en tu ordenador. Si alguna vez no responde, el juego te ofrece los diálogos escritos para no quedarte atascada.'),
+        el('label', { class: 'switch-row' }, el('span', {}, 'Usar KoboldCpp', el('small', { class: 'muted' }, on ? 'Activada' : 'Desactivada: solo diálogos escritos')),
+          el('input', { type: 'checkbox', checked: on, onchange: (e) => save(e.target.checked ? { provider: 'koboldcpp' } : { provider: 'off' }) })),
+        on ? el('p', { class: 'small ai-help' }, d.help) : null,
+        on ? el('label', { class: 'field' }, el('span', {}, 'Dirección'),
+          el('input', { class: 'input', value: App.settings.ai?.provider === 'koboldcpp' && App.settings.ai.url ? App.settings.ai.url : d.url, placeholder: 'http://192.168.1.40:5001', inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
+        on && !window.AI.ready() ? el('p', { class: 'small ai-help' }, 'En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».') : null,
+        on ? lan : null,
+        on ? el('label', { class: 'field' }, el('span', {}, 'Modelo'),
+          el('input', { class: 'input', value: c.model, placeholder: 'koboldcpp', onchange: (e) => save({ model: e.target.value.trim() }) })) : null,
+        on ? models : null,
+        on ? el('div', { class: 'row gap' },
+          el('button', { class: 'btn small', onclick: findModels }, 'Ver el modelo abierto'),
           el('button', { class: 'btn small', onclick: async () => {
             status.textContent = 'Probando…';
             try {
               const r = await window.AI.test();
-              status.textContent = `✓ Funciona en ${r.secs.toFixed(1)} s: «${r.text}»${local && r.secs > 15 ? ' · La primera vez tarda más porque carga el modelo. Prueba otra vez; si sigue lento, elige un modelo más pequeño.' : ''}`;
+              status.textContent = `✓ Funciona en ${r.secs.toFixed(1)} s: «${r.text}»${r.secs > 15 ? ' · La primera vez tarda más porque carga el modelo. Prueba otra vez; si sigue lento, elige un modelo más pequeño en KoboldCpp.' : ''}`;
             } catch (err) { status.textContent = `✗ ${err.message}`; }
-          } }, 'Probar conexión'), status) : null);
-      // En el PC: la dirección que hay que escribir en la tablet para usar este LM Studio.
-      if ((a.provider === 'lmstudio' || a.provider === 'koboldcpp') && window.arcane?.lanIps) {
-        const port = a.provider === 'koboldcpp' ? 5001 : 1234;
+          } }, 'Probar conexión'), status) : null].filter(Boolean));
+      // En el PC: la dirección que hay que escribir en la tablet para usar este KoboldCpp.
+      if (on && window.arcane?.lanIps) {
         window.arcane.lanIps().then((ips) => {
-          if (ips.length) lan.textContent = `En la tablet o el móvil escribe: ${ips.map((ip) => `http://${ip}:${port}`).join(' o ')}`;
+          if (ips.length) lan.textContent = `En la tablet o el móvil escribe: ${ips.map((ip) => `http://${ip}:5001`).join(' o ')}`;
         }).catch(() => {});
       }
-      /** Busca modelos de IA accesibles para el usuario. */
+      /** Pregunta a KoboldCpp qué modelo tiene abierto. */
       async function findModels() {
         status.textContent = 'Buscando…';
         try {
           const list = await window.AI.models();
-          const empty = a.provider === 'lmstudio' ? 'LM Studio no tiene ningún modelo. Descarga uno desde su buscador (por ejemplo Gemma 3 12B).' : a.provider === 'koboldcpp' ? 'KoboldCpp no tiene ningún modelo abierto. Ciérralo, elige un .gguf en «Model» y pulsa «Launch».' : 'Ollama no tiene ningún modelo. Abre una terminal y escribe «ollama pull gemma3:4b».';
-          status.textContent = list.length ? 'Elige uno (los pequeños responden antes).' : empty;
+          status.textContent = list.length ? 'Este es el modelo que tiene abierto KoboldCpp.' : 'KoboldCpp no tiene ningún modelo abierto. Ciérralo, elige un .gguf en «Model» y pulsa «Launch».';
           models.replaceChildren(...list.map((m) => el('button', {
-            class: `chip${m.name === (a.model || d.model) ? ' active' : ''}`,
+            class: `chip${m.name === c.model ? ' active' : ''}`,
             onclick: () => save({ model: m.name }),
-          }, m.gb != null ? `${m.name} · ${m.gb.toFixed(1)} GB` : `${m.name}${m.quant ? ` · ${m.quant}` : ''}${m.loaded ? ' · cargado' : ''}`)));
+          }, `${m.name}${m.loaded ? ' · cargado' : ''}`)));
         } catch (err) { status.textContent = `✗ ${err.message}`; }
       }
     };
@@ -398,7 +395,7 @@
         el('h3', {}, 'Acerca de'),
         el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. Todas las imágenes y datos vienen dentro del juego y la música se sintetiza en tiempo real: no necesita internet (solo el chat libre con IA, si lo activas con un servicio en línea).'),
         el('p', { class: 'muted small' }, 'Este juego se creó según la política «Legal Jibber Jabber» de Riot Games usando recursos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto. Arcane y League of Legends son marcas de Riot Games, Inc.'),
-        el('p', { class: 'muted small' }, 'Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA para los chats, lo que escribes en el comunicador (y el contexto del personaje) se envía al servicio que elijas, con tu propia clave; con Ollama no sale de tu ordenador.'),
+        el('p', { class: 'muted small' }, 'Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.'),
       ],
     };
 

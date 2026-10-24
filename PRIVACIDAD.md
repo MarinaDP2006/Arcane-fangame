@@ -11,7 +11,7 @@ Este juego es un proyecto de fans **gratuito y sin ánimo de lucro**, creado por
 - Tus partidas y ajustes se guardan **solo en tu dispositivo**. Si desinstalas el juego (en Android), se borran.
 - Si eliges «Subir mi foto» en el creador de personaje, la imagen se guarda solo dentro de tu partida, en tu dispositivo.
 - En la versión de ordenador, el juego puede descargar imágenes públicas de la Arcane Wiki (arcane.fandom.com). Al hacerlo, tu ordenador se conecta a esa web como lo haría un navegador.
-- **IA para los chats (opcional, desactivada por defecto).** Si en Ajustes eliges un servicio de IA (Google Gemini, Groq, OpenRouter u otro) y pones tu propia clave, lo que escribes en el comunicador, los últimos mensajes de esa conversación y el contexto del personaje (tu nombre de personaje, tu ciudad, tu afinidad y vuestra relación) se envían a ese servicio para generar la respuesta, y se aplica su política de privacidad. Con Ollama todo se queda en tu ordenador. Tu clave se guarda solo en tu dispositivo. No escribas datos personales reales en el chat.
+- **IA (opcional).** La única IA del juego es KoboldCpp, que se ejecuta en tu propio ordenador. Lo que escribes en la historia y el comunicador, los últimos mensajes y el contexto del personaje (tu nombre de personaje, tu ciudad, tu afinidad y vuestra relación) solo viajan a KoboldCpp, en tu ordenador o en otro de tu red de casa. Nada sale a internet ni hace falta ninguna clave.
 - La pestaña «Mapas de la Wiki» abre páginas de arcane.fandom.com, que tiene su propia política de privacidad.
 
 ## Permisos de la app de Android

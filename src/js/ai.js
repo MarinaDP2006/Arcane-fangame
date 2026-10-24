@@ -1,48 +1,50 @@
 // Chat libre con IA (opcional y gratis): escribes lo que quieras y el personaje responde
-// en su papel, al estilo de Character AI. Funciona con Ollama o LM Studio en tu ordenador
-// (sin internet; LM Studio también sirve a la tablet por la red de casa) o con servicios
-// con clave gratuita (Google Gemini, Groq, OpenRouter).
-// Todos hablan el formato de OpenAI (/chat/completions). La clave se guarda solo en
-// tus ajustes locales.
+// en su papel, al estilo de Character AI. La única IA del juego es KoboldCpp, que corre en
+// tu ordenador (sin internet) y también sirve a la tablet o al móvil por la red de casa.
+// Habla el formato de OpenAI (/v1/chat/completions) en el puerto 5001.
 (function () {
   const PROVIDERS = {
     off: { label: 'Desactivada' },
-    ollamaCloud: { label: 'IA alojada de Arcane (recomendada, sin instalar nada)', url: window.ROLEPLAY_CONFIG?.endpoint || '/api/roleplay', model: window.ROLEPLAY_CONFIG?.model || 'gemma4:31b', key: false, help: 'No hace falta instalar Ollama ni descargar modelos: el juego habla con un servidor propio que usa Gemma 4 31B en Ollama Cloud. Si el servidor llevaba un rato dormido, la primera respuesta puede tardar hasta un minuto.' },
-    ollama: { label: 'Ollama (en tu PC, sin internet)', url: 'http://localhost:11434/v1/chat/completions', model: 'gemma3:4b', key: false, help: 'Instala Ollama desde ollama.com y descarga un modelo en una terminal: «ollama pull gemma3:4b» (rápido, unos 3 GB) o «ollama pull gemma3:12b» (mejor conversación, necesita una tarjeta gráfica con 8 GB o más). Pulsa «Buscar mis modelos» para elegir uno de los que ya tienes. Mientras Ollama esté abierto, los personajes te responden sin internet. Solo en el ordenador.' },
-    lmstudio: { label: 'LM Studio (en tu PC o por la red de casa)', url: 'http://localhost:1234/v1/chat/completions', model: '', key: false, help: 'Abre LM Studio, descarga un modelo y en la pestaña Developer enciende «Start server» (puerto 1234). En este ordenador deja la dirección como está. Para jugar desde la tablet o el móvil activa también «Serve on Local Network» y escribe aquí la dirección de tu PC, por ejemplo http://192.168.1.40:1234. Pulsa «Buscar mis modelos» para elegir uno. Los pasos están en GUIA-LM-STUDIO.md.' },
-    koboldcpp: { label: 'KoboldCpp (en tu PC o por la red de casa)', url: 'http://localhost:5001/v1/chat/completions', model: 'koboldcpp', key: false, help: 'Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.40:5001. Los pasos están en GUIA-KOBOLDCPP.md.' },
-    custom: { label: 'Otro servidor compatible', url: '', model: '', key: true, help: 'Cualquier servidor con el formato de OpenAI (KoboldCpp, text-generation-webui, vLLM…). Escribe la dirección completa de /chat/completions.' },
+    koboldcpp: { label: 'KoboldCpp (en tu PC o por la red de casa)', url: 'http://localhost:5001/v1/chat/completions', model: 'koboldcpp', help: 'Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.40:5001. Los pasos están en GUIA-KOBOLDCPP.md.' },
   };
 
-  // Servidores que corren en tu PC (o en otro de tu red): no piden clave y no salen a internet.
-  const LOCAL = new Set(['ollama', 'lmstudio', 'koboldcpp']);
+  // KoboldCpp corre en tu PC (o en otro de tu red): no pide clave y no sale a internet.
+  const LOCAL = new Set(['koboldcpp']);
 
-  // Para LM Studio y KoboldCpp basta con escribir «192.168.1.40» o «http://192.168.1.40:1234»:
-  // se completa el puerto y la ruta de /v1/chat/completions.
-  const PORTS = { lmstudio: '1234', koboldcpp: '5001' };
-  function fullUrl(p, url) {
+  // Basta con escribir «192.168.1.40» o «http://192.168.1.40:5001»: se completa el puerto
+  // y la ruta de /v1/chat/completions.
+  function fullUrl(url) {
     url = String(url || '').trim();
-    if (!PORTS[p] || !url) return url;
+    if (!url) return url;
     if (!/^https?:\/\//i.test(url)) url = `http://${url}`;
     try {
       const u = new URL(url);
-      if (!u.port && u.protocol === 'http:') u.port = PORTS[p];
+      if (!u.port && u.protocol === 'http:') u.port = '5001';
       if (!/\/chat\/completions$/.test(u.pathname)) u.pathname = `${u.pathname.replace(/\/(v1\/?)?$/, '').replace(/\/+$/, '')}/v1/chat/completions`;
       return u.toString();
     } catch { return url; }
   }
 
+  // Las partidas de versiones anteriores podían tener elegido otro servicio (Ollama, LM Studio,
+  // la IA alojada…): ahora todas usan KoboldCpp, salvo quien la desactivó. La dirección guardada
+  // solo se conserva si ya era la de KoboldCpp.
   function cfg() {
     const a = window.App?.settings?.ai || {};
-    const p = PROVIDERS[a.provider] ? a.provider : (a.provider ? 'off' : 'ollamaCloud');
-    const d = PROVIDERS[p];
-    return { provider: p, url: (LOCAL.has(p) || p === 'custom' || p === 'ollamaCloud') ? fullUrl(p, a.url || d.url) : d.url, model: a.model || d.model, key: a.key || '' };
+    if (a.provider === 'off') return { provider: 'off', url: '', model: '' };
+    const d = PROVIDERS.koboldcpp;
+    const mine = !a.provider || a.provider === 'koboldcpp';
+    return { provider: 'koboldcpp', url: fullUrl((mine && a.url) || d.url), model: (mine && a.model) || d.model };
   }
+
+  // En el móvil o la tablet, «localhost» es el propio aparato y no el PC donde corre KoboldCpp:
+  // hasta que se escriba la dirección del PC se juega con los diálogos escritos.
+  const onDevice = () => Boolean(window.Capacitor?.isNativePlatform?.());
+  const isLocalhost = (url) => { try { return ['localhost', '127.0.0.1', '[::1]'].includes(new URL(url).hostname); } catch { return false; } };
 
   function ready() {
     const c = cfg();
     if (c.provider === 'off' || !c.url || !c.model) return false;
-    return !PROVIDERS[c.provider].key || Boolean(c.key) || c.provider === 'custom';
+    return !(onDevice() && isLocalhost(c.url));
   }
 
   // Envía la petición por el camino que no tenga problemas de CORS: el proceso
@@ -68,7 +70,7 @@
     }
   }
 
-  // GET corto (listas de modelos), por el mismo camino que post().
+  // GET corto (lista de modelos), por el mismo camino que post().
   async function get(url) {
     if (window.arcane?.aiGet) {
       const r = await window.arcane.aiGet(url);
@@ -83,110 +85,40 @@
     return fetch(url).then((r) => r.json());
   }
 
-  // Ollama tiene su propia API (/api/chat), que deja mantener el modelo cargado entre
-  // mensajes (sin esperas de 20 s en cada respuesta), limitar lo largo que contesta,
-  // apagar el «pensamiento» de los modelos que razonan y cortar si se pone a hablar por ti.
-  const ollamaBase = (url) => url.replace(/\/(v1|api)(\/.*)?$/, '').replace(/\/+$/, '');
-  const THINKERS = /qwen3|deepseek-r1|magistral|phi4-reasoning|cogito/i;
-
-  async function ollama(c, messages, opts) {
-    const body = {
-      model: c.model, messages, stream: false, keep_alive: '30m',
-      options: { temperature: opts.temperature ?? 0.8, top_p: 0.9, repeat_penalty: 1.12, num_ctx: 4096, num_predict: opts.max ?? 220, stop: opts.stop || [] },
-    };
-    if (THINKERS.test(c.model)) body.think = false;
-    const r = await post(`${ollamaBase(c.url)}/api/chat`, {}, body);
-    if (r.status >= 400 || r.data?.error) throw new Error(ollamaError(r.data?.error || `HTTP ${r.status}`, c.model));
-    const text = r.data?.message?.content;
-    if (!text) throw new Error('La IA no ha devuelto texto');
-    return String(text).replace(/<think>[\s\S]*?<\/think>/gi, '');
-  }
-
-  function ollamaError(msg, model) {
-    msg = typeof msg === 'string' ? msg : JSON.stringify(msg);
-    if (/not found|pull/i.test(msg)) return `No tienes el modelo «${model}». Abre una terminal y escribe «ollama pull ${model}», o pulsa «Buscar mis modelos» en Ajustes.`;
-    return msg;
-  }
-
-  // Modelos que tiene Ollama descargados (para elegir en Ajustes).
-  async function ollamaModels() {
-    const c = cfg();
-    const data = await get(`${ollamaBase(c.url || PROVIDERS.ollama.url)}/api/tags`);
-    return (data?.models || []).map((m) => ({ name: m.name, gb: (m.size || 0) / 1e9 })).sort((a, b) => a.gb - b.gb);
-  }
-
-  // Modelos de LM Studio. Su API propia (/api/v0/models) dice cuál está ya cargado en la
-  // tarjeta gráfica; si no existe (versiones viejas), se usa /v1/models de OpenAI.
-  async function lmstudioModels() {
-    const base = cfg().url.replace(/\/v1\/chat\/completions$/, '');
-    let list;
-    try {
-      const data = await get(`${base}/api/v0/models`);
-      if (!Array.isArray(data?.data)) throw new Error('sin api v0');
-      list = data.data.filter((m) => m.type !== 'embeddings').map((m) => ({ name: m.id, loaded: m.state === 'loaded', quant: m.quantization || '' }));
-    } catch {
-      const data = await get(`${base}/v1/models`);
-      list = (data?.data || []).filter((m) => !/embed/i.test(m.id)).map((m) => ({ name: m.id, loaded: false, quant: '' }));
-    }
-    return list.sort((a, b) => Number(b.loaded) - Number(a.loaded) || a.name.localeCompare(b.name));
-  }
+  // Modelos que razonan antes de hablar: necesitan más margen de tokens.
+  const THINKERS = /qwen3|deepseek-r1|magistral|phi4-reasoning|cogito|gpt-oss/i;
 
   // KoboldCpp sirve un solo modelo a la vez: el que se eligió al abrirlo.
-  async function koboldModels() {
+  async function models() {
     const data = await get(`${cfg().url.replace(/\/v1\/chat\/completions$/, '')}/v1/models`);
     return (data?.data || []).map((m) => ({ name: m.id, loaded: true, quant: '' }));
   }
-
-  // Lista de modelos del servidor local elegido.
-  const models = () => ({ lmstudio: lmstudioModels, koboldcpp: koboldModels }[cfg().provider] || ollamaModels)();
 
   // Carga el modelo en memoria antes del primer mensaje (la primera respuesta es la lenta).
   let warmed = '';
   function warm() {
     const c = cfg();
-    // El servidor alojado se duerme si nadie juega: una petición vacía lo despierta.
-    if (c.provider === 'ollamaCloud' && c.url && warmed !== c.url) {
-      warmed = c.url;
-      post(c.url, {}, {}).catch(() => { warmed = ''; });
-      return;
-    }
-    if (!LOCAL.has(c.provider) || !c.model || warmed === c.model) return;
-    warmed = c.model;
-    const call = c.provider === 'ollama'
-      ? post(`${ollamaBase(c.url)}/api/chat`, {}, { model: c.model, messages: [], keep_alive: '30m' })
-      : post(c.url, {}, { model: c.model, messages: [{ role: 'user', content: 'Hola' }], max_tokens: 1, ttl: 1800 });
-    call.catch(() => { warmed = ''; });
+    if (!ready() || warmed === `${c.url}|${c.model}`) return;
+    warmed = `${c.url}|${c.model}`;
+    post(c.url, {}, { model: c.model, messages: [{ role: 'user', content: 'Hola' }], max_tokens: 1 }).catch(() => { warmed = ''; });
   }
 
   async function complete(messages, opts = {}) {
     const c = cfg();
-    if (c.provider === 'ollama') return ollama(c, messages, opts);
-    const headers = {};
-    if (c.key) headers.Authorization = `Bearer ${c.key}`;
-    if (c.provider === 'openrouter') { headers['HTTP-Referer'] = 'https://github.com/MarinaDP2006/RIFTS-GEARS'; headers['X-Title'] = 'Rifts & Gears'; }
+    if (c.provider === 'off') throw new Error('La IA está desactivada en Ajustes.');
     const body = { model: c.model, messages, temperature: opts.temperature ?? 0.9, max_tokens: opts.max ?? 350 };
-    // Los modelos que razonan antes de hablar (gpt-oss) gastan parte de los tokens pensando:
-    // se les pide que piensen poco y se les deja más margen.
-    if (/gpt-oss/.test(c.model)) { body.reasoning_effort = 'low'; body.max_tokens = Math.max(body.max_tokens, 800); }
-    if (c.provider === 'ollamaCloud' && opts.stop?.length) body.stop = opts.stop.slice(0, 4);
-    // LM Studio: el modelo se queda cargado 30 min tras el último mensaje (sin recargas lentas)
-    // y se corta si empieza a escribir tu parte.
-    if (c.provider === 'lmstudio') {
-      body.ttl = 1800;
-      if (opts.stop?.length) body.stop = opts.stop.slice(0, 4);
-      if (THINKERS.test(c.model)) body.max_tokens = Math.max(body.max_tokens, 900);
+    // Se corta si empieza a escribir tu parte; los modelos que piensan antes de hablar tienen más margen.
+    if (opts.stop?.length) body.stop = opts.stop.slice(0, 4);
+    if (THINKERS.test(c.model)) body.max_tokens = Math.max(body.max_tokens, 900);
+    let r;
+    try {
+      r = await post(c.url, {}, body);
+    } catch (err) {
+      throw new Error(`No se puede conectar con KoboldCpp en ${c.url}. Comprueba que está abierto y que la dirección es la de tu PC. (${err.message})`);
     }
-    // KoboldCpp: se corta si empieza a escribir tu parte; Qwen 3 piensa antes de hablar.
-    if (c.provider === 'koboldcpp') {
-      if (opts.stop?.length) body.stop = opts.stop.slice(0, 4);
-      if (THINKERS.test(c.model)) body.max_tokens = Math.max(body.max_tokens, 900);
-    }
-    const r = await post(c.url, headers, body);
     if (r.status >= 400 || r.data?.error) {
-      let msg = r.data?.error?.message || r.data?.error || r.data?.message || `HTTP ${r.status}`;
-      msg = typeof msg === 'string' ? msg : JSON.stringify(msg);
-      if (c.provider === 'lmstudio' && /no models? loaded|not found|model_not_found/i.test(msg)) msg = `LM Studio no encuentra el modelo «${c.model}». Pulsa «Buscar mis modelos» en Ajustes o carga uno en LM Studio.`;
-      throw new Error(msg);
+      const msg = r.data?.error?.message || r.data?.error || r.data?.message || `HTTP ${r.status}`;
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
     }
     const text = r.data?.choices?.[0]?.message?.content;
     if (!text) throw new Error('La IA no ha devuelto texto');
@@ -429,5 +361,5 @@ vi: ¿Y tú quién demonios eres?
     return { text: text.trim(), secs: (performance.now() - t0) / 1000 };
   }
 
-  window.AI = { PROVIDERS, LOCAL, cfg, ready, reply, direct, adapt, test, warm, models, ollamaModels, lmstudioModels };
+  window.AI = { PROVIDERS, LOCAL, cfg, ready, reply, direct, adapt, test, warm, models };
 })();

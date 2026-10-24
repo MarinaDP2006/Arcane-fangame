@@ -524,7 +524,7 @@
     tab = kind;
     if (who !== undefined) contact = who;
     box.append(el('div', { class: 'panel overlay-panel' },
-      el('div', { class: 'play' },
+      el('div', { class: 'play', 'data-tab': kind },
         el('aside', { class: 'contacts' },
           el('div', { class: 'me', onclick: () => setTab('ficha') },
             el('div', { class: 'avatar', html: Portrait.forPlayer(G.player) }),
@@ -808,6 +808,7 @@
     tab = t;
     if (who !== undefined) contact = who;
     document.querySelectorAll('.tabs-v .tab').forEach((b) => b.classList.toggle('active', b.dataset.tab === tab));
+    $('#overlay .play')?.setAttribute('data-tab', tab);
     renderContacts();
     renderMain();
   }
@@ -1665,20 +1666,19 @@
     box.classList.add('ai-box');
     if (!window.AI.ready()) {
       box.append(el('div', { class: 'ai-off' },
-        el('p', {}, `Con la IA puedes escribirle a ${charName(id)} lo que quieras y te responderá en su papel. Es gratis: actívala en Ajustes → «IA para los chats».`),
+        el('p', {}, `Con la IA puedes escribirle a ${charName(id)} lo que quieras y te responderá en su papel. Es gratis: abre KoboldCpp en tu PC y actívalo en Ajustes → «IA de la historia y los chats».`),
         el('button', { class: 'btn small primary', onclick: openSettingsOverlay }, 'Abrir ajustes')));
       return;
     }
     const input = el('textarea', { class: 'input ai-input', rows: 1, maxlength: 500, placeholder: `Escribe a ${charName(id)}…`,
       onkeydown: (e) => { if (e.key !== 'Escape') e.stopPropagation(); if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } } });
     const send = () => { const t = input.value.trim(); if (!t || talking) return; input.value = ''; sendAI(id, t); };
-    box.append(el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', onclick: send }, '➤')),
-      window.AI.LOCAL.has(window.AI.cfg().provider) ? null : el('small', { class: 'muted ai-note' }, `✦ ${window.AI.PROVIDERS[window.AI.cfg().provider].label} · lo que escribas se envía a ese servicio`));
+    box.append(el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', onclick: send }, '➤')));
     window.AI.warm();
     if (!U.touch) setTimeout(() => input.focus(), 0);
   }
 
-  /** Envía el mensaje al proveedor de IA seleccionado. */
+  /** Envía el mensaje a KoboldCpp. */
   async function sendAI(id, text) {
     talking = true;
     const thread = G.chats[id];
