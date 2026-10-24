@@ -15,6 +15,9 @@
   // Dificultad de Ajustes: fácil da una ventaja más, difícil quita una.
   const DIFF = { facil: 1, normal: 0, dificil: -1 };
   const reduced = () => Boolean(opt().reduceMotion);
+  // No dependemos solo de la detección inicial: algunos navegadores móviles cambian
+  // el tipo de puntero al abrir la app o al conectar/desconectar un ratón.
+  const touchUI = () => Boolean(U.touch || window.matchMedia?.('(pointer: coarse)').matches || navigator.maxTouchPoints > 0);
 
   // ---------- Emblemas (iconos de línea dorada) ----------
   const EMBLEM = {
@@ -448,7 +451,7 @@
       window.addEventListener('pointercancel', up);
 
       // En pantallas táctiles, los minijuegos de teclado llevan botones grandes.
-      if (U.touch && def.touchKeys) {
+      if (touchUI() && def.touchKeys) {
         const pad = document.createElement('div');
         pad.className = `mg-pad ${def.touchLayout || ''}`;
         for (const [k, label] of def.touchKeys) {
@@ -1430,29 +1433,100 @@
     },
   };
 
+  // ---------- Clasificación de chatarra (actividad exclusiva de Zaun) ----------
+  GAMES.chatarra = {
+    title: 'Clasificación de chatarra', icon: '', scene: 'sumidero', grade: 'zaun',
+    backdrops: ['sumidero', 'fabrica', 'mercado', 'zaun'],
+    desc: 'Benzo paga por piezas reutilizables, pero solo si separas metal, cristal hextec y residuos peligrosos. Clasifica las piezas antes de que se acabe el tiempo.',
+    controls: 'Pulsa 1, 2 o 3, o haz clic en el contenedor correcto.',
+    touchControls: 'Toca el contenedor correcto. No mezcles cristal hextec con residuos.',
+    touchKeys: [['1', 'Metal'], ['2', 'Hextec'], ['3', 'Residuos']], touchLayout: 'column',
+    goal: 'Clasifica correctamente 7 piezas con un máximo de 2 errores.',
+    winText: 'Benzo revisa las cajas y te paga por las piezas aprovechables.',
+    loseText: 'Una pieza peligrosa acaba en el contenedor equivocado. Benzo te retira el trabajo.',
+    create(w, h, o = {}) {
+      const types = [
+        { name: 'Metal', color: '#d8aa50', key: '1', x: 0.2 },
+        { name: 'Hextec', color: '#3fd0ff', key: '2', x: 0.5 },
+        { name: 'Residuos', color: '#7de0a1', key: '3', x: 0.8 },
+      ];
+      const target = 7;
+      const maxErrors = 2 + Math.max(0, o.bonus || 0);
+      let current = Math.floor(Math.random() * 3), sorted = 0, errors = 0, feedback = 'Clasifica la pieza', feedbackT = 0;
+      let result = null;
+      const next = () => { current = Math.floor(Math.random() * 3); };
+      const choose = (idx) => {
+        if (result != null) return;
+        if (idx === current) { sorted++; feedback = ['Correcto: metal recuperable.', 'El cristal conserva su carga.', 'Residuo aislado con seguridad.'][idx]; FX.burst(w * types[idx].x, h * 0.62, 12, { color: [types[idx].color, '#fff3c0'], kind: 'shard', speed: 180, size: 3, life: 0.5 }); }
+        else { errors++; feedback = 'Mal clasificado. Comprueba el material antes de seguir.'; FX.shake(5); }
+        feedbackT = 1.2;
+        if (sorted >= target) result = true;
+        else if (errors >= maxErrors) result = false;
+        else next();
+      };
+      return {
+        result,
+        update(dt, inp) {
+          feedbackT = Math.max(0, feedbackT - dt);
+          for (const k of inp.pressed) { const i = types.findIndex((t) => t.key === k); if (i >= 0) choose(i); }
+          for (const p of inp.mouse.clicks) {
+            const i = types.findIndex((t) => p.x >= w * (t.x - 0.14) && p.x <= w * (t.x + 0.14) && p.y >= h * 0.48 && p.y <= h * 0.86);
+            if (i >= 0) choose(i);
+          }
+          this.result = result;
+        },
+        draw(ctx, t) {
+          stageLight(ctx, w, h, t, { center: 0.5, ray: '70,210,190', fog: '70,160,130' });
+          glowText(ctx, 'TALLER DE RECUPERACIÓN', w / 2, h * 0.12, Math.min(22, w * 0.035), '#ffe08a');
+          const item = types[current];
+          ctx.save(); ctx.translate(w / 2, h * 0.32); ctx.rotate(Math.sin(t * 1.8) * 0.06);
+          ctx.shadowColor = item.color; ctx.shadowBlur = 22; ctx.fillStyle = item.color;
+          if (current === 0) { ctx.fillRect(-38, -24, 76, 48); ctx.fillStyle = '#49391f'; ctx.fillRect(-25, -12, 50, 24); }
+          else if (current === 1) { hexPath(ctx, 0, 0, 36, t * 0.6); ctx.fill(); ctx.fillStyle = '#e5fbff'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, TAU); ctx.fill(); }
+          else { ctx.beginPath(); ctx.moveTo(-28, -28); ctx.lineTo(24, -20); ctx.lineTo(35, 18); ctx.lineTo(-18, 30); ctx.closePath(); ctx.fill(); }
+          ctx.restore();
+          types.forEach((type, i) => {
+            const x = w * type.x, y = h * 0.66, bw = Math.min(150, w * 0.27), bh = Math.min(100, h * 0.2);
+            plate(ctx, x - bw / 2, y - bh / 2, bw, bh, { top: '#383329', bot: '#14120f', edge: type.color, cut: 10, lw: 2 });
+            glowText(ctx, type.name, x, y - 4, Math.min(18, w * 0.035), type.color, 'system-ui, sans-serif');
+            glowText(ctx, String(i + 1), x, y + bh * 0.28, 13, '#f4efe6', 'system-ui, sans-serif');
+          });
+          plate(ctx, w * 0.08, h * 0.83, w * 0.84, 44, { top: 'rgba(18,15,12,.95)', bot: 'rgba(8,8,8,.95)', edge: 'rgba(216,170,80,.45)' });
+          glowText(ctx, feedbackT > 0 ? feedback : '¿De qué material está hecha la pieza?', w / 2, h * 0.83 + 22, Math.min(16, w * 0.03), '#f4efe6', 'system-ui, sans-serif');
+        },
+        hud() { return bar('Piezas', sorted, target, '#3fbf9f') + bar('Errores', errors, maxErrors, '#e0457b') + '<span class="mg-num">' + sorted + '/' + target + '</span>'; },
+      };
+    },
+  };
+
   // ---------- 6. Regateo en el mercado ----------
   GAMES.regateo = {
     title: 'Regateo en el mercado', icon: '', scene: 'mercado', grade: 'zaun', backdrops: ['mercado', 'callejones', 'tienda-benzo', 'ultima-gota', 'zaun'],
     desc: 'La vendedora pide 100 monedas por un cachivache que vale mucho menos. Haz ofertas: si te pasas de lista se enfadará, si ofreces poco perderá la paciencia.',
     controls: 'Flechas ← → (o los botones − y +) para ajustar tu oferta, Espacio, Intro o «Ofrecer» para ofrecer.', touchControls: 'Botones − y + (o desliza el dedo a izquierda o derecha) para ajustar tu oferta, «Ofrecer» para ofrecer.',
-    touchKeys: [['arrowright', '+'], [' ', 'Ofrecer'], ['arrowleft', '−']], touchLayout: 'column', swipe: true, goal: 'Cierra el trato por 60 monedas o menos.',
+    touchKeys: [['arrowright', '+'], [' ', 'Regatear'], ['arrowleft', '−']], touchLayout: 'column', swipe: true, goal: 'Cierra el trato a un precio razonable sin agotar la paciencia de la vendedora.',
     winText: '«Trato hecho… me has desplumado», ríe la vendedora.', loseText: '«Fuera de mi puesto», te dice cruzándose de brazos.',
     create(w, h, o = {}) {
-      const min = 38 + Math.floor(Math.random() * 18);
-      const goal = 60 + 5 * (o.bonus || 0);
-      const maxPat = 4 + (o.bonus || 0);
+      const place = Object.values(window.WORLD?.maps || {}).flatMap((m) => m.locations || []).find((l) => l.id === o.place);
+      const city = place?.map || (['academia', 'taller-jayce', 'consejo', 'ejecutores', 'mansion-kiramman', 'plaza', 'artesanos', 'hexpuertas', 'muelle-stillwater'].includes(o.place) ? 'piltover' : 'zaun');
+      const piltoverMarket = city === 'piltover';
+      // En Piltover los objetos hextec son más caros; en Zaun prima la paciencia y el trueque.
+      const openingAsk = piltoverMarket ? 135 : 100;
+      const min = (piltoverMarket ? 62 : 38) + Math.floor(Math.random() * (piltoverMarket ? 18 : 18));
+      const goal = (piltoverMarket ? 88 : 60) + 5 * (o.bonus || 0);
+      const maxPat = (piltoverMarket ? 3 : 4) + (o.bonus || 0);
       // Botones dibujados (para ratón; en móvil están los botones grandes)
-      const btns = U.touch ? [] : [
+      const btns = touchUI() ? [] : [
         { id: 'minus', label: '−', x: w / 2 - 190, y: h * 0.8, w: 60, h: 52 },
         { id: 'plus', label: '+', x: w / 2 + 130, y: h * 0.8, w: 60, h: 52 },
         { id: 'offer', label: 'Ofrecer', x: w / 2 - 70, y: h * 0.9, w: 140, h: 40 },
       ];
       const g = {
-        offer: 40, ask: 100, patience: maxPat, msg: '¿Cuánto me das?', result: null, mood: 0, moodT: 0, shownOffer: 40, shownAsk: 100, hover: null,
+        offer: piltoverMarket ? 65 : 40, ask: openingAsk, patience: maxPat, msg: piltoverMarket ? 'Es una pieza hextec auténtica. No aceptaré calderilla.' : '¿Cuánto me das?', result: null, mood: 0, moodT: 0, shownOffer: piltoverMarket ? 65 : 40, shownAsk: openingAsk, hover: null,
         say(text, mood) { g.msg = text; g.mood = mood; g.moodT = 1; },
         offerNow() {
           Audio2.sfx.click();
-          if (g.offer >= g.ask) { g.result = g.ask <= goal; g.msg = 'Hecho.'; return; }
+          if (g.offer >= g.ask) { g.result = g.offer <= goal; g.msg = 'Hecho.'; return; }
           if (g.offer >= min) {
             g.ask = Math.max(g.offer, Math.round((g.ask + g.offer) / 2 - 2));
             if (g.ask - g.offer <= 3) {
@@ -1588,12 +1662,13 @@
             glowText(ctx, lab(Math.round(v)), x, by - 28, 15, col, 'system-ui, sans-serif');
           }
           glowText(ctx, `${g.offer}`, w / 2, h * 0.8 + 26, 42, '#ffe08a');
+          glowText(ctx, piltoverMarket ? 'MERCADO DE PILTOVER · PRECIO HEXTEC' : 'MERCADO DE ZAUN · TRUEQUE', w / 2, h * 0.72, 13, '#a8d9cf', 'system-ui, sans-serif');
           for (const b of btns) {
             const hov = g.hover === b.id;
             plate(ctx, b.x, b.y, b.w, b.h, { top: hov ? '#5a4628' : '#3a2e22', bot: hov ? '#2a1e10' : '#16100a', edge: hov ? '#ffe08a' : 'rgba(216,170,80,0.7)', cut: 9, lw: 2 });
             glowText(ctx, b.label, b.x + b.w / 2, b.y + b.h / 2 + 1, b.id === 'offer' ? 18 : 30, hov ? '#fff6d8' : '#ffe08a');
           }
-          if (U.touch) glowText(ctx, 'Pulsa «Ofrecer» para ofrecer', w / 2, h * 0.93, 16, '#a39cb3', 'system-ui, sans-serif');
+          if (touchUI()) glowText(ctx, 'Pulsa «Regatear» para ofrecer', w / 2, h * 0.93, 16, '#a39cb3', 'system-ui, sans-serif');
         },
         hud() { return bar('Paciencia', g.patience, maxPat, '#e3c45a') + `<span class="mg-num">Meta: ≤ ${goal}</span>`; },
       };
@@ -1608,8 +1683,8 @@
     'mansion-kiramman': ['francotiradora', 'tiro'], plaza: ['regateo', 'francotiradora'], artesanos: ['circuito', 'regateo'],
     hexpuertas: ['circuito', 'francotiradora'], 'muelle-stillwater': ['francotiradora', 'persecucion'], puente: ['persecucion', 'francotiradora'],
     'puente-zaun': ['persecucion', 'chompers'], fabrica: ['chompers', 'persecucion'], foso: ['foso'], tejados: ['tejados', 'francotiradora'],
-    'ultima-gota': ['foso', 'regateo'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['circuito', 'regateo'], mercado: ['regateo', 'chompers'],
-    sumidero: ['aerotabla', 'persecucion'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['aerotabla', 'runas'], arbol: ['aerotabla', 'chompers'],
+    'ultima-gota': ['foso', 'regateo'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['circuito', 'regateo', 'chatarra'], mercado: ['regateo', 'chompers'],
+    sumidero: ['aerotabla', 'persecucion', 'chatarra'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['aerotabla', 'runas'], arbol: ['aerotabla', 'chompers'],
   };
   // Lista de minijuegos con lo necesario para pintar un botón o una tarjeta.
   function list(ids = Object.keys(GAMES)) {
