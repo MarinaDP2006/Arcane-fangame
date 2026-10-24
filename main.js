@@ -54,7 +54,7 @@ function createWindow() {
     minWidth: 980,
     minHeight: 640,
     backgroundColor: '#0d0b14',
-    title: 'Grietas & Gears',
+    title: 'Arcane-fangame',
     show: false,
     icon: path.join(__dirname, 'build', 'icon.png'),
     autoHideMenuBar: true,
