@@ -251,8 +251,12 @@ em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240
 .portada-texto { max-width: 720px; }
 .portada-fondo { position: absolute; inset: 0 calc(50% - 50vw); z-index: -1; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
 .portada-fondo span { position: relative; }
-.lado-piltover { background: radial-gradient(circle at 30% 20%, rgba(227, 182, 91, .35), transparent 55%), radial-gradient(circle at 70% 70%, rgba(87, 199, 255, .18), transparent 50%), linear-gradient(180deg, #1c2033, #0b0d14); }
-.lado-zaun { background: radial-gradient(circle at 60% 75%, rgba(124, 240, 161, .28), transparent 55%), radial-gradient(circle at 30% 30%, rgba(255, 79, 163, .2), transparent 50%), linear-gradient(180deg, #0e1a17, #0b0d14); }
+.retrato-ciudad { position: absolute; z-index: 0; right: 3%; bottom: 0; width: min(62%, 470px); height: 82%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .42)); opacity: .92; mask-image: linear-gradient(to bottom, #000 0%, #000 74%, transparent 100%); }
+.retrato-jinx { right: 0; width: min(70%, 520px); }
+@media (max-width: 760px) { .retrato-ciudad { right: -10%; width: 74%; height: 60%; opacity: .58; } .retrato-jinx { right: -16%; width: 84%; } }
+/* Fondos basados en concept art publicado de Arcane. Se enlaza a las fichas de referencia y no se redistribuyen copias de las imágenes protegidas. */
+.lado-piltover { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .7)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E08_Concept_05.jpg") center 44% / cover no-repeat, linear-gradient(180deg, #1c2033, #0b0d14); }
+.lado-zaun { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .72)), url("https://wiki.leagueoflegends.com/en-us/Special:FilePath/Arcane_S01E07_Concept_14.jpg") center 44% / cover no-repeat, linear-gradient(180deg, #0e1a17, #0b0d14); }
 .portada-fondo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11, 13, 20, .92) 0%, rgba(11, 13, 20, .55) 55%, rgba(11, 13, 20, .2) 100%), repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .015) 3px 4px); }
 .portada-fondo .lado-zaun::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--laton), var(--reso)); box-shadow: 0 0 18px var(--reso); }
 
