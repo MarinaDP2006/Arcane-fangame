@@ -34,3 +34,9 @@ La demo de la web (`/demo.html`) también habla con KoboldCpp. Dentro de la part
 - Si KoboldCpp no contesta, la demo sigue con el narrador local.
 
 El servidor de Render nunca ve lo que escribes: el navegador habla directamente con tu KoboldCpp.
+
+## Importante: Save Slots y separación de juegos
+
+Los **Save Slots de KoboldAI Lite no configuran las demos**. La demo de Arcane envía sus propias instrucciones desde `web/demo-base.json` y `web/demo-juego.js`; el juego descargable define además sus prompts por personaje en `src/js/ai.js`. No cargues la tarjeta de Las ciudades del Umbral para intentar arreglar Arcane ni al revés: cada demo debe conectarse al mismo endpoint de KoboldCpp, pero envía su propio canon y su propio reparto. Si ves respuestas genéricas, comprueba que el estado de conexión diga que está conectado y no «narrador local». Llama 3.1 8B Instruct puede seguir mal instrucciones complejas; un modelo de rol/instrucciones con buen español puede mejorar la fidelidad, pero ningún prompt garantiza una imitación perfecta.
+
+**Seguridad:** el enlace `trycloudflare.com` funciona como una puerta pública temporal mientras el túnel esté activo. No lo publiques ni lo compartas; si ya lo has compartido públicamente, cierra el túnel y genera otro.
