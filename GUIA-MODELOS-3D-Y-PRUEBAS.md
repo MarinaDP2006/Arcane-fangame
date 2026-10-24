@@ -88,3 +88,9 @@ Se escriben en `dist/`. Si `npm ci` falla, no intentes usar un instalador antigu
 
 ## Limitaciones todavía pendientes
 No se ha confirmado el resultado de una compilación Windows completa en Actions, ni se ha probado un instalador en una máquina Windows real desde esta conversación. También faltan una prueba integral de todas las rutas narrativas y un examen gráfico de los seis ZIP reales. Estas verificaciones deben completarse antes de declarar terminada la versión estable.
+
+## Corrección de escala de personajes 3D
+
+La altura objetivo de los personajes se fija en **20 unidades del mapa** (antes eran 64). Los modelos externos GLB/FBX se normalizan a esa altura antes de colocarse en la escena, y el muñeco articulado de respaldo usa la misma referencia. Así los personajes dejan de verse sobredimensionados y quedan en proporción con las calles (74 unidades de ancho) y los edificios (de 60 a 400 unidades de alto). Los bustos siguen usando pedestal.
+
+Para validar el cambio: entra en Piltover y Zaun y compara a Jinx, Vi, Caitlyn y los guardias de Piltover con las calles, los edificios y la esfera del jugador; comprueba que tienen los pies sobre el suelo y que se puede hablar con ellos. Con el zoom al máximo deben seguir viéndose bien. Si un archivo de origen trae una base o piezas planas, revisa el resultado, porque el ajuste automático de escala no puede corregir un modelo mal exportado.
