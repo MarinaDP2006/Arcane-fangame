@@ -9,6 +9,7 @@ La única IA del juego es **KoboldCpp**, que corre en el ordenador de cada jugad
 ## Ponerlo en marcha
 
 - En tu PC: `npm run web` y después `npm run serve:web` (puerto 8787).
-- En Render: `render.yaml` ya lo configura (build `node scripts/build-web.js`, start `node server/roleplay-server.js`, plan Free).
-  No hay que poner variables secretas.
+- En Render: build `node scripts/build-web.js`, start `node server/roleplay-server.js`, health check `/api/health`
+  (ver [`GUIA-WEB-RENDER.md`](../GUIA-WEB-RENDER.md)). No hay que poner variables secretas.
+  Si el servicio arranca con `node main.js`, fuera de Electron también monta y sirve la web.
 - `GET /api/health` responde `{ "ok": true }` para comprobar que está vivo.

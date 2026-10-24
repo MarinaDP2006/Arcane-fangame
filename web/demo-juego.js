@@ -1,20 +1,43 @@
 // Demo de rol libre en el navegador. Sin opciones fijas: escribes lo que tu personaje dice o
 // hace y el narrador y los personajes te contestan. Los datos del mundo vienen de window.DEMO
-// (demo-datos.js). La única IA es KoboldCpp, abierto en tu ordenador (http://localhost:5001).
-// Si no está abierto, un narrador local mantiene la escena para que la demo no se quede muda.
+// (demo-datos.js). La única IA es KoboldCpp, abierto en tu ordenador (http://localhost:5001)
+// o en la dirección https que da su túnel (--remotetunnel). Se puede cambiar en «Conectar IA» o
+// abriendo la demo con ?kobold=<dirección>. Si no responde, un narrador local mantiene la escena.
 (() => {
   'use strict';
   const D = window.DEMO;
   const app = document.getElementById('demo-app');
   if (!D || !app) return;
 
-  const ENDPOINT = 'http://localhost:5001/v1/chat/completions';
+  const KOBOLD_DEF = 'http://localhost:5001';
+  const KOBOLD_KEY = 'demo-kobold-url';
   const KEY = 'demo-' + D.id;
   const PRONOMBRES = [['el', 'Él'], ['ella', 'Ella'], ['elle', 'Elle']];
 
   const make = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const gen = (txt, i) => String(txt).replace(/\{g:([^}]*)\}/g, (m, opts) => opts.split('|')[i] ?? opts.split('|')[0]);
   const pick = (arr, n) => arr[Math.abs(n) % arr.length];
+
+  // Dirección de KoboldCpp: «192.168.1.40», «localhost:5001» o «https://xxx.trycloudflare.com»
+  // se completan hasta /v1/chat/completions (puerto 5001 si es http sin puerto).
+  function koboldBase(url) {
+    url = String(url || '').trim();
+    if (!url) return KOBOLD_DEF;
+    if (!/^https?:\/\//i.test(url)) url = 'http://' + url;
+    try {
+      const u = new URL(url);
+      if (!u.port && u.protocol === 'http:') u.port = '5001';
+      return (u.origin + u.pathname.replace(/\/+$/, '').replace(/\/v1(\/chat\/completions|\/models)?$/, '')).replace(/\/+$/, '');
+    } catch { return KOBOLD_DEF; }
+  }
+  const esLocal = (url) => { try { return ['localhost', '127.0.0.1', '[::1]'].includes(new URL(url).hostname); } catch { return false; } };
+  // Una web https no puede pedir nada a http://192.168.x (contenido mixto); localhost sí.
+  const bloqueada = (url) => location.protocol === 'https:' && /^http:/i.test(url) && !esLocal(url);
+  let kobold = koboldBase((() => {
+    let q = null; try { q = new URLSearchParams(location.search).get('kobold'); } catch { /* sin parámetros */ }
+    if (q) { try { localStorage.setItem(KOBOLD_KEY, q); } catch { /* sin almacenamiento */ } return q; }
+    try { return localStorage.getItem(KOBOLD_KEY); } catch { return null; }
+  })());
 
   let st = load() || { paso: 'pregunta' };
   st.offline = false; // en cada visita se vuelve a probar KoboldCpp
@@ -99,7 +122,7 @@
     st.log.forEach(m => log.append(burbuja(m)));
     wrap.append(log);
 
-    const estado = make('p', 'dj-estado', st.offline ? 'Narrador local: abre KoboldCpp en tu PC para jugar con IA.' : 'IA local con KoboldCpp');
+    const estado = make('p', 'dj-estado', textoEstado());
     const form = make('form', 'dj-entrada');
     const ta = make('textarea'); ta.rows = 2; ta.maxLength = 600; ta.required = true;
     ta.placeholder = 'Escribe lo que dices o haces. Por ejemplo: «Me acerco a ' + nombreDe(esc.presentes[0]) + ' y le pregunto qué ha visto».';
@@ -117,15 +140,53 @@
       pensando.remove();
       const a = { role: 'assistant', content: r }; st.log.push(a); st.turno++; save();
       log.append(burbuja(a)); bajar(log);
-      estado.textContent = st.offline ? 'Narrador local: abre KoboldCpp en tu PC para jugar con IA.' : 'IA local con KoboldCpp';
+      estado.textContent = textoEstado();
       send.disabled = ta.disabled = false; ta.focus();
     });
 
     const pie = make('div', 'dj-pie');
     const reset = make('button', 'btn btn-texto', 'Empezar de nuevo');
     reset.onclick = () => { if (confirm('¿Borrar esta partida de la demo y crear otro personaje?')) { st = { paso: 'pregunta' }; save(); render(); } };
-    pie.append(estado, reset);
+    pie.append(estado, conectarIA(estado), reset);
     wrap.append(form, pie); app.append(wrap); bajar(log);
+  }
+
+  function textoEstado() {
+    if (bloqueada(kobold)) return 'Narrador local: desde esta web https no se llega a ' + kobold + '. Usa localhost o el túnel https de KoboldCpp.';
+    return st.offline ? 'Narrador local: abre KoboldCpp (' + kobold + ') para jugar con IA.' : 'IA local con KoboldCpp · ' + kobold;
+  }
+
+  // «Conectar IA»: cambia la dirección de KoboldCpp y prueba que contesta (/v1/models).
+  function conectarIA(estado) {
+    const det = make('details', 'dj-ia');
+    det.append(make('summary', 'btn btn-texto', 'Conectar IA'));
+    const f = make('form', 'dj-ia-form');
+    const l = make('label', 'dj-campo'); const inp = make('input');
+    inp.value = kobold; inp.autocomplete = 'off'; inp.spellcheck = false; inp.inputMode = 'url';
+    inp.placeholder = 'http://localhost:5001 o https://….trycloudflare.com';
+    l.append(make('span', '', 'Dirección de KoboldCpp'), inp);
+    const probar = make('button', 'btn btn-borde', 'Probar conexión'); probar.type = 'submit';
+    const msg = make('p', 'dj-estado', 'En el PC donde está abierto KoboldCpp vale http://localhost:5001. Desde otro aparato usa la dirección https del túnel de KoboldCpp (--remotetunnel).');
+    msg.setAttribute('aria-live', 'polite');
+    f.append(l, probar, msg); det.append(f);
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      kobold = koboldBase(inp.value); inp.value = kobold;
+      try { localStorage.setItem(KOBOLD_KEY, kobold); } catch { /* sin almacenamiento */ }
+      if (bloqueada(kobold)) { st.offline = true; msg.textContent = 'Esta web va por https y el navegador no deja llamar a ' + kobold + '. Usa http://localhost:5001 en el PC de KoboldCpp o la dirección https de su túnel.'; estado.textContent = textoEstado(); return; }
+      probar.disabled = true; msg.textContent = 'Probando ' + kobold + '…';
+      try {
+        const r = await fetch(kobold + '/v1/models', { signal: AbortSignal.timeout(8000) });
+        const j = await r.json();
+        const modelo = j && j.data && j.data[0] && j.data[0].id;
+        st.offline = false; msg.textContent = 'Conectado' + (modelo ? ' a ' + modelo : '') + '. Los personajes ya contestan con KoboldCpp.';
+      } catch {
+        st.offline = true;
+        msg.textContent = 'No contesta ' + kobold + '. Comprueba que KoboldCpp está abierto' + (esLocal(kobold) ? ' en este ordenador' : '') + ' y, si el navegador pregunta, permite el acceso a la red local.';
+      }
+      probar.disabled = false; estado.textContent = textoEstado();
+    });
+    return det;
   }
 
   const nombreDe = id => (D.reparto.find(p => p.id === id) || {}).name || id;
@@ -156,14 +217,14 @@
   }
 
   async function responder(txt) {
-    if (ENDPOINT && !st.offline) {
+    if (!st.offline && !bloqueada(kobold)) {
       try {
         const historial = st.log.slice(-16).map(m => ({ role: m.role, content: m.content }));
-        const r = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
+        const r = await fetch(kobold + '/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(90000), headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'koboldcpp', messages: [{ role: 'system', content: sistema() }, ...historial], temperature: 0.85, max_tokens: 380 }) });
         const j = await r.json().catch(() => ({}));
         const c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
         if (r.ok && c && c.trim()) return c.trim();
-              } catch { /* KoboldCpp no está abierto: pasamos al narrador local */ }
+      } catch { /* KoboldCpp no está abierto: pasamos al narrador local */ }
       st.offline = true;
     }
     return local(txt);

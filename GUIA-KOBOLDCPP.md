@@ -24,6 +24,13 @@ Mientras KoboldCpp esté abierto, los personajes te responden con ese modelo.
 - Prueba con un modelo más pequeño o con más **GPU Layers**.
 - Si la IA no contesta, el juego ofrece los diálogos escritos para que no te quedes atascada.
 
-## En la web
+## En la web (demo de Render)
 
-La web y la demo solo llegan a KoboldCpp abierto en el mismo ordenador (`http://localhost:5001`). Desde una página `https` el navegador no deja hablar con otro PC de la red: para la tablet usa la app de Android.
+La demo de la web (`/demo.html`) también habla con KoboldCpp. Dentro de la partida, el botón **Conectar IA** deja escribir la dirección y **Probar conexión** comprueba que contesta. La dirección se guarda en ese navegador. También se puede abrir la demo con `demo.html?kobold=<dirección>`.
+
+- **En el mismo PC donde está KoboldCpp:** deja `http://localhost:5001`. Si el navegador pregunta si la web puede acceder a dispositivos de tu red local, pulsa **Permitir**.
+- **Desde otro aparato (móvil, tablet u otro PC):** la web va por `https` y el navegador bloquea las llamadas a `http://192.168.x.x` (contenido mixto). Para eso abre KoboldCpp con túnel: en la pestaña **Network** marca **Remote Tunnel**, o lánzalo con `--remotetunnel`. KoboldCpp mostrará una dirección `https://….trycloudflare.com`; pégala en **Conectar IA**. Esa dirección cambia cada vez que abres KoboldCpp y cualquiera que la tenga puede usar tu IA mientras esté abierto, así que no la publiques.
+- La app de Android también puede usar la dirección de tu PC en casa (`http://192.168.1.x:5001`) desde **Ajustes**, sin túnel.
+- Si KoboldCpp no contesta, la demo sigue con el narrador local.
+
+El servidor de Render nunca ve lo que escribes: el navegador habla directamente con tu KoboldCpp.

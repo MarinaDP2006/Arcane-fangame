@@ -5,6 +5,7 @@ services:
     plan: free
     buildCommand: node scripts/build-web.js
     startCommand: node server/roleplay-server.js
+    healthCheckPath: /api/health
     autoDeployTrigger: commit
     envVars:
       - key: NODE_VERSION

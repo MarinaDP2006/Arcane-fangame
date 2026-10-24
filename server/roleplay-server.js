@@ -61,8 +61,13 @@ const server = http.createServer((req, res) => {
   return send(res, 404, { error: 'No encontrado' });
 });
 
-if (require.main === module) {
-  server.listen(PORT, () => console.log(`Web de Arcane escuchando en :${PORT} (${STATIC})`));
+// Escucha en todas las interfaces: Render solo da por vivo el servicio si encuentra el puerto abierto.
+function start() {
+  if (!fs.existsSync(path.join(STATIC, 'index.html'))) console.warn(`Aviso: falta ${STATIC}/index.html. Ejecuta antes «npm run web».`);
+  server.listen(PORT, '0.0.0.0', () => console.log(`Web de Arcane escuchando en :${PORT} (${STATIC})`));
+  return server;
 }
 
-module.exports = { server };
+if (require.main === module) start();
+
+module.exports = { server, start };

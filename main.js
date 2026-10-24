@@ -1,4 +1,12 @@
 // Proceso principal de Electron: ventana, guardado de partidas y ajustes.
+
+// Fuera de Electron (por ejemplo «node main.js» en Render) no hay ventana que abrir: se monta la
+// web en web-dist/ y se sirve con server/roleplay-server.js en el puerto PORT.
+if (!process.versions.electron) {
+  require('./scripts/build-web.js');
+  require('./server/roleplay-server.js').start();
+  return;
+}
 const { app, BrowserWindow, ipcMain, shell, dialog, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
