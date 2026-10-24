@@ -11,10 +11,9 @@
 (function () {
   if (!window.THREE) return;
   const T = window.THREE;
-  // Altura objetivo de una persona en unidades del mapa. Mantenerla cerca de la escala de
-  // puertas, calles y edificios evita que los modelos GLB importados parezcan gigantes.
-  // Los modelos externos se normalizan a esta altura; los muñecos de respaldo usan la misma.
-  const H = 20;
+  // Altura de una persona adulta en unidades del mapa. Algo más grande que la escala real de
+  // las calles (como en los juegos de vista aérea) para que se vean bien desde la cámara.
+  const H = 64;
   const DOLL = H / 44; // el muñeco se modela con 44 unidades de alto
   const WALK = 230; // velocidad de andar del jugador (world.js)
 
