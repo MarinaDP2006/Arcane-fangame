@@ -5183,4 +5183,13 @@ window.I18N_DATA.en = {
   "Ver el modelo abierto": "Show the open model",
   "En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».": "On your phone or tablet type your PC's address (the one shown in the game's Settings on the PC), not «localhost».",
   "Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.": "Privacy: the game does not collect or send personal data. Your saves and settings are stored only on your device. If you turn on the AI, what you write in the story and the communicator (and the character's context) only travels to KoboldCpp, on your computer or another one on your home network: it never goes out to the internet."
+  "PRIMER CONTACTO · PILTOVER / ZAUN": "FIRST CONTACT · PILTOVER / ZAUN",
+  "¿Es tu primera vez en Piltover y Zaun?": "Is this your first time in Piltover and Zaun?",
+  "Puedes descubrir el mundo antes de crear tu personaje o ir directamente al creador si ya lo conoces.": "Explore the world before creating your character, or go straight to character creation if you already know it.",
+  "Sí, soy nuevo/a": "Yes, I'm new here",
+  "Ya conozco este mundo": "I know this world already",
+  "La partida comienza después de crear el personaje.": "Your game begins after you create your character.",
+  "Antes de cruzar la grieta…": "Before you cross the rift…",
+  "Piltover presume de progreso, academias y poder; Zaun sobrevive entre humo, talleres y alianzas frágiles. Tus decisiones, tus vínculos y el lugar de donde vienes cambiarán cómo te trata la gente. No necesitas conocer la serie: descubrirás el mundo jugando.": "Piltover prides itself on progress, academies and power; Zaun survives amid smoke, workshops and fragile alliances. Your choices, relationships and origins will shape how people treat you. You don't need to know the show: you'll discover this world as you play.",
+  "Entendido, crear personaje": "Got it — create my character",
 };
