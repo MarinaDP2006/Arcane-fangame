@@ -1,4 +1,6 @@
 # Piltover 3D: cinco referencias, cinco espacios explorables
+
+> **En pocas palabras:** Este documento describe la intención visual y los espacios de Piltover dentro del mapa. Úsalo para comparar lo que se quiere construir con lo que realmente aparece en el juego. Las referencias sirven para orientar el diseño; no significan que todos los edificios estén modelados al detalle ni que el mapa ya haya pasado una revisión visual en todos los dispositivos.
 | Imagen | Espacio jugable | Localización del mapa | Elementos arquitectónicos |
 |---|---|---|---|
 | 1 | Sala del Consejo | `consejo` | Mesa circular, asientos, piedra clara, ventanas monumentales geométricas, adornos de bronce |
