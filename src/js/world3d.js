@@ -189,10 +189,19 @@
   // Guardias de Piltover (modelo guardia-piltover) de pie junto a estos lugares.
   const GUARD_POSTS = { ejecutores: 3, consejo: 2, puente: 2 };
 
+
+  // Hitos 3D específicos en lugares clave. Son recreaciones procedurales inspiradas
+  // en la serie, no modelos oficiales ni copias fotograma a fotograma.
+  const LANDMARK_CLEARANCES = {
+    piltover: { academia:185, consejo:190, 'mansion-kiramman':165, plaza:130, hexpuertas:200, 'muelle-stillwater':150, puente:170, 'taller-jayce':180, ejecutores:145, artesanos:100 },
+    zaun: { fabrica:190, 'ultima-gota':130, callejones:100, 'tienda-benzo':105, mercado:130, sumidero:155, 'escondite-jinx':120, invernadero:130, arbol:190, 'puente-zaun':175, foso:120, tejados:115 },
+  };
+
   function buildings(group, map, zaun) {
     const r = rng(map.def.seed * 7 + 3);
     const q = quality();
-    const cleared = map.def.locations.filter((l) => PLACE_MODELS[l.id]).map((l) => ({ x: l.x, y: l.y, r: PLACE_MODELS[l.id].size * 0.8 }));
+    const clearances = LANDMARK_CLEARANCES[zaun ? 'zaun' : 'piltover'];
+    const cleared = map.def.locations.map((l) => ({ x: l.x, y: l.y, r: Math.max(PLACE_MODELS[l.id]?.size * 0.8 || 0, clearances[l.id] || 0) })).filter((l) => l.r > 0);
     const list = map.buildings.filter((b) => r() < q && !cleared.some((c) => Math.hypot(b.x + b.w / 2 - c.x, b.y + b.h / 2 - c.y) < c.r));
     const nFac = 4;
     const bodies = Array.from({ length: nFac }, () => []);
@@ -285,6 +294,60 @@
           (o) => { dummy.position.set(o.x, o.y, o.z); dummy.scale.set(o.sx, 1, 1); });
       });
     }
+  }
+
+
+  /** Hitos reconocibles desde la vista 3D del mapa. */
+  function landmarks(group, map, zaun) {
+    const M=(color,metalness=0.12,emissive=null)=>new T.MeshStandardMaterial({color,roughness:0.72,metalness,...(emissive?{emissive,emissiveIntensity:0.4}:{})});
+    const stone=M(zaun?'#373630':'#d8c69d'), trim=M(zaun?'#806044':'#bd9848',0.55), roof=M(zaun?'#202927':'#397d78',0.3), dark=M('#151b19',0.35), glow=M(zaun?'#47efb2':'#6bdcff',0.25,zaun?'#159a67':'#2386c3');
+    const root=new T.Group(), defs=map.def.locations;
+    const add=(p,geo,mat,x,y,z,sx=1,sy=1,sz=1,ry=0)=>{const o=new T.Mesh(geo,mat);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.rotation.y=ry;o.castShadow=true;o.receiveShadow=true;p.add(o);return o;};
+    const B=(p,x,y,z,sx,sy,sz,m=stone,ry=0)=>add(p,new T.BoxGeometry(1,1,1),m,x,y,z,sx,sy,sz,ry);
+    const C=(p,x,y,z,rt,rb,h,m=stone,n=12)=>add(p,new T.CylinderGeometry(rt,rb,h,n),m,x,y,z);
+    const ring=(p,x,y,z,r,t,m=trim,rx=0)=>{const o=add(p,new T.TorusGeometry(r,t,8,32),m,x,y,z);o.rotation.x=rx;return o;};
+    const place=(id,fn)=>{const l=defs.find(v=>v.id===id);if(!l)return;const p=new T.Group();p.position.set(l.x,0,l.y);fn(p);root.add(p);};
+    if(!zaun){
+      // Academia: alas simétricas, columnata y cúpula verde.
+      place('academia',p=>{B(p,0,12,0,230,24,180,trim);B(p,0,66,0,172,84,125);B(p,-75,55,0,52,62,142);B(p,75,55,0,52,62,142);for(let x=-68;x<=68;x+=34){C(p,x,65,66,5,5,64,trim);B(p,x,100,66,8,5,8,trim);}B(p,0,111,-3,90,12,82,trim);C(p,0,137,-3,43,46,35,roof,16);C(p,0,166,-3,8,8,26,trim);B(p,0,38,70,40,48,6,dark);B(p,0,53,74,25,25,2,glow);});
+      // Consejo: rotonda, columnata radial y cúpula ceremonial.
+      place('consejo',p=>{C(p,0,10,0,112,122,20,trim,32);C(p,0,30,0,100,100,22,stone,32);C(p,0,70,0,84,94,60,stone,24);C(p,0,103,0,90,90,8,trim,24);for(let i=0;i<16;i++){const a=i*Math.PI/8;C(p,Math.cos(a)*78,62,Math.sin(a)*78,4,4,54,trim,8);}add(p,new T.SphereGeometry(1,24,16),roof,0,118,0,67,40,67);C(p,0,157,0,9,12,22,trim);});
+      // Mansión Kiramman: alas y tejados verdes.
+      place('mansion-kiramman',p=>{B(p,0,12,0,180,24,145,trim);B(p,0,45,0,145,48,112);B(p,-65,38,8,48,42,102);B(p,65,38,8,48,42,102);B(p,0,76,-8,92,16,85,roof);B(p,-65,60,8,58,12,112,roof);B(p,65,60,8,58,12,112,roof);B(p,0,28,64,42,38,8,trim);B(p,0,28,69,24,30,2,dark);for(let x=-48;x<=48;x+=32)B(p,x,46,58,8,23,3,glow);});
+      // Plaza del Progreso: fuente y obelisco hextech.
+      place('plaza',p=>{C(p,0,5,0,68,76,10,trim,12);C(p,0,12,0,52,60,8,stone,12);C(p,0,30,0,22,28,28,trim);C(p,0,54,0,11,13,24,glow,8);add(p,new T.OctahedronGeometry(1),glow,0,73,0,17,25,17);});
+      // Hexpuertas: anillo monumental entre torres gemelas.
+      place('hexpuertas',p=>{B(p,0,10,0,260,20,150,trim);for(const x of [-94,94]){B(p,x,84,0,28,148,34);B(p,x,162,0,42,10,48,trim);C(p,x,181,0,6,7,25,trim);}ring(p,0,98,0,73,9,trim);ring(p,0,98,1,61,3,glow);});
+      // Stillwater: fortaleza amurallada con torres de vigilancia.
+      place('muelle-stillwater',p=>{B(p,0,28,0,190,56,125);B(p,0,58,-8,150,10,100,trim);for(const x of [-78,78])for(const z of [-48,48]){B(p,x,83,z,28,105,28);C(p,x,140,z,15,18,18,roof,8);}for(let x=-65;x<=65;x+=26){B(p,x,75,-62,14,20,14);B(p,x,75,62,14,20,14);}});
+      // Puente del Progreso: calzada, pilonos y cables tensados.
+      place('puente',p=>{B(p,0,9,0,440,14,92,trim);B(p,0,17,0,420,4,70);for(const x of [-170,-85,0,85,170]){B(p,x,34,0,10,36,12,trim);B(p,x,53,0,16,5,18);}for(const side of [-1,1]){const pts=[];for(let i=0;i<=20;i++){const x=-205+i*410/20;pts.push(new T.Vector3(x,44+Math.sin(i/20*Math.PI)*48,side*36));}add(p,new T.TubeGeometry(new T.CatmullRomCurve3(pts),40,2.2,6,false),trim,0,0,0);}});
+    } else {
+      // Fábrica de Brillo: nave, calderas y chimeneas.
+      place('fabrica',p=>{B(p,0,12,0,205,24,160,dark);B(p,0,45,0,150,46,118);B(p,-45,73,-15,72,14,92,trim);for(const [x,z,h] of [[-70,-48,95],[-25,-48,135],[48,-45,115],[78,38,82]]){C(p,x,24+h/2,z,13,17,h,trim);C(p,x,24+h+5,z,18,18,9,dark);C(p,x,24+h+11,z,9,9,4,glow);}});
+      // La Última Gota: taberna, marquesina y cartel luminoso.
+      place('ultima-gota',p=>{B(p,0,12,0,150,24,100,dark);B(p,0,40,0,125,40,78);B(p,0,63,0,145,8,92,trim);B(p,0,35,41,24,32,4,dark);B(p,-42,42,41,22,22,4,glow);B(p,42,42,41,22,22,4,glow);B(p,0,78,2,65,13,12,dark);B(p,0,78,9,52,4,3,glow);});
+      // Callejones y tejados: bloques superpuestos y pasarelas.
+      place('callejones',p=>{for(let i=0;i<5;i++){const x=(i-2)*34;B(p,x,36+(i%2)*18,0,42,72+(i%2)*36,48,i%2?stone:dark);}B(p,0,38,34,190,8,18,trim);for(let x=-75;x<=75;x+=25)B(p,x,45,34,3,12,3,glow);});
+      place('tejados',p=>{for(let i=0;i<5;i++){const x=(i-2)*35;B(p,x,24+(i%2)*12,0,38,48+(i%2)*24,42,dark);B(p,x,51+(i%2)*12,0,42,7,46,trim);}});
+      // Tienda de Benzo: chatarra, mostrador y cubierta.
+      place('tienda-benzo',p=>{B(p,0,10,0,95,20,72,dark);B(p,0,34,0,82,28,60);B(p,0,53,0,105,8,78,trim);for(let i=0;i<7;i++)C(p,-36+(i%4)*24,25+(i%3)*7,-20+Math.floor(i/4)*28,8,9,14,trim,8);B(p,0,28,34,26,24,4,glow);});
+      // Mercado: puestos, toldos y luces.
+      place('mercado',p=>{for(let i=0;i<5;i++){const x=(i-2)*38;B(p,x,15,0,30,30,30);B(p,x,35,0,38,5,38,i%2?trim:roof);}for(let x=-76;x<=76;x+=38){C(p,x,55,-5,3,3,32,trim);B(p,x,72,-5,30,4,32,glow);}});
+      // Laboratorio del Sumidero: reactores y tubos quimtec.
+      place('sumidero',p=>{B(p,0,10,0,160,20,118,dark);B(p,0,30,0,130,22,90);for(const [x,z,h] of [[-48,-24,65],[0,-24,90],[48,-24,72]]){C(p,x,24+h/2,z,12,12,h,glow,16);C(p,x,24+h,z,16,16,8,trim);}for(let x=-60;x<=60;x+=30)B(p,x,48,30,4,4,40,trim);});
+      // Escondite de Jinx: taller improvisado y símbolo luminoso.
+      place('escondite-jinx',p=>{B(p,0,12,0,105,24,90,dark);B(p,0,36,0,78,28,64);for(let i=0;i<9;i++)B(p,-42+(i%5)*21,24+(i%3)*13,-25+Math.floor(i/5)*35,12,18+(i%3)*10,12,i%2?trim:roof);ring(p,0,60,34,18,4,glow);B(p,0,60,35,4,32,3,glow);});
+      // Invernadero: bastidor de cristal y cultivos quimtec.
+      place('invernadero',p=>{B(p,0,8,0,132,16,100,dark);for(let x=-54;x<=54;x+=27){B(p,x,36,0,3,54,90,trim);B(p,x,62,0,28,3,90,glow);}for(let z=-38;z<=38;z+=25)B(p,0,36,z,120,3,3,trim);for(let x=-36;x<=36;x+=24)for(let z=-22;z<=22;z+=22)C(p,x,20,z,4,4,22,glow,8);});
+      // Árbol de las Luciérnagas: tronco, ramas y copa luminosa.
+      place('arbol',p=>{C(p,0,72,0,24,34,140,M('#4b3b2d'),12);for(let i=0;i<8;i++){const a=i*Math.PI/4;const pts=[new T.Vector3(0,30,0),new T.Vector3(Math.cos(a)*48,55,Math.sin(a)*42),new T.Vector3(Math.cos(a)*95,100+Math.sin(i)*18,Math.sin(a)*85)];add(p,new T.TubeGeometry(new T.CatmullRomCurve3(pts),16,5,6,false),M('#514333'));}for(let i=0;i<18;i++){const a=i*2.399;add(p,new T.IcosahedronGeometry(1,1),M('#345a40',0.05,'#143b21'),Math.cos(a)*(25+(i%5)*14),125+(i%4)*18,Math.sin(a)*(22+(i%5)*14),24+(i%3)*7,18+(i%4)*8,22+(i%3)*7);}for(let i=0;i<20;i++){const a=i*2.399;add(p,new T.SphereGeometry(1,8,6),glow,Math.cos(a)*(35+(i%4)*15),75+(i%6)*15,Math.sin(a)*(32+(i%4)*15),3,3,3);}});
+      // Puente de Zaun: calzada industrial, pilonos y cables de neón.
+      place('puente-zaun',p=>{B(p,0,10,0,420,16,100,dark);B(p,0,19,0,400,4,82,trim);for(const x of [-170,-85,0,85,170]){B(p,x,40,0,12,48,14,trim);B(p,x,65,0,18,5,20,dark);}for(const side of [-1,1]){const pts=[];for(let i=0;i<=20;i++){const x=-195+i*390/20;pts.push(new T.Vector3(x,50+Math.sin(i/20*Math.PI)*32,side*38));}add(p,new T.TubeGeometry(new T.CatmullRomCurve3(pts),40,3,6,false),glow,0,0,0);}});
+      // Foso: anillo de combate y postes.
+      place('foso',p=>{C(p,0,5,0,82,95,10,trim,24);C(p,0,8,0,48,55,8,dark,20);for(let i=0;i<12;i++){const a=i*Math.PI/6;B(p,Math.cos(a)*90,12,Math.sin(a)*90,8,24,8,trim,a);}});
+    }
+    group.add(root);
   }
 
   /** Suelo: la carta pintada de la ciudad (calles, barrios, agua) como textura. */
@@ -517,6 +580,7 @@
       const group = new T.Group();
       ground(group, map, groundCanvas, zaun);
       buildings(group, map, zaun);
+      landmarks(group, map, zaun);
       water(group, map, zaun);
       scene.add(group);
       world = zaun ? zaunWorld(scene, map) : piltoverWorld(scene, map);
