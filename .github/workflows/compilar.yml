@@ -230,7 +230,8 @@ jobs:
             Instaladores del fangame de Arcane (no oficial).
             - Windows: el `Setup` (instalador) o el `portable` (sin instalar).
             - Mac: `arm64` (Apple Silicon) o `x64` (Intel). Sin firmar: la primera vez, clic derecho → Abrir.
-            - Android: `arcane-fangame-*-android-universal-debug.apk`.
+            - Android de prueba: `arcane-fangame-*-android-universal-debug.apk` (instalación directa; no es una versión de Play Store).
+            - Android firmado: `arcane-fangame-*-android-universal-release.apk` y `*-android-universal-release.aab` si están configurados los secretos de firma.
           files: dist/*
           overwrite_files: true
           fail_on_unmatched_files: true
