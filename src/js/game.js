@@ -143,11 +143,12 @@
     input.click();
   }
 
-  /** Inicia una nueva historia con el personaje creado. */
+  /** Nueva partida: ofrece contexto opcional antes de crear personaje. */
   function newGame(s) {
     slot = s;
+    const root = document.querySelector('#view-creator');
     window.App.go('creator');
-    Creator.start(async (player, stats) => {
+    const launchCreator = () => Creator.start(async (player, stats) => {
       G = newState(player, stats);
       tab = 'historia';
       contact = null;
@@ -156,8 +157,22 @@
       window.App.go('game');
       toast(`Objetivo: ve a ${objectiveName()}`, 'good');
     });
+    root.innerHTML = '';
+    const screen = document.createElement('section');
+    screen.className = 'world-entry';
+    screen.innerHTML = `<div class="world-entry-backdrop" aria-hidden="true"></div><article class="world-entry-panel">
+      <p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">¿Es tu primera vez en Piltover y Zaun?</h1>
+      <p class="world-entry-copy">Puedes descubrir el mundo antes de crear tu personaje o ir directamente al creador si ya lo conoces.</p>
+      <div class="world-entry-actions"><button class="btn primary world-entry-new" type="button">Sí, soy nuevo/a</button><button class="btn world-entry-known" type="button">Ya conozco este mundo</button></div>
+      <p class="world-entry-foot">La partida comienza después de crear el personaje.</p></article>`;
+    root.append(screen);
+    screen.querySelector('.world-entry-known').addEventListener('click', launchCreator, { once: true });
+    screen.querySelector('.world-entry-new').addEventListener('click', () => {
+      screen.querySelector('.world-entry-panel').innerHTML = `<p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">Antes de cruzar la grieta…</h1>
+      <p class="world-entry-copy">Piltover presume de progreso, academias y poder; Zaun sobrevive entre humo, talleres y alianzas frágiles. Tus decisiones, tus vínculos y el lugar de donde vienes cambiarán cómo te trata la gente. No necesitas conocer la serie: descubrirás el mundo jugando.</p><div class="world-entry-actions"><button class="btn primary world-entry-continue" type="button">Entendido, crear personaje</button></div>`;
+      screen.querySelector('.world-entry-continue').addEventListener('click', launchCreator, { once: true });
+    }, { once: true });
   }
-
   /** Restaura una partida guardada. */
   async function loadGame(s) {
     const data = await store.load(s);
