@@ -304,7 +304,7 @@
       }
 
       function intro() {
-        const c = card(def.title, `<p>${def.desc}</p><p class="mg-ctrl"><b>Controles:</b> ${(U.touch && def.touchControls) || def.controls}</p><p class="mg-goal">${goalTxt(def.goal)}</p>${opts.bonus ? `<p class="mg-bonus">Tus habilidades te dan ventaja +${opts.bonus} en este minijuego.</p>` : ''}`,
+        const c = card(def.title, `<p>${def.desc}</p><p class="mg-goal">${goalTxt(def.goal)}</p>${opts.bonus ? `<p class="mg-bonus">Tus habilidades te dan ventaja +${opts.bonus} en este minijuego.</p>` : ''}`,
           [['¡Empezar!', 'primary hex-btn', () => { c.remove(); start(); }], ['Salir', 'ghost', () => close(false)]]);
       }
 
@@ -410,6 +410,8 @@
         window.removeEventListener('keyup', ku, true);
         window.removeEventListener('pointerup', up);
         window.removeEventListener('pointercancel', up);
+        window.removeEventListener('blur', releaseInputs);
+        keys.clear(); mouse.down = false; swipe = null; pointerStart = null;
         box.classList.add('out');
         setTimeout(() => box.remove(), 300);
         resolve(win);
@@ -430,28 +432,44 @@
       window.addEventListener('keydown', kd, true);
       window.addEventListener('keyup', ku, true);
       const pos = (e) => { const r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; };
-      // Eventos de puntero: valen igual para ratón y para dedo (móvil).
+      // Un solo sistema de puntero para ratón, lápiz y dedo; los gestos no generan clics fantasma.
+      canvas.style.touchAction = 'none';
       canvas.addEventListener('pointermove', pos);
-      // Deslizar el dedo (solo en los minijuegos con «swipe») equivale a pulsar una flecha;
-      // un toque corto sigue siendo un clic. El ratón no cambia.
       let swipe = null;
+      let pointerStart = null;
       canvas.addEventListener('pointerdown', (e) => {
-        e.preventDefault(); pos(e); mouse.down = true; mouse.clicks.push({ x: mouse.x, y: mouse.y });
+        e.preventDefault();
+        pos(e);
+        mouse.down = true;
+        pointerStart = { x: mouse.x, y: mouse.y, clientX: e.clientX, clientY: e.clientY, id: e.pointerId, type: e.pointerType };
         swipe = def.swipe && e.pointerType !== 'mouse' ? { x: e.clientX, y: e.clientY, id: e.pointerId } : null;
+        try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       });
       const up = (e) => {
+        const start = pointerStart;
+        // Ignore releases from unrelated pointers; do not cancel the active drag.
+        if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
         mouse.down = false;
-        if (!swipe || e?.pointerId !== swipe.id) return;
-        const dx = e.clientX - swipe.x;
-        const dy = e.clientY - swipe.y;
+        const start = pointerStart;
+        if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
+        pointerStart = null;
+        if (e.type === 'pointercancel' || !e.clientX && !e.clientY || !running) { swipe = null; return; }
+        const dx = e.clientX - start.clientX;
+        const dy = e.clientY - start.clientY;
+        const moved = Math.max(Math.abs(dx), Math.abs(dy));
+        if (swipe && e.pointerId === swipe.id && moved >= 32) {
+          const k = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'arrowleft' : 'arrowright') : (dy < 0 ? 'arrowup' : 'arrowdown');
+          pressed.push(k);
+          buzz(10);
+        } else if (moved < 18) {
+          mouse.clicks.push({ x: start.x, y: start.y });
+        }
         swipe = null;
-        if (e.type === 'pointercancel' || !running || Math.max(Math.abs(dx), Math.abs(dy)) < 32) return;
-        const k = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'arrowleft' : 'arrowright') : (dy < 0 ? 'arrowup' : 'arrowdown');
-        pressed.push(k);
-        buzz(10);
       };
       window.addEventListener('pointerup', up);
       window.addEventListener('pointercancel', up);
+      const releaseInputs = () => { mouse.down = false; keys.clear(); swipe = null; pointerStart = null; };
+      window.addEventListener('blur', releaseInputs);
 
       // En pantallas táctiles, los minijuegos de teclado llevan botones grandes.
       if (touchUI() && def.touchKeys) {
