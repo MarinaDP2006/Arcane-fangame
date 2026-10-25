@@ -298,9 +298,13 @@
       el('p', { class: 'muted' }, 'Tu origen decide tu ruta, los personajes que conoces primero y cómo te miran los demás.'));
     const grid = el('div', { class: 'origin-grid' });
     for (const [id, o] of Object.entries(C().origins)) {
-      const cv = el('canvas', { class: 'origin-scene' });
+      // Reutiliza el arte local del juego para que la selección muestre las ciudades
+      // ya incluidas en el proyecto, en vez de generar una escena nueva en cada tarjeta.
+      const cityArt = window.CustomArt.image('lugares', id) || `img/arte/lugares/${id}.webp`;
       const card = el('button', {
         class: `origin-card origin-${id}${draft.origin === id ? ' active' : ''}`,
+        style: `--origin-art:url("${cityArt}")`,
+        'aria-pressed': String(draft.origin === id),
         onclick: () => {
           if (draft.origin !== id) {
             draft.origin = id; draft.district = o.districts[0]; draft.job = o.jobs[0].id; draft.family = 'ninguna';
@@ -313,10 +317,9 @@
           Audio2.playMusic(id);
           rerender();
         },
-      }, cv, el('div', { class: 'origin-info' }, el('h3', {}, o.label), el('p', {}, o.tagline),
-        el('small', {}, id === 'zaun' ? 'Empiezas con: Vander, Vi, Jinx' : 'Empiezas con: Jayce, Viktor, Heimerdinger')));
+      }, el('div', { class: 'origin-info' }, el('h3', {}, o.label), el('p', {}, o.tagline),
+        el('small', {}, id === 'zaun' ? 'Química · callejones · supervivencia' : 'Hextech · poder · progreso')));
       grid.append(card);
-      requestAnimationFrame(() => Scenes.mount(cv, id === 'zaun' ? 'zaun' : 'piltover'));
     }
     body.append(grid, nav());
   }
