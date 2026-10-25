@@ -1642,8 +1642,7 @@
             el('span', { class: 'avatar sm', html: Portrait.forCharacter(id) }),
             el('div', {}, el('b', {}, charName(id)), el('small', { id: 'chat-topics', class: 'muted' })),
             el('div', { class: 'chat-mode', role: 'tablist' },
-              el('button', { class: `cm-btn${chatMode(id) === 'tree' ? ' on' : ''}`, onclick: () => setChatMode(id, 'tree') }, 'Opciones'),
-              window.AI.ready() ? el('button', { class: `cm-btn${chatMode(id) === 'ai' ? ' on' : ''}`, title: 'Chat libre opcional', onclick: () => setChatMode(id, 'ai') }, '✦ Libre') : null)),
+              el('button', { class: 'cm-btn on', 'aria-selected': 'true', onclick: () => setChatMode(id, 'tree') }, 'Opciones escritas'))),
           el('div', { id: 'chat-log', class: 'log' }),
           el('div', { id: 'dlg-choices', class: 'choices' }))));
     refreshChatHead(id);
