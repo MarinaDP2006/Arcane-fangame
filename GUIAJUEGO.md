@@ -216,7 +216,7 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 - [ ] Silenciar el audio no impide continuar el juego.
 - [ ] No aparecen sonidos atascados tras cambiar de pantalla.
 
-**Importante:** esta prueba corresponde al sistema de audio procedural actual. No marques como aprobada la reproducción de tres archivos externos hasta que existan y estén integrados.
+**Importante:** el reproductor ya está configurado para `assets/music/menu-theme.mp3`, `assets/music/a-bicentennial-instrumental.mp3` (Piltover) y `assets/music/sucker-instrumental.mp3.mp3` (Zaun). Los archivos existen en el repositorio; falta probar su reproducción en una ejecución real. Si una pista no carga, debe activarse la música sintetizada de respaldo.
 
 ### Prueba H. Minijuegos, atlas y códice
 - [ ] Abre el Salón de minijuegos.
@@ -297,8 +297,8 @@ Para ver el historial de imágenes y su versión de origen, abre [capturasjuego/
 
 ## 11. Si quieres continuar después de la primera partida
 - Para mover o recuperar guardados: [partidas-guardadas-guia.md](partidas-guardadas-guia.md).
-- Para habilitar la IA (KoboldCpp, la única del juego): [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
-- Para entender cómo está programado el juego: [GUIA.md](GUIA.md).
+- Para habilitar el chat libre actual (KoboldCpp; Ollama aún no está integrado en la aplicación): [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
+- Para entender cómo está programado el juego: [Guía técnica](Guía%20técnica.md).
 - Para probar modelos 3D personales: [GUIA-MODELOS-3D-Y-PRUEBAS.md](GUIA-MODELOS-3D-Y-PRUEBAS.md).
 
 Disfruta el viaje a tu ritmo: para comenzar no necesitas conocer toda la historia; basta con elegir un origen y prestar atención a las personas que conozcas por el camino.
