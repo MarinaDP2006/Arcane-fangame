@@ -146,9 +146,12 @@
   /** Nueva partida: ofrece contexto opcional antes de crear personaje. */
   function newGame(s) {
     slot = s;
+    // Solo quien indica que está descubriendo Arcane verá presentaciones en el comunicador.
+    let showCharacterDescriptions = false;
     const root = document.querySelector('#view-creator');
     window.App.go('creator');
     const launchCreator = () => Creator.start(async (player, stats) => {
+      player.showCharacterDescriptions = showCharacterDescriptions;
       G = newState(player, stats);
       tab = 'historia';
       contact = null;
@@ -161,13 +164,14 @@
     const screen = document.createElement('section');
     screen.className = 'world-entry';
     screen.innerHTML = `<div class="world-entry-backdrop" aria-hidden="true"></div><article class="world-entry-panel">
-      <p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">¿Es tu primera vez en Piltover y Zaun?</h1>
-      <p class="world-entry-copy">Puedes descubrir el mundo antes de crear tu personaje o ir directamente al creador si ya lo conoces.</p>
-      <div class="world-entry-actions"><button class="btn primary world-entry-new" type="button">Sí, soy nuevo/a</button><button class="btn world-entry-known" type="button">Ya conozco este mundo</button></div>
+      <p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">¿Conoces Arcane y a sus personajes?</h1>
+      <p class="world-entry-copy">Si estás descubriendo Arcane, verás una presentación breve de cada personaje en el comunicador. Si ya conoces la serie, la ocultaremos para mantener la inmersión.</p>
+      <div class="world-entry-actions"><button class="btn primary world-entry-new" type="button">Estoy descubriendo Arcane</button><button class="btn world-entry-known" type="button">Ya conozco Arcane</button></div>
       <p class="world-entry-foot">La partida comienza después de crear el personaje.</p></article>`;
     root.append(screen);
-    screen.querySelector('.world-entry-known').addEventListener('click', launchCreator, { once: true });
+    screen.querySelector('.world-entry-known').addEventListener('click', () => { showCharacterDescriptions = false; launchCreator(); }, { once: true });
     screen.querySelector('.world-entry-new').addEventListener('click', () => {
+      showCharacterDescriptions = true;
       screen.querySelector('.world-entry-panel').innerHTML = `<p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">Antes de cruzar la grieta…</h1>
       <p class="world-entry-copy">Piltover presume de progreso, academias y poder; Zaun sobrevive entre humo, talleres y alianzas frágiles. Tus decisiones, tus vínculos y el lugar de donde vienes cambiarán cómo te trata la gente. No necesitas conocer la serie: descubrirás el mundo jugando.</p><div class="world-entry-actions"><button class="btn primary world-entry-continue" type="button">Entendido, crear personaje</button></div>`;
       screen.querySelector('.world-entry-continue').addEventListener('click', launchCreator, { once: true });
@@ -1634,7 +1638,8 @@
             el('i', { class: 'cp-shine' })),
           el('div', { class: 'cp-plate' },
             el('h2', {}, charName(id)),
-            el('small', {}, info?.role || '')),
+            el('small', {}, info?.role || ''),
+            G.player.showCharacterDescriptions && info?.summary ? el('p', { class: 'cp-intro' }, info.summary) : null),
           el('div', { class: 'cp-aff', id: 'chat-aff' }),
           el('div', { class: 'cp-rel', id: 'chat-rel' }),
           el('div', { class: 'cp-actions' },
@@ -1645,8 +1650,7 @@
             el('span', { class: 'avatar sm', html: Portrait.forCharacter(id) }),
             el('div', {}, el('b', {}, charName(id)), el('small', { id: 'chat-topics', class: 'muted' })),
             el('div', { class: 'chat-mode', role: 'tablist' },
-              el('button', { class: `cm-btn${chatMode(id) === 'tree' ? ' on' : ''}`, onclick: () => setChatMode(id, 'tree') }, 'Opciones'),
-              el('button', { class: `cm-btn${chatMode(id) === 'ai' ? ' on' : ''}`, title: 'Escribe lo que quieras (IA)', onclick: () => setChatMode(id, 'ai') }, '✦ Libre'))),
+              el('button', { class: 'cm-btn on', 'aria-selected': 'true', onclick: () => setChatMode(id, 'tree') }, 'Opciones escritas'))),
           el('div', { id: 'chat-log', class: 'log' }),
           el('div', { id: 'dlg-choices', class: 'choices' }))));
     refreshChatHead(id);
@@ -1678,14 +1682,10 @@
     if (top) top.textContent = fresh ? `✦ ${fresh} tema${fresh > 1 ? 's' : ''} por descubrir` : 'Todo hablado por ahora';
   }
 
-  // Modo del comunicador: opciones escritas o chat libre con IA.
-  function chatMode(id) {
-    return talkState().mode?.[id] || (window.AI.ready() ? 'ai' : 'tree');
-  }
-  /** Cambia entre diálogo escrito y chat libre opcional. */
-  function setChatMode(id, m) {
-    talkState().mode = { ...(talkState().mode || {}), [id]: m };
-    document.querySelectorAll('.chat-mode .cm-btn').forEach((b, i) => b.classList.toggle('on', (i === 1) === (m === 'ai')));
+  // En esta fase todo el comunicador funciona con árboles de diálogo escritos; no usa IA.
+  function chatMode() { return 'tree'; }
+  function setChatMode(id) {
+    talkState().mode = { ...(talkState().mode || {}), [id]: 'tree' };
     showDialog(id);
     persist();
   }
