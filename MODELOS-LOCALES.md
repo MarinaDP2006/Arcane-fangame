@@ -1,11 +1,11 @@
 # Modelos locales y Ollama
 
-Esta guía explica cómo usar Ollama como proveedor local de la historia libre y del chat con personajes. La integración disponible en esta rama se selecciona desde **Ajustes → IA de la historia y los chats → Proveedor de IA → Ollama**. El modelo sigue ejecutándose en tu equipo; el juego no aloja ni descarga modelos por ti.
+Esta guía explica cómo usar Ollama como proveedor local de la historia libre y del chat con personajes. Selecciónalo desde **Ajustes → IA de la historia y los chats → Proveedor de IA → Ollama**. El modelo se ejecuta en tu equipo; el juego no aloja ni descarga modelos por ti.
 
 ## 1. Instalar y comprobar Ollama
 
 1. Instala Ollama desde https://ollama.com/ y arranca el servicio.
-2. Descarga un modelo compatible, por ejemplo:
+2. Descarga un modelo compatible:
 
    ```bash
    ollama pull qwen3:4b
@@ -34,7 +34,7 @@ En Ajustes selecciona Ollama y deja el modelo `arcane-narrador`. Si prefieres ot
 - Pulsa **Probar conexión** en Ajustes. Si falla, comprueba que Ollama está activo, que el modelo existe (`ollama list`) y que la versión instalada expone la API compatible con OpenAI en `/v1/chat/completions`.
 - Para usar Ollama desde un móvil o tableta, `127.0.0.1` no es el PC: escribe la IP local del PC y el puerto 11434. Configura Ollama para aceptar conexiones desde la red local y comprueba el firewall.
 - No expongas el puerto de Ollama a Internet. Usa solo una red de confianza y restringe el acceso cuando sea posible.
-- En un navegador web, las reglas de CORS y los permisos de red local pueden impedir la conexión; prueba primero la aplicación de escritorio o el transporte nativo móvil.
+- En navegador web, las reglas de CORS y los permisos de red local pueden impedir la conexión; prueba primero la aplicación de escritorio o el transporte nativo móvil.
 
 ## 4. Problemas habituales
 
