@@ -1674,15 +1674,12 @@
     if (top) top.textContent = fresh ? `✦ ${fresh} tema${fresh > 1 ? 's' : ''} por descubrir` : 'Todo hablado por ahora';
   }
 
-  // Modo del comunicador: opciones escritas o chat libre con IA.
-  function chatMode(id) {
-    // Los diálogos escritos son la experiencia predeterminada y no requieren IA.
-    return talkState().mode?.[id] || 'tree';
-  }
-  /** Cambia entre diálogo escrito y chat libre opcional. */
-  function setChatMode(id, m) {
-    talkState().mode = { ...(talkState().mode || {}), [id]: m };
-    document.querySelectorAll('.chat-mode .cm-btn').forEach((b, i) => b.classList.toggle('on', (i === 1) === (m === 'ai')));
+  // En esta fase el comunicador usa exclusivamente árboles de diálogo escritos.
+  // Fuerza el modo local incluso si una partida antigua guardó "ai" como preferencia.
+  function chatMode() { return 'tree'; }
+  function setChatMode(id) {
+    talkState().mode = { ...(talkState().mode || {}), [id]: 'tree' };
+    document.querySelectorAll('.chat-mode .cm-btn').forEach((b) => b.classList.add('on'));
     showDialog(id);
     persist();
   }
