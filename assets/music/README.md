@@ -7,8 +7,8 @@ Rutas objetivo de la integración. Hay que comprobar el código y los paquetes p
 | Uso | Ruta esperada |
 |---|---|
 | Menú / inicio | `assets/music/menu-theme.mp3` |
-| Zaun | `assets/music/zaun-theme.mp3` |
-| Piltover | `assets/music/piltover-theme.mp3` |
+| Zaun | `assets/music/sucker-instrumental.mp3` |
+| Piltover | `assets/music/a-bicentennial-instrumental.mp3` |
 
 Los tres MP3 convertidos existen fuera del repositorio, pero todavía no están versionados aquí. No se puede afirmar que el audio renderizado esté integrado ni que el bucle o el empaquetado hayan pasado pruebas. Mantener la música procedural como fallback hasta añadir los binarios y probar la reproducción real.
 
