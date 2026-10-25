@@ -1692,3 +1692,64 @@ html[data-tema="zaun"] #view-settings .settings h2 { color: #8af1cc; }
   .place-acts { overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .place-act { width: 100%; touch-action: manipulation; }
 }
+
+
+/* Adaptación táctil completa: objetivos cómodos, scroll controlado y Códice distinto en móvil/tablet. */
+@media (pointer: coarse), (max-width: 900px) {
+  button, .btn, .tab, .home-btn, .home-city, .place-act, .map-ctrl, .wiki-tabs button, .wiki-origin button {
+    touch-action: manipulation;
+  }
+  .mg-pad-btn, .mg-regateo .mg-pad-btn, .scene2d-touch-btn {
+    min-width: 54px; min-height: 54px; padding: .7rem; font-size: 1rem;
+  }
+  .mg-regateo .mg-pad-btn { min-width: 78px; min-height: 62px; }
+  .mg-pad { gap: .65rem; padding: .45rem; }
+  .mg-card button, .mg-card [role="button"] { min-height: 48px; }
+  .overlay-panel .codex { min-width: 0; }
+  .wiki-layout { min-width: 0; }
+  input, select, textarea { font-size: 16px; }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  .wiki-layout { display: grid; grid-template-columns: minmax(150px, 0.72fr) minmax(230px, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: .7rem; height: 100%; min-height: 0; }
+  .wiki-side { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(180px, .7fr) minmax(200px, 1fr); gap: .55rem; align-items: start; min-width: 0; }
+  .wiki-side #wiki-search { grid-column: 1; }
+  .wiki-side #wiki-origin { grid-column: 2; }
+  .wiki-side .wiki-tabs { grid-column: 1 / -1; display: flex; flex-wrap: nowrap; overflow-x: auto; gap: .4rem; }
+  .wiki-list { grid-column: 1; grid-row: 2; min-height: 0; overflow: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
+  .wiki-detail { grid-column: 2; grid-row: 2; min-height: 0; overflow: auto; }
+  .overlay-panel.codex { max-width: min(96vw, 1040px); max-height: 92dvh; overflow: auto; }
+}
+@media (max-width: 760px) {
+  .wiki-layout { display: flex; flex-direction: column; gap: .6rem; height: 100%; min-height: 0; overflow: hidden; }
+  .wiki-side { display: flex; flex-direction: column; gap: .5rem; min-width: 0; }
+  .wiki-side #wiki-search { width: 100%; min-height: 46px; }
+  .wiki-side #wiki-origin { display: flex; width: 100%; overflow-x: auto; gap: .35rem; }
+  .wiki-side #wiki-origin button { flex: 0 0 auto; min-height: 42px; }
+  .wiki-side .wiki-tabs { display: flex; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; gap: .35rem; max-width: 100%; padding-bottom: .2rem; }
+  .wiki-side .wiki-tabs .tab { flex: 0 0 auto; min-height: 42px; white-space: nowrap; }
+  .wiki-list { flex: 1 1 42%; min-height: 120px; overflow: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; }
+  .wiki-card { min-width: 0; }
+  .wiki-card-art { min-height: 80px; }
+  .wiki-detail { flex: 1 1 58%; min-height: 180px; overflow: auto; }
+  .overlay-panel.codex { width: 100%; max-width: 100%; max-height: 100dvh; overflow: auto; padding: max(12px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); }
+  .overlay-panel.codex .tabs { display: flex; overflow-x: auto; flex-wrap: nowrap; }
+  .overlay-panel.codex .tab { flex: 0 0 auto; min-height: 42px; }
+  .mg-pad { gap: .45rem; }
+  .mg-pad-btn { min-width: 52px; min-height: 52px; }
+  .home-menu button { min-height: 48px; }
+}
+.inspiration-backdrop { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: rgba(4,5,10,.88); backdrop-filter: blur(10px); }
+.inspiration-panel { width: min(1180px, 100%); max-height: 100%; overflow: auto; border: 1px solid rgba(202,163,92,.55); border-radius: 18px; background: linear-gradient(145deg,#17151b,#0a0b10 65%); color: #f2e8d5; padding: clamp(14px,2vw,28px); box-shadow: 0 24px 90px #000b; }
+.inspiration-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:1rem; }
+.inspiration-head h2 { margin:.2rem 0; font-family:Cinzel,serif; }
+.inspiration-head p { margin:.35rem 0; color:#c7bfaf; }
+.inspiration-head .eyebrow { letter-spacing:.16em; font-size:.72rem; color:#d8b778; }
+.inspiration-close { flex:0 0 46px; width:46px; height:46px; border:1px solid #7e6944; border-radius:50%; color:#fff1d1; background:#24202a; font-size:1.8rem; }
+.inspiration-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
+.inspiration-card { min-width:0; border:1px solid #514638; border-radius:12px; padding:.75rem; background:#111117; }
+.inspiration-card img { display:block; width:100%; max-height:42vh; object-fit:contain; background:#09090d; border-radius:8px; }
+.inspiration-card h3 { font-size:1rem; margin:.7rem 0 .35rem; color:#ecd3a0; }
+.inspiration-card p { font-size:.9rem; color:#c5bdaf; line-height:1.45; }
+.inspiration-card a { display:inline-flex; min-height:44px; align-items:center; color:#f3d59a; }
+.inspiration-missing { border-color:#a54b4b; }
+@media (max-width: 700px) { .inspiration-grid { grid-template-columns:minmax(0,1fr); } .inspiration-card img { max-height:none; } .inspiration-head { position:sticky; top:-1px; background:#141218; z-index:1; padding-bottom:.5rem; } }
