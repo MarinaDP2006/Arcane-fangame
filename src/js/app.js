@@ -107,6 +107,7 @@
           btn('Nueva partida', () => Game.newGame(), hasSave ? '' : 'primary'),
           btn('Cargar partida', () => App.go('game')),
           btn('Ajustes', () => App.go('settings')),
+          btn('Arte e inspiración', () => window.ArcaneInspiration?.open()),
           U.desktop ? btn('Salir', () => window.arcane.quit(), 'quiet') : null)),
       el('div', { class: 'home-hint' }, U.touch ? 'Desliza el dedo para abrir la grieta entre Piltover y Zaun' : 'Mueve el ratón para abrir la grieta entre Piltover y Zaun'));
     root.append(home);
