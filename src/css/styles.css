@@ -2336,3 +2336,33 @@ p, h1, h2, h3, label, .muted, .small { overflow-wrap: anywhere; }
 @media (max-height: 520px) and (orientation: landscape) {
   .overlay-panel, .action-menu, .play-panel, .guia-panel, .codex-panel, .settings-panel { max-height: calc(100dvh - 8px); }
 }
+
+ 
+/* Arcane-fangame — Piltover/Zaun visual pass and cross-device controls */
+:root { --arcane-focus: #e5c56b; --arcane-glass: rgba(12, 16, 24, .88); }
+:where(button, a, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--arcane-focus);
+  outline-offset: 3px;
+}
+:where(button, .btn, .home-btn, .mg-pad-btn) { touch-action: manipulation; }
+.home-panel, .panel, .mg-card { box-sizing: border-box; }
+.home-panel { border-color: rgba(229,197,107,.35); box-shadow: 0 22px 72px rgba(0,0,0,.42); }
+.home-btn { min-height: 46px; }
+.home-btn:active, .btn:active { transform: translateY(1px); }
+.mg-pad-btn { min-width: 46px; min-height: 46px; }
+.mg-card, .mg-card.panel { max-width: calc(100vw - 24px); }
+@media (max-width: 760px) {
+  .home-panel { width: min(94vw, 560px); max-width: 100%; padding: clamp(.75rem, 3vw, 1.2rem); }
+  .home-title { font-size: clamp(1.6rem, 7vw, 3rem); overflow-wrap: anywhere; }
+  .home-menu { gap: .55rem; }
+  .home-btn { width: 100%; min-height: 48px; justify-content: center; }
+  .home-cities { flex-wrap: wrap; gap: .55rem; }
+  .mg-card, .mg-card.panel { width: min(560px, calc(100vw - 16px)); max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); overflow: auto; overscroll-behavior: contain; }
+  .mg-stage { max-width: 100vw; max-height: 100dvh; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  .mg-card, .mg-card.panel { max-height: calc(100dvh - 12px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
