@@ -9,9 +9,9 @@ El chat libre opcional usa **KoboldCpp**. El juego no incluye un modelo de lengu
 - **Código principal:** `src/js/ai.js`.
 - **Función que construye las instrucciones del personaje:** `systemPrompt(G, id)`.
 - **Conexión:** API compatible con OpenAI en `/v1/chat/completions`, normalmente en el puerto `5001`.
-- **Guía de conexión:** [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
+- **Guía de conexión:** este repositorio no tiene actualmente una guía independiente llamada `GUIA-KOBOLDCPP.md`; consulta los ajustes disponibles en la versión instalada y el código de `src/js/ai.js`. La guía [MODELOS-LOCALES.md](MODELOS-LOCALES.md) describe la preparación de Ollama, que todavía no está integrada en el juego.
 
-La configuración de Ollama que pueda existir en el repositorio es preparatoria: **no significa que Ollama esté integrado automáticamente en el juego**. La aplicación actual selecciona KoboldCpp para el chat con IA, salvo que la IA esté desactivada en Ajustes.
+La configuración de Ollama que existe en el repositorio es preparatoria: **no significa que Ollama esté integrado automáticamente en el juego**. El perfil está desactivado por defecto y debe mantenerse así hasta implementar y probar el proveedor. La aplicación actual selecciona KoboldCpp para el chat con IA, salvo que la IA esté desactivada en Ajustes.
 
 ### Qué contexto recibe el modelo
 
@@ -90,7 +90,7 @@ Después, prueba manualmente:
 3. Verificar cambios de afinidad, relaciones, indicadores de decisiones y consecuencias.
 4. Probar el guardado y la carga de una partida creada antes de los cambios.
 5. Revisar el salto de la Parte I a la Parte II y los finales alternativos.
-6. Probar el chat libre con KoboldCpp, con más de un personaje, y confirmar que la partida sigue funcionando con la IA desactivada.
+6. Probar el chat libre actual con KoboldCpp, con más de un personaje, y confirmar que la partida sigue funcionando con la IA desactivada. No marcar la integración con Ollama como hecha hasta conectar y probar el proveedor real.
 7. Comprobar que los personajes salvados no vuelven a aparecer como fallecidos en escenas posteriores.
 
 `npm run check` ayuda a detectar errores automáticos, pero no sustituye una partida completa de prueba. No se debe afirmar que una campaña está validada hasta haber realizado esas pruebas manuales en la versión que se vaya a publicar.
