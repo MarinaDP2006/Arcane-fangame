@@ -1569,24 +1569,16 @@
   // Evita adelantos en el comunicador: el coqueteo requiere salto temporal y afinidad;
   // los temas sobre otros personajes esperan a que el jugador los haya conocido.
   function prematureChatOption(o, id) {
-    const text = String(o?.t || '');
+    const textWords = String(o?.t || '').toLocaleLowerCase().split(/[^a-z0-9áéíóúüñ]+/).filter(Boolean);
     if (o?.tone === 'coqueto') {
       if (!Relations.adultTimeline(G) || affOf(id) < 3) return true;
       if (['familia', 'pariente', 'hermandad'].includes(Relations.status(G, id))) return true;
     }
     for (const other of (S().cast || [])) {
       if (other === id || G.met.includes(other)) continue;
-      const name = charName(other);
-      if (!name || name.length < 3) continue;
-      const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\  /** Decide si una opción de diálogo debe ocultarse. */
-  function dlgHidden(req, id) {
-    if (!req) return false;
-    const season = G.progress.season || 1;
-    if ((req.season && season < req.season) || (req.maxSeason && season > req.maxSeason)) return true;
-    return !condMet(req);
-  }
-');
-      if (new RegExp('\\b' + escaped + '\\b', 'i').test(text)) return true;
+      const nameWords = charName(other).toLocaleLowerCase().split(/[^a-z0-9áéíóúüñ]+/).filter(Boolean);
+      if (nameWords.length !== 1 || nameWords[0].length < 3) continue;
+      if (textWords.includes(nameWords[0])) return true;
     }
     return false;
   }
