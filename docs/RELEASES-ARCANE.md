@@ -1,48 +1,50 @@
-# Compilar Arcane-fangame y crear releases
+# Compilaciones y Releases — Arcane-fangame
 
-El fangame de Arcane vive en este repositorio (`MarinaDP2006/Arcane-fangame`, rama `main`). El mundo nuevo se lleva aparte, en `RIFTS-GEARS`.
+Repositorio: [MarinaDP2006/Arcane-fangame](https://github.com/MarinaDP2006/Arcane-fangame). Versión fuente actual: la indicada en `package.json` (no copies ejemplos antiguos de versiones).
 
-## 1. El workflow «Compilar Arcane»
+## Compilación automatizada
 
-Todo está en un solo archivo: `.github/workflows/compilar.yml` (sustituye a los antiguos `build.yml` y `android.yml`).
+Workflow: [Compilar Arcane (Windows, macOS y Android)](../.github/workflows/compilar.yml).
 
-| Job | Runner | Qué hace |
-| --- | --- | --- |
-| Comprobaciones del proyecto | Ubuntu | `npm ci --ignore-scripts`, `npm run check`, `npm run web` y `node --check` de todos los `.js` del repositorio. Lee la versión de `package.json`. |
-| Windows (x64) | Windows | `npm ci` y `npm run dist:win`: instalador `Setup` y `portable`. |
-| macOS (x64) y macOS (arm64) | macOS | `npm ci` y `npm run dist:mac` para una sola arquitectura: DMG y ZIP sin firmar. |
-| Android (universal) | Ubuntu | JDK 21 (Temurin), Android SDK 36, `npm run android:sync` y `gradlew assembleDebug`. Con llave, también APK firmado y AAB. |
-| Publicar Release (manual) | Ubuntu | Solo si lo lanzas a mano desde `main` con «publicar» marcado. |
+- Se ejecuta en cada push a `main`, en cada PR a `main` y manualmente desde Actions.
+- Primero valida `npm ci --ignore-scripts`, `npm run check`, `npm run web` y la sintaxis JavaScript rastreada.
+- Si pasan las comprobaciones, compila en trabajos separados Windows x64, macOS Intel (x64), macOS Apple Silicon (arm64) y Android universal.
+- Los builds automáticos no publican Releases. Los artefactos de Actions son temporales y se guardan durante el periodo de retención elegido.
 
-Las compilaciones solo empiezan si las comprobaciones pasan, y cada sistema compila por separado: si falla uno, los demás siguen y el workflow queda en rojo. Ningún paso ignora errores.
+## Descargar una compilación de prueba
 
-Se ejecuta en cada push a `main`, en cada pull request hacia `main` y a mano. **Ni los push ni las etiquetas publican nada.**
+1. Abre **Actions → Compilar Arcane (Windows, macOS y Android)**.
+2. Entra en una ejecución con resultado correcto y baja a **Artifacts**.
+3. Descarga solo el artefacto de tu dispositivo y descomprímelo si el navegador lo entrega como ZIP.
 
-## 2. Lanzarlo a mano y descargar los artefactos
+| Dispositivo | Archivo |
+|---|---|
+| Windows x64 | Instalador `Arcane-fangame-<versión>-Setup.exe` o portable `Arcane-fangame-<versión>-portable.exe`. |
+| macOS Intel | `Arcane-Fangame-<versión>-mac-x64.dmg` o ZIP equivalente. |
+| macOS Apple Silicon | `Arcane-Fangame-<versión>-mac-arm64.dmg` o ZIP equivalente. |
+| Android / tableta | `arcane-fangame-<versión>-android-universal-debug.apk`, APK de prueba para instalar directamente. |
 
-1. Abre **Actions → Compilar Arcane (Windows, macOS y Android) → Run workflow**.
-2. Elige la rama, deja **publicar** sin marcar y, si quieres, cambia **retencion** (días que se guardan los artefactos, de 1 a 90; por defecto 14).
-3. Cuando termine, abre la ejecución y baja a **Artifacts**. Cada uno se llama `arcane-fangame-<versión>-<plataforma>-<arquitectura>`:
-   - `arcane-fangame-1.27.0-windows-x64`
-   - `arcane-fangame-1.27.0-macos-x64` y `arcane-fangame-1.27.0-macos-arm64`
-   - `arcane-fangame-1.27.0-android-universal` (dentro, `arcane-fangame-1.27.0-android-universal-debug.apk`)
+Los nombres concretos son los que adjunte la ejecución; no uses el nombre de una versión antigua como garantía del contenido.
 
-Con la CLI de GitHub: `gh workflow run compilar.yml --ref main -f retencion=14` y, al terminar, `gh run download <id-de-la-ejecución>`.
+### Android: prueba frente a publicación
 
-## 3. Publicar una versión
+- **Debug APK:** sirve para instalar y probar la app directamente en un dispositivo compatible. No es un paquete firmado para publicar en Google Play.
+- **Release APK y AAB:** solo se generan si están configurados correctamente los secretos `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD`. El AAB es el formato de entrega habitual a Google Play.
+- No guardes el keystore ni contraseñas en el repositorio, en Issues o en el artefacto de una compilación.
 
-1. Sube el número de `version` en `package.json`, por ejemplo `1.28.0`, y fusiónalo en `main`.
-2. Lanza el workflow a mano desde `main` con **publicar** marcado.
-3. Si todas las compilaciones pasan, se crea la etiqueta `arcane-v1.28.0` y la Release con los instaladores y el APK. Si alguna falla, no se publica nada.
+Antes de probar en Android, instala el APK en una tableta o teléfono real, abre una partida, verifica audio, controles táctiles, rotación, guardado y reanudación. Una compilación correcta no sustituye estas pruebas.
 
-Crear una etiqueta o una Release a mano desde la web ya no lanza compilaciones.
+## Publicar una Release
 
-## 4. Firma de Android (opcional)
+1. Confirma que los cambios están en `main` y que `version` de `package.json` usa formato `X.Y.Z`.
+2. Abre **Actions → Compilar Arcane (Windows, macOS y Android) → Run workflow**, elige `main`, deja retención entre 1 y 90 días y marca **Publicar la Release**.
+3. El trabajo de publicación solo corre si todos los builds de Windows, macOS y Android han terminado correctamente.
+4. Se crea o actualiza la Release `arcane-v<versión>` con los artefactos generados en esa ejecución. Si falla una plataforma, no se publica una versión parcial.
 
-Para publicar en Google Play se necesita una clave de firma propia y los secretos `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` y `ANDROID_KEY_PASSWORD` (Settings → Secrets and variables → Actions). Si existe la llave pero falta alguno de los otros tres, el job falla en vez de sacar un APK a medias. La llave se escribe en la carpeta temporal del runner y se borra al acabar. No uses ni subas el keystore al repositorio.
+La publicación es manual. Un push normal no publica una Release. No marques una versión como estable hasta instalarla y probarla en los dispositivos que quieras soportar.
 
-En pull requests desde forks GitHub no entrega secretos: solo se compila el APK de prueba.
+## Enlaces
 
-## 5. Descargas
-
-Las versiones aparecerán en la pestaña **Releases** de `https://github.com/MarinaDP2006/Arcane-fangame/releases`. No se debe anunciar una versión como estable hasta comprobar los builds y probar los instaladores.
+- [Releases publicadas](https://github.com/MarinaDP2006/Arcane-fangame/releases)
+- [Ejecuciones de compilación](https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml)
+- [Pendientes](TAREAS-PENDIENTES.md)
