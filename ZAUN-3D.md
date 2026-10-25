@@ -1,7 +1,4 @@
 # Zaun explorable: seis escenarios 3D
-
-Primera versión funcional de escenarios geométricos originales inspirados en las seis imágenes entregadas por la autora. Los recursos originales del juego no se borran y **Piltover no se modifica**.
-
 | Imagen | Espacio | Lugar de entrada |
 |---|---|---|
 | 1 | Ciudad vertical, balcones y pasarelas, neón verde | Los Callejones |
