@@ -427,13 +427,65 @@
       clouds.add(s);
     }
     scene.add(clouds);
+
+    // Globos aerostáticos de las Hexpuertas: cúpula textil, cesta y cuerdas, con rutas
+    // de vuelo suaves y repetibles. Son geometría local, no sprites ni recursos externos.
+    const balloons = new T.Group();
+    const balloonColors = ['#c64e47', '#e0b85d', '#3e8b8a', '#6b5b9e', '#d7d0b9'];
+    const ropeMat = new T.MeshStandardMaterial({ color: '#6a5137', roughness: 0.9 });
+    const basketMat = new T.MeshStandardMaterial({ color: '#6b4930', roughness: 0.95 });
+    for (let i = 0; i < 5; i++) {
+      const craft = new T.Group();
+      const color = balloonColors[i % balloonColors.length];
+      const envelopeMat = new T.MeshStandardMaterial({ color, roughness: 0.72, metalness: 0.02 });
+      const seamMat = new T.MeshStandardMaterial({ color: i % 2 ? '#f1d99a' : '#f0d7c5', roughness: 0.8 });
+      const envelope = new T.Mesh(new T.SphereGeometry(1, 20, 16), envelopeMat);
+      envelope.scale.set(29, 41, 26);
+      envelope.position.y = 36;
+      envelope.castShadow = true;
+      craft.add(envelope);
+      for (const y of [23, 42, 58]) {
+        const band = new T.Mesh(new T.TorusGeometry(26 * Math.sqrt(Math.max(0.35, 1 - ((y - 36) / 42) ** 2)), 1.6, 6, 24), seamMat);
+        band.position.y = y;
+        band.rotation.x = Math.PI / 2;
+        craft.add(band);
+      }
+      const basket = new T.Mesh(new T.BoxGeometry(20, 15, 20), basketMat);
+      basket.position.y = -22;
+      basket.castShadow = true;
+      craft.add(basket);
+      for (const x of [-8, 8]) for (const z of [-8, 8]) {
+        const rope = new T.Mesh(new T.CylinderGeometry(0.8, 0.8, 22, 5), ropeMat);
+        rope.position.set(x, -8, z);
+        craft.add(rope);
+      }
+      const baseY = 270 + (i % 3) * 85;
+      craft.position.set(map.w * (0.08 + i * 0.19), baseY, map.h * (0.78 + (i % 2) * 0.055));
+      craft.userData = { speed: 22 + i * 4, baseY, phase: i * 1.7, drift: 55 + (i % 3) * 18 };
+      balloons.add(craft);
+    }
+    scene.add(balloons);
+
     scene.fog = new T.Fog('#e9d3a6', 3500, 14000);
     scene.add(new T.HemisphereLight('#fff1d0', '#6a5a42', 1.2));
     const key = new T.DirectionalLight('#ffd89a', 2.2);
     key.position.set(map.w / 2 + 1800, 2600, map.h / 2 - 1600);
     key.target.position.set(map.w / 2, 0, map.h / 2);
     scene.add(key, key.target);
-    return { key, tick(t, dt) { clouds.children.forEach((c) => { c.position.x += c.userData.v * dt; if (c.position.x > map.w / 2 + 9500) c.position.x -= 19000; }); } };
+    return { key, tick(t, dt) {
+      clouds.children.forEach((c) => { c.position.x += c.userData.v * dt; if (c.position.x > map.w / 2 + 9500) c.position.x -= 19000; });
+      balloons.children.forEach((b) => {
+        const d = b.userData;
+        b.position.x += d.speed * dt;
+        if (b.position.x > map.w + 140) b.position.x = -140;
+        b.position.y = d.baseY + Math.sin(t * 0.55 + d.phase) * 13;
+        b.position.z += Math.sin(t * 0.18 + d.phase) * dt * 10;
+        if (b.position.z < map.h * 0.68) b.position.z = map.h * 0.68;
+        if (b.position.z > map.h * 0.91) b.position.z = map.h * 0.91;
+        b.rotation.z = Math.sin(t * 0.45 + d.phase) * 0.035;
+        b.rotation.y = Math.sin(t * 0.22 + d.phase) * 0.12;
+      });
+    } };
   }
 
   function zaunWorld(scene, map) {

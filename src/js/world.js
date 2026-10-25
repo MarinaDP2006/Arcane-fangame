@@ -234,38 +234,58 @@
     return out;
   }
 
-  /**
-   * Habitantes ambientales de la ciudad. No son contactos del comunicador ni marcadores
-   * interactivos: viven en la capa 3D y recorren pequeños circuitos alrededor de zonas públicas.
-   * Sus identidades y trayectorias son deterministas para evitar que salten al cambiar de fotograma.
-   */
-  function ambientNpcs() {
-    const def = W().maps[mapId];
-    const anchors = (def?.locations || []).filter((l) => l.x > 260 && l.y > 260 && l.x < map.w - 260 && l.y < map.h - 260);
-    if (!anchors.length) return [];
-    const count = Math.min(12, Math.max(8, Math.round(anchors.length * 0.7)));
-    const out = [];
-    for (let i = 0; i < count; i++) {
-      const anchor = anchors[(i * 7 + Math.floor(i / 3)) % anchors.length];
-      const phase = i * 2.399963229728653;
-      const rx = 190 + (i % 4) * 24;
-      const rz = 145 + (i % 3) * 28;
-      const a = ambientTime * (0.16 + (i % 4) * 0.018) + phase;
-      const rawX = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
-      const rawY = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
-      const point = nearestWalkable(rawX, rawY, 16);
-      if (!point) continue;
-      const { x, y } = point;
-      const speed = Math.hypot(Math.sin(a) * rx, Math.cos(a) * rz) * (0.16 + (i % 4) * 0.018);
-      out.push({
-        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true,
-        speed: Math.min(82, Math.max(28, speed)),
-        home: Math.atan2(-Math.sin(a), Math.cos(a)),
-      });
-    }
-    return out;
-  }
+  // Habitantes originales del mundo: nombres, oficios y líneas escritas. No son personajes canon
+  // ni se generan con IA; sus pequeños diálogos dan vida a los barrios sin añadir contactos falsos.
+  const CITY_RESIDENTS = {
+    piltover: [
+      { id: 'liora', name: 'Liora Tern', role: 'relojera', lines: ['Si el reloj del Consejo se atrasa, culpan a los relojeros. Si adelanta, se atribuyen el mérito.', 'Las calles brillan, pero quien las limpia nunca sale en los retratos.'] },
+      { id: 'corin', name: 'Corin Vale', role: 'aprendiz hextec', lines: ['La Academia dice que una chispa basta para cambiar el mundo. A mí me bastaría con que no explotara mi mesa.', 'No toques ese prototipo; llevo tres días sin dormir.'] },
+      { id: 'mara', name: 'Mara Bell', role: 'vendedora de telas', lines: ['El oro compra seda, pero no compra buen gusto.', 'Hoy todos quieren azul. Mañana dirán que siempre quisieron verde.'] },
+      { id: 'olan', name: 'Olan Rusk', role: 'mensajero', lines: ['Si ves un sobre con sello del Consejo, no preguntes qué contiene.', 'Cruzo media ciudad antes del desayuno. La gente importante llama a eso puntualidad.'] },
+      { id: 'dalia', name: 'Dalia Wren', role: 'artesana', lines: ['Estas cornisas tardan meses en tallarse y segundos en olvidarse.', 'Zaun también sabe construir cosas hermosas; aquí solo miran hacia arriba.'] },
+      { id: 'bren', name: 'Bren Orlo', role: 'estudiante', lines: ['Heimerdinger dice que la curiosidad es un deber. Mis exámenes dicen que es un problema.', '¿Has visto los globos de las Hexpuertas? Un día viajaré en uno.'] },
+      { id: 'eren', name: 'Eren Sola', role: 'técnico de las Hexpuertas', lines: ['Los globos no flotan por magia: se equilibran por capas. Bueno, y algo de magia.', 'Si oyes tres campanadas en el muelle, aléjate de los anclajes.'] },
+      { id: 'nessa', name: 'Nessa Orl', role: 'guardia civil', lines: ['No busco problemas. Busco que los problemas no lleguen al Consejo.', 'En el puente cambia el uniforme, pero no el cansancio.'] },
+    ],
+    zaun: [
+      { id: 'rook', name: 'Rook Fen', role: 'chatarrero', lines: ['Todo tiene arreglo si no te importa qué pieza sobra.', 'La gente de arriba tira cosas mejores que las que compran abajo.'] },
+      { id: 'sella', name: 'Sella Coil', role: 'vendedora de tuberías', lines: ['Si gotea verde, no lo toques. Si gotea rojo, corre.', 'Hoy vendo válvulas. Ayer vendía cuchillos. La ciudad decide.'] },
+      { id: 'kett', name: 'Kett Varo', role: 'repartidor', lines: ['Si el paquete zumba, no es mío. Si explota, tampoco.', 'Cruzar el Sumidero con botas secas es un milagro.'] },
+      { id: 'vira', name: 'Vira Coil', role: 'mecánica', lines: ['La máquina no está rota; está ofendida.', 'Dame dos tornillos, una cuerda y cinco minutos.'] },
+      { id: 'nilo', name: 'Nilo Dren', role: 'recolector', lines: ['No mires el humo demasiado tiempo. Te empieza a parecer bonito.', 'Las chimeneas hacen más ruido cuando alguien no quiere que le oigan.'] },
+      { id: 'tessa', name: 'Tessa Marr', role: 'sanadora', lines: ['El humo de aquí no cura nada. Cúbrete la boca antes de acercarte.', 'Si alguien se cae, grita. No intentes cargarlo a solas.'] },
+      { id: 'jori', name: 'Jori Pell', role: 'estibador', lines: ['La fábrica paga tarde, pero paga. A veces.', 'He visto cosas salir de ese conducto que no caben en ningún barril.'] },
+      { id: 'puck', name: 'Puck', role: 'mensajero de las Luciérnagas', lines: ['Si ves pintura verde en una pared, sigue el camino. Si ves azul, da la vuelta.', 'No todos los que llevan máscara trabajan para Silco.'] },
+    ],
+  };
 
+  /** Habitantes con rutas seguras y diálogos escritos, separados del reparto canon. */
+  function ambientNpcs() {
+    const routes = ambientRoutes();
+    const profiles = CITY_RESIDENTS[mapId] || [];
+    if (!routes.length || !profiles.length) return [];
+    return profiles.slice(0, Math.min(profiles.length, routes.length, 8)).map((profile, i) => {
+      const route = routes[(i * 13 + Math.floor(i / 2) * 7) % routes.length];
+      const speed = 30 + (i % 4) * 6;
+      const travel = (ambientTime * speed + i * 37) % (route.length * 2);
+      const reverse = travel > route.length;
+      const distance = reverse ? route.length * 2 - travel : travel;
+      let walked = 0;
+      let seg = route.segments[route.segments.length - 1];
+      let u = 1;
+      for (const s of route.segments) {
+        if (distance <= walked + s.length) { seg = s; u = s.length ? (distance - walked) / s.length : 0; break; }
+        walked += s.length;
+      }
+      const x = seg.x1 + (seg.x2 - seg.x1) * u;
+      const y = seg.y1 + (seg.y2 - seg.y1) * u;
+      return {
+        kind: 'resident', id: `resident-${mapId}-${profile.id}`, name: profile.name, role: profile.role,
+        lines: profile.lines, loc: route.loc, x, y, px: x, py: y, ambient: true, moving: true, speed,
+        home: reverse ? Math.atan2(seg.x1 - seg.x2, seg.y1 - seg.y2) : Math.atan2(seg.x2 - seg.x1, seg.y2 - seg.y1),
+      };
+    });
+  }
   /** Lugar del objetivo de la historia. */
   function objectiveLoc() {
     const id = cb.objective?.();
@@ -1159,6 +1179,59 @@
     return false;
   }
 
+  const ambientRouteCache = {};
+
+  /**
+   * Crea tramos peatonales seguros alrededor de los lugares. Cada segmento se muestrea antes
+   * de aceptarlo; los residentes recorren cadenas de segmentos válidos, nunca diagonales a través de edificios.
+   */
+  function ambientRoutes() {
+    if (ambientRouteCache[mapId]) return ambientRouteCache[mapId];
+    const routes = [];
+    for (const anchor of map.def.locations) {
+      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[anchor.id] || [60, 60];
+      const baseRadius = Math.max(88, footprint[0], footprint[1]) + 18;
+      for (let ring = 0; ring < 6; ring++) {
+        const radius = baseRadius + ring * 20;
+        const points = [];
+        for (let i = 0; i < 32; i++) {
+          const a = i * Math.PI * 2 / 32;
+          const p = { x: anchor.x + Math.cos(a) * radius, y: anchor.y + Math.sin(a) * radius };
+          points.push(blockedAt(p.x, p.y, 10) ? null : p);
+        }
+        let chain = [];
+        const flush = () => {
+          if (chain.length >= 2) {
+            const segments = [];
+            let length = 0;
+            for (let i = 0; i < chain.length - 1; i++) {
+              const a = chain[i], b = chain[i + 1];
+              const len = Math.hypot(b.x - a.x, b.y - a.y);
+              if (len > 4) { segments.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, length: len }); length += len; }
+            }
+            if (length >= 18) routes.push({ loc: anchor.id, segments, length });
+          }
+          chain = [];
+        };
+        for (let i = 0; i < points.length - 1; i++) {
+          const a = points[i], b = points[i + 1];
+          let clear = Boolean(a && b);
+          if (clear) for (let j = 1; j < 5; j++) {
+            const t = j / 5;
+            if (blockedAt(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, 10)) { clear = false; break; }
+          }
+          if (clear) {
+            if (!chain.length) chain.push(a);
+            chain.push(b);
+          } else flush();
+        }
+        flush();
+      }
+    }
+    ambientRouteCache[mapId] = routes;
+    return routes;
+  }
+
   /** Si se pulsa sobre un tejado, busca un punto de calle cercano en vez de colocar al jugador dentro. */
   function nearestWalkable(x, y, radius = PLAYER_RADIUS) {
     const px = Math.max(radius, Math.min(map.w - radius, x));
@@ -1265,8 +1338,11 @@
   function updateNear() {
     let best = null;
     let bd = Infinity;
-    for (const n of npcs()) {
-      const d = Math.hypot(n.px - G.world.px, n.py - G.world.py);
+    const nearbyPeople = [...npcs(), ...(r3d ? ambientNpcs() : [])];
+    for (const n of nearbyPeople) {
+      const nx = n.px ?? n.x;
+      const ny = n.py ?? n.y;
+      const d = Math.hypot(nx - G.world.px, ny - G.world.py);
       if (d < NEAR_CHAR && d < bd) { best = n; bd = d; }
     }
     if (!best) {
@@ -1300,9 +1376,10 @@
     if (!el) return;
     let txt = '';
     const act = U.touch ? 'toca aquí' : 'pulsa <kbd>E</kbd>';
-    if (hover?.kind === 'loc') txt = `<b>${U.esc(hover.name)}</b> · ${U.touch ? 'toca' : 'clic'} para ver qué hacer`;
-    else if (hover?.kind === 'char') txt = `Hablar con <b>${U.esc(hover.name)}</b>`;
+    if (near?.kind === 'resident') txt = `<b>${U.esc(near.name)}</b> · ${U.esc(near.role)} · ${act} para hablar`;
     else if (near?.kind === 'char') txt = `<b>${U.esc(near.name)}</b> te mira · ${act} para hablar`;
+    else if (hover?.kind === 'loc') txt = `<b>${U.esc(hover.name)}</b> · ${U.touch ? 'toca' : 'clic'} para ver qué hacer`;
+    else if (hover?.kind === 'char') txt = `Hablar con <b>${U.esc(hover.name)}</b>`;
     else if (near?.kind === 'loc') txt = `<b>${U.esc(near.name)}</b> · ${act} para entrar`;
     if (el.dataset.txt !== txt) {
       el.innerHTML = txt;
@@ -1316,6 +1393,7 @@
     if (paused || !thing) return;
     Audio2.sfx.click();
     if (thing.kind === 'char') return cb.onTalk?.(thing.id);
+    if (thing.kind === 'resident') return cb.onResident?.(thing);
     if (thing.kind === 'frag') {
       cb.onFragment?.(thing);
       return;
@@ -1345,6 +1423,7 @@
 
   /** Abre el lugar resaltado o, si no hay ninguno, el más cercano al centro de la vista. */
   function interact() {
+    if (near?.kind === 'resident' || near?.kind === 'char') return open(near);
     if (hover) return open(hover);
     if (near) return open(near);
     const l = map.def.locations.reduce((b, x) => (Math.hypot(x.x - G.world.x, x.y - G.world.y) < Math.hypot(b.x - G.world.x, b.y - G.world.y) ? x : b));
