@@ -9,6 +9,7 @@ Documento de seguimiento. Marca una tarea como completada solo tras verificarla 
 - [ ] Probar inicio, diálogo, elección, guardado, recarga y continuación.
 - [ ] Revisar la corrección del parallax del título (PR #36) y mantener la navegación por clic.
 - [ ] Probar escritorio y móvil, rutas de recursos, consola y compilación.
+- [ ] Tras los cambios de empaquetado, verificar una nueva ejecución de Actions y probar los instaladores de Windows, los paquetes macOS y el APK en dispositivos reales antes de anunciar una Release estable.
 - [ ] Limpiar documentación obsoleta y comprobar que la web generada tiene una portada válida.
 - [ ] Integrar Ollama solo como función opcional, tras conectar el proveedor y probarlo; la configuración actual está desactivada.
 - [ ] Revisar el PR #38 del modelo personalizado, si sigue abierto; no asumir que el modelo está integrado en la app.
