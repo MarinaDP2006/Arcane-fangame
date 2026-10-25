@@ -8,7 +8,7 @@ Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 
 
 1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
 2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
-3. **IA opcional:** el chat de IA del juego de escritorio usa actualmente KoboldCpp. Ollama está preparado como perfil local experimental, pero `config/ollama.json` está desactivado y la aplicación no lo carga automáticamente. No confundas preparar `arcane-narrador` con tener el juego integrado con Ollama; consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md). Los diálogos escritos permiten jugar sin IA.
+3. **IA opcional:** el chat de IA del juego de escritorio usa actualmente KoboldCpp. Ollama puede seleccionarse como proveedor local experimental desde Ajustes de IA. Consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md) para instalarlo, configurar el modelo y resolver problemas de conexión. Los diálogos escritos permiten jugar sin IA.
 
 ## Web y arte
 
