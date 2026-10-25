@@ -277,7 +277,6 @@
         if (distance <= walked + s.length) { seg = s; u = s.length ? (distance - walked) / s.length : 0; break; }
         walked += s.length;
       }
-      if (reverse) u = 1 - u;
       const x = seg.x1 + (seg.x2 - seg.x1) * u;
       const y = seg.y1 + (seg.y2 - seg.y1) * u;
       return {
