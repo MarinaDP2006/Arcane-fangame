@@ -23,11 +23,15 @@
     return Object.entries(state(G)).find(([, v]) => v === 'pareja')?.[0] || null;
   }
 
+  function familyLinksFor(family) {
+    return R().familyLinks[family] || R().legacyFamilyLinks?.[family] || {};
+  }
+
   function label(G, id) {
     const k = status(G, id);
     if (!k) return '';
     if (k === 'familia') return familyLabel(id);
-    if (k === 'pariente') return R().familyLinks[G.player.family]?.[id]?.[1] || R().kinds.pariente.label;
+    if (k === 'pariente') return familyLinksFor(G.player.family)[id]?.[1] || R().kinds.pariente.label;
     return R().kinds[k]?.label || '';
   }
 
@@ -38,7 +42,7 @@
 
   // Lazos que vienen de la familia elegida en la creación.
   function applyFamily(G) {
-    const links = R().familyLinks[G.player.family] || {};
+    const links = familyLinksFor(G.player.family);
     const rel = state(G);
     for (const [id, [kind]] of Object.entries(links)) if (!rel[id]) rel[id] = kind;
   }
@@ -183,5 +187,5 @@
     return [].concat(list[index]);
   }
 
-  window.Relations = { adultTimeline, together, spendTime, NEEDS, status, label, partner, applyFamily, relOptions, ask, greet, hang, hangLabel, small, canRomance, needsFamily, info };
+  window.Relations = { adultTimeline, together, spendTime, NEEDS, status, label, partner, applyFamily, familyLinksFor, relOptions, ask, greet, hang, hangLabel, small, canRomance, needsFamily, info };
 })();
