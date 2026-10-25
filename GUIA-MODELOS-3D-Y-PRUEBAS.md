@@ -1,6 +1,6 @@
 # Seis personajes 3D a color y pruebas de Windows
 
-> **En pocas palabras:** Esta guía explica cómo colocar modelos 3D propios en el juego y cómo comprobar si se cargan bien. No necesitas empezar programando: primero coloca los archivos en la carpeta correcta, activa las opciones indicadas y prueba un personaje. Los modelos personales se leen desde tu equipo; no se incluyen automáticamente en el repositorio ni se convierten por arte de magia en modelos animados. Haz una copia de tus partidas antes de probar.
+> **Alcance: modelos 3D convencionales, sin IA.** Esta guía trata de importar archivos que ya existen (`.glb`, `.fbx`, `.obj` o ZIP compatible), probar materiales, escala y animaciones, y corregir errores. No genera modelos con IA ni conecta un servicio de IA. La integración de modelos es independiente del chat, la historia y Ollama.
 
 ## Estado real
 La rama `main` incluye código para reconocer archivos `.zip`, `.fbx` y `.glb` de personajes, además de un modo por defecto **«NPC quietos y a color»**. Esta configuración deja al jugador moverse, pero no ejecuta animaciones del modelo importado de los personajes secundarios. La posición e interacción de cada personaje se conservan. **Tus seis ZIP no se suben a GitHub**: se leen desde tu ordenador. No modifiques ni borres las imágenes o las partidas antiguas.
@@ -21,7 +21,18 @@ La rama `main` incluye código para reconocer archivos `.zip`, `.fbx` y `.glb` d
 | Ekko | Solo `FirelightEkko.blend` | Convertido con Blender a `ekko.glb` (copia, girado para mirar de frente), con su aerotabla, en El Árbol de las Luciérnagas |
 | Vi | Solo un `.blend` (exportación «NSFW») | Convertido con Blender a `vi.glb` solo con la ropa visible y los colores de su textura original, en Los Callejones |
 
-`ekko.glb` y `vi.glb` ya están en `%APPDATA%Arcane Piltover y Zaunartemodelos` y tienen prioridad sobre los ZIP. Si los pierdes o quieres repetirlo, usa `scriptsexportar-blend-a-glb.py` con Blender sobre una copia del `.blend` (las instrucciones están al principio del archivo). Los modelos importados están quietos en su pose original (en algunos casos en «T»), porque los archivos no traen animaciones.
+`ekko.glb` y `vi.glb` ya están en `%APPDATA%\\Arcane Piltover y Zaun\\arte\\modelos` y tienen prioridad sobre los ZIP. Si los pierdes o quieres repetirlo, usa `scripts\\exportar-blend-a-glb.py` con Blender sobre una copia del `.blend` (las instrucciones están al principio del archivo). Los modelos importados están quietos en su pose original (en algunos casos en «T»), porque los archivos no traen animaciones.
+
+## Cómo importar modelos propios sin IA
+
+Los modelos son archivos 3D convencionales que ya tienes o has creado en un editor 3D. No se generan con IA.
+
+1. Entra en **Ajustes → Arte personal → modelos** y abre la carpeta del juego.
+2. Copia un ZIP con un `.glb` o `.fbx` y sus texturas si las necesita. No borres el original.
+3. Usa un nombre que coincida con el ID del personaje (por ejemplo, `vi.zip`, `jinx.zip` o `jugador.zip`).
+4. Activa **Personajes en 3D** y **NPC quietos y a color**; recarga el arte o reinicia el mapa.
+5. Comprueba escala, orientación, materiales y pies sobre el suelo. Los modelos estáticos no adquieren animaciones automáticamente.
+6. Si no carga, ejecuta el comprobador de modelos y usa el avatar de respaldo mientras corriges el archivo.
 
 ## Cómo importar los seis ZIP sin Blender
 1. Abre el juego en Windows.
