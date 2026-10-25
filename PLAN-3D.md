@@ -32,6 +32,10 @@ El proyecto **ya dispone** de un sistema de avatares 3D en `src/js/avatars3d.js`
 6. Verificar carga en el juego, orientación, escala, materiales, iluminación, animaciones, interacción, FPS y consumo de memoria en Windows y Android.
 7. Probar todas las variantes narrativas y el sistema de guardado. No fusionar una incorporación sin prueba visual.
 
+## Mapa 3D exterior de Piltover y Zaun
+
+`src/js/world3d.js` ahora construye hitos con siluetas diferenciadas para edificios y lugares clave de ambas ciudades y deja espacio libre a su alrededor. Esta es una mejora estructural del mapa, no una reconstrucción exacta de la serie. La fidelidad final aún requiere modelado artesanal, materiales específicos y validación visual contra referencias.
+
 ## Mejoras de mundo e interfaz aún pendientes
 - Mapa: transiciones consistentes entre vista general, ubicaciones y exploración, marcadores legibles y rutas táctiles.
 - Mundo 3D: escenarios explorables con colisiones, cámara y NPCs, no solo fondos o avatares tridimensionales.
