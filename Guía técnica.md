@@ -1,5 +1,7 @@
 # Guía técnica — Arcane-fangame
 
+> **En pocas palabras:** Si acabas de abrir el repositorio y no sabes por dónde empezar, esta guía te lleva por los archivos principales, las carpetas y los comandos habituales. También aclara qué herramientas se usan en escritorio y Android. Importante: una configuración o un documento puede describir una función prevista, pero solo una prueba real confirma que funciona.
+
 Manual para entender la estructura y los archivos principales de **Arcane-fangame**. Este repositorio es independiente de **Las ciudades del Umbral** (`MarinaDP2006/RIFTS-GEARS`).
 
 > **Estado real:** el juego se puede jugar mediante rol y diálogos escritos sin IA. El chat de IA de escritorio usa actualmente KoboldCpp. El perfil de Ollama está preparado como experimento, pero está desactivado y la aplicación no lo carga automáticamente. Que exista un archivo de configuración no significa que esa función esté integrada.
