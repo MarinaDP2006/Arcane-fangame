@@ -13,7 +13,7 @@ const fs = require('fs');
 const os = require('os');
 const { pathToFileURL } = require('url');
 
-// La app se llama «Grietas & Gears», pero las partidas, ajustes y arte siguen en la carpeta de siempre
+// La app visible se llama «Arcane-fangame»; las partidas, ajustes y arte conservan la carpeta de datos histórica
 // (%APPDATA%\Arcane Piltover y Zaun), así no se pierde nada al actualizar.
 // GRIETAS_DATOS permite probar el juego con otra carpeta sin tocar las partidas reales.
 app.setPath('userData', process.env.GRIETAS_DATOS || path.join(app.getPath('appData'), 'Arcane Piltover y Zaun'));
