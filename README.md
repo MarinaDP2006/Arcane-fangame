@@ -20,6 +20,12 @@ La web pública se genera con `npm run web`. La demo del repositorio se mantiene
 - `web/demo.html` + `web/demo-juego.js`: demo mantenida en el repositorio para desarrollo/pruebas; no enlazada desde la portada.
 - `web/arte-propio/`: recursos gráficos propios de la interfaz.
 
+## Guías de modelos e integración
+
+- [Modelos locales y Ollama](MODELOS-LOCALES.md): instalación, comprobación y estado real de integración.
+- [Guía de modelos 3D](GUIA-MODELOS-3D.md): formatos, rendimiento, integración por etapas y pruebas.
+- [Guía de KoboldCpp](GUIA-KOBOLDCPP.md): proveedor de chat local que usa actualmente el juego de escritorio.
+
 `npm run web` genera la carpeta `web-dist/` con el contenido listo para Render. Las imágenes de Arcane son propiedad de Riot Games / Fortiche Production; el proyecto es un fangame no oficial.
 
 ## Desarrollo
