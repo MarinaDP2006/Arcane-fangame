@@ -1965,3 +1965,151 @@ h1,h2,h3,.title-arcane,.home-title{ text-wrap:balance }
  .btn,.arcade-card{transition:none}
  .btn:hover,.arcade-card:hover{transform:none}
 }
+
+
+/* ===== Pasada integral de dirección artística Arcane: portada, juego, atlas, Códice y ajustes =====
+   La referencia guía toda la interfaz: metal trabajado, vidrio oscuro, luz hextech y contraste de ciudad.
+   No sustituye el arte del juego por una galería; viste los componentes funcionales existentes. */
+:root{
+  --arcane-gold:#c9a45e;
+  --arcane-gold-bright:#f0d99b;
+  --arcane-line:rgba(211,177,108,.32);
+  --arcane-shadow:0 22px 60px rgba(0,0,0,.42);
+  --arcane-ink:#090c12;
+  --arcane-panel:rgba(12,16,23,.94);
+}
+body{background:#080a10;color:#e9e5dc}
+body[data-city="piltover"],body[data-ciudad="piltover"]{
+  --city-accent:#e4c783;--city-glow:rgba(227,190,112,.18);--city-line:rgba(225,192,121,.36);
+}
+body[data-city="zaun"],body[data-ciudad="zaun"]{
+  --city-accent:#8ce0c5;--city-glow:rgba(59,198,158,.17);--city-line:rgba(104,218,184,.34);
+}
+button,input,select,textarea{font:inherit}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--city-accent,var(--arcane-gold-bright));outline-offset:3px;
+}
+.view{min-width:0}
+.panel,.card,.slot,.settings,.overlay-panel,.action-menu{
+  border-color:var(--city-line,var(--arcane-line));
+  box-shadow:var(--arcane-shadow);
+}
+.btn{border:1px solid rgba(214,181,113,.36);border-radius:8px;transition:background .2s,border-color .2s,transform .2s,box-shadow .2s}
+.btn:not(:disabled):hover{border-color:var(--city-accent,var(--arcane-gold-bright));box-shadow:0 0 0 1px var(--city-line),0 8px 24px rgba(0,0,0,.24)}
+.btn.primary{border:1px solid rgba(255,231,173,.58);background:linear-gradient(135deg,#f0d99b 0%,#c39a50 55%,#8f652d 100%);color:#17130c;text-shadow:none;font-weight:800}
+.btn.ghost,.btn.quiet{background:linear-gradient(145deg,rgba(35,39,44,.86),rgba(10,13,19,.94));color:#e7dfcf}
+.input,textarea,select{border:1px solid var(--city-line,var(--arcane-line));border-radius:8px;background:rgba(3,6,11,.82);color:#f4eee1}
+label,.field{min-width:0}
+.muted,small.muted{color:#aaa9a5}
+h1,h2,h3,.title-arcane,.title-arcane *{text-wrap:balance}
+#view-home{position:relative;isolation:isolate;overflow:hidden;background:#080a10}
+#view-home .home{min-height:100svh;min-height:100dvh}
+#view-home .home-art{filter:saturate(.88) contrast(1.04)}
+#view-home .home-art-in{transform:scale(1.025)}
+#view-home .home-shade{background:linear-gradient(180deg,rgba(5,7,11,.08),rgba(5,7,11,.1) 35%,rgba(5,7,11,.72)),radial-gradient(ellipse at 50% 45%,transparent 0%,rgba(3,5,9,.22) 72%)}
+#view-home .home-panel{width:min(92vw,680px);padding:clamp(1rem,3.2vw,2.2rem);border:1px solid rgba(231,199,128,.45);border-radius:18px;background:linear-gradient(145deg,rgba(9,12,18,.88),rgba(9,11,16,.68));box-shadow:0 28px 90px #0008,inset 0 1px rgba(255,240,196,.08);backdrop-filter:blur(13px)}
+#view-home .home-panel::before{content:"";position:absolute;inset:7px;pointer-events:none;border:1px solid rgba(231,199,128,.14);border-radius:12px}
+#view-home .home-title{font-size:clamp(2rem,6.2vw,4.5rem);letter-spacing:.12em;text-shadow:0 4px 25px #000,0 0 26px rgba(223,180,91,.18)}
+#view-home .home-cities{gap:.65rem;margin-top:.65rem}
+#view-home .home-city{min-height:44px;padding:.45rem .8rem;border-radius:7px;letter-spacing:.14em;text-transform:uppercase;font-size:.76rem}
+#view-home .home-city img{width:22px;height:22px;object-fit:contain}
+#view-home .home-menu{gap:.55rem;margin-top:clamp(1rem,3vh,2rem)}
+#view-home .home-btn{position:relative;min-height:50px;justify-content:center;border:1px solid rgba(219,183,110,.36);border-radius:8px;background:linear-gradient(135deg,rgba(27,31,38,.94),rgba(8,11,17,.94));color:#f1e8d5;letter-spacing:.09em;text-transform:uppercase;font-size:.82rem;font-weight:750;box-shadow:0 8px 24px #0004}
+#view-home .home-btn.primary{background:linear-gradient(130deg,#f2d995,#c39a50 60%,#89602b);color:#21190c;border-color:#ffe9ad}
+#view-home .home-btn .home-gem{filter:drop-shadow(0 0 4px rgba(239,208,137,.25))}
+#view-home .home-btn:hover{transform:translateY(-1px);border-color:var(--city-accent,var(--arcane-gold-bright))}
+#view-home .home-hint{bottom:max(1rem,env(safe-area-inset-bottom));font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;text-shadow:0 2px 9px #000}
+#view-game{position:relative;isolation:isolate;overflow:hidden}
+#view-game::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(115deg,rgba(5,8,14,.94),rgba(7,10,16,.8) 48%,rgba(5,8,14,.94)),url("../img/arte/lugares/piltover.webp") center/cover no-repeat;opacity:.95}
+body[data-city="zaun"] #view-game::before,body[data-ciudad="zaun"] #view-game::before{background:linear-gradient(115deg,rgba(3,13,13,.95),rgba(4,13,14,.8) 48%,rgba(3,9,12,.94)),url("../img/arte/lugares/zaun.webp") center/cover no-repeat}
+#view-game .menu{position:relative;border:1px solid var(--city-line,var(--arcane-line));background:linear-gradient(145deg,rgba(12,16,23,.94),rgba(5,8,13,.94));box-shadow:0 24px 70px #0008}
+#view-game .menu::before{content:"";position:absolute;inset:8px;pointer-events:none;border:1px solid rgba(221,185,111,.12);border-radius:10px}
+#view-game .menu>.muted{max-width:66ch;line-height:1.65}
+#view-game .title-arcane{font-size:clamp(1.8rem,4vw,3.3rem);text-shadow:0 3px 25px var(--city-glow);font-family:var(--display,serif)}
+#view-game .slot{background:linear-gradient(145deg,rgba(24,28,35,.95),rgba(7,10,15,.96));transition:transform .2s,border-color .2s}
+#view-game .slot:not(.empty):hover{transform:translateY(-2px);border-color:var(--city-accent)}
+#view-game .slot h3{color:var(--city-accent,var(--arcane-gold-bright));letter-spacing:.04em}
+#view-game .world-entry{min-height:100svh;min-height:100dvh;padding:clamp(.8rem,3vw,2rem)}
+#view-game .world-entry-panel{width:min(760px,100%);padding:clamp(1.2rem,4vw,3rem);position:relative;overflow:hidden}
+#view-game .world-entry-panel::before{content:"";position:absolute;inset:7px;border:1px solid rgba(232,199,125,.13);border-radius:12px;pointer-events:none}
+#view-game .world-entry-title{font-size:clamp(2rem,6vw,4rem);letter-spacing:.025em}
+#view-game .world-entry-actions .btn{min-height:48px}
+#view-creator .creator-bg{opacity:.92}
+#view-creator .creator-body,#view-creator .creator-stage{border-color:var(--city-line,var(--arcane-line));background:linear-gradient(145deg,rgba(18,22,29,.96),rgba(6,9,15,.97))}
+#view-creator .creator-body h2,#view-creator .creator-stage h3{color:var(--city-accent,var(--arcane-gold-bright))}
+#view-creator .origin-card{cursor:pointer;transition:transform .22s,border-color .22s,box-shadow .22s}
+#view-creator .origin-card:hover{transform:translateY(-3px)}
+#view-creator .origin-card.origin-piltover{--city-card:#f0d28c}
+#view-creator .origin-card.origin-zaun{--city-card:#8ce0c5}
+#view-creator .origin-card.active{border-color:var(--city-card,var(--city-accent));box-shadow:0 0 0 1px var(--city-card,var(--city-accent)),0 0 30px var(--city-glow)}
+/* Dentro de la partida: historia, mensajería, lista de contactos y paneles del mundo. */
+#view-game .play{min-height:calc(100svh - 1rem);border:1px solid var(--city-line,var(--arcane-line));border-radius:14px;overflow:hidden;background:rgba(5,8,13,.94);box-shadow:0 22px 70px #0008}
+#view-game .contacts{background:linear-gradient(180deg,rgba(16,20,27,.98),rgba(5,8,13,.98))}
+#view-game .contacts .me{padding:1rem;border-bottom:1px solid var(--city-line,var(--arcane-line))}
+#view-game .contact-list button{border-radius:9px;transition:background .18s,border-color .18s}
+#view-game .contact-list button.active{background:linear-gradient(100deg,var(--city-glow),rgba(8,11,16,.7));border-color:var(--city-line)}
+#view-game .play-main{background:linear-gradient(180deg,rgba(13,17,24,.97),rgba(5,8,13,.97))}
+#view-game .play-main .bubble,#view-game .chat-bubble{padding:.8rem 1rem;line-height:1.62;box-shadow:0 5px 18px #0003}
+#view-game .play-main .bubble:not(.me),#view-game .chat-bubble:not(.me){background:linear-gradient(145deg,rgba(26,30,37,.97),rgba(12,15,21,.97))}
+#view-game .play-main .bubble.me,#view-game .chat-bubble.me{background:linear-gradient(145deg,rgba(108,82,38,.45),rgba(32,27,20,.95));border-color:rgba(226,190,112,.34)}
+#view-game .chat-input-row{padding:.7rem;border-top:1px solid var(--city-line,var(--arcane-line));background:rgba(5,8,13,.98)}
+#view-game .chat-input-row .input{min-height:46px}
+.overlay{padding:clamp(.35rem,2vw,1rem)}
+.overlay-panel,.action-menu{border:1px solid var(--city-line,var(--arcane-line));background:linear-gradient(145deg,rgba(17,21,28,.98),rgba(5,8,13,.99));box-shadow:0 28px 90px #000b}
+.overlay-head{padding:1rem 1.15rem}
+.overlay-head h2,.overlay-head h3{color:var(--city-accent,var(--arcane-gold-bright));letter-spacing:.04em}
+.codex{background:linear-gradient(145deg,rgba(16,20,27,.98),rgba(5,8,13,.98));box-shadow:var(--arcane-shadow)}
+.codex-tabs .tab,.settings-tabs .tab,.tabs-v button{min-height:42px;padding:.55rem .8rem;border:1px solid transparent;background:rgba(255,255,255,.025);color:#d9d3c8}
+.codex-tabs .tab.active,.settings-tabs .tab.active,.tabs-v button.active{background:linear-gradient(135deg,var(--city-glow),rgba(9,12,18,.95));border-color:var(--city-line);color:var(--city-accent)}
+.codex-body,.codex-body p{line-height:1.7}
+.codex-body img{max-width:100%;height:auto;border-radius:8px}
+.guia-ficha,.atlas-card,.atlas-detail,.arcade-card{box-shadow:0 10px 30px #0004;transition:border-color .2s,transform .2s}
+.atlas-cityhead{border-bottom:1px solid var(--city-line)}
+.atlas-cityhead h2{letter-spacing:.07em}
+.atlas-stage{box-shadow:inset 0 0 40px #0005}
+.atlas-pin{min-width:32px;min-height:32px;border:1px solid rgba(255,237,185,.8);box-shadow:0 0 0 4px rgba(4,8,12,.5),0 0 20px var(--city-glow)}
+.atlas-pin:hover{transform:translate(-50%,-50%) scale(1.12)}
+.arcade-card{position:relative;overflow:hidden}
+.arcade-card::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--city-accent),transparent)}
+.arcade-card:hover{transform:translateY(-2px);border-color:var(--city-accent)}
+#view-settings{min-height:100svh;position:relative;isolation:isolate;padding:clamp(.6rem,2.5vw,2rem);background:linear-gradient(120deg,rgba(5,8,14,.9),rgba(5,8,14,.82)),url("../img/arte/lugares/piltover.webp") center/cover fixed}
+body[data-city="zaun"] #view-settings{background:linear-gradient(120deg,rgba(3,13,13,.92),rgba(3,10,12,.84)),url("../img/arte/lugares/zaun.webp") center/cover fixed}
+#view-settings .settings{width:min(1120px,100%);margin:clamp(.4rem,3vh,2rem) auto;border:1px solid var(--city-line,var(--arcane-line));background:linear-gradient(145deg,rgba(14,18,25,.97),rgba(5,8,13,.97));backdrop-filter:blur(14px)}
+#view-settings .settings h1,#view-settings .settings h2,#view-settings .settings h3{color:var(--city-accent,var(--arcane-gold-bright))}
+#view-settings .settings-page .field,#view-settings .settings-page .switch-row{padding:.75rem;border:1px solid rgba(221,185,111,.16);border-radius:9px;background:rgba(255,255,255,.018)}
+#view-settings .ai-settings{background:rgba(3,6,11,.5)}
+/* Lectura, navegación táctil y áreas seguras: todos los controles siguen siendo funcionales. */
+@media(max-width:800px){
+ #view-home .home-panel{width:min(100% - 1rem,560px);padding:1rem;border-radius:13px}
+ #view-home .home-title{font-size:clamp(1.65rem,8vw,3rem);letter-spacing:.075em}
+ #view-home .home-btn{min-height:50px;font-size:.78rem}
+ #view-game .play{min-height:calc(100svh - .7rem);border-radius:10px}
+ #view-game .play-main{padding:.65rem;min-width:0}
+ #view-game .chat-input-row{padding:.5rem;gap:.45rem}
+ #view-game .chat-input-row button{min-width:44px;min-height:44px}
+ #view-settings{padding:.5rem}
+ #view-settings .settings{padding:.9rem;border-radius:12px}
+ .overlay-panel,.action-menu{width:100%;max-width:100%;border-radius:12px}
+ .overlay-head{padding:.8rem}
+ .codex-tabs{display:flex;max-width:100%;overflow-x:auto;scrollbar-width:thin}
+ .codex-tabs .tab{flex:0 0 auto}
+ .codex-body{overflow-wrap:anywhere}
+ .atlas-detail{max-width:calc(100vw - 1rem)}
+ .arcade-card{min-height:90px}
+}
+@media(max-width:480px){
+ #view-home .home-cities{gap:.35rem}
+ #view-home .home-city{padding:.35rem .5rem;font-size:.68rem;letter-spacing:.08em}
+ #view-home .home-hint{max-width:90%;text-align:center;line-height:1.5}
+ #view-game .menu{padding:.8rem}
+ #view-game .world-entry-title{font-size:clamp(1.8rem,9vw,2.7rem)}
+ #view-game .play-main .bubble,#view-game .chat-bubble{padding:.65rem .75rem}
+ #view-settings .settings-tabs .tab{padding:.5rem .65rem}
+}
+@media(hover:none){
+ #view-home .home-btn:hover,#view-creator .origin-card:hover,.arcade-card:hover{transform:none}
+}
+@media(prefers-reduced-motion:reduce){
+ #view-home .home-btn,#view-creator .origin-card,.arcade-card,.btn{transition:none}
+ #view-home .home-btn:hover,#view-creator .origin-card:hover,.arcade-card:hover,.btn:hover{transform:none}
+}
