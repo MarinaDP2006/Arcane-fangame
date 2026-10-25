@@ -183,10 +183,14 @@
       const loc = locById(W().homes[id]);
       if (!loc || loc.map !== mapId) continue;
       const n = (byLoc[loc.id] = (byLoc[loc.id] || 0) + 1);
-      // De pie alrededor de su lugar, mirando hacia fuera hasta que te acercas.
+      // De pie fuera de la huella del edificio, en un punto de calle despejado.
       const a = 2.3 + (n - 1) * 1.15;
-      const px = loc.x + Math.cos(a) * 85;
-      const py = loc.y + Math.sin(a) * 85;
+      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[loc.id] || [60, 60];
+      const radius = Math.max(85, footprint[0] + 24, footprint[1] + 24);
+      const safe = nearestWalkable(loc.x + Math.cos(a) * radius, loc.y + Math.sin(a) * radius, 10);
+      if (!safe) continue;
+      const px = safe.x;
+      const py = safe.y;
       out.push({ kind: 'char', id, loc: loc.id, slot: n - 1, name: window.WIKI.personajes.find((p) => p.id === id)?.name || id, x: loc.x, y: loc.y, px, py, home: Math.atan2(px - loc.x, py - loc.y) });
     }
     return out;
