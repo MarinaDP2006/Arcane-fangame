@@ -780,12 +780,13 @@
         seen.add(n.id);
         let e = actors.npcs.get(n.id);
         if (!e) {
-          e = { av: A.create({ id: n.id }) };
+          e = { av: A.create({ id: n.id, ambient: Boolean(n.ambient) }) };
           actors.npcs.set(n.id, e);
           actors.group.add(e.av.holder);
         }
         e.av.holder.position.set(n.x, 0, n.y);
-        turnTo(e.av, n.x, n.y, n.home ?? 0, p, dt, t);
+        if (n.ambient) A.update(e.av, dt, n.moving ? (n.speed || 45) : 0, n.home ?? 0, t, false);
+        else turnTo(e.av, n.x, n.y, n.home ?? 0, p, dt, t);
       }
       for (const [id, e] of actors.npcs) if (!seen.has(id)) { A.dispose(e.av); actors.npcs.delete(id); }
       for (const g of actors.guards) turnTo(g.av, g.x, g.y, g.home, p, dt, t);
