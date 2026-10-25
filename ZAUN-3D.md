@@ -1,4 +1,6 @@
 # Zaun explorable: seis escenarios 3D
+
+> **En pocas palabras:** Este documento reúne las ideas y los espacios previstos para el mapa de Zaun. La intención es que la ciudad se sienta vertical, industrial, densa y llena de luces y pasarelas. Las descripciones son una guía de diseño: el resultado actual puede ser más sencillo y hay que comprobarlo jugando, no solo leyendo el código.
 | Imagen | Espacio | Lugar de entrada |
 |---|---|---|
 | 1 | Ciudad vertical, balcones y pasarelas, neón verde | Los Callejones |
