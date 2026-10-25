@@ -12,7 +12,7 @@ Marca con `[x]` lo que se vaya cerrando.
 - [x] Mapa 3D: el jugador es una bola de luz (color según hombre o mujer) que salta al andar; los personajes no se animan y se giran hacia ti al acercarte.
 - [x] En Android y táctil no salen las teclas del teclado.
 
-- [ ] Pantalla «¿Conoces Arcane?» antes de crear el personaje, con una intro breve si la respuesta es no.
+- [ ] Verificar en una partida real la bienvenida y el contexto sin spoilers según el origen; no marcarlo completo sin probar la versión actual.
 - [x] Caitlyn, Ekko y Jinx con los modelos de Nina; guardias de Piltover y el Taller de Jayce y Viktor en el mapa.
 - [ ] Modelos 3D fieles para el resto del reparto (Vi, Jayce, Viktor, Mel, Silco…), que siguen siendo prototipos.
 - [x] Música en MP3 (menú, Piltover y Zaun en `assets/music`).
@@ -20,4 +20,6 @@ Marca con `[x]` lo que se vaya cerrando.
 - [x] Revisar la interfaz en el móvil (Android en horizontal) con la caja de texto nueva de la historia (v1.30.0).
 
 ## Web
-- [ ] Fusionar la PR #69 (web nueva de Arcane, sin descargas). Tras fusionar main en esta rama tiene conflictos.
+- [ ] Reconstruir y validar la portada web (`web/index.html`) y comprobar que `npm run web` genera una `web-dist/` completa antes de publicar.
+- [ ] Integrar Ollama de verdad en el juego (proveedor, ajustes, estado de conexión y pruebas); hasta entonces `config/ollama.json` sigue desactivado y el chat de IA de escritorio continúa usando KoboldCpp.
+- [ ] Probar la reproducción real de `assets/music/sucker-instrumental.mp3.mp3` (Zaun) y `assets/music/a-bicentennial-instrumental.mp3` (Piltover) en una ejecución del juego. Las rutas están configuradas, pero falta verificar la reproducción en ejecución.
