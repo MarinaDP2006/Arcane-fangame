@@ -1,8 +1,7 @@
-# GUIAJUEGO.md · Manual de usuario, primera partida y testing
+# Manual de usuario, primera partida y testing
 **Para quien nunca ha jugado, para quien no conoce Arcane y para quien prueba el juego**
 
 Esta guía no exige conocimientos de programación y evita spoilers importantes del argumento. Está dividida en tres modos de lectura:
-
 - **Quiero jugar:** instrucciones para la primera partida.
 - **No conozco Arcane:** contexto básico de las ciudades y personajes.
 - **Quiero probar el juego:** lista de pruebas y una plantilla para informar de errores.
@@ -10,31 +9,21 @@ Esta guía no exige conocimientos de programación y evita spoilers importantes 
 > **Sobre la bienvenida:** los datos del proyecto incluyen una guía rápida sin spoilers, con presentaciones distintas según el origen de la partida. No se debe asumir que todas las versiones muestran exactamente la misma pantalla inicial ni que preguntan literalmente «¿Conoces Arcane?». Revisa cómo se comporta la versión que estés probando.
 
 ## 1. Qué juego es este
-
-Arcane-fangame es una aventura narrativa de fans ambientada en *Arcane*. Creas tu personaje y escribes lo que dice o hace; los personajes reaccionan dentro de los límites del juego. La disponibilidad de opciones seleccionables depende de la versión y debe verificarse en la ejecución: no se deben dar por existentes botones de respuesta que aún no estén implementados. El proyecto también incluye localizaciones y sistemas de juego descritos en el README.
-
-No necesitas saberte la serie ni jugar a *League of Legends*. Puedes empezar sin conocer a nadie y descubrir el mundo a medida que la historia te presenta a sus habitantes.
+Arcane-fangame es una aventura narrativa de fans ambientada en *Arcane*. Creas tu personaje y escribes lo que dice o hace; los personajes reaccionan dentro de los límites del juego. La disponibilidad de opciones seleccionables depende de la versión y debe verificarse en la ejecución: no se deben dar por existentes botones de respuesta que aún no estén implementados. El proyecto también incluye localizaciones y sistemas de juego descritos en el README. No necesitas saberte la serie ni jugar a *League of Legends*. Puedes empezar sin conocer a nadie y descubrir el mundo a medida que la historia te presenta a sus habitantes.
 
 ## 2. Introducción a Piltover y Zaun, sin spoilers
-
 ![Menú principal que presenta Piltover y Zaun](capturasjuego/02-menu-inicial-grieta-entre-piltover-y-zaun.webp)
 
 ### Piltover: la ciudad alta
-
-Piltover se conoce como la Ciudad del Progreso. Es una ciudad rica, con academias, inventores, familias influyentes y un Consejo que toma decisiones políticas. Sus edificios, su tecnología y su imagen elegante representan la promesa de que la ciencia y el ingenio pueden mejorar la vida.
-
-Pero el progreso no llega de la misma forma a todo el mundo. La riqueza, la influencia y el control de la tecnología también crean tensiones.
+Piltover se conoce como la Ciudad del Progreso. Es una ciudad rica, con academias, inventores, familias influyentes y un Consejo que toma decisiones políticas. Sus edificios, su tecnología y su imagen elegante representan la promesa de que la ciencia y el ingenio pueden mejorar la vida. Pero el progreso no llega de la misma forma a todo el mundo. La riqueza, la influencia y el control de la tecnología también crean tensiones.
 
 ### Zaun: la ciudad de abajo
-
 Zaun es una ciudad industrial situada bajo la sombra de Piltover. Tiene talleres, callejones, humo químico, inventores improvisados, comerciantes, bandas y comunidades que intentan salir adelante. Es creativa y resistente, pero está marcada por desigualdad, contaminación y falta de oportunidades.
 
 ### Por qué importa la relación entre ambas
-
 Las dos ciudades están conectadas y comparten una historia, pero no están de acuerdo en quién debe decidir el futuro ni quién se beneficia del progreso. Esa tensión social, junto con la familia, la lealtad, la ambición y las decisiones personales, impulsa la narración.
 
 ### Tres palabras que ayudan a orientarse
-
 - **Hextech:** tecnología extraordinaria que combina ingeniería y una fuente de poder especial. Es uno de los símbolos del progreso de Piltover.
 - **El Consejo:** el grupo de autoridades que gobierna Piltover.
 - **La ciudad subterránea:** forma habitual de referirse a Zaun y sus barrios industriales.
@@ -42,7 +31,6 @@ Las dos ciudades están conectadas y comparten una historia, pero no están de a
 No hace falta memorizar estos términos: la historia y la guía interna los contextualizan a medida que aparecen.
 
 ## 3. Quién es quién, en términos sencillos
-
 Estas son descripciones generales de los personajes principales, sin revelar sus destinos. En distintos momentos de la historia sus relaciones pueden cambiar.
 
 | Personaje | Para empezar |
@@ -58,9 +46,7 @@ Estas son descripciones generales de los personajes principales, sin revelar sus
 Otros personajes pueden aparecer según el origen y el momento narrativo: Vander, Silco, Sevika, Heimerdinger, Cassandra, Ambessa, Isha y más. Si no reconoces un nombre, no significa que te hayas perdido algo: la historia puede presentarlo más adelante.
 
 ## 4. Primera partida: pasos recomendados
-
 ### Paso 1. Abre el menú principal
-
 ![Menú de inicio](capturasjuego/02-menu-inicial-grieta-entre-piltover-y-zaun.webp)
 
 La pantalla principal incluye acciones para iniciar o continuar una partida, acceder a partidas guardadas y cambiar ajustes. Los nombres exactos pueden variar según la versión.
@@ -73,20 +59,16 @@ La pantalla principal incluye acciones para iniciar o continuar una partida, acc
 Para aprender, elige **Nueva partida**. Si ya tienes una partida importante, no la sobrescribas para probar.
 
 ### Paso 2. Elige un origen
-
 El creador te permite escoger entre Piltover y Zaun. Esto determina el punto de partida narrativo y las personas que se presentan al principio.
-
 - Elige **Zaun** si te interesa una historia que comienza entre talleres, callejones y la vida industrial.
 - Elige **Piltover** si prefieres comenzar entre academias, inventos e instituciones.
 
-No hay una elección universalmente correcta. Escoge la que te intrigue y deja que la historia te enseñe el resto.
+Escoge la que te intrigue y deja que la historia te enseñe el resto.
 
 ### Paso 3. Crea tu personaje
-
 ![Creador de personaje](capturasjuego/03-creador-de-personaje-eleccion-de-retrato.webp)
 
 En el código actual, el creador está organizado en estos pasos:
-
 1. **Origen:** ciudad de procedencia.
 2. **Identidad:** datos básicos del protagonista.
 3. **Clase:** estilo general del personaje.
@@ -97,7 +79,6 @@ En el código actual, el creador está organizado en estos pasos:
 8. **Ficha final:** revisar la creación y confirmar.
 
 Consejos para tu primera partida:
-
 - Elige un nombre que quieras ver en los diálogos.
 - Lee la descripción de cada clase y habilidad antes de decidir.
 - Revisa los puntos de aptitud, porque representan distintos enfoques de resolución.
@@ -107,33 +88,22 @@ Consejos para tu primera partida:
 La importancia de cada habilidad o aptitud depende de las reglas de la versión que juegues. No hay que conocer el lore para tomar estas decisiones.
 
 ### Paso 4. Lee la guía del mundo
-
-El juego dispone de datos para una guía rápida sin spoilers. El contenido cambia según el origen: quien empieza en Zaun conoce primero a las personas de esa ciudad; quien empieza en Piltover recibe contexto sobre sus inventores y autoridades. En una fase posterior puede aparecer un repaso con personajes nuevos.
-
-Si conoces poco el universo, lee esas fichas sin prisa. Si ya conoces la serie, puedes usarlas como referencia rápida.
+El juego dispone de datos para una guía rápida sin spoilers. El contenido cambia según el origen: quien empieza en Zaun conoce primero a las personas de esa ciudad; quien empieza en Piltover recibe contexto sobre sus inventores y autoridades. En una fase posterior puede aparecer un repaso con personajes nuevos. Si conoces poco el universo, lee esas fichas sin prisa. Si ya conoces la serie, puedes usarlas como referencia rápida.
 
 ### Paso 5. Lee y decide
-
-La historia se presenta en escenas y conversaciones. Lee el texto, revisa las opciones y selecciona la respuesta que mejor encaje con tu protagonista.
-
-Las decisiones pueden influir en relaciones o eventos posteriores. No todas las elecciones tienen un efecto visible inmediato. Si una respuesta no ofrece una explicación completa, sigue jugando antes de concluir que se ha roto la historia.
+La historia se presenta en escenas y conversaciones. Lee el texto, revisa las opciones y selecciona la respuesta que mejor encaje con tu protagonista. Las decisiones pueden influir en relaciones o eventos posteriores. No todas las elecciones tienen un efecto visible inmediato. Si una respuesta no ofrece una explicación completa, sigue jugando antes de concluir que se ha roto la historia.
 
 ### Paso 6. Explora el mapa
-
 ![Mapa 3D de Zaun](capturasjuego/07-version-actual-mapa-3d-de-zaun.webp)
 
 El mapa permite recorrer visualmente una ciudad y localizar puntos de interés. En función del dispositivo:
-
 - En ordenador puedes utilizar ratón y teclado.
 - En pantalla táctil puedes arrastrar, tocar los puntos de interés y utilizar gestos de zoom cuando estén disponibles.
 - Puedes cambiar entre la vista 3D y la alternativa 2D si la versión o los ajustes lo permiten.
 
 **Importante:** tocar un lugar del mapa puede abrir primero un menú contextual con acciones como historia, conversación, explorar, minijuego o viajar. No presupongas que un toque siempre lleva directamente a otra pantalla. Lee las opciones del lugar.
 
-La captura del mapa sirve de referencia visual y podría no representar la interfaz exacta de todas las compilaciones.
-
 ### Paso 7. Conversa con los personajes
-
 El juego tiene conversaciones con opciones escritas y una opción de chat libre con IA cuando está configurada.
 
 - **Diálogo escrito:** selecciona respuestas preparadas por la historia. No requiere instalar un modelo.
@@ -146,16 +116,10 @@ La única IA del juego es KoboldCpp, en tu ordenador: lo que escribes no sale a 
 
 ![Salón de minijuegos](capturasjuego/06-salon-de-minijuegos-con-los-10-juegos.webp)
 
-El proyecto incluye una pantalla de actividades/minijuegos. Entra, lee las reglas que se muestran en cada uno y prueba más de una actividad. Los controles pueden variar según el minijuego y la plataforma.
-
-En pantalla táctil, los minijuegos de teclado muestran botones grandes. En **Pelea en el foso** y **Regateo en el mercado** también puedes deslizar el dedo: un deslizamiento de unos 32 píxeles o más hacia un lado equivale a la flecha de esa dirección, y un toque corto sigue siendo un toque normal. Con ratón y teclado no cambia nada.
-
-No des por hecho que la captura antigua representa la lista exacta de actividades de la versión descargada. Úsala para reconocer visualmente la sección.
+El proyecto incluye una pantalla de actividades/minijuegos. Entra, lee las reglas que se muestran en cada uno y prueba más de una actividad. Los controles pueden variar según el minijuego y la plataforma. En pantalla táctil, los minijuegos de teclado muestran botones grandes. En **Pelea en el foso** y **Regateo en el mercado** también puedes deslizar el dedo: un deslizamiento de unos 32 píxeles o más hacia un lado equivale a la flecha de esa dirección, y un toque corto sigue siendo un toque normal. Con ratón y teclado no cambia nada. No des por hecho que la captura antigua representa la lista exacta de actividades de la versión descargada. Úsala para reconocer visualmente la sección.
 
 ### Paso 9. Guarda tu progreso
-
 Abre el menú de partidas y usa la ranura disponible. Para comprobar el guardado:
-
 1. Guarda la partida.
 2. Regresa al menú o cierra el juego de forma normal.
 3. Abre de nuevo la aplicación.
@@ -163,7 +127,6 @@ Abre el menú de partidas y usa la ranura disponible. Para comprobar el guardado
 5. Comprueba si conserva el protagonista, el punto de historia y las decisiones recientes.
 
 Antes de hacer pruebas de actualización, exporta o copia tu partida. En Windows, la ubicación habitual documentada es:
-
 ~~~text
 %APPDATA%\Arcane Piltover y Zaun\partidas
 ~~~
@@ -171,9 +134,7 @@ Antes de hacer pruebas de actualización, exporta o copia tu partida. En Windows
 En Android, la partida se almacena dentro de la app salvo que se exporte. Sigue [partidas-guardadas-guia.md](partidas-guardadas-guia.md) para transferirla o recuperarla. No desinstales una app con guardados sin confirmar que la copia está a salvo.
 
 ## 5. Ajustes recomendados para empezar
-
 No hay una configuración perfecta para todos los dispositivos. Como base:
-
 - **Sonido:** deja un volumen cómodo y prueba música, ambiente y efectos por separado si aparecen esas opciones.
 - **Gráficos:** si el mapa 3D va lento, selecciona opciones de calidad inferiores o la vista alternativa disponible.
 - **Accesibilidad:** comprueba tamaño de pantalla, legibilidad, movimiento reducido y controles táctiles cuando existan.
@@ -181,11 +142,9 @@ No hay una configuración perfecta para todos los dispositivos. Como base:
 - **Partidas:** crea una ranura de prueba y conserva el guardado principal sin tocar.
 
 ## 6. Qué probar: plan de testing
-
 Este plan sirve para probar una compilación sin editar el código. Haz una prueba a la vez y registra cualquier resultado inesperado.
 
 ### Prueba A. Arranque y menú
-
 - [ ] La aplicación abre sin pantalla vacía.
 - [ ] Los botones principales responden.
 - [ ] Si no hay guardados, la opción de continuar se comporta de forma coherente.
@@ -195,7 +154,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Resultado esperado:** el menú se muestra y cada acción lleva a la pantalla apropiada.
 
 ### Prueba B. Bienvenida y lore para alguien nuevo
-
 - [ ] La versión explica cómo empezar o permite acceder a una guía sin spoilers.
 - [ ] La explicación de Piltover y Zaun se entiende sin haber visto la serie.
 - [ ] La guía no cuenta muertes, giros importantes ni finales.
@@ -207,7 +165,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Nota de diseño:** el código de datos tiene una guía de personajes sin spoilers en <code>src/data/guia.js</code>. Si se quiere probar una pregunta literal del tipo «¿Conoces Arcane?» con dos rutas de bienvenida, registra si aparece en la compilación concreta; no lo marques como implementado basándote solo en el contenido de esta documentación.
 
 ### Prueba C. Creación del protagonista
-
 - [ ] Seleccionar origen.
 - [ ] Introducir un nombre.
 - [ ] Cambiar clase y habilidades.
@@ -220,7 +177,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Resultado esperado:** la creación solo avanza cuando los campos obligatorios del paso están válidos; la ficha final corresponde a lo elegido.
 
 ### Prueba D. Historia y decisiones
-
 - [ ] La primera escena aparece.
 - [ ] El texto se puede leer completo y las opciones no quedan ocultas.
 - [ ] Seleccionar cada opción disponible avanza o vuelve a un punto válido.
@@ -231,7 +187,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Resultado esperado:** todas las opciones conducen a una transición válida y el jugador puede continuar.
 
 ### Prueba E. Mapa y navegación
-
 ![Mapa interactivo: referencia visual](capturasjuego/05-mapa-interactivo-de-zaun-camino-al-objetivo.webp)
 
 - [ ] El mapa abre y muestra la ciudad elegida.
@@ -244,7 +199,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Resultado esperado:** se puede localizar y seleccionar un punto, leer sus opciones y volver al mapa.
 
 ### Prueba F. Personajes y chat
-
 - [ ] Los personajes que la historia ha presentado pueden seleccionarse cuando corresponde.
 - [ ] Los diálogos escritos muestran opciones y continúan.
 - [ ] La IA desactivada no provoca un error que impida usar los diálogos escritos.
@@ -255,7 +209,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Resultado esperado:** el sistema de conversación responde o falla de forma controlada, sin bloquear la partida.
 
 ### Prueba G. Audio
-
 - [ ] La música empieza después de una interacción si el navegador lo requiere.
 - [ ] El menú activa el tema correspondiente.
 - [ ] Al cambiar de zona se actualiza el tema si esa función está implementada en esa compilación.
@@ -266,7 +219,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Importante:** esta prueba corresponde al sistema de audio procedural actual. No marques como aprobada la reproducción de tres archivos externos hasta que existan y estén integrados.
 
 ### Prueba H. Minijuegos, atlas y códice
-
 - [ ] Abre el Salón de minijuegos.
 - [ ] Inicia un minijuego y sigue las reglas que aparecen.
 - [ ] En móvil o tableta: en Pelea en el foso, desliza en la dirección de la flecha; en Regateo, desliza a izquierda o derecha para bajar o subir la oferta.
@@ -275,7 +227,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 - [ ] Comprueba que la información no se pierde al volver a la historia.
 
 ### Prueba I. Guardado y recuperación
-
 - [ ] Guarda una ranura de prueba.
 - [ ] Cierra y vuelve a abrir.
 - [ ] Carga la ranura y confirma que mantiene el protagonista y la historia.
@@ -286,7 +237,6 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 **Resultado esperado:** la partida de prueba se puede recuperar. No uses el único guardado importante para validar una actualización.
 
 ### Prueba J. Adaptación a dispositivos
-
 - [ ] Ordenador: teclado y ratón.
 - [ ] Tableta/móvil: botones táctiles, controles visibles y texto legible.
 - [ ] Pantalla estrecha: no hay desbordamiento horizontal que oculte botones importantes.
@@ -296,17 +246,10 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 Prueba con las plataformas que realmente se vayan a distribuir. Un resultado en escritorio no valida automáticamente Android, y viceversa.
 
 ## 7. Controles
-
-Los controles disponibles pueden depender de la pantalla, del dispositivo y de la versión. Sigue primero las pistas visibles de la interfaz.
-
-La guía previa de modelos registra estos controles para la vista de mundo en la compilación que describe: movimiento con WASD/flechas, correr con Mayús, rotación de cámara con Q/R e interacción con E. Verifícalos en la versión que estés probando y anota si no coinciden. En pantalla táctil, busca los controles en pantalla; no presupongas que existe un teclado.
+Los controles disponibles pueden depender de la pantalla, del dispositivo y de la versión. Sigue primero las pistas visibles de la interfaz. La guía previa de modelos registra estos controles para la vista de mundo en la compilación que describe: movimiento con WASD/flechas, correr con Mayús, rotación de cámara con Q/R e interacción con E. Verifícalos en la versión que estés probando y anota si no coinciden. En pantalla táctil, busca los controles en pantalla; no presupongas que existe un teclado.
 
 ## 8. Cómo informar de un error útil
-
-Un informe con pasos claros permite reproducir el problema mucho más fácilmente que un mensaje como «no funciona».
-
-Copia y rellena esta plantilla:
-
+Un informe con pasos claros permite reproducir el problema mucho más fácilmente que un mensaje como «no funciona». Copia y rellena esta plantilla:
 ~~~text
 Título:
 Versión del juego:
@@ -328,7 +271,6 @@ Adjuntos: captura sin datos privados (si ayuda)
 Antes de publicar una captura, elimina nombres reales, archivos personales, conversaciones privadas, claves y cualquier dato que no quieras hacer público. Si se trata de un spoiler, indícalo en el título del informe.
 
 ## 9. Qué hacer cuando algo no va
-
 | Problema | Primer paso seguro |
 |---|---|
 | El juego no abre | Comprueba que descargaste el archivo de la versión correcta. En una build de desarrollo, ejecuta la comprobación del proyecto. |
@@ -341,7 +283,6 @@ Antes de publicar una captura, elimina nombres reales, archivos personales, conv
 | La pantalla táctil no responde | Cierra y vuelve a abrir; registra dispositivo, orientación y pantalla afectada. |
 
 ## 10. Capturas de referencia incluidas en el repositorio
-
 Las capturas siguientes son reales y están guardadas en <code>capturasjuego/</code>. Se incluyen para ayudar a reconocer las pantallas, no como garantía de que cada píxel coincida con la última compilación.
 
 | Captura | Para qué sirve |
@@ -355,7 +296,6 @@ Las capturas siguientes son reales y están guardadas en <code>capturasjuego/</c
 Para ver el historial de imágenes y su versión de origen, abre [capturasjuego/README.md](capturasjuego/README.md).
 
 ## 11. Si quieres continuar después de la primera partida
-
 - Para mover o recuperar guardados: [partidas-guardadas-guia.md](partidas-guardadas-guia.md).
 - Para habilitar la IA (KoboldCpp, la única del juego): [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 - Para entender cómo está programado el juego: [GUIA.md](GUIA.md).
