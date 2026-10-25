@@ -626,7 +626,7 @@
     // En 3D se pintan de lejos a cerca, con un poste de luz hasta el suelo.
     const order = map.def.locations.map((l) => ({ l, s: toScreen(l.x, l.y, PIN_H) })).filter((o) => !o.s.behind).sort((a, b) => (b.s.depth || 0) - (a.s.depth || 0));
     for (const { l, s } of order) {
-      const R = r3d ? Math.max(20, Math.min(54, 34 * Math.sqrt(r3d.scaleAt(l.x, l.y) / Math.max(0.05, fit)))) : pinR();
+      const R = r3d ? Math.max(24, Math.min(62, 38 * Math.sqrt(r3d.scaleAt(l.x, l.y) / Math.max(0.05, fit)))) : pinR();
       if (s.x < -R * 3 || s.y < -R * 3 || s.x > cw + R * 3 || s.y > ch + R * 3) continue;
       const isObj = obj && obj.id === l.id;
       const hov = hover?.kind === 'loc' && hover.id === l.id;
