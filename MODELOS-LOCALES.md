@@ -11,12 +11,11 @@ Esta guía describe la preparación local de Ollama para el universo de **Arcane
 
 ## Modelo personalizado de Arcane
 
-El modelo personalizado `arcane-narrador` y su `Modelfile` solo se pueden crear cuando `ollama/Modelfile.arcane` esté presente en la rama que has descargado. Desde la raíz de ese repositorio:
+El repositorio incluye `ollama/Modelfile.arcane`. Desde la raíz del repositorio, crea el modelo personalizado:
 ```bash
 ollama create arcane-narrador -f ollama/Modelfile.arcane
 ollama run arcane-narrador
 ```
-Si el archivo no existe en tu copia, no ejecutes el comando todavía: actualiza el repositorio o utiliza el modelo base.
 
 ## Estado de integración
 
