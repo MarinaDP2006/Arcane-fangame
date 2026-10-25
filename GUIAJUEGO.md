@@ -110,7 +110,7 @@ El juego tiene conversaciones con opciones escritas y una opción de chat libre 
 - **Chat libre con IA:** permite escribir texto propio, pero depende de que haya proveedor, servidor y modelo disponibles. Puede responder lento o inventarse detalles; la calidad no está garantizada.
 - Si la IA no está configurada, utiliza los diálogos escritos. No necesitas resolver la IA para completar una prueba básica de interfaz e historia.
 
-La única IA del juego es KoboldCpp, en tu ordenador: lo que escribes no sale a internet. Consulta [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md) antes de permitir conexiones entre dispositivos.
+El proveedor del chat libre de escritorio actualmente es KoboldCpp, ejecutado por separado. Ollama está preparado como perfil experimental, pero no está integrado en la aplicación. Si permites conexiones desde otro dispositivo, revisa la dirección, el puerto y las reglas del cortafuegos; no expongas un servicio local a Internet.
 
 ### Paso 8. Prueba el Salón de minijuegos
 
