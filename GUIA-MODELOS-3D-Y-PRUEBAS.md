@@ -1,13 +1,9 @@
-# Grietas & Gears: seis personajes 3D a color y pruebas de Windows
+# Seis personajes 3D a color y pruebas de Windows
 
 ## Estado real
-
-La rama `main` incluye código para reconocer archivos `.zip`, `.fbx` y `.glb` de personajes, además de un modo por defecto **«NPC quietos y a color»**. Esta configuración deja al jugador moverse, pero no ejecuta animaciones del modelo importado de los personajes secundarios. La posición e interacción de cada personaje se conservan.
-
-**Tus seis ZIP no se suben a GitHub**: se leen desde tu ordenador. No modifiques ni borres las imágenes o las partidas antiguas.
+La rama `main` incluye código para reconocer archivos `.zip`, `.fbx` y `.glb` de personajes, además de un modo por defecto **«NPC quietos y a color»**. Esta configuración deja al jugador moverse, pero no ejecuta animaciones del modelo importado de los personajes secundarios. La posición e interacción de cada personaje se conservan. **Tus seis ZIP no se suben a GitHub**: se leen desde tu ordenador. No modifiques ni borres las imágenes o las partidas antiguas.
 
 ### Desde la versión 1.18.0
-
 - El juego encuentra los ZIP en `Documentos\LOL-Game_Arcane\arcaneData\arte\personajes\3d models` (cualquier carpeta `arte` de Documentos hasta dos niveles, con una subcarpeta de personajes cuyo nombre contenga «3d») y también en `%APPDATA%\Arcane Piltover y Zaun\arte\modelos`.
 - La primera vez que aparece un personaje, el juego **prepara su ZIP una sola vez** y guarda el resultado en la carpeta persistente `%APPDATA%\Arcane Piltover y Zaun\arte\modelos\_cache`: reduce las texturas a 2048 px (color) o 1024 px (resto), abre los ZIP que hay dentro de otro ZIP y convierte los `.obj` a un formato binario rápido. Tus ZIP originales no se modifican. Puedes borrar `_cache` cuando quieras: se vuelve a crear sola.
 - Se admiten `.glb`, `.fbx` y ahora también `.obj`. Las texturas se enlazan aunque el nombre esté recortado (`…_BaseCo.png`) o cambie el espacio por guion bajo (`hair 2.png` / `hair_2.png`). Las piezas sin textura reciben un color de respaldo del personaje (pelo, piel, ropa), nunca negro.
@@ -50,7 +46,6 @@ powershell -ExecutionPolicy Bypass -File scripts/comprobar-modelos.ps1
 ## Descargar y probar en Windows
 
 ### Opción A: ejecutable creado por GitHub Actions
-
 1. Abre **https://github.com/MarinaDP2006/grietas-and-gears/actions/workflows/build.yml**.
 2. Elige la ejecución más reciente de **Compilar Windows** y asegúrate de que termine con una marca verde.
 3. En la zona **Artifacts**, descarga **grietas-and-gears-windows** y **extrae el ZIP**.
@@ -68,7 +63,6 @@ npm run check
 npm start
 ```
 Para fabricar localmente los dos ejecutables:
-
 ```powershell
 npm run dist:win
 ```
@@ -90,7 +84,6 @@ Se escriben en `dist/`. Si `npm ci` falla, no intentes usar un instalador antigu
 No se ha confirmado el resultado de una compilación Windows completa en Actions, ni se ha probado un instalador en una máquina Windows real desde esta conversación. También faltan una prueba integral de todas las rutas narrativas y un examen gráfico de los seis ZIP reales. Estas verificaciones deben completarse antes de declarar terminada la versión estable.
 
 ## Tamaño de los personajes en el mapa 3D
-
 Todos los personajes del mapa (Caitlyn y los guardias en Piltover; Jinx, Vi y Ekko en Zaun) se ajustan a **20 unidades del mapa** de alto, más o menos la talla de la esfera del jugador. Las calles miden 74 de ancho y los edificios de 60 a 400 de alto.
 
 El juego mide cada modelo **tal como se dibuja**, con los huesos aplicados, y no la malla en reposo. Antes se medía la malla en reposo, y en los modelos con esqueleto eso fallaba: Jinx venía tumbada y se tomaba por un busto (salía con unas 135 unidades de alto), el guardia de Piltover venía a otra escala (más de 6000) y Ekko quedaba diminuto. Los archivos `.glb` no se modifican; solo cambia cómo los mide el juego.
