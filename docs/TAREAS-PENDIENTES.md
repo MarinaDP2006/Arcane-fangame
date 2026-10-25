@@ -9,6 +9,8 @@ Documento de seguimiento. Marca una tarea como completada solo tras verificarla 
 - [ ] Probar inicio, diálogo, elección, guardado, recarga y continuación.
 - [ ] Revisar la corrección del parallax del título (PR #36) y mantener la navegación por clic.
 - [ ] Probar escritorio y móvil, rutas de recursos, consola y compilación.
+- [ ] Validar visualmente el nuevo mapa exterior 3D en Windows y Android: comprobar escala, solapamientos y rendimiento de los hitos de Piltover y Zaun.
+- [ ] Sustituir progresivamente la geometría procedural de los hitos por modelos artesanales con referencias y derechos de uso verificados; no anunciar una copia exacta hasta completar la comparación visual.
 - [ ] Tras los cambios de empaquetado, verificar una nueva ejecución de Actions y probar los instaladores de Windows, los paquetes macOS y el APK en dispositivos reales antes de anunciar una Release estable.
 - [ ] Limpiar documentación obsoleta y comprobar que la web generada tiene una portada válida.
 - [ ] Integrar Ollama solo como función opcional, tras conectar el proveedor y probarlo; la configuración actual está desactivada.
