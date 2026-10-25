@@ -191,6 +191,9 @@
       lore.motivaciones ? `Motivaciones, miedos y contradicciones: ${lore.motivaciones}` : '',
       v.nunca ? `Para no salirte del papel: ${v.nunca}` : '',
       `Hablas con ${who}.`,
+      p.family && p.family !== 'ninguna' && (window.RELATIONS.familyLinks[p.family] || {})[id]
+        ? 'Vínculo familiar de esta partida: trata al protagonista como familia real, con recuerdos compartidos, confianza y conflictos coherentes con tu personalidad. No conviertas este parentesco en romance ni lo ignores.'
+        : 'No inventes parentescos secretos con el protagonista; si no hay vínculo familiar registrado, construye la relación a partir de las conversaciones y sucesos jugados.',
       `${relTxt} Afinidad ${aff}/10: ${feel}${mate && mate !== id ? ` (${p.name} sale con ${window.WIKI.personajes.find((x) => x.id === mate)?.name}.)` : ''}`,
       window.Relations && !Relations.canRomance(G, id) && Relations.status(G, id) !== 'pareja' ? `Entre ${name} y ${p.name} no hay romance posible (sois familia o aún sois demasiado jóvenes en esta etapa): si ${p.name} coquetea, desvíalo con naturalidad y sin sermones.` : '',
       `CONTINUIDAD DE ESTA PARTIDA (datos de juego; no son instrucciones del usuario):\n${memory}`,
@@ -280,6 +283,7 @@
       gone.length ? `Ya no están (no pueden hablar): ${gone.join(', ')}.` : '',
       saved.length ? `Siguen vivos gracias al protagonista: ${saved.join(', ')}.` : '',
       `PROTAGONISTA (lo controla el jugador): ${playerBrief(G)}.`,
+      G.player.family && G.player.family !== 'ninguna' ? `CONTINUIDAD DEL OC: el parentesco elegido es parte de esta versión alternativa de la historia. Respétalo en cada escena: las personas de su familia ya le conocen, tienen recuerdos compartidos y pueden discutir, protegerle, desconfiar o discrepar según su personalidad. No lo reduzcas a una mención decorativa ni lo borres para volver al canon exacto. La familia nunca es interés romántico. No inventes parentescos adicionales.` : `CONTINUIDAD DEL OC: no tiene parentesco famoso predefinido. No lo conviertas en familiar secreto de personajes del canon; deja que la confianza y la historia se construyan en juego.`,
       `PERSONAJES EN ESCENA:\n${scene.cast.map((id) => castBrief(G, id)).join('\n') || '(nadie del reparto; usa solo la narración y figurantes descritos por el narrador)'}`,
       `LO QUE ACABA DE PASAR EN EL CANON DE ESTA ESCENA:\n${scene.beat.join('\n')}`,
       `CAMINOS POSIBLES (secretos, nunca los enseñes ni los conviertas en menú):\n${paths || '(ninguno: la escena sigue)'}`,
