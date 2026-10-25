@@ -37,7 +37,12 @@
       "src/**/*",
       "build/icon.png",
       "package.json",
-      "assets/music/**/*"
+      "assets/music/**/*",
+      "CREACION DE PERSONAJES, MENUS Y AJUSTES INSPIRACION.png",
+      "INSPIRACION PANTALLAS SEGUN CIUDAD.png",
+      "INSPIRACION MODELOS 3D.png",
+      "COMO SE VERIAN LOS LUGARES, PANTALLAS Y PERSONAJE EN LAS CIUDADES (CIUDADES CUADRADAS).png",
+      "INTERFAZ A MEJORAR DE CREACION Y USABILIDAD.png"
     ],
     "directories": {
       "output": "dist",
