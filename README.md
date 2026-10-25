@@ -1,5 +1,7 @@
 # Arcane-fangame · Piltover y Zaun
 
+> **En pocas palabras:** Este es el punto de partida del proyecto. Aquí puedes entender qué juego es, qué puedes hacer ahora mismo, cómo ejecutarlo y dónde encontrar instrucciones más específicas. Es un proyecto de fans, no oficial, y algunas funciones —como ciertos proveedores de IA o partes de la web— siguen en preparación; por eso distinguimos entre lo que ya está disponible y lo que todavía hay que probar.
+
 Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o Zaun y escribes lo que dice o hace. Los personajes reaccionan dentro del mundo de la serie. Proyecto de fans no oficial.
 
 ## Cómo funciona
