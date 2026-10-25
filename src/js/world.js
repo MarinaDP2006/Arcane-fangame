@@ -528,38 +528,57 @@
   // Colores de tu bola de luz (los mismos que en world3d.js).
   const ORB = { hombre: '#4fb8ff', mujer: '#ff5aa8', nobinario: '#ffc857' };
   let orbPh = 0;
-  /** Tu personaje en la carta 2D: una bola de luz con sombra que salta al andar. */
+  /** Marcador 2D del jugador: retrato real y nombre, sin colores de facción o clase. */
   function drawOrb2D(t) {
     if (r3d || G.world.px == null) return;
-    const c = ORB[G.player.gender] || ORB.nobinario;
     const p = toScreen(G.world.px, G.world.py);
-    if (moving) orbPh += 0.016 * 9;
-    const hop = moving ? Math.abs(Math.sin(orbPh)) : 0;
-    const r = Math.max(7, 11 * zoom * 1.6);
-    const lift = r * 0.9 + hop * r * 2 + (moving ? 0 : Math.sin(t / 450) * r * 0.12);
+    const size = Math.max(22, Math.min(38, 30 * Math.max(0.75, Math.min(1.2, zoom / Math.max(fit, 0.001)))));
+    const photo = typeof G.player.photo === 'string' && G.player.photo ? loadImg(`player-portrait:${G.player.photo}`, G.player.photo) : null;
+    const imgReady = ready(photo);
+    const name = String(G.player.name || 'Personaje').slice(0, 24);
+    const labelW = Math.max(size + 10, Math.min(180, name.length * 7 + 18));
+    const labelY = p.y + size * 0.68 + 13;
     ctx.save();
-    ctx.globalAlpha = 0.35 * (1 - hop * 0.45);
-    ctx.fillStyle = '#000';
+    // Sombra discreta para separarlo del suelo sin asignarle un color de equipo.
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y, r * (1 - hop * 0.4), r * 0.45 * (1 - hop * 0.4), 0, 0, Math.PI * 2);
+    ctx.ellipse(p.x, p.y + size * 0.78, size * 0.48, size * 0.16, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.globalAlpha = 1;
-    const g = ctx.createRadialGradient(p.x, p.y - lift, 0, p.x, p.y - lift, r * 3.2);
-    g.addColorStop(0, c);
-    g.addColorStop(0.3, `${c}88`);
-    g.addColorStop(1, `${c}00`);
-    ctx.fillStyle = g;
     ctx.beginPath();
-    ctx.arc(p.x, p.y - lift, r * 3.2, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, size * 0.58, 0, Math.PI * 2);
+    ctx.fillStyle = '#17191d';
     ctx.fill();
-    const b = ctx.createRadialGradient(p.x - r * 0.3, p.y - lift - r * 0.3, r * 0.1, p.x, p.y - lift, r);
-    b.addColorStop(0, '#fff');
-    b.addColorStop(0.45, c);
-    b.addColorStop(1, c);
-    ctx.fillStyle = b;
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(p.x, p.y - lift, r, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, size * 0.49, 0, Math.PI * 2);
+    ctx.clip();
+    if (imgReady) {
+      ctx.drawImage(photo, p.x - size * 0.49, p.y - size * 0.49, size * 0.98, size * 0.98);
+    } else {
+      ctx.fillStyle = '#77736e';
+      ctx.fillRect(p.x - size / 2, p.y - size / 2, size, size);
+      ctx.fillStyle = '#f2eee7';
+      ctx.font = `600 ${Math.round(size * 0.55)}px system-ui, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(name.trim().charAt(0).toUpperCase() || '?', p.x, p.y + 1);
+    }
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(245,239,224,0.95)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size * 0.51, 0, Math.PI * 2);
+    ctx.stroke();
+    // La etiqueta tiene un fondo neutro: no codifica facción, rareza ni profesión.
+    ctx.fillStyle = 'rgba(14,15,18,0.88)';
+    ctx.beginPath();
+    ctx.roundRect(p.x - labelW / 2, labelY - 9, labelW, 19, 5);
     ctx.fill();
+    ctx.fillStyle = '#f3f0e8';
+    ctx.font = '600 11px system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(name, p.x, labelY + 0.5, labelW - 10);
     ctx.restore();
   }
 
