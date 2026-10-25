@@ -1,5 +1,4 @@
-// Creador de personaje estilo selección de campeón: clase, habilidades,
-// aptitudes, retrato elegido de la galería (carpeta «avatares») o foto propia, y ficha.
+// Creador de personaje narrativo: identidad, profesión, familia, aficiones y retrato.
 (function () {
   const { $, el, tpl, pick } = U;
   const C = () => window.CREATION;
@@ -12,8 +11,6 @@
     return {
       origin: null, name: '', gender: 'mujer', age: 20, district: '', job: '', family: 'ninguna', parents: 'ambos', attraction: 'todos',
       hobbies: [], bio: '', photo: null,
-      cls: null, abilities: { Q: null, W: null, E: null, R: null }, keystone: null, title: '',
-      alloc: { ingenio: 0, carisma: 0, valor: 0, sigilo: 0 },
       look: { ...Painter.DEFAULTS, skin: '#e8b394', hair: '#2a1e18', style: 'long', eyeColor: '#5a7a9a', outfit: 'chaqueta', outfitColor: '#4a3a5a', accents: [] },
     };
   }
@@ -28,9 +25,6 @@
       add(o.families.find((f) => f.id === d.family)?.stats);
     }
     d.hobbies.forEach((h) => add(C().hobbies.find((x) => x.id === h)?.stats));
-    add(C().classes.find((c) => c.id === d.cls)?.stats);
-    for (const slot of ['Q', 'W', 'E', 'R']) add(C().abilities[slot].find((a) => a.id === d.abilities?.[slot])?.stats);
-    add(d.alloc);
     return s;
   }
 
@@ -47,11 +41,12 @@
       family: fam.id, familyLabel: fam.label, familyName: fam.name || '', familyAff: fam.aff || {},
       hobbies: d.hobbies, hobbyLabels: hobbies.map((h) => h.label),
       bio: d.bio.trim(), photo: d.photo, look: { ...d.look },
-      cls: d.cls, abilities: { ...d.abilities }, keystone: d.keystone, title: d.title,
+      // Campos vacíos por compatibilidad con partidas antiguas; el creador ya no ofrece habilidades.
+      cls: null, abilities: {}, keystone: null, title: '',
     };
   }
 
-  const STEPS = ['Origen', 'Identidad', 'Clase', 'Habilidades', 'Aptitudes', 'Retrato', 'Familia y aficiones', 'Ficha final'];
+  const STEPS = ['Origen', 'Identidad', 'Retrato', 'Familia y aficiones', 'Ficha final'];
 
   function header() {
     return el('ol', { class: 'steps' }, STEPS.map((s, i) =>
@@ -61,10 +56,7 @@
   function canNext() {
     if (step === 0) return Boolean(draft.origin);
     if (step === 1) return Boolean(draft.name.trim());
-    if (step === 2) return Boolean(draft.cls);
-    if (step === 3) return ['Q', 'W', 'E', 'R'].every((k) => draft.abilities[k]);
-    if (step === 4) return Boolean(draft.keystone) && allocUsed(draft) === C().statPoints;
-    if (step === 6) return draft.hobbies.length > 0;
+    if (step === 3) return draft.hobbies.length > 0;
     return true;
   }
 
@@ -198,7 +190,7 @@
 
   function rerender() {
     const body = layout();
-    [stepOrigin, stepIdentity, stepClass, stepAbilities, stepAptitudes, stepPortrait, stepFamily, stepSummary][step](body);
+    [stepOrigin, stepIdentity, stepPortrait, stepFamily, stepSummary][step](body);
     body.classList.add('enter');
   }
 
@@ -211,16 +203,14 @@
     if (b) { b.innerHTML = ''; b.append(buildBar()); }
   }
 
-  // Insignia de clase y barra de habilidades Q W E R bajo el retrato.
+  // La vista previa resume profesión y familia; no muestra habilidades sin uso real.
   function buildBar() {
-    const cls = C().classes.find((c) => c.id === draft.cls);
-    const ks = C().keystones.find((k) => k.id === draft.keystone);
+    const origin = C().origins[draft.origin];
+    const job = origin?.jobs.find((j) => j.id === draft.job);
+    const family = origin?.families.find((f) => f.id === draft.family);
     return el('div', { class: 'build-bar' },
-      el('div', { class: 'class-badge', style: cls ? `--c:${cls.color}` : '' }, cls ? tpl(cls.label, draft) : 'Sin clase', draft.title ? el('small', {}, tpl(draft.title, draft)) : null),
-      el('div', { class: 'ability-row' },
-        cls ? abilityHex({ icon: cls.icon, name: cls.passive.name, desc: cls.passive.desc }, 'P', true) : null,
-        ...['Q', 'W', 'E', 'R'].map((k) => abilityHex(C().abilities[k].find((a) => a.id === draft.abilities[k]), k)),
-        ks ? abilityHex({ icon: ks.icon, name: ks.name, desc: tpl(ks.desc, draft) }, '★', true) : null));
+      el('div', { class: 'class-badge' }, job ? tpl(job.label, draft) : 'Tu historia'),
+      el('div', { class: 'ability-row' }, el('span', { class: 'muted' }, family ? tpl(family.label, draft) : 'Elige tus vínculos')));
   }
 
   function abilityHex(a, key, small) {
@@ -257,11 +247,12 @@
 
   // Frases al hacer clic en el retrato.
   function quip() {
-    const cls = C().classes.find((c) => c.id === draft.cls);
-    const who = `${draft.name || 'yo'}${draft.title ? `, ${tpl(draft.title, draft)}` : ''}`;
+    const origin = C().origins[draft.origin];
+    const job = origin?.jobs.find((j) => j.id === draft.job);
+    const who = draft.name || 'yo';
     const lines = [
       `¿Qué miras? Soy ${who}.`,
-      cls ? `${tpl(cls.label, draft)} de ${draft.origin === 'piltover' ? 'Piltover' : 'Zaun'}. Y de las buenas.` : 'Aún no sé a qué me dedico. ¿Me ayudas?',
+      job ? `${tpl(job.label, draft)} de ${draft.origin === 'piltover' ? 'Piltover' : 'Zaun'}. Y de las buenas.` : 'Aún estoy encontrando mi lugar en la ciudad.',
       '¡Eh, sin tocar!',
       'Si me vuelves a pinchar, te lanzo una bomba de pintura.',
       draft.origin === 'piltover' ? 'El progreso no espera, y yo tampoco.' : 'Aquí abajo nadie viene a salvarnos.',
@@ -278,16 +269,6 @@
   function randomize() {
     const gallery = avatars();
     if (gallery.length) draft.photo = pick(gallery)[1];
-    // La clase, las habilidades, el talento y los puntos.
-    const Cc = C();
-    draft.cls = pick(Cc.classes).id;
-    for (const k of ['Q', 'W', 'E', 'R']) draft.abilities[k] = pick(Cc.abilities[k]).id;
-    draft.keystone = pick(Cc.keystones).id;
-    draft.alloc = { ingenio: 0, carisma: 0, valor: 0, sigilo: 0 };
-    for (let i = 0; i < Cc.statPoints; i++) {
-      const k = pick(Object.keys(draft.alloc).filter((x) => draft.alloc[x] < Cc.maxStatPerAllocation));
-      draft.alloc[k]++;
-    }
     Audio2.sfx.choice();
     rerender();
   }
@@ -346,69 +327,6 @@
         'Decide con quién puedes tener una relación de pareja (a partir de 18 años).')),
       el('h3', {}, 'A qué te dedicas'), job, nav());
     setTimeout(() => name.focus(), 0);
-  }
-
-  // ----- Paso 3: Clase -----
-  function stepClass(body) {
-    body.append(el('h2', {}, 'Elige tu clase'),
-      el('p', { class: 'muted' }, 'Tu clase define tu estilo: suma estadísticas, te da una habilidad pasiva y te hace destacar en ciertos minijuegos.'));
-    body.append(el('div', { class: 'class-grid' }, C().classes.map((c) =>
-      el('button', {
-        class: `class-card${draft.cls === c.id ? ' active' : ''}`, style: `--c:${c.color}`,
-        onclick: () => { draft.cls = c.id; Audio2.sfx.choice(); rerender(); },
-      },
-      el('span', { class: 'class-icon' }, c.icon),
-      el('strong', {}, tpl(c.label, draft)),
-      el('small', { class: 'class-role' }, c.role),
-      el('p', {}, c.desc),
-      el('div', { class: 'class-passive' }, el('b', {}, `Pasiva · ${c.passive.name}`), el('span', {}, c.passive.desc)),
-      el('small', { class: 'gold' }, bonusText(c.stats)),
-      gamesText(c.passive.bonus) ? el('small', { class: 'class-games' }, `Destaca en: ${gamesText(c.passive.bonus)}`) : null))));
-    const chosen = C().classes.find((c) => c.id === draft.cls);
-    if (chosen) body.append(el('p', { class: 'creator-consecuencia' }, `En la historia, tus estadísticas abren respuestas que otros no tienen: con ${tpl(chosen.label, draft)} empiezas con ${bonusText(chosen.stats)}, y en los minijuegos de tu especialidad tienes ventaja.`));
-    body.append(nav());
-  }
-
-  // ----- Paso 4: Habilidades -----
-  const SLOT_INFO = { Q: 'Ataque', W: 'Movimiento', E: 'Utilidad', R: 'Definitiva' };
-  function stepAbilities(body) {
-    body.append(el('h2', {}, 'Habilidades'),
-      el('p', { class: 'muted' }, 'Elige una habilidad para cada tecla, como en la selección de campeón. Cada una suma una estadística y te da ventaja en un minijuego.'));
-    for (const k of ['Q', 'W', 'E', 'R']) {
-      body.append(el('div', { class: 'ability-slot' },
-        el('div', { class: 'slot-key' }, el('kbd', {}, k), el('small', {}, SLOT_INFO[k])),
-        el('div', { class: 'ability-options' }, C().abilities[k].map((a) =>
-          el('button', {
-            class: `ability-card${draft.abilities[k] === a.id ? ' active' : ''}${k === 'R' ? ' ult' : ''}`,
-            onclick: () => { draft.abilities[k] = a.id; Audio2.sfx.click(); rerender(); },
-          }, el('span', { class: 'ab-icon' }, a.icon), el('strong', {}, a.name), el('small', {}, a.desc))))));
-    }
-    body.append(nav());
-  }
-
-  // ----- Paso 5: Aptitudes -----
-  function stepAptitudes(body) {
-    const total = C().statPoints;
-    const left = total - allocUsed(draft);
-    const stats = computeStats(draft);
-    body.append(el('h2', {}, 'Aptitudes'),
-      el('p', { class: 'muted' }, `Reparte ${total} puntos de aptitud y elige tu talento clave. Las estadísticas abren opciones en la historia.`));
-    const rows = el('div', { class: 'alloc' }, Object.entries(window.STORY.stats).map(([k, m]) =>
-      el('div', { class: 'alloc-row' },
-        el('span', {}, m.label),
-        el('button', { class: 'btn small', disabled: draft.alloc[k] <= 0, onclick: () => { draft.alloc[k]--; rerender(); } }, '−'),
-        el('b', {}, `${stats[k]}${draft.alloc[k] ? ` (+${draft.alloc[k]})` : ''}`),
-        el('button', { class: 'btn small', disabled: left <= 0 || draft.alloc[k] >= C().maxStatPerAllocation, onclick: () => { draft.alloc[k]++; Audio2.sfx.click(); rerender(); } }, '+'))));
-    body.append(el('div', { class: 'alloc-wrap' }, el('div', {}, el('p', { class: left ? 'gold' : 'muted' }, `Puntos por repartir: ${left}`), rows), radar(stats)));
-    body.append(el('h3', {}, 'Talento clave'),
-      el('div', { class: 'keystone-grid' }, C().keystones.map((k) =>
-        el('button', { class: `keystone${draft.keystone === k.id ? ' active' : ''}`, onclick: () => { draft.keystone = k.id; Audio2.sfx.choice(); rerender(); } },
-          el('span', { class: 'ks-icon' }, k.icon), el('strong', {}, tpl(k.name, draft)), el('small', {}, k.desc)))));
-    body.append(el('h3', {}, 'Título (opcional)'),
-      el('div', { class: 'chips wrap' },
-        el('button', { class: `chip${!draft.title ? ' active' : ''}`, onclick: () => { draft.title = ''; rerender(); } }, 'Sin título'),
-        ...C().titles.map((t) => el('button', { class: `chip${draft.title === t ? ' active' : ''}`, onclick: () => { draft.title = t; rerender(); } }, tpl(t, draft)))));
-    body.append(nav());
   }
 
   // ----- Paso 6: Retrato -----
@@ -514,12 +432,6 @@
       ...(p.parents ? [['Padres', tpl(C().parents.find((x) => x.id === p.parents)?.label || '', p)]] : []),
       ...(p.attraction ? [['Te atraen', C().attractions.find((x) => x.id === p.attraction)?.label || '']] : []),
       ['Aficiones', p.hobbyLabels.join(', ')],
-      ...(p.cls ? [
-        ['Clase', tpl(C().classes.find((c) => c.id === p.cls)?.label || '', p)],
-        ['Habilidades', ['Q', 'W', 'E', 'R'].map((k) => `${k}: ${C().abilities[k].find((a) => a.id === p.abilities?.[k])?.name || '—'}`).join(' · ')],
-        ['Talento clave', tpl(C().keystones.find((k) => k.id === p.keystone)?.name || '—', p)],
-      ] : []),
-      ...(p.title ? [['Título', tpl(p.title, p)]] : []),
     ];
     return el('dl', { class: 'sheet-list' }, rows.flatMap(([k, v]) => [el('dt', {}, k), el('dd', {}, String(v ?? ''))]));
   }
