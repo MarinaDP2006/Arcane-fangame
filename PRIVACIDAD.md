@@ -1,5 +1,7 @@
 # Política de privacidad · Arcane: Piltover y Zaun (juego de fans)
 
+> **En pocas palabras:** Esta página explica qué datos maneja el juego y dónde se guardan. Léela antes de compartir capturas, partidas o registros. La privacidad puede cambiar si utilizas servicios externos —por ejemplo, un servidor de IA que tú mismo configures—, así que no compartas secretos ni datos personales en prompts o archivos públicos.
+
 Última actualización: 21 de octubre de 2026
 
 Este juego es un proyecto de fans **gratuito y sin ánimo de lucro**, creado por MarinaDP2006.
