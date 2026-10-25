@@ -708,7 +708,30 @@
       ctx.restore();
     }
 
-    // Ambiente: humo químico en Zaun, polvo dorado en Piltover.
+    // En el mapa 2D el gas solo aparece alrededor de zonas industriales concretas.
+    if (zaun && !r3d && opt().particles !== false && !opt().reduceMotion) {
+      const toxicIds = ['sumidero', 'fabrica', 'callejones'];
+      toxicIds.forEach((id, i) => {
+        const loc = map.def.locations.find((l) => l.id === id);
+        if (!loc) return;
+        const p = toScreen(loc.x, loc.y);
+        const radius = Math.max(18, Math.min(105, (105 + i * 18) * zoom));
+        const pulse = 0.8 + Math.sin(t / 900 + i * 1.8) * 0.2;
+        const haze = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+        haze.addColorStop(0, `rgba(92,255,112,${0.16 * pulse})`);
+        haze.addColorStop(0.55, `rgba(50,205,100,${0.09 * pulse})`);
+        haze.addColorStop(1, 'rgba(50,205,100,0)');
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = haze;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, radius * 1.35, radius * 0.75, Math.sin(t / 2100 + i) * 0.12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // Ambiente: partículas pequeñas por el aire y humo tóxico localizado en Zaun.
     if (opt().particles !== false && !opt().reduceMotion) {
       for (const p of particles) {
         if (zaun) {
@@ -1303,7 +1326,7 @@
 
     if (particles.length < (mapId === 'zaun' ? 26 : 60) && Math.random() < 0.4) {
       const zaun = mapId === 'zaun';
-      particles.push({ x: Math.random() * cw, y: ch + 10, vy: -(15 + Math.random() * 35), vx: (Math.random() - 0.5) * 12, life: 7 + Math.random() * 6, r: zaun ? 50 + Math.random() * 90 : 1.2 + Math.random() * 2 });
+      particles.push({ x: Math.random() * cw, y: ch + 10, vy: -(15 + Math.random() * 35), vx: (Math.random() - 0.5) * 12, life: 7 + Math.random() * 6, r: zaun ? 8 + Math.random() * 20 : 1.2 + Math.random() * 2 });
     }
     particles.forEach((p) => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; });
     particles = particles.filter((p) => p.life > 0);
