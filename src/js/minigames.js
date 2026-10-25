@@ -419,11 +419,14 @@
         e.stopPropagation();
         const k = e.key.toLowerCase();
         if (k === 'escape') { e.preventDefault(); if (running) { running = false; result(false); } return; }
-        if (running && [' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) e.preventDefault();
+        const mapped = ({ w: 'arrowup', s: 'arrowdown', a: 'arrowleft', d: 'arrowright' })[k];
+        if (running && [' ', 'enter', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(k)) e.preventDefault();
         if (!keys.has(k)) pressed.push(k);
+        if (mapped && !keys.has(mapped)) pressed.push(mapped);
         keys.add(k);
+        if (mapped) keys.add(mapped);
       };
-      const ku = (e) => { e.stopPropagation(); keys.delete(e.key.toLowerCase()); };
+      const ku = (e) => { e.stopPropagation(); const k = e.key.toLowerCase(); keys.delete(k); const mapped = ({ w: 'arrowup', s: 'arrowdown', a: 'arrowleft', d: 'arrowright' })[k]; if (mapped) keys.delete(mapped); };
       window.addEventListener('keydown', kd, true);
       window.addEventListener('keyup', ku, true);
       const pos = (e) => { const r = canvas.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; };
@@ -1503,7 +1506,7 @@
   GAMES.regateo = {
     title: 'Regateo en el mercado', icon: '', scene: 'mercado', grade: 'zaun', backdrops: ['mercado', 'callejones', 'tienda-benzo', 'ultima-gota', 'zaun'],
     desc: 'La vendedora pide 100 monedas por un cachivache que vale mucho menos. Haz ofertas: si te pasas de lista se enfadará, si ofreces poco perderá la paciencia.',
-    controls: 'Flechas ← → (o los botones − y +) para ajustar tu oferta, Espacio, Intro o «Ofrecer» para ofrecer.', touchControls: 'Botones − y + (o desliza el dedo a izquierda o derecha) para ajustar tu oferta, «Ofrecer» para ofrecer.',
+    controls: 'Flechas o A/D para ajustar la oferta; Espacio, Intro o clic en OFRECER para cerrar el trato.', touchControls: 'Pulsa − / + o desliza horizontalmente para ajustar; toca REGATEAR para ofrecer.',
     touchKeys: [['arrowright', '+'], [' ', 'Regatear'], ['arrowleft', '−']], touchLayout: 'column', swipe: true, goal: 'Cierra el trato a un precio razonable sin agotar la paciencia de la vendedora.',
     winText: '«Trato hecho… me has desplumado», ríe la vendedora.', loseText: '«Fuera de mi puesto», te dice cruzándose de brazos.',
     create(w, h, o = {}) {
@@ -1517,9 +1520,9 @@
       const maxPat = (piltoverMarket ? 3 : 4) + (o.bonus || 0);
       // Botones dibujados (para ratón; en móvil están los botones grandes)
       const btns = touchUI() ? [] : [
-        { id: 'minus', label: '−', x: w / 2 - 190, y: h * 0.8, w: 60, h: 52 },
-        { id: 'plus', label: '+', x: w / 2 + 130, y: h * 0.8, w: 60, h: 52 },
-        { id: 'offer', label: 'Ofrecer', x: w / 2 - 70, y: h * 0.9, w: 140, h: 40 },
+        { id: 'minus', label: '−', x: w / 2 - 220, y: h * 0.79, w: 84, h: 64 },
+        { id: 'plus', label: '+', x: w / 2 + 136, y: h * 0.79, w: 84, h: 64 },
+        { id: 'offer', label: 'OFRECER · ENTER', x: w / 2 - 112, y: h * 0.89, w: 224, h: 56 },
       ];
       const g = {
         offer: piltoverMarket ? 65 : 40, ask: openingAsk, patience: maxPat, msg: piltoverMarket ? 'Es una pieza hextec auténtica. No aceptaré calderilla.' : '¿Cuánto me das?', result: null, mood: 0, moodT: 0, shownOffer: piltoverMarket ? 65 : 40, shownAsk: openingAsk, hover: null,

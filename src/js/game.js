@@ -143,11 +143,12 @@
     input.click();
   }
 
-  /** Inicia una nueva historia con el personaje creado. */
+  /** Nueva partida: ofrece contexto opcional antes de crear personaje. */
   function newGame(s) {
     slot = s;
+    const root = document.querySelector('#view-creator');
     window.App.go('creator');
-    Creator.start(async (player, stats) => {
+    const launchCreator = () => Creator.start(async (player, stats) => {
       G = newState(player, stats);
       tab = 'historia';
       contact = null;
@@ -156,8 +157,22 @@
       window.App.go('game');
       toast(`Objetivo: ve a ${objectiveName()}`, 'good');
     });
+    root.innerHTML = '';
+    const screen = document.createElement('section');
+    screen.className = 'world-entry';
+    screen.innerHTML = `<div class="world-entry-backdrop" aria-hidden="true"></div><article class="world-entry-panel">
+      <p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">¿Es tu primera vez en Piltover y Zaun?</h1>
+      <p class="world-entry-copy">Puedes descubrir el mundo antes de crear tu personaje o ir directamente al creador si ya lo conoces.</p>
+      <div class="world-entry-actions"><button class="btn primary world-entry-new" type="button">Sí, soy nuevo/a</button><button class="btn world-entry-known" type="button">Ya conozco este mundo</button></div>
+      <p class="world-entry-foot">La partida comienza después de crear el personaje.</p></article>`;
+    root.append(screen);
+    screen.querySelector('.world-entry-known').addEventListener('click', launchCreator, { once: true });
+    screen.querySelector('.world-entry-new').addEventListener('click', () => {
+      screen.querySelector('.world-entry-panel').innerHTML = `<p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">Antes de cruzar la grieta…</h1>
+      <p class="world-entry-copy">Piltover presume de progreso, academias y poder; Zaun sobrevive entre humo, talleres y alianzas frágiles. Tus decisiones, tus vínculos y el lugar de donde vienes cambiarán cómo te trata la gente. No necesitas conocer la serie: descubrirás el mundo jugando.</p><div class="world-entry-actions"><button class="btn primary world-entry-continue" type="button">Entendido, crear personaje</button></div>`;
+      screen.querySelector('.world-entry-continue').addEventListener('click', launchCreator, { once: true });
+    }, { once: true });
   }
-
   /** Restaura una partida guardada. */
   async function loadGame(s) {
     const data = await store.load(s);
@@ -194,12 +209,13 @@
   // Cinemática de inicio según la ciudad elegida.
   async function playIntro(p) {
     const me = { look: p.look, photo: p.photo, ...Portrait.playerOpts(p) };
+    const introStart = window.I18N.t('Aquí empieza tu historia, {0}.').replace('{0}', p.name);
     const shots = p.origin === 'zaun'
       ? [
         { scene: 'piltover', dur: 6, kicker: 'Runeterra', title: 'Piltover', lines: ['Arriba, la Ciudad del Progreso brilla de oro y cristal.'], zoom: [1.2, 1.05], pan: [[-0.6, -0.4], [0.4, 0.2]] },
         { scene: 'puente', dur: 6, lines: ['Un puente une dos mundos que no se miran a los ojos.'], zoom: [1.0, 1.18], pan: [[0.5, -0.3], [-0.2, 0.4]] },
         { scene: 'zaun', dur: 7, title: 'Zaun', lines: ['Abajo, entre humo verde y neón, la gente sobrevive como puede.'], zoom: [1.15, 1.0], pan: [[0, 0.6], [0, -0.2]] },
-        { scene: 'callejones', dur: 7, lines: [`Aquí empieza tu historia, ${p.name}.`, 'Lo que decidas cambiará las dos ciudades.'], portrait: me, zoom: [1.05, 1.15] },
+        { scene: 'callejones', dur: 7, lines: [introStart, 'Lo que decidas cambiará las dos ciudades.'], portrait: me, zoom: [1.05, 1.15] },
       ]
       : [
         { scene: 'zaun', dur: 6, kicker: 'Runeterra', title: 'Zaun', lines: ['Bajo tus pies, una ciudad respira humo y rabia.'], zoom: [1.2, 1.05], pan: [[0.5, 0.5], [-0.3, 0]] },

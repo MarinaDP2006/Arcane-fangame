@@ -5174,5 +5174,14 @@ window.I18N_DATA.fr = {
   "Desactivada: solo diálogos escritos": "Désactivée : dialogues écrits seulement",
   "Ver el modelo abierto": "Voir le modèle ouvert",
   "En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».": "Sur le téléphone ou la tablette, écris l'adresse de ton PC (celle affichée dans les Réglages du jeu sur le PC), pas «localhost».",
-  "Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.": "Confidentialité : le jeu ne collecte ni n'envoie de données personnelles. Tes parties et réglages sont enregistrés uniquement sur ton appareil. Si tu actives l'IA, ce que tu écris dans l'histoire et le communicateur (et le contexte du personnage) ne va qu'à KoboldCpp, sur ton ordinateur ou un autre de ton réseau domestique : rien ne part sur internet."
+  "Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.": "Confidentialité : le jeu ne collecte ni n'envoie de données personnelles. Tes parties et réglages sont enregistrés uniquement sur ton appareil. Si tu actives l'IA, ce que tu écris dans l'histoire et le communicateur (et le contexte du personnage) ne va qu'à KoboldCpp, sur ton ordinateur ou un autre de ton réseau domestique : rien ne part sur internet.",
+  "PRIMER CONTACTO · PILTOVER / ZAUN": "PREMIER CONTACT · PILTOVER / ZAUN",
+  "¿Es tu primera vez en Piltover y Zaun?": "C'est la première fois que tu viens à Piltover et Zaun ?",
+  "Puedes descubrir el mundo antes de crear tu personaje o ir directamente al creador si ya lo conoces.": "Tu peux découvrir le monde avant de créer ton personnage, ou passer directement à la création si tu le connais déjà.",
+  "Sí, soy nuevo/a": "Oui, je découvre ce monde",
+  "Ya conozco este mundo": "Je connais déjà ce monde",
+  "La partida comienza después de crear el personaje.": "L'aventure commence après la création du personnage.",
+  "Antes de cruzar la grieta…": "Avant de franchir la faille…",
+  "Piltover presume de progreso, academias y poder; Zaun sobrevive entre humo, talleres y alianzas frágiles. Tus decisiones, tus vínculos y el lugar de donde vienes cambiarán cómo te trata la gente. No necesitas conocer la serie: descubrirás el mundo jugando.": "Piltover affiche fièrement ses progrès, ses académies et son pouvoir ; Zaun survit au milieu de la fumée, des ateliers et d'alliances fragiles. Tes choix, tes liens et tes origines changeront la façon dont les autres te traiteront. Inutile de connaître la série : tu découvriras cet univers en jouant.",
+  "Entendido, crear personaje": "Compris, créer mon personnage",
 };
