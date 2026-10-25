@@ -495,6 +495,31 @@
       tube.castShadow = true;
       scene.add(tube);
     }
+    // Nubes de gas químico localizadas: el resto de Zaun conserva visibilidad jugable.
+    const toxicGas = new T.Group();
+    const gasTexture = softSprite('rgba(140,255,120,0.28)', 'rgba(30,155,75,0)', 64);
+    const gasZones = [
+      { id: 'sumidero', x: map.w * 0.52, z: map.h * 0.78, radius: 150 },
+      { id: 'fabrica', x: map.w * 0.28, z: map.h * 0.55, radius: 125 },
+      { id: 'callejones', x: map.w * 0.72, z: map.h * 0.42, radius: 105 },
+    ];
+    for (const zone of gasZones) {
+      const loc = map.def?.locations?.find((l) => l.id === zone.id);
+      const cx = loc?.x ?? zone.x;
+      const cz = loc?.y ?? zone.z;
+      for (let i = 0; i < 7; i++) {
+        const mat = new T.SpriteMaterial({ map: gasTexture, color: i % 3 === 0 ? '#b5ff8a' : '#65d86f', transparent: true, opacity: 0.12 + (i % 4) * 0.035, blending: T.AdditiveBlending, depthWrite: false, fog: false });
+        const puff = new T.Sprite(mat);
+        const phase = i * 1.71 + zone.radius * 0.01;
+        const spread = zone.radius * (0.15 + (i % 4) * 0.16);
+        puff.scale.set(95 + (i % 3) * 45, 62 + (i % 4) * 24, 1);
+        puff.position.set(cx + Math.cos(phase) * spread, 18 + (i % 4) * 24, cz + Math.sin(phase) * spread);
+        puff.userData = { cx, cz, phase, spread, baseY: puff.position.y, phaseSpeed: 0.18 + (i % 3) * 0.05 };
+        toxicGas.add(puff);
+      }
+    }
+    scene.add(toxicGas);
+
     // Luz: ambiente químico, la luz fría que cae de arriba y faroles de neón
     scene.fog = new T.FogExp2('#0d1a14', 0.00022);
     scene.add(new T.HemisphereLight('#7fd8c0', '#1a120a', 0.9));
@@ -523,6 +548,13 @@
         const a = spores.geometry.attributes.position;
         for (let i = 0; i < a.count; i++) { let y = a.getY(i) + dt * 12; if (y > 900) y = 0; a.setY(i, y); }
         a.needsUpdate = true;
+        toxicGas.children.forEach((p) => {
+          const d = p.userData;
+          p.position.x = d.cx + Math.cos(t * d.phaseSpeed + d.phase) * d.spread;
+          p.position.z = d.cz + Math.sin(t * d.phaseSpeed * 0.8 + d.phase) * d.spread;
+          p.position.y = d.baseY + Math.sin(t * 0.7 + d.phase) * 9;
+          p.material.opacity = 0.11 + (Math.sin(t * 0.6 + d.phase) + 1) * 0.045;
+        });
         shafts.children.forEach((s, i) => { s.material.opacity = 0.07 + Math.sin(t * 0.4 + i) * 0.02; });
       },
     };
