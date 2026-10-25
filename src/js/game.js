@@ -466,6 +466,15 @@
       locationActions: (loc) => locationActions(loc).map((a) => a.label),
       onLocation,
       onTalk: (id) => openOverlay('chats', id),
+      onResident: (resident) => {
+        G.flags ||= {};
+        G.flags.residentChats ||= {};
+        const index = G.flags.residentChats[resident.id] || 0;
+        G.flags.residentChats[resident.id] = index + 1;
+        const line = resident.lines?.[index % Math.max(1, resident.lines.length)] || 'La ciudad nunca se queda quieta.';
+        toast(`${resident.name} · ${resident.role}: ${line}`, 'good');
+        persist();
+      },
       onTravel: (to) => { toast(`Llegas a ${window.WORLD.maps[to].label}`); persist(); },
       onVisit: (loc) => {
         if (!G.visited.includes(loc.id)) {
