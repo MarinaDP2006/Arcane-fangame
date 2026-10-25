@@ -8,7 +8,7 @@ Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 
 
 1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
 2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
-3. **IA opcional:** el chat de IA del juego de escritorio usa actualmente KoboldCpp. Ollama está preparado como perfil local experimental, pero `config/ollama.json` está desactivado y la aplicación no lo carga automáticamente. No confundas preparar `arcane-narrador` con tener el juego integrado con Ollama; consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md). Los diálogos escritos permiten jugar sin IA.
+3. **IA opcional:** el chat de IA del juego de escritorio usa actualmente KoboldCpp. Ollama puede seleccionarse como proveedor local experimental desde Ajustes de IA. Consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md) para instalarlo, configurar el modelo y resolver problemas de conexión. Los diálogos escritos permiten jugar sin IA.
 
 ## Web y arte
 
@@ -19,6 +19,12 @@ La web pública se genera con `npm run web`. La demo del repositorio se mantiene
 - `arcaneData/arte/FUENTES.json`: fuentes, créditos, nombres de archivos y procedencia de los recursos.
 - `web/demo.html` + `web/demo-juego.js`: demo mantenida en el repositorio para desarrollo/pruebas; no enlazada desde la portada.
 - `web/arte-propio/`: recursos gráficos propios de la interfaz.
+
+## Guías de modelos e integración
+
+- [Modelos locales y Ollama](MODELOS-LOCALES.md): instalación, comprobación y estado real de integración.
+- [Guía de modelos 3D](GUIA-MODELOS-3D.md): formatos, rendimiento, integración por etapas y pruebas.
+- [Guía de KoboldCpp](GUIA-KOBOLDCPP.md): proveedor de chat local que usa actualmente el juego de escritorio.
 
 `npm run web` genera la carpeta `web-dist/` con el contenido listo para Render. Las imágenes de Arcane son propiedad de Riot Games / Fortiche Production; el proyecto es un fangame no oficial.
 
