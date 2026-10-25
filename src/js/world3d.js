@@ -558,11 +558,6 @@
       actors.group.add(actors.orb.root);
       const A = window.Avatars3D;
       if (!A) return;
-      // El marcador luminoso conserva la sombra y el halo, pero el cuerpo es el avatar 3D
-      // del jugador. Su holder usa exactamente las coordenadas del orbe del mapa.
-      actors.playerAvatar = A.create({ player: true });
-      actors.group.add(actors.playerAvatar.holder);
-      actors.orb.ball.visible = false;
       const mine = actors;
       // Decorados con modelo propio.
       for (const l of map.def.locations) {
@@ -612,6 +607,13 @@
       const { orb } = actors;
       const p = st.player;
       if (p) {
+        // Crear el avatar al disponer de la ficha real del jugador (aspecto y ropa incluidos).
+        const APlayer = window.Avatars3D;
+        if (APlayer && !actors.playerAvatar) {
+          actors.playerAvatar = APlayer.create({ player: p });
+          actors.group.add(actors.playerAvatar.holder);
+          orb.ball.visible = false;
+        }
         orb.root.visible = true;
         const color = ORB[p.gender] || ORB.nobinario;
         if (orb.color !== color) {
