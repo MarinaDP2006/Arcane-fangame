@@ -198,27 +198,21 @@
    * Sus identidades y trayectorias son deterministas para evitar que salten al cambiar de fotograma.
    */
   function ambientNpcs() {
-    const def = W().maps[mapId];
-    const anchors = (def?.locations || []).filter((l) => l.x > 260 && l.y > 260 && l.x < map.w - 260 && l.y < map.h - 260);
-    if (!anchors.length) return [];
-    const count = Math.min(12, Math.max(8, Math.round(anchors.length * 0.7)));
+    const routes = ambientRoutes();
+    if (!routes.length) return [];
+    const count = Math.min(12, Math.max(8, Math.round(routes.length / 5)));
     const out = [];
     for (let i = 0; i < count; i++) {
-      const anchor = anchors[(i * 7 + Math.floor(i / 3)) % anchors.length];
-      const phase = i * 2.399963229728653;
-      // Las rutas quedan dentro del espacio peatonal despejado alrededor de cada lugar.
-      // El mapa reserva un radio de 120 unidades sin edificios en torno a los puntos públicos.
-      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[anchor.id] || [60, 60];
-      const rx = Math.max(62, footprint[0] + 24) + (i % 2) * 8;
-      const rz = Math.max(52, footprint[1] + 24) + (i % 2) * 8;
-      const a = ambientTime * (0.16 + (i % 4) * 0.018) + phase;
-      const x = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
-      const y = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
-      const speed = Math.hypot(Math.sin(a) * rx, Math.cos(a) * rz) * (0.16 + (i % 4) * 0.018);
+      const route = routes[(i * 13 + Math.floor(i / 2) * 7) % routes.length];
+      const speed = 34 + (i % 4) * 7;
+      const travel = (ambientTime * speed + i * 41) % (route.len * 2);
+      const reverse = travel > route.len;
+      const u = reverse ? 2 - travel / route.len : travel / route.len;
+      const x = route.x1 + (route.x2 - route.x1) * u;
+      const y = route.y1 + (route.y2 - route.y1) * u;
       out.push({
-        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true,
-        speed: Math.min(82, Math.max(28, speed)),
-        home: Math.atan2(-Math.sin(a), Math.cos(a)),
+        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true, speed,
+        home: reverse ? Math.atan2(route.x1 - route.x2, route.y1 - route.y2) : Math.atan2(route.x2 - route.x1, route.y2 - route.y1),
       });
     }
     return out;
