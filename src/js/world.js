@@ -122,6 +122,44 @@
     return cache[id];
   }
 
+  // Colisión circular contra las huellas de los edificios. El mismo sistema de coordenadas
+  // se usa en el mapa 2D y en la escena 3D, así que el bloqueo coincide en ambas vistas.
+  const ACTOR_RADIUS = 20;
+  function blockedAt(x, y, radius = ACTOR_RADIUS) {
+    if (!map || x < radius || y < radius || x > map.w - radius || y > map.h - radius) return true;
+    return map.buildings.some((b) => {
+      const nx = Math.max(b.x, Math.min(x, b.x + b.w));
+      const ny = Math.max(b.y, Math.min(y, b.y + b.h));
+      return (x - nx) ** 2 + (y - ny) ** 2 < radius ** 2;
+    });
+  }
+
+  /** Movimiento con deslizamiento lateral: no se atraviesan esquinas y se conserva control fluido. */
+  function moveOnStreet(x, y, dx, dy, radius = ACTOR_RADIUS) {
+    const nx = Math.max(radius, Math.min(map.w - radius, x + dx));
+    const ny = Math.max(radius, Math.min(map.h - radius, y + dy));
+    if (!blockedAt(nx, ny, radius)) return { x: nx, y: ny, moved: Math.hypot(nx - x, ny - y) > 0.001 };
+    let outX = x;
+    let outY = y;
+    if (!blockedAt(nx, y, radius)) outX = nx;
+    if (!blockedAt(outX, ny, radius)) outY = ny;
+    return { x: outX, y: outY, moved: Math.hypot(outX - x, outY - y) > 0.001 };
+  }
+
+  /** Si un punto de una ruta cae dentro de un edificio, busca la acera libre más cercana. */
+  function nearestWalkable(x, y, radius = ACTOR_RADIUS) {
+    if (!blockedAt(x, y, radius)) return { x, y };
+    for (let ring = 24; ring <= 240; ring += 24) {
+      for (let i = 0; i < 24; i++) {
+        const a = i * Math.PI / 12;
+        const px = Math.max(radius, Math.min(map.w - radius, x + Math.cos(a) * ring));
+        const py = Math.max(radius, Math.min(map.h - radius, y + Math.sin(a) * ring));
+        if (!blockedAt(px, py, radius)) return { x: px, y: py };
+      }
+    }
+    return null;
+  }
+
   // ---------- Imágenes ----------
   function loadImg(key, src) {
     if (imgCache.has(key)) return imgCache.get(key);
@@ -209,8 +247,11 @@
       const rx = 190 + (i % 4) * 24;
       const rz = 145 + (i % 3) * 28;
       const a = ambientTime * (0.16 + (i % 4) * 0.018) + phase;
-      const x = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
-      const y = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
+      const rawX = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
+      const rawY = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
+      const point = nearestWalkable(rawX, rawY, 16);
+      if (!point) continue;
+      const { x, y } = point;
       const speed = Math.hypot(Math.sin(a) * rx, Math.cos(a) * rz) * (0.16 + (i % 4) * 0.018);
       out.push({
         id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true,
@@ -1068,8 +1109,12 @@
     moving = Boolean(mx || my);
     if (moving) {
       const sp = WALK * (opt().camSpeed || 1);
-      G.world.px = Math.max(40, Math.min(map.w - 40, G.world.px + mx * sp * dt));
-      G.world.py = Math.max(40, Math.min(map.h - 40, G.world.py + my * sp * dt));
+      const moved = moveOnStreet(G.world.px, G.world.py, mx * sp * dt, my * sp * dt);
+      G.world.px = moved.x;
+      G.world.py = moved.y;
+      // Si el destino automático queda bloqueado, se cancela para no empujar al jugador contra una pared.
+      if (!moved.moved && walkTo) walkTo = null;
+      moving = moved.moved;
       G.world.face = Math.atan2(mx, my);
       (G.world.pos ||= {})[mapId] = { x: G.world.px, y: G.world.py };
       // La cámara sigue a tu personaje.
