@@ -2394,3 +2394,41 @@ img, picture, video, canvas { max-width:100%; }
   .chat-portrait .cp-actions .btn, .choice { min-width:0; white-space:normal; overflow-wrap:anywhere; }
   .log, .chat-log { max-height: min(48vh, 420px); }
 }
+
+
+/* Cinematic dialogue polish — Arcane: lectura, foco y retrato sin efectos pesados. */
+#view-game .chat-stage { align-items:stretch; gap:clamp(.8rem,1.5vw,1.25rem); }
+#view-game .chat-portrait,
+#view-game .chat-convo { min-width:0; overflow:hidden; border:1px solid rgba(181,202,230,.18); border-radius:8px; }
+#view-game .chat-portrait {
+  background:linear-gradient(155deg,rgba(17,24,35,.98),rgba(5,8,14,.98));
+  box-shadow:0 14px 34px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.035);
+}
+#view-game .cp-frame { position:relative; overflow:hidden; background:#0b111b; }
+#view-game .cp-frame img { display:block; width:100%; height:100%; object-fit:cover; object-position:center top; }
+#view-game .cp-plate { padding:.85rem 1rem; border-top:1px solid rgba(232,207,138,.22); }
+#view-game .cp-plate h2 { margin:0 0 .25rem; letter-spacing:.025em; }
+#view-game .cp-plate small { color:var(--muted, #aab2c1); line-height:1.45; }
+#view-game .chat-convo { background:linear-gradient(160deg,rgba(11,15,23,.98),rgba(5,7,12,.99)); box-shadow:0 14px 34px rgba(0,0,0,.2); }
+#view-game .chat-head { gap:.75rem; padding:.8rem 1rem; background:linear-gradient(90deg,rgba(232,207,138,.09),transparent 75%); border-bottom:1px solid rgba(232,207,138,.2); }
+#view-game #chat-log { padding:clamp(.8rem,1.6vw,1.2rem); line-height:1.65; }
+#view-game #chat-log .msg { max-width:min(88%,68ch); }
+#view-game #chat-log .msg.them { margin-right:auto; }
+#view-game #chat-log .msg.me { margin-left:auto; }
+#view-game #chat-log .msg.them .bubble { border-left:2px solid rgba(127,208,255,.62); }
+#view-game #chat-log .msg.me .bubble { border-right:2px solid rgba(232,207,138,.68); }
+#view-game #dlg-choices { gap:.45rem; padding:.7rem; border-top:1px solid rgba(232,207,138,.17); background:rgba(4,7,12,.97); }
+#view-game #dlg-choices .choice { min-height:44px; padding:.7rem .85rem; text-align:left; line-height:1.45; transition:border-color .15s ease,background-color .15s ease; }
+#view-game #dlg-choices .choice:focus-visible,
+#view-game .chat-mode .cm-btn:focus-visible,
+#view-game .cp-actions .btn:focus-visible { outline:2px solid var(--gold,#e8cf8a); outline-offset:3px; }
+#view-game .chat-mode { display:flex; flex-wrap:wrap; gap:.35rem; }
+@media(max-width:640px) {
+  #view-game .chat-portrait, #view-game .chat-convo { border-radius:6px; }
+  #view-game #chat-log { padding:.7rem; }
+  #view-game #chat-log .msg { max-width:96%; }
+  #view-game .chat-head { flex-wrap:wrap; padding:.65rem; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #view-game #dlg-choices .choice { transition:none; }
+}
