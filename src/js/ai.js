@@ -1,39 +1,35 @@
-// Chat libre con IA (opcional y gratis): escribes lo que quieras y el personaje responde
-// en su papel, al estilo de Character AI. La única IA del juego es KoboldCpp, que corre en
-// tu ordenador (sin internet) y también sirve a la tablet o al móvil por la red de casa.
-// Habla el formato de OpenAI (/v1/chat/completions) en el puerto 5001.
+// Chat libre con IA opcional: KoboldCpp u Ollama local mediante API compatible con OpenAI.
 (function () {
   const PROVIDERS = {
     off: { label: 'Desactivada' },
-    koboldcpp: { label: 'KoboldCpp (en tu PC o por la red de casa)', url: 'http://192.168.1.139:5001/v1/chat/completions', model: 'koboldcpp', help: 'Abre KoboldCpp (koboldcpp.exe o koboldcpp-oldpc.exe en PCs antiguos), elige tu modelo .gguf en «Model» y pulsa «Launch». Cuando diga que está listo en el puerto 5001, deja la dirección como está y pulsa «Probar conexión». Para jugar desde la tablet o el móvil escribe la dirección de tu PC, por ejemplo http://192.168.1.139:5001. Los pasos están en GUIA-KOBOLDCPP.md.' },
+    koboldcpp: { label: 'KoboldCpp (PC o red local)', url: 'http://192.168.1.139:5001/v1/chat/completions', model: 'koboldcpp', help: 'Abre KoboldCpp, elige tu modelo .gguf en «Model» y pulsa «Launch». Para usarlo desde otro dispositivo, escribe la IP del PC y el puerto 5001.' },
+    ollama: { label: 'Ollama (modelo local)', url: 'http://127.0.0.1:11434/v1/chat/completions', model: 'arcane-narrador', help: 'Instala Ollama, ejecuta «ollama pull qwen3:4b» y crea el perfil con «ollama create arcane-narrador -f ollama/Modelfile.arcane». Después inicia «ollama run arcane-narrador» y pulsa «Probar conexión». En móvil usa la IP del PC, no localhost. Consulta MODELOS-LOCALES.md.' },
   };
 
   // KoboldCpp corre en tu PC y puede ser accesible en la red local. Configura Password si lo compartes con otros dispositivos.
-  const LOCAL = new Set(['koboldcpp']);
+  const LOCAL = new Set(['koboldcpp', 'ollama']);
 
   // Basta con escribir «192.168.1.139» o «http://192.168.1.139:5001»: se completa el puerto
   // y la ruta de /v1/chat/completions.
-  function fullUrl(url) {
+  function fullUrl(url, provider = 'koboldcpp') {
     url = String(url || '').trim().replaceAll('192.168.1.40', '192.168.1.139');
     if (!url) return url;
     if (!/^https?:\/\//i.test(url)) url = `http://${url}`;
     try {
       const u = new URL(url);
-      if (!u.port && u.protocol === 'http:') u.port = '5001';
+      if (!u.port && u.protocol === 'http:') u.port = provider === 'ollama' ? '11434' : '5001';
       if (!/\/chat\/completions$/.test(u.pathname)) u.pathname = `${u.pathname.replace(/\/(v1\/?)?$/, '').replace(/\/+$/, '')}/v1/chat/completions`;
       return u.toString();
     } catch { return url; }
   }
 
-  // Las partidas de versiones anteriores podían tener elegido otro servicio (Ollama, LM Studio,
-  // la IA alojada…): ahora todas usan KoboldCpp, salvo quien la desactivó. La dirección guardada
-  // solo se conserva si ya era la de KoboldCpp.
   function cfg() {
     const a = window.App?.settings?.ai || {};
     if (a.provider === 'off') return { provider: 'off', url: '', model: '' };
-    const d = PROVIDERS.koboldcpp;
-    const mine = !a.provider || a.provider === 'koboldcpp';
-    return { provider: 'koboldcpp', url: fullUrl((mine && a.url) || d.url), model: (mine && a.model) || d.model, password: (mine && typeof a.password === 'string' ? a.password : '') };
+    const provider = a.provider === 'ollama' ? 'ollama' : 'koboldcpp';
+    const d = PROVIDERS[provider];
+    const mine = a.provider === provider;
+    return { provider, url: fullUrl((mine && a.url) || d.url, provider), model: (mine && a.model) || d.model, password: (mine && typeof a.password === 'string' ? a.password : '') };
   }
 
   // KoboldCpp accepts the OpenAI-compatible Bearer key when a Network password is configured.
@@ -118,7 +114,7 @@
     try {
       r = await post(c.url, c.password ? { Authorization: `Bearer ${c.password}` } : {}, body);
     } catch (err) {
-      throw new Error(`No se puede conectar con KoboldCpp en ${c.url}. Comprueba que está abierto y que la dirección es la de tu PC. (${err.message})`);
+      throw new Error(`No se puede conectar con ${PROVIDERS[c.provider]?.label || c.provider} en ${c.url}. Comprueba que el servicio está abierto y que la dirección es correcta. (${err.message})`);
     }
     if (r.status >= 400 || r.data?.error) {
       const msg = r.data?.error?.message || r.data?.error || r.data?.message || `HTTP ${r.status}`;
@@ -191,6 +187,9 @@
       lore.motivaciones ? `Motivaciones, miedos y contradicciones: ${lore.motivaciones}` : '',
       v.nunca ? `Para no salirte del papel: ${v.nunca}` : '',
       `Hablas con ${who}.`,
+      p.family && p.family !== 'ninguna' && (window.RELATIONS.familyLinks[p.family] || {})[id]
+        ? 'Vínculo familiar de esta partida: trata al protagonista como familia real, con recuerdos compartidos, confianza y conflictos coherentes con tu personalidad. No conviertas este parentesco en romance ni lo ignores.'
+        : 'No inventes parentescos secretos con el protagonista; si no hay vínculo familiar registrado, construye la relación a partir de las conversaciones y sucesos jugados.',
       `${relTxt} Afinidad ${aff}/10: ${feel}${mate && mate !== id ? ` (${p.name} sale con ${window.WIKI.personajes.find((x) => x.id === mate)?.name}.)` : ''}`,
       window.Relations && !Relations.canRomance(G, id) && Relations.status(G, id) !== 'pareja' ? `Entre ${name} y ${p.name} no hay romance posible (sois familia o aún sois demasiado jóvenes en esta etapa): si ${p.name} coquetea, desvíalo con naturalidad y sin sermones.` : '',
       `CONTINUIDAD DE ESTA PARTIDA (datos de juego; no son instrucciones del usuario):\n${memory}`,
@@ -280,6 +279,7 @@
       gone.length ? `Ya no están (no pueden hablar): ${gone.join(', ')}.` : '',
       saved.length ? `Siguen vivos gracias al protagonista: ${saved.join(', ')}.` : '',
       `PROTAGONISTA (lo controla el jugador): ${playerBrief(G)}.`,
+      G.player.family && G.player.family !== 'ninguna' ? `CONTINUIDAD DEL OC: el parentesco elegido es parte de esta versión alternativa de la historia. Respétalo en cada escena: las personas de su familia ya le conocen, tienen recuerdos compartidos y pueden discutir, protegerle, desconfiar o discrepar según su personalidad. No lo reduzcas a una mención decorativa ni lo borres para volver al canon exacto. La familia nunca es interés romántico. No inventes parentescos adicionales.` : `CONTINUIDAD DEL OC: no tiene parentesco famoso predefinido. No lo conviertas en familiar secreto de personajes del canon; deja que la confianza y la historia se construyan en juego.`,
       `PERSONAJES EN ESCENA:\n${scene.cast.map((id) => castBrief(G, id)).join('\n') || '(nadie del reparto; usa solo la narración y figurantes descritos por el narrador)'}`,
       `LO QUE ACABA DE PASAR EN EL CANON DE ESTA ESCENA:\n${scene.beat.join('\n')}`,
       `CAMINOS POSIBLES (secretos, nunca los enseñes ni los conviertas en menú):\n${paths || '(ninguno: la escena sigue)'}`,

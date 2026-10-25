@@ -922,11 +922,21 @@
   // Crea un personaje. El jugador empieza con el muñeco y, si hay modelo .glb, lo cambia en
   // cuanto carga. Los personajes de Arcane solo aparecen con su propio modelo 3D: sin muñeco
   // provisional ni modelo genérico (hasta que carga, el hueco queda vacío).
-  function create({ id, player }) {
-    const spec = specFor(id, player);
+  function create({ id, player, ambient = false }) {
+    let spec = specFor(id, player);
+    if (ambient) {
+      // Variaciones sencillas para que los peatones no parezcan copias idénticas.
+      const seed = String(id).split('').reduce((n, ch) => (n * 31 + ch.charCodeAt(0)) >>> 0, 7);
+      const tops = ['#526a79', '#8b6650', '#6c7354', '#7c5268', '#9a8359', '#48545b'];
+      const hairs = ['#211c1a', '#4b3025', '#b18a51', '#6b4c35', '#252b30', '#8b6650'];
+      const skins = ['#e8b89a', '#bd8768', '#f0c8a0', '#8f5c45', '#d9a27e'];
+      spec = { ...spec, id: null, top: tops[seed % tops.length], bottom: tops[(seed >>> 3) % tops.length], hair: hairs[(seed >>> 5) % hairs.length], skin: skins[(seed >>> 7) % skins.length], style: ['short', 'long', 'bald'][(seed >>> 9) % 3], build: {} };
+    }
     const holder = new T.Group();
-    const av = { holder, yaw: 0, ...(player ? buildDoll(spec) : {}) };
+    const av = { holder, yaw: 0, ...(player || ambient ? buildDoll(spec) : {}) };
     if (av.root) holder.add(av.root);
+    // Los peatones ambientales usan el muñeco procedural y no intentan cargar un GLB inexistente.
+    if (ambient) return av;
     // En el móvil solo el jugador proyecta sombra (ahorra mucho trabajo a la gráfica).
     const shadows = !(window.U?.touch && !player);
     if (!shadows) holder.traverse((o) => { o.castShadow = false; });
