@@ -1,5 +1,7 @@
 # Guía para reconstruir la web desde cero
 
+> **En pocas palabras:** Esta es una guía de reconstrucción, no una afirmación de que la web ya esté terminada. Explica cómo organizar una web nueva, qué responsabilidad tiene cada carpeta y cómo comprobar que los enlaces y recursos funcionan antes de publicarla. La antigua portada se conserva como referencia; no la confundas con una página activa lista para desplegar.
+
 Esta guía se aplica a **Arcane-fangame**. La página principal `web/index.html` se deja vacía a propósito para empezar una web nueva; la versión anterior queda guardada en `web/archivo/index-anterior.html` como referencia, no como página activa.
 
 ## 1. Estructura recomendada
