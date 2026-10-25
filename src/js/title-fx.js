@@ -81,6 +81,8 @@
     }
 
     function input(clientX, clientY) {
+      // En modo estático, el puntero no desplaza la grieta ni las ilustraciones.
+      if (reduce) return;
       const r = home.getBoundingClientRect();
       st.mx = clamp((clientX - r.left) / st.w, 0, 1);
       st.my = clamp((clientY - r.top) / st.h, 0, 1);
@@ -258,6 +260,7 @@
     home.addEventListener('pointerleave', onLeave);
     if (!reduce && window.U?.touch) window.addEventListener('deviceorientation', onTilt);
     cities.forEach((c) => c.addEventListener('click', () => {
+      if (reduce) return;
       st.target = c.dataset.city === 'piltover' ? 0.94 : 0.1;
       st.lastInput = performance.now();
       st.mx = st.target; st.my = 0.5;
