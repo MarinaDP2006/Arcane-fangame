@@ -1522,7 +1522,7 @@
 
   // ---------- 6. Regateo en el mercado ----------
   GAMES.regateo = {
-    title: 'Regateo en el mercado', icon: '', scene: 'mercado', grade: 'zaun', backdrops: ['mercado', 'callejones', 'tienda-benzo', 'ultima-gota', 'zaun'],
+    title: 'Regateo en la plaza', icon: '', scene: 'plaza', grade: 'piltover', backdrops: ['plaza', 'artesanos', 'hexpuertas', 'piltover'],
     desc: 'La vendedora pide 100 monedas por un cachivache que vale mucho menos. Haz ofertas: si te pasas de lista se enfadará, si ofreces poco perderá la paciencia.',
     controls: 'Flechas o A/D para ajustar la oferta; Espacio, Intro o clic en OFRECER para cerrar el trato.', touchControls: 'Pulsa − / + o desliza horizontalmente para ajustar; toca REGATEAR para ofrecer.',
     touchKeys: [['arrowright', '+'], [' ', 'Regatear'], ['arrowleft', '−']], touchLayout: 'column', swipe: true, goal: 'Cierra el trato a un precio razonable sin agotar la paciencia de la vendedora.',
@@ -1702,10 +1702,10 @@
   const PLACE_GAMES = {
     academia: ['runas'], 'taller-jayce': ['circuito'], consejo: ['runas', 'francotiradora'], ejecutores: ['tiro', 'francotiradora'],
     'mansion-kiramman': ['francotiradora', 'tiro'], plaza: ['regateo', 'francotiradora'], artesanos: ['circuito', 'regateo'],
-    hexpuertas: ['circuito', 'francotiradora'], 'muelle-stillwater': ['francotiradora', 'persecucion'], puente: ['persecucion', 'francotiradora'],
-    'puente-zaun': ['persecucion', 'chompers'], fabrica: ['chompers', 'persecucion'], foso: ['foso'], tejados: ['tejados', 'francotiradora'],
-    'ultima-gota': ['foso', 'regateo'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['circuito', 'regateo', 'chatarra'], mercado: ['regateo', 'chompers'],
-    sumidero: ['persecucion', 'chatarra'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['persecucion', 'runas'], arbol: ['persecucion', 'chompers'],
+    hexpuertas: ['circuito', 'francotiradora'], 'muelle-stillwater': ['francotiradora'], puente: ['francotiradora'],
+    'puente-zaun': ['persecucion', 'chompers'], fabrica: ['chompers', 'persecucion'], foso: ['foso'], tejados: ['tejados'],
+    'ultima-gota': ['foso'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['chatarra'], mercado: ['chompers'],
+    sumidero: ['persecucion', 'chatarra'], 'escondite-jinx': ['chompers'], invernadero: ['persecucion'], arbol: ['persecucion', 'chompers'],
   };
   // Lista de minijuegos con lo necesario para pintar un botón o una tarjeta.
   function list(ids = Object.keys(GAMES)) {
