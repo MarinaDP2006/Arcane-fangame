@@ -1,5 +1,7 @@
 # Modelos locales
 
+> **En pocas palabras:** Esta guía te ayuda a preparar un modelo local con Ollama para experimentar con el narrador de Arcane. Es una preparación separada del chat que ya utiliza el juego de escritorio: el perfil descrito aquí no se carga automáticamente ni debe considerarse una integración terminada. Sigue los pasos en orden y no confundas que el modelo responda en Ollama con que la aplicación lo tenga conectado.
+
 Esta guía prepara Ollama para el universo de **Arcane: Piltover y Zaun**. No comparte personajes, historias ni memoria con Las ciudades del Umbral.
 
 ## Requisitos y preparación
