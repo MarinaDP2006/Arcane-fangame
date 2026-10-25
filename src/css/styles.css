@@ -317,6 +317,12 @@ blockquote small { color: var(--muted); font-style: normal; }
 .sheet h3 { color: var(--gold); margin-bottom: 0.4rem; }
 .sheet-head { display: flex; gap: 1.2rem; align-items: center; }
 .sheet-head h2 { margin: 0.1rem 0 0.3rem; font-family: var(--display); font-size: 2rem; color: var(--gold); }
+.sheet-story-context { margin: .7rem 0 1rem; padding: .85rem 1rem; border: 1px solid rgba(221,185,111,.25); border-left: 3px solid var(--gold); border-radius: 8px; background: linear-gradient(120deg, rgba(221,185,111,.09), rgba(9,12,18,.38)); }
+.sheet-story-context > small { display:block; font-size:.68rem; letter-spacing:.15em; text-transform:uppercase; }
+.sheet-story-context p { margin:.35rem 0 0; line-height:1.45; }
+.sheet-story-context p:first-of-type { color:var(--text); font-weight:600; }
+.sheet-bio { padding:.7rem 0; }
+.sheet-bio p { white-space:pre-wrap; line-height:1.6; }
 .sheet-art { width: 160px; height: 160px; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); flex-shrink: 0; }
 .sheet .rel { flex-direction: row; }
 

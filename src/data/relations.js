@@ -28,6 +28,12 @@ window.RELATIONS = {
 
   // Tu familia en la creación crea lazos desde el principio (y con ellos no hay romance).
   familyLinks: {
+    // Parentescos OC/what-if: alteran quién te conoce desde el inicio y bloquean el romance familiar.
+    vander_hija: { vander: ['familia', 'Te adoptó y te crio como a su propi{g:o|a|e} hij{g:o|a|e}'], vi: ['hermandad', 'Creciste bajo el mismo techo: os consideráis hermanas/os'], jinx: ['hermandad', 'Powder te conoce desde la infancia y te considera de su familia'] },
+    silco_hija: { silco: ['familia', 'Silco te crió y te considera parte de su legado'], jinx: ['hermandad', 'Creciste cerca de Jinx; vuestra relación es de hermanas/os, no romántica'] },
+    jayce_hermana: { jayce: ['hermandad', 'Sois hermanas/os y compartís el peso del apellido Talis'] },
+    viktor_hermana: { viktor: ['hermandad', 'Sois hermanas/os; tu vínculo cambia su confianza y sus decisiones'] },
+    mel_hermana: { mel: ['hermandad', 'Sois hermanas/os; conoces la presión política de los Medarda desde dentro'] },
     vander: { vander: ['pariente', 'Te acogió como a {g:un hijo|una hija|une hije}'], vi: ['hermandad', 'Creciste con ella en La Última Gota'], jinx: ['hermandad', 'Era tu hermanita Powder'] },
     benzo: { ekko: ['hermandad', 'Benzo os crió a los dos entre cachivaches'] },
     luciernagas: { ekko: ['hermandad', 'Creciste en el árbol de las Luciérnagas'], isha: ['hermandad', 'La cuidas como a una hermana pequeña'] },
