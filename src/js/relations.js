@@ -171,14 +171,15 @@
 
   // Respuestas de charla en bucle: recorre todas las variantes antes de volver a la primera.
   // La selección se mantiene separada por personaje y tema para que cada charla tenga continuidad.
-  const smallCursor = {};
-  function small(id, topic) {
+  function small(id, topic, gameState) {
     const list = info(id)?.small?.[topic];
     if (!Array.isArray(list) || !list.length) return null;
+    const state = gameState && typeof gameState === 'object' ? gameState : null;
+    const cursor = state ? ((state.talk = state.talk || {}).smallCursor = state.talk.smallCursor || {}) : (small.fallbackCursor = small.fallbackCursor || {});
     const key = `${id}:${topic}`;
-    const previous = smallCursor[key];
+    const previous = cursor[key];
     const index = Number.isInteger(previous) ? (previous + 1) % list.length : 0;
-    smallCursor[key] = index;
+    cursor[key] = index;
     return [].concat(list[index]);
   }
 
