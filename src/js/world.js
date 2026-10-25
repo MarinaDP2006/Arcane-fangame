@@ -559,41 +559,58 @@
   }
 
   /** Lo que va encima del mapa (2D o 3D): ruta, ambiente, cristales, lugares, caras y rótulos. */
-  // Colores de tu bola de luz (los mismos que en world3d.js).
-  const ORB = { hombre: '#4fb8ff', mujer: '#ff5aa8', nobinario: '#ffc857' };
-  let orbPh = 0;
-  /** Tu personaje en la carta 2D: una bola de luz con sombra que salta al andar. */
+  /** Marcador del personaje en la carta 2D: retrato real y nombre, sin colores por género o facción. */
   function drawOrb2D(t) {
     if (r3d || G.world.px == null) return;
-    const c = ORB[G.player.gender] || ORB.nobinario;
     const p = toScreen(G.world.px, G.world.py);
-    if (moving) orbPh += 0.016 * 9;
-    const hop = moving ? Math.abs(Math.sin(orbPh)) : 0;
-    const r = Math.max(7, 11 * zoom * 1.6);
-    const lift = r * 0.9 + hop * r * 2 + (moving ? 0 : Math.sin(t / 450) * r * 0.12);
+    const size = Math.max(18, Math.min(34, 22 * Math.sqrt(zoom / Math.max(0.2, fit))));
+    const img = loadImg(`player-marker:${G.player.photo || G.player.name}`, Portrait.playerURL(G.player, 128));
+    const x = p.x;
+    const y = p.y;
+    const r = size * 0.58;
     ctx.save();
-    ctx.globalAlpha = 0.35 * (1 - hop * 0.45);
-    ctx.fillStyle = '#000';
+    // Sombra neutra anclada al suelo.
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y, r * (1 - hop * 0.4), r * 0.45 * (1 - hop * 0.4), 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + r * 0.65, r * 0.92, r * 0.28, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.globalAlpha = 1;
-    const g = ctx.createRadialGradient(p.x, p.y - lift, 0, p.x, p.y - lift, r * 3.2);
-    g.addColorStop(0, c);
-    g.addColorStop(0.3, `${c}88`);
-    g.addColorStop(1, `${c}00`);
-    ctx.fillStyle = g;
+    // Marco blanco neutro: no codifica género, clase ni facción.
     ctx.beginPath();
-    ctx.arc(p.x, p.y - lift, r * 3.2, 0, Math.PI * 2);
+    ctx.arc(x, y - r * 0.45, r + 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(8,10,14,0.92)';
     ctx.fill();
-    const b = ctx.createRadialGradient(p.x - r * 0.3, p.y - lift - r * 0.3, r * 0.1, p.x, p.y - lift, r);
-    b.addColorStop(0, '#fff');
-    b.addColorStop(0.45, c);
-    b.addColorStop(1, c);
-    ctx.fillStyle = b;
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(245,245,245,0.95)';
+    ctx.stroke();
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(p.x, p.y - lift, r, 0, Math.PI * 2);
+    ctx.arc(x, y - r * 0.45, r, 0, Math.PI * 2);
+    ctx.clip();
+    if (ready(img)) ctx.drawImage(img, x - r, y - r * 1.45, r * 2, r * 2);
+    else {
+      ctx.fillStyle = '#252830';
+      ctx.fillRect(x - r, y - r * 1.45, r * 2, r * 2);
+      ctx.fillStyle = '#f1f1f1';
+      ctx.font = 'bold 14px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText((G.player.name || '?').slice(0, 1).toUpperCase(), x, y - r * 0.45);
+    }
+    ctx.restore();
+    const label = String(G.player.name || 'Tu personaje').slice(0, 22);
+    ctx.font = '600 12px system-ui, sans-serif';
+    const width = Math.min(cw - 16, ctx.measureText(label).width + 18);
+    const ly = y + r + 15;
+    ctx.fillStyle = 'rgba(7,9,13,0.9)';
+    roundRect(x - width / 2, ly - 10, width, 20, 6);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(245,245,245,0.75)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, ly, width - 10);
     ctx.restore();
   }
 
@@ -1022,7 +1039,7 @@
     }
     mctx.fillStyle = '#7fd0ff';
     for (const f of map.def.fragments) if (!G.codex.includes(f.codex)) mctx.fillRect(f.x * s - 1.5, f.y * s - 1.5, 3, 3);
-    mctx.strokeStyle = '#ff5a8a';
+    mctx.strokeStyle = '#ffffff';
     mctx.lineWidth = 2;
     if (r3d) {
       // Lo que ve la cámara: el trapecio del suelo que cae en pantalla.
