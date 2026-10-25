@@ -37,9 +37,7 @@
       "src/**/*",
       "build/icon.png",
       "package.json",
-      "assets/music/**/*",
-      "INSPIRACION PANTALLAS SEGUN CIUDAD.png",
-      "INSPIRACION MODELOS 3D.png"
+      "assets/music/**/*"
     ],
     "directories": {
       "output": "dist",
