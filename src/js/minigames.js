@@ -450,8 +450,6 @@
         // Ignore releases from unrelated pointers; do not cancel the active drag.
         if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
         mouse.down = false;
-        const start = pointerStart;
-        if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
         pointerStart = null;
         if (e.type === 'pointercancel' || !e.clientX && !e.clientY || !running) { swipe = null; return; }
         const dx = e.clientX - start.clientX;
