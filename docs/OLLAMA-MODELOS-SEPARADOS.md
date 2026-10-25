@@ -1,5 +1,7 @@
 # Ollama: modelo separado para Arcane-fangame
 
+> **En pocas palabras:** Esta guía trata los modelos de Ollama como instalaciones separadas para evitar mezclar perfiles o configuraciones de proyectos distintos. Sigue los comandos en el entorno correcto y comprueba cada modelo por separado. Preparar un modelo no lo conecta automáticamente a la aplicación: esa integración requiere código y una prueba real.
+
 ## Estado actual
 
 Esta guía es preparatoria. El perfil existente `config/ollama.json` sigue con `enabled: false`. Crear el modelo de Ollama **no integra automáticamente** Ollama en el juego. La aplicación debe implementar y probar explícitamente el proveedor antes de enviarle conversaciones. El juego debe seguir funcionando si Ollama está apagado.
