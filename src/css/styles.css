@@ -2681,7 +2681,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     max-height: none;
     min-height: 0;
     overflow: visible;
-    margin: auto 0;
+    margin: 0;
     touch-action: pan-y;
   }
   #view-game .overlay .action-menu p,
