@@ -262,29 +262,23 @@
   /** Habitantes con rutas seguras y diálogos escritos, separados del reparto canon. */
   function ambientNpcs() {
     const routes = ambientRoutes();
-    const profiles = CITY_RESIDENTS[mapId] || [];
-    if (!routes.length || !profiles.length) return [];
-    return profiles.slice(0, Math.min(profiles.length, routes.length, 8)).map((profile, i) => {
+    if (!routes.length) return [];
+    const count = Math.min(12, Math.max(8, Math.round(routes.length / 5)));
+    const out = [];
+    for (let i = 0; i < count; i++) {
       const route = routes[(i * 13 + Math.floor(i / 2) * 7) % routes.length];
-      const speed = 30 + (i % 4) * 6;
-      const travel = (ambientTime * speed + i * 37) % (route.length * 2);
-      const reverse = travel > route.length;
-      const distance = reverse ? route.length * 2 - travel : travel;
-      let walked = 0;
-      let seg = route.segments[route.segments.length - 1];
-      let u = 1;
-      for (const s of route.segments) {
-        if (distance <= walked + s.length) { seg = s; u = s.length ? (distance - walked) / s.length : 0; break; }
-        walked += s.length;
-      }
-      const x = seg.x1 + (seg.x2 - seg.x1) * u;
-      const y = seg.y1 + (seg.y2 - seg.y1) * u;
-      return {
-        kind: 'resident', id: `resident-${mapId}-${profile.id}`, name: profile.name, role: profile.role,
-        lines: profile.lines, loc: route.loc, x, y, px: x, py: y, ambient: true, moving: true, speed,
-        home: reverse ? Math.atan2(seg.x1 - seg.x2, seg.y1 - seg.y2) : Math.atan2(seg.x2 - seg.x1, seg.y2 - seg.y1),
-      };
-    });
+      const speed = 34 + (i % 4) * 7;
+      const travel = (ambientTime * speed + i * 41) % (route.len * 2);
+      const reverse = travel > route.len;
+      const u = reverse ? 2 - travel / route.len : travel / route.len;
+      const x = route.x1 + (route.x2 - route.x1) * u;
+      const y = route.y1 + (route.y2 - route.y1) * u;
+      out.push({
+        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true, speed,
+        home: reverse ? Math.atan2(route.x1 - route.x2, route.y1 - route.y2) : Math.atan2(route.x2 - route.x1, route.y2 - route.y1),
+      });
+    }
+    return out;
   }
   /** Lugar del objetivo de la historia. */
   function objectiveLoc() {
@@ -444,27 +438,81 @@
       g.restore();
     }
 
-    // Edificios: manzanas pintadas con tinta, para dar densidad de ciudad (en 3D ya son volúmenes).
+    // Edificios 2D: fachadas, ventanas y tejados con lenguaje visual distinto por ciudad.
     for (const b of forGround ? [] : map.buildings) {
-      // Tejados en tinta suave: dan textura de ciudad sin tapar el arte de fondo.
-      g.globalAlpha = 0.22;
-      g.fillStyle = 'rgba(0,0,0,0.7)';
-      g.fillRect(b.x + 5, b.y + 7, b.w, b.h);
-      g.globalAlpha = zaun ? 0.16 : 0.14;
+      const seed = Math.abs(Math.sin(b.x * 0.0129898 + b.y * 0.078233) * 43758.5453);
+      const cols = Math.max(1, Math.min(5, Math.floor(b.w / 30)));
+      const rows = Math.max(1, Math.min(4, Math.floor(b.h / 27)));
+      g.globalAlpha = 0.24;
+      g.fillStyle = 'rgba(0,0,0,0.78)';
+      g.fillRect(b.x + 6, b.y + 8, b.w, b.h);
+      g.globalAlpha = zaun ? 0.5 : 0.58;
       g.fillStyle = b.color;
       g.fillRect(b.x, b.y, b.w, b.h);
+      g.globalAlpha = zaun ? 0.68 : 0.82;
       g.fillStyle = b.roof;
-      g.globalAlpha = 0.12;
-      g.fillRect(b.x + 4, b.y + 4, b.w - 8, b.h * 0.4);
-      g.globalAlpha = 0.25;
+      g.fillRect(b.x + 3, b.y + 3, b.w - 6, Math.max(5, b.h * (zaun ? 0.28 : 0.2)));
+
+      if (zaun) {
+        // Zaun: planchas, tejados remendados, tubos y luces químicas.
+        g.globalAlpha = 0.42;
+        g.strokeStyle = 'rgba(8,14,12,0.9)';
+        g.lineWidth = 2;
+        for (let k = 1; k < cols; k++) {
+          const x = b.x + (b.w / cols) * k;
+          g.beginPath(); g.moveTo(x, b.y + 4); g.lineTo(x, b.y + b.h - 3); g.stroke();
+        }
+        g.globalAlpha = 0.62;
+        for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
+          const ww = Math.max(3, Math.min(8, b.w / (cols * 3)));
+          const wh = Math.max(3, Math.min(7, b.h / (rows * 3)));
+          const wx = b.x + (col + 0.5) * b.w / cols - ww / 2;
+          const wy = b.y + b.h * 0.34 + (row + 0.5) * b.h * 0.58 / rows - wh / 2;
+          g.fillStyle = (Math.floor(seed + row * 3 + col) % 5 === 0) ? 'rgba(255,73,164,0.9)' : 'rgba(100,230,154,0.72)';
+          g.fillRect(wx, wy, ww, wh);
+        }
+        if (b.tall > 0.55) {
+          g.globalAlpha = 0.72;
+          g.strokeStyle = 'rgba(88,199,136,0.75)';
+          g.lineWidth = Math.max(2, b.w * 0.025);
+          g.beginPath(); g.moveTo(b.x + b.w * 0.18, b.y + b.h * 0.1); g.lineTo(b.x + b.w * 0.18, b.y - 9); g.lineTo(b.x + b.w * 0.55, b.y - 9); g.stroke();
+          g.fillStyle = 'rgba(117,255,151,0.55)';
+          g.fillRect(b.x + b.w * 0.58, b.y + b.h * 0.12, b.w * 0.22, 3);
+        }
+        if (seed % 2 > 1) {
+          g.globalAlpha = 0.5; g.fillStyle = '#111c18';
+          g.fillRect(b.x + b.w * 0.1, b.y + b.h * 0.45, b.w * 0.8, 3);
+        }
+      } else {
+        // Piltover: tejado a dos aguas, cornisa dorada y ventanas simétricas.
+        g.globalAlpha = 0.85;
+        g.fillStyle = b.roof;
+        g.beginPath();
+        g.moveTo(b.x + 2, b.y + b.h * 0.26);
+        g.lineTo(b.x + b.w * 0.5, b.y + 2);
+        g.lineTo(b.x + b.w - 2, b.y + b.h * 0.26);
+        g.closePath(); g.fill();
+        g.globalAlpha = 0.45;
+        g.strokeStyle = 'rgba(255,221,142,0.85)';
+        g.lineWidth = 2;
+        g.beginPath(); g.moveTo(b.x + 3, b.y + b.h * 0.27); g.lineTo(b.x + b.w - 3, b.y + b.h * 0.27); g.stroke();
+        for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
+          const ww = Math.max(3, Math.min(8, b.w / (cols * 3.2)));
+          const wh = Math.max(4, Math.min(9, b.h / (rows * 2.8)));
+          const wx = b.x + (col + 0.5) * b.w / cols - ww / 2;
+          const wy = b.y + b.h * 0.34 + (row + 0.5) * b.h * 0.58 / rows - wh / 2;
+          g.globalAlpha = 0.78;
+          g.fillStyle = (row + col + Math.floor(seed)) % 4 === 0 ? 'rgba(255,228,158,0.9)' : 'rgba(115,184,221,0.75)';
+          g.fillRect(wx, wy, ww, wh);
+        }
+        g.globalAlpha = 0.62;
+        g.fillStyle = '#4b3728';
+        g.fillRect(b.x + b.w * 0.43, b.y + b.h * 0.72, b.w * 0.14, b.h * 0.28);
+      }
+      g.globalAlpha = 0.52;
       g.strokeStyle = P.outline;
       g.lineWidth = 1.5;
       g.strokeRect(b.x, b.y, b.w, b.h);
-      if (zaun && b.tall > 0.75) {
-        g.globalAlpha = 0.55;
-        g.fillStyle = b.roof;
-        g.fillRect(b.x + b.w * 0.2, b.y + b.h - 10, b.w * 0.6, 4);
-      }
     }
     g.globalAlpha = 1;
 
@@ -1179,59 +1227,6 @@
     return false;
   }
 
-  const ambientRouteCache = {};
-
-  /**
-   * Crea tramos peatonales seguros alrededor de los lugares. Cada segmento se muestrea antes
-   * de aceptarlo; los residentes recorren cadenas de segmentos válidos, nunca diagonales a través de edificios.
-   */
-  function ambientRoutes() {
-    if (ambientRouteCache[mapId]) return ambientRouteCache[mapId];
-    const routes = [];
-    for (const anchor of map.def.locations) {
-      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[anchor.id] || [60, 60];
-      const baseRadius = Math.max(88, footprint[0], footprint[1]) + 18;
-      for (let ring = 0; ring < 6; ring++) {
-        const radius = baseRadius + ring * 20;
-        const points = [];
-        for (let i = 0; i < 32; i++) {
-          const a = i * Math.PI * 2 / 32;
-          const p = { x: anchor.x + Math.cos(a) * radius, y: anchor.y + Math.sin(a) * radius };
-          points.push(blockedAt(p.x, p.y, 10) ? null : p);
-        }
-        let chain = [];
-        const flush = () => {
-          if (chain.length >= 2) {
-            const segments = [];
-            let length = 0;
-            for (let i = 0; i < chain.length - 1; i++) {
-              const a = chain[i], b = chain[i + 1];
-              const len = Math.hypot(b.x - a.x, b.y - a.y);
-              if (len > 4) { segments.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, length: len }); length += len; }
-            }
-            if (length >= 18) routes.push({ loc: anchor.id, segments, length });
-          }
-          chain = [];
-        };
-        for (let i = 0; i < points.length - 1; i++) {
-          const a = points[i], b = points[i + 1];
-          let clear = Boolean(a && b);
-          if (clear) for (let j = 1; j < 5; j++) {
-            const t = j / 5;
-            if (blockedAt(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, 10)) { clear = false; break; }
-          }
-          if (clear) {
-            if (!chain.length) chain.push(a);
-            chain.push(b);
-          } else flush();
-        }
-        flush();
-      }
-    }
-    ambientRouteCache[mapId] = routes;
-    return routes;
-  }
-
   /** Si se pulsa sobre un tejado, busca un punto de calle cercano en vez de colocar al jugador dentro. */
   function nearestWalkable(x, y, radius = PLAYER_RADIUS) {
     const px = Math.max(radius, Math.min(map.w - radius, x));
@@ -1289,12 +1284,7 @@
     moving = Boolean(mx || my);
     if (moving) {
       const sp = WALK * (opt().camSpeed || 1);
-      const moved = moveOnStreet(G.world.px, G.world.py, mx * sp * dt, my * sp * dt);
-      G.world.px = moved.x;
-      G.world.py = moved.y;
-      // Si el destino automático queda bloqueado, se cancela para no empujar al jugador contra una pared.
-      if (!moved.moved && walkTo) walkTo = null;
-      moving = moved.moved;
+      moving = movePlayer(mx, my, sp * dt);
       G.world.face = Math.atan2(mx, my);
       (G.world.pos ||= {})[mapId] = { x: G.world.px, y: G.world.py };
       // La cámara sigue a tu personaje.
