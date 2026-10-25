@@ -1,5 +1,7 @@
 # Guía de repositorio, exportación y publicación
 
+> **En pocas palabras:** Esta guía explica cómo preparar una copia del proyecto para compartirla o moverla a otro entorno. Antes de exportar, revisa qué archivos son código del proyecto y cuáles son datos personales, partidas, modelos descargados o secretos locales. La copia debe permitir entender el proyecto sin publicar contenido privado por accidente.
+
 ## Proyecto
 Rifts & Gears es un juego narrativo con JavaScript, Three.js, Electron, Capacitor/Android y web estática. La versión de referencia observada en `package.json` es 1.27.0.
 
