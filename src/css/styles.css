@@ -1024,6 +1024,7 @@ body[data-city='zaun'] .btn.primary { background: linear-gradient(180deg, #8fe8c
 .cp-plate h2 { margin: 0; font-size: 1.5rem; color: #f6e7bd; letter-spacing: 0.08em; }
 .chat-stage.origin-zaun .cp-plate h2 { color: #c8f5e6; text-shadow: 0 0 14px rgba(63, 191, 159, 0.45); }
 .cp-plate h2::after { display: none; }
+.cp-intro { margin: 0.55rem 0 0; max-width: 28rem; color: rgba(238, 232, 218, 0.78); font-size: 0.82rem; line-height: 1.45; text-align: center; }
 .cp-plate small { display: block; margin-top: 0.2rem; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; }
 .cp-aff { display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--muted); }
 .cp-aff-label { letter-spacing: 0.14em; text-transform: uppercase; }
