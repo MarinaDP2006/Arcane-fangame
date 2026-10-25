@@ -39,7 +39,7 @@
   const pointers = new Map();
   // Tu personaje en el mapa: una bola de luz que anda (WASD o tocando el suelo) y salta a cada paso.
   const WALK = 230; // unidades por segundo
-  const NEAR_LOC = 120; // a esta distancia de un lugar puedes entrar
+  const NEAR_LOC = 165; // permite interactuar desde el exterior incluso ante edificios grandes
   const NEAR_CHAR = 95; // y de un personaje, hablar
   let walkTo = null; // { x, y, thing? } destino al tocar el suelo, un lugar o una cara
   let moving = false;
