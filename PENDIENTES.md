@@ -1,5 +1,4 @@
 # Pendientes de la rama de Arcane
-
 Lista viva de lo que falta en el fangame de Arcane. Lo del mundo nuevo va en el repo RIFTS-GEARS.
 Marca con `[x]` lo que se vaya cerrando.
 
