@@ -11,7 +11,7 @@ Esta guía no exige conocimientos de programación y evita spoilers importantes 
 
 ## 1. Qué juego es este
 
-Rifts & Gears es una aventura narrativa de fans inspirada en la atmósfera y el universo de *Arcane*. Creas tu propio personaje, decides de dónde viene, lees conversaciones, eliges cómo responde, exploras localizaciones y construyes relaciones con el reparto. También hay mapa, códice/atlas, actividades y minijuegos.
+Arcane-fangame es una aventura narrativa de fans ambientada en *Arcane*. Creas tu personaje y escribes lo que dice o hace; los personajes reaccionan dentro de los límites del juego. La disponibilidad de opciones seleccionables depende de la versión y debe verificarse en la ejecución: no se deben dar por existentes botones de respuesta que aún no estén implementados. El proyecto también incluye localizaciones y sistemas de juego descritos en el README.
 
 No necesitas saberte la serie ni jugar a *League of Legends*. Puedes empezar sin conocer a nadie y descubrir el mundo a medida que la historia te presenta a sus habitantes.
 
