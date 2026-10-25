@@ -384,7 +384,9 @@
 
   function piltoverWorld(scene, map) {
     const r = rng(77);
-    scene.background = null;
+    // Color de reserva: si la textura del cielo no se puede dibujar en un dispositivo,
+    // la escena conserva un fondo visible en lugar de quedar como un rectángulo negro.
+    scene.background = new T.Color('#b79b6b');
     // Cielo: gran esfera con degradado dorado; el sol y un mar de nubes por debajo de la meseta.
     const sky = new T.Mesh(new T.SphereGeometry(16000, 32, 16), new T.MeshBasicMaterial({ map: skyTexture(), side: T.BackSide, fog: false, depthWrite: false }));
     sky.position.set(map.w / 2, 0, map.h / 2);
