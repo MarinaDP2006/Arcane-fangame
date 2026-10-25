@@ -10,6 +10,22 @@ fs.cpSync(src, www, { recursive: true });
 // La música está versionada en la raíz del repo y se sirve desde www/assets/music/.
 const music = path.join(root, 'assets', 'music');
 if (fs.existsSync(music)) fs.cpSync(music, path.join(www, 'assets', 'music'), { recursive: true });
+// Copia las referencias visuales de la autora a una ruta local dentro del APK.
+const inspiration = [
+  'CREACION DE PERSONAJES, MENUS Y AJUSTES INSPIRACION.png',
+  'INSPIRACION PANTALLAS SEGUN CIUDAD.png',
+  'INSPIRACION MODELOS 3D.png',
+  'COMO SE VERIAN LOS LUGARES, PANTALLAS Y PERSONAJE EN LAS CIUDADES (CIUDADES CUADRADAS).png',
+  'INTERFAZ A MEJORAR DE CREACION Y USABILIDAD.png',
+];
+for (const file of inspiration) {
+  const from = path.join(root, file);
+  if (fs.existsSync(from)) {
+    const to = path.join(www, 'img', 'inspiracion', file);
+    fs.mkdirSync(path.dirname(to), { recursive: true });
+    fs.copyFileSync(from, to);
+  }
+}
 // La consola web de Capacitor sirve el juego desde https://localhost: la CSP de index.html ya
 // lo permite con 'self'. Solo se marca la página para que el juego sepa que está en Android.
 const html = path.join(www, 'index.html');
