@@ -1573,8 +1573,14 @@
     const at = talkState().at[id] || 'hub';
     if (at === 'bye') return [];
     let base = at === 'hub' ? data.hub : data.nodes?.[at]?.opts || [];
-    // Temas que se añaden a todos: charla con respuestas variadas y las relaciones.
-    if (at === '__charla') base = window.RELATIONS.small.map((x) => ({ ...x, __small: x.id }));
+    // Temas escritos compartidos. «Familia» solo aparece si hay un vínculo familiar real
+    // y el personaje tiene respuestas preparadas para ese tema.
+    if (at === '__charla') {
+      const relation = Relations.status(G, id);
+      base = window.RELATIONS.small
+        .filter((x) => x.id !== 'familia' || (['familia', 'hermandad', 'pariente'].includes(relation) && Array.isArray(window.RELATIONS.chars[id]?.small?.familia)))
+        .map((x) => ({ ...x, __small: x.id }));
+    }
     if (at === '__rel') base = Relations.relOptions(G, id, affOf(id));
     if (at === 'hub') {
       const extra = [{ t: 'Charlar un rato…', tone: 'amable', go: '__charla', __menu: true }];
