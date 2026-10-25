@@ -36,27 +36,12 @@
       view.prepend(host);
     }
     host.remove(); // Fondos 3D desactivados para evitar errores gráficos.
-    tiltAll(view);
+    // Inclinación por ratón desactivada: las pantallas permanecen estables.
   }
   App.backdrop3d = backdrop3d;
 
   // Inclinación 3D de los paneles siguiendo al ratón.
-  function tiltAll(root) {
-    root.querySelectorAll('.title-content, .slot').forEach((n) => {
-      if (n.dataset.tilt) return;
-      n.dataset.tilt = '1';
-      n.classList.add('tilt3d');
-      n.addEventListener('pointermove', (e) => {
-        // Con el dedo el panel se quedaba torcido al soltar: la inclinación es solo para el ratón.
-        if (App.settings.reduceMotion || e.pointerType !== 'mouse') return;
-        const r = n.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        n.style.transform = `perspective(1100px) rotateY(${x * 6}deg) rotateX(${-y * 5}deg) translateZ(0)`;
-      });
-      n.addEventListener('pointerleave', () => { n.style.transform = ''; });
-    });
-  }
+  function tiltAll() { /* Desactivado por preferencia visual: sin inclinación al mover el ratón. */ }
   App.tiltAll = tiltAll;
 
   // Menú principal: Piltover (cielo) y Zaun (cueva) pintadas a la vez, separadas por una grieta
@@ -108,10 +93,10 @@
           btn('Cargar partida', () => App.go('game')),
           btn('Ajustes', () => App.go('settings')),
           U.desktop ? btn('Salir', () => window.arcane.quit(), 'quiet') : null)),
-      el('div', { class: 'home-hint' }, U.touch ? 'Desliza el dedo para abrir la grieta entre Piltover y Zaun' : 'Mueve el ratón para abrir la grieta entre Piltover y Zaun'));
+      el('div', { class: 'home-hint' }, 'Piltover y Zaun: dos ciudades del mismo mundo'));
     root.append(home);
     Audio2.playMusic('wiki');
-    stopTitleFx = window.TitleFX.mount(home, { reduce: s.reduceMotion, particles: s.particles, low: s.quality === 'baja' });
+    stopTitleFx = null; // Portada estática: el ratón no desplaza las ciudades ni la grieta.
     // Cada ciudad cambia de ilustración a su ritmo, desfasadas para que nunca cambien a la vez.
     [pilt, zaun].forEach((layerEl, n) => {
       const slides = [...layerEl.firstElementChild.children];

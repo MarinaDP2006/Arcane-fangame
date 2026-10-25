@@ -23,6 +23,7 @@
     <nav id="menu" class="menu" aria-label="Navegación principal">
       <a href="#nuevo">¿Nuevo en Arcane?</a>
       <a href="#ciudades">Ciudades</a>
+      <a href="#mapas-juego">Mapas del juego</a>
       <a href="#personajes">Personajes</a>
       <a href="#arte-oficial">Arte oficial</a>
       <a href="#como-se-juega">Cómo se juega</a>
@@ -115,11 +116,30 @@
       <p class="nota-arte">Créditos de cada archivo y enlace a su fuente original: <code>arcaneData/arte/FUENTES.json</code>. Arcane © Riot Games / Fortiche Production. Proyecto de fans no oficial.</p>
     </section>
 
+    <section class="seccion mapas-juego" id="mapas-juego" aria-labelledby="t-mapas-juego">
+      <header class="seccion-cabeza">
+        <p class="kicker">03 · Referencias visuales del juego</p>
+        <h2 id="t-mapas-juego">Piltover arriba. Zaun abajo.</h2>
+        <p>Una sección visual para reconocer las dos ciudades que recorres en el fangame. Son imágenes de referencia del entorno, no capturas falsas de una partida ni sustitutos del mapa interactivo dentro del juego.</p>
+      </header>
+      <div class="mapas-juego-grid">
+        <article class="mapa-juego mapa-juego-piltover">
+          <img src="arte-oficial/lugares/piltover-s1.webp" alt="Vista panorámica de Piltover usada como referencia visual" loading="lazy">
+          <div><span>Ciudad del Progreso</span><h3>Piltover</h3><p>Academia, Consejo, talleres hextec y el puente que conecta con Zaun.</p></div>
+        </article>
+        <article class="mapa-juego mapa-juego-zaun">
+          <img src="arte-oficial/lugares/zaun-s1.webp" alt="Vista panorámica de Zaun usada como referencia visual" loading="lazy">
+          <div><span>La ciudad subterránea</span><h3>Zaun</h3><p>Los Callejones, La Última Gota, mercados, talleres y los barrios bajo el humo químico.</p></div>
+        </article>
+      </div>
+      <p class="nota-arte">Las imágenes son referencias artísticas de Arcane; la navegación y las ubicaciones jugables se consultan dentro del juego.</p>
+    </section>
+
     <section class="seccion" id="personajes" aria-labelledby="t-personajes">
       <header class="seccion-cabeza">
         <p class="kicker">03 · Con quién hablas</p>
         <h2 id="t-personajes">Personajes que te contestan como ellos.</h2>
-        <p>Cada personaje conoce solo lo que ha vivido hasta el momento de tu partida: sin poderes inventados y sin salirse del canon.</p>
+        <p>Las fichas de esta web son descripciones escritas del personaje y su historia en Arcane; no las genera una IA. La conversación interactiva del juego va por separado y debe respetar el canon de las temporadas 1 y 2.</p>
       </header>
       <div class="fichas">{{REPARTO}}</div>
     </section>

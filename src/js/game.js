@@ -1580,7 +1580,7 @@
       base = [...base, ...extra];
     }
     const seen = talkState().seen;
-    const list = base.filter((o) => !dlgHidden(o.req, id) && !(o.once && seen[dlgKey(id, at, o)]))
+    const list = base.filter((o) => !dlgHidden(o.req, id) && !(o.once && at !== '__charla' && seen[dlgKey(id, at, o)]))
       .map((o) => ({ ...o, __node: at }));
     if (at === 'hub') list.push({ t: 'Hasta luego.', tone: 'amable', go: 'bye', __node: at, __bye: true });
     else if (at.startsWith('__') || !data.nodes[at].noBack) {
@@ -1793,6 +1793,13 @@
   /** Procesa la respuesta elegida por el jugador. */
   async function sayOption(id, o) {
     if (talking) return;
+    // Los botones de navegación solo cambian el menú: no son frases del jugador ni del personaje.
+    if (o.__menu || o.__back) {
+      talkState().at[id] = o.go || 'hub';
+      showDialog(id);
+      persist();
+      return;
+    }
     talking = true;
     Audio2.sfx.choice();
     const data = window.CHAT[id];
