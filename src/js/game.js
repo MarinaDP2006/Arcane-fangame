@@ -839,12 +839,16 @@
     if (!alive.length) list.append(el('p', { class: 'muted small' }, 'Avanza en la historia para conocer a gente.'));
     for (const id of alive) {
       const a = affOf(id);
+      const info = window.WIKI.personajes.find((p) => p.id === id) || {};
+      const description = info.summary || info.bio || info.description || '';
       list.append(el('button', {
         class: `contact${tab === 'chats' && contact === id ? ' active' : ''}`,
         onclick: () => setTab('chats', id),
       },
       el('span', { class: 'avatar sm', html: Portrait.forCharacter(id) }),
       el('span', { class: 'c-body' }, el('strong', {}, charName(id), window.CHAT[id] && freshTopics(id) ? el('em', { class: 'new', title: 'Temas nuevos' }, ' ✦') : null),
+        info.role ? el('small', { class: 'c-role' }, info.role) : null,
+        description ? el('small', { class: 'c-description' }, description) : null,
         Relations.status(G, id) ? el('small', { class: `c-rel rel-${Relations.status(G, id)}` }, `${window.RELATIONS.kinds[Relations.status(G, id)]?.icon || ''} ${tpl(Relations.label(G, id), G.player)}`) : null,
         heart(a))));
     }
@@ -1825,7 +1829,7 @@
 
     let said = o.__bye ? [pick(data.bye || ['Nos vemos.'])] : [].concat(o.say || []);
     let go = o.go || (o.__node === 'hub' ? 'hub' : o.__node);
-    if (o.__small) said = Relations.small(id, o.__small) || ['(Se encoge de hombros.)'];
+    if (o.__small) said = Relations.small(id, o.__small, G) || ['(Se encoge de hombros.)'];
     if (o.__hang) {
       const h = Relations.hang(G, id);
       said = h?.lines || [];
