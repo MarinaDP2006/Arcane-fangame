@@ -2432,3 +2432,8 @@ img, picture, video, canvas { max-width:100%; }
 @media(prefers-reduced-motion:reduce) {
   #view-game #dlg-choices .choice { transition:none; }
 }
+
+/* Ficha breve del personaje en «Con quién hablas». */
+.contact .c-role { display:block; color:var(--muted); font-size:.72rem; letter-spacing:.025em; }
+.contact .c-description { display:-webkit-box; max-width:32ch; overflow:hidden; color:var(--muted); font-size:.72rem; line-height:1.35; opacity:.88; -webkit-box-orient:vertical; -webkit-line-clamp:2; }
+@media(max-width:700px) { .contact .c-description { max-width:24ch; font-size:.68rem; } }
