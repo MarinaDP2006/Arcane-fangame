@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "enabled": false,
+  "provider": "ollama",
+  "baseUrl": "http://127.0.0.1:11434",
+  "model": "qwen3:4b",
+  "timeoutMs": 90000,
+  "keepAlive": "10m",
+  "options": {
+    "temperature": 0.75,
+    "top_p": 0.9,
+    "num_ctx": 8192
+  },
+  "worldProfile": "config/mundo.json",
+  "notes": "Perfil preparado; la integración está desactivada por defecto hasta conectar el proveedor de forma explícita en la app de escritorio. No expongas el puerto 11434 a Internet."
+}

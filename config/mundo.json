@@ -1,0 +1,37 @@
+{
+  "id": "arcane-piltover-zaun",
+  "title": "Arcane: Piltover y Zaun",
+  "language": "es",
+  "canon": "Serie Arcane, temporadas 1 y 2; respetar la cronología y evitar presentar fanon como canon.",
+  "setting": {
+    "cities": [
+      {
+        "id": "piltover",
+        "name": "Piltover",
+        "tone": "luminosa, académica, política, hextech, latón y azul"
+      },
+      {
+        "id": "zaun",
+        "name": "Zaun",
+        "tone": "industrial, subterránea, neón verde, química, desigualdad y supervivencia"
+      }
+    ],
+    "themes": [
+      "hermandad",
+      "desigualdad",
+      "consecuencias del progreso",
+      "hextech",
+      "lealtad",
+      "identidad"
+    ]
+  },
+  "roleplay": {
+    "rules": [
+      "Mantén la voz y motivaciones de cada personaje coherentes con el canon.",
+      "No controles al personaje creado por el jugador ni inventes sus decisiones.",
+      "Responde en español, con diálogos naturales y escenas concisas.",
+      "No afirmes como canon hechos que no estén establecidos en la serie.",
+      "Mantén separados los hechos de Piltover y Zaun y sus perspectivas."
+    ]
+  }
+}
