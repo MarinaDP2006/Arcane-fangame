@@ -1,6 +1,6 @@
 # Seis personajes 3D a color y pruebas de Windows
 
-> **En pocas palabras:** Esta guía explica cómo colocar modelos 3D propios en el juego y cómo comprobar si se cargan bien. No necesitas empezar programando: primero coloca los archivos en la carpeta correcta, activa las opciones indicadas y prueba un personaje. Los modelos personales se leen desde tu equipo; no se incluyen automáticamente en el repositorio ni se convierten por arte de magia en modelos animados. Haz una copia de tus partidas antes de probar.
+> **Alcance: modelos 3D convencionales, sin IA.** Esta guía trata de importar archivos que ya existen (`.glb`, `.fbx`, `.obj` o ZIP compatible), probar materiales, escala y animaciones, y corregir errores. No genera modelos con IA ni conecta un servicio de IA. La integración de modelos es independiente del chat, la historia y Ollama.
 
 ## Estado real
 La rama `main` incluye código para reconocer archivos `.zip`, `.fbx` y `.glb` de personajes, además de un modo por defecto **«NPC quietos y a color»**. Esta configuración deja al jugador moverse, pero no ejecuta animaciones del modelo importado de los personajes secundarios. La posición e interacción de cada personaje se conservan. **Tus seis ZIP no se suben a GitHub**: se leen desde tu ordenador. No modifiques ni borres las imágenes o las partidas antiguas.
