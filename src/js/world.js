@@ -486,7 +486,7 @@
       try {
         ctx.clearRect(0, 0, cw, ch);
         r3d.render(camState(), t / 1000, dt, {
-          player: { x: G.world.px, y: G.world.py, gender: G.player.gender, moving, speed: WALK },
+          player: { x: G.world.px, y: G.world.py, gender: G.player.gender, look: G.player.look, name: G.player.name, moving, speed: WALK },
           npcs: npcs().map((n) => ({ id: n.id, x: n.px, y: n.py, home: n.home })),
         });
         drawOverlay(t, zaun);
@@ -626,7 +626,7 @@
     // En 3D se pintan de lejos a cerca, con un poste de luz hasta el suelo.
     const order = map.def.locations.map((l) => ({ l, s: toScreen(l.x, l.y, PIN_H) })).filter((o) => !o.s.behind).sort((a, b) => (b.s.depth || 0) - (a.s.depth || 0));
     for (const { l, s } of order) {
-      const R = r3d ? Math.max(20, Math.min(54, 34 * Math.sqrt(r3d.scaleAt(l.x, l.y) / Math.max(0.05, fit)))) : pinR();
+      const R = r3d ? Math.max(24, Math.min(62, 38 * Math.sqrt(r3d.scaleAt(l.x, l.y) / Math.max(0.05, fit)))) : pinR();
       if (s.x < -R * 3 || s.y < -R * 3 || s.x > cw + R * 3 || s.y > ch + R * 3) continue;
       const isObj = obj && obj.id === l.id;
       const hov = hover?.kind === 'loc' && hover.id === l.id;
