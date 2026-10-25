@@ -1825,7 +1825,7 @@
 
     let said = o.__bye ? [pick(data.bye || ['Nos vemos.'])] : [].concat(o.say || []);
     let go = o.go || (o.__node === 'hub' ? 'hub' : o.__node);
-    if (o.__small) said = Relations.small(id, o.__small) || ['(Se encoge de hombros.)'];
+    if (o.__small) said = Relations.small(id, o.__small, G) || ['(Se encoge de hombros.)'];
     if (o.__hang) {
       const h = Relations.hang(G, id);
       said = h?.lines || [];
