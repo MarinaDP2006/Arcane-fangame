@@ -894,7 +894,7 @@
     }
     main.append(
       el('header', { class: 'scene-head', id: 'scene-head' },
-        el('div', {}, el('small', { class: 'muted' }, window.GAME_UNIVERSE ? `${ch.part === 1 ? 'Parte I' : ch.part === 2 ? 'Parte II' : 'Parte III'} · ${G.progress.route === 'zaun' ? 'Nácar' : 'Aurelia'}` : (G.progress.season === 2 ? 'Parte II · Las consecuencias' : G.progress.route === 'zaun' ? 'Parte I · El inicio (Zaun)' : 'Parte I · El inicio (Piltover)')), el('h2', {}, ch.title)),
+        el('div', {}, el('small', { class: 'muted' }, `${window.GAME_UNIVERSE ? `${ch.part === 1 ? 'Parte I' : ch.part === 2 ? 'Parte II' : 'Parte III'} · ${G.progress.route === 'zaun' ? 'Nácar' : 'Aurelia'}` : (G.progress.season === 2 ? 'Parte II · Las consecuencias' : G.progress.route === 'zaun' ? 'Parte I · El inicio (Zaun)' : 'Parte I · El inicio (Piltover)')} · ${G.player.family && G.player.family !== 'ninguna' ? tpl(G.player.familyLabel || 'Familia conocida', G.player) : 'Historia personal'}`), el('h2', {}, ch.title)),
         el('div', { class: 'row gap' },
           el('button', { class: 'btn ghost small', title: 'Saltar animación', onclick: () => { skipping = true; } }, 'Saltar'))),
       el('canvas', { id: 'scene-bg', class: 'scene-bg' }),
@@ -1899,6 +1899,10 @@
   // ---------------- Ficha ----------------
   function renderSheet(main) {
     const p = G.player;
+    const originData = window.CREATION.origins[p.origin];
+    const jobLabel = originData?.jobs.find((j) => j.id === p.job)?.label || p.jobLabel || 'Habitante';
+    const familyData = originData?.families.find((f) => f.id === p.family);
+    const familyLabel = p.family && p.family !== 'ninguna' ? tpl(familyData?.label || p.familyLabel || 'Familia conocida', p) : 'Sin familia famosa';
     const photoInput = el('input', { type: 'file', accept: 'image/*', class: 'hidden', onchange: (e) => changePhoto(e.target.files[0]) });
     main.append(el('div', { class: 'sheet', id: 'sheet' },
       el('div', { class: 'sheet-head' },
@@ -1911,8 +1915,13 @@
             el('button', { class: 'btn small', onclick: () => photoInput.click() }, 'Cambiar foto'),
             el('button', { class: 'btn small', onclick: exportSheet }, 'Exportar ficha'),
             el('button', { class: 'btn small ghost', onclick: () => window.print() }, 'Imprimir'), photoInput))),
+      el('section', { class: 'sheet-story-context' },
+        el('small', { class: 'muted' }, 'TU LUGAR EN LA HISTORIA'),
+        el('p', {}, `${p.name} · ${p.age} años · ${p.origin === 'zaun' ? 'Zaun' : 'Piltover'} · ${tpl(jobLabel, p)}`),
+        el('p', {}, `Vínculo familiar: ${familyLabel}`),
+        el('p', { class: 'muted small' }, p.family && p.family !== 'ninguna' ? 'Este vínculo modifica afinidades y escenas de la historia.' : 'Tu historia empieza sin un parentesco famoso preestablecido.')),
       Creator.sheetList(p),
-      p.bio ? el('div', {}, el('h3', {}, 'Biografía'), el('p', {}, p.bio)) : null,
+      p.bio ? el('div', { class: 'sheet-bio' }, el('h3', {}, 'Biografía'), el('p', {}, p.bio)) : null,
       el('h3', {}, 'Estadísticas'),
       el('div', { class: 'stat-bars' }, Object.entries(S().stats).map(([k, meta]) =>
         el('div', { class: 'stat' }, el('span', {}, meta.label),
