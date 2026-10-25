@@ -380,27 +380,81 @@
       g.restore();
     }
 
-    // Edificios: manzanas pintadas con tinta, para dar densidad de ciudad (en 3D ya son volúmenes).
+    // Edificios 2D: fachadas, ventanas y tejados con lenguaje visual distinto por ciudad.
     for (const b of forGround ? [] : map.buildings) {
-      // Tejados en tinta suave: dan textura de ciudad sin tapar el arte de fondo.
-      g.globalAlpha = 0.22;
-      g.fillStyle = 'rgba(0,0,0,0.7)';
-      g.fillRect(b.x + 5, b.y + 7, b.w, b.h);
-      g.globalAlpha = zaun ? 0.16 : 0.14;
+      const seed = Math.abs(Math.sin(b.x * 0.0129898 + b.y * 0.078233) * 43758.5453);
+      const cols = Math.max(1, Math.min(5, Math.floor(b.w / 30)));
+      const rows = Math.max(1, Math.min(4, Math.floor(b.h / 27)));
+      g.globalAlpha = 0.24;
+      g.fillStyle = 'rgba(0,0,0,0.78)';
+      g.fillRect(b.x + 6, b.y + 8, b.w, b.h);
+      g.globalAlpha = zaun ? 0.5 : 0.58;
       g.fillStyle = b.color;
       g.fillRect(b.x, b.y, b.w, b.h);
+      g.globalAlpha = zaun ? 0.68 : 0.82;
       g.fillStyle = b.roof;
-      g.globalAlpha = 0.12;
-      g.fillRect(b.x + 4, b.y + 4, b.w - 8, b.h * 0.4);
-      g.globalAlpha = 0.25;
+      g.fillRect(b.x + 3, b.y + 3, b.w - 6, Math.max(5, b.h * (zaun ? 0.28 : 0.2)));
+
+      if (zaun) {
+        // Zaun: planchas, tejados remendados, tubos y luces químicas.
+        g.globalAlpha = 0.42;
+        g.strokeStyle = 'rgba(8,14,12,0.9)';
+        g.lineWidth = 2;
+        for (let k = 1; k < cols; k++) {
+          const x = b.x + (b.w / cols) * k;
+          g.beginPath(); g.moveTo(x, b.y + 4); g.lineTo(x, b.y + b.h - 3); g.stroke();
+        }
+        g.globalAlpha = 0.62;
+        for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
+          const ww = Math.max(3, Math.min(8, b.w / (cols * 3)));
+          const wh = Math.max(3, Math.min(7, b.h / (rows * 3)));
+          const wx = b.x + (col + 0.5) * b.w / cols - ww / 2;
+          const wy = b.y + b.h * 0.34 + (row + 0.5) * b.h * 0.58 / rows - wh / 2;
+          g.fillStyle = (Math.floor(seed + row * 3 + col) % 5 === 0) ? 'rgba(255,73,164,0.9)' : 'rgba(100,230,154,0.72)';
+          g.fillRect(wx, wy, ww, wh);
+        }
+        if (b.tall > 0.55) {
+          g.globalAlpha = 0.72;
+          g.strokeStyle = 'rgba(88,199,136,0.75)';
+          g.lineWidth = Math.max(2, b.w * 0.025);
+          g.beginPath(); g.moveTo(b.x + b.w * 0.18, b.y + b.h * 0.1); g.lineTo(b.x + b.w * 0.18, b.y - 9); g.lineTo(b.x + b.w * 0.55, b.y - 9); g.stroke();
+          g.fillStyle = 'rgba(117,255,151,0.55)';
+          g.fillRect(b.x + b.w * 0.58, b.y + b.h * 0.12, b.w * 0.22, 3);
+        }
+        if (seed % 2 > 1) {
+          g.globalAlpha = 0.5; g.fillStyle = '#111c18';
+          g.fillRect(b.x + b.w * 0.1, b.y + b.h * 0.45, b.w * 0.8, 3);
+        }
+      } else {
+        // Piltover: tejado a dos aguas, cornisa dorada y ventanas simétricas.
+        g.globalAlpha = 0.85;
+        g.fillStyle = b.roof;
+        g.beginPath();
+        g.moveTo(b.x + 2, b.y + b.h * 0.26);
+        g.lineTo(b.x + b.w * 0.5, b.y + 2);
+        g.lineTo(b.x + b.w - 2, b.y + b.h * 0.26);
+        g.closePath(); g.fill();
+        g.globalAlpha = 0.45;
+        g.strokeStyle = 'rgba(255,221,142,0.85)';
+        g.lineWidth = 2;
+        g.beginPath(); g.moveTo(b.x + 3, b.y + b.h * 0.27); g.lineTo(b.x + b.w - 3, b.y + b.h * 0.27); g.stroke();
+        for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
+          const ww = Math.max(3, Math.min(8, b.w / (cols * 3.2)));
+          const wh = Math.max(4, Math.min(9, b.h / (rows * 2.8)));
+          const wx = b.x + (col + 0.5) * b.w / cols - ww / 2;
+          const wy = b.y + b.h * 0.34 + (row + 0.5) * b.h * 0.58 / rows - wh / 2;
+          g.globalAlpha = 0.78;
+          g.fillStyle = (row + col + Math.floor(seed)) % 4 === 0 ? 'rgba(255,228,158,0.9)' : 'rgba(115,184,221,0.75)';
+          g.fillRect(wx, wy, ww, wh);
+        }
+        g.globalAlpha = 0.62;
+        g.fillStyle = '#4b3728';
+        g.fillRect(b.x + b.w * 0.43, b.y + b.h * 0.72, b.w * 0.14, b.h * 0.28);
+      }
+      g.globalAlpha = 0.52;
       g.strokeStyle = P.outline;
       g.lineWidth = 1.5;
       g.strokeRect(b.x, b.y, b.w, b.h);
-      if (zaun && b.tall > 0.75) {
-        g.globalAlpha = 0.55;
-        g.fillStyle = b.roof;
-        g.fillRect(b.x + b.w * 0.2, b.y + b.h - 10, b.w * 0.6, 4);
-      }
     }
     g.globalAlpha = 1;
 
