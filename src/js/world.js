@@ -39,7 +39,7 @@
   const pointers = new Map();
   // Tu personaje en el mapa: una bola de luz que anda (WASD o tocando el suelo) y salta a cada paso.
   const WALK = 230; // unidades por segundo
-  const NEAR_LOC = 120; // a esta distancia de un lugar puedes entrar
+  const NEAR_LOC = 165; // permite interactuar desde el exterior incluso ante edificios grandes
   const NEAR_CHAR = 95; // y de un personaje, hablar
   let walkTo = null; // { x, y, thing? } destino al tocar el suelo, un lugar o una cara
   let moving = false;
@@ -221,10 +221,14 @@
       const loc = locById(W().homes[id]);
       if (!loc || loc.map !== mapId) continue;
       const n = (byLoc[loc.id] = (byLoc[loc.id] || 0) + 1);
-      // De pie alrededor de su lugar, mirando hacia fuera hasta que te acercas.
+      // De pie fuera de la huella del edificio, en un punto de calle despejado.
       const a = 2.3 + (n - 1) * 1.15;
-      const px = loc.x + Math.cos(a) * 85;
-      const py = loc.y + Math.sin(a) * 85;
+      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[loc.id] || [60, 60];
+      const radius = Math.max(85, footprint[0] + 24, footprint[1] + 24);
+      const safe = nearestWalkable(loc.x + Math.cos(a) * radius, loc.y + Math.sin(a) * radius, 10);
+      if (!safe) continue;
+      const px = safe.x;
+      const py = safe.y;
       out.push({ kind: 'char', id, loc: loc.id, slot: n - 1, name: window.WIKI.personajes.find((p) => p.id === id)?.name || id, x: loc.x, y: loc.y, px, py, home: Math.atan2(px - loc.x, py - loc.y) });
     }
     return out;
@@ -599,41 +603,58 @@
   }
 
   /** Lo que va encima del mapa (2D o 3D): ruta, ambiente, cristales, lugares, caras y rótulos. */
-  // Colores de tu bola de luz (los mismos que en world3d.js).
-  const ORB = { hombre: '#4fb8ff', mujer: '#ff5aa8', nobinario: '#ffc857' };
-  let orbPh = 0;
-  /** Tu personaje en la carta 2D: una bola de luz con sombra que salta al andar. */
+  /** Marcador del personaje en la carta 2D: retrato real y nombre, sin colores por género o facción. */
   function drawOrb2D(t) {
     if (r3d || G.world.px == null) return;
-    const c = ORB[G.player.gender] || ORB.nobinario;
     const p = toScreen(G.world.px, G.world.py);
-    if (moving) orbPh += 0.016 * 9;
-    const hop = moving ? Math.abs(Math.sin(orbPh)) : 0;
-    const r = Math.max(7, 11 * zoom * 1.6);
-    const lift = r * 0.9 + hop * r * 2 + (moving ? 0 : Math.sin(t / 450) * r * 0.12);
+    const size = Math.max(18, Math.min(34, 22 * Math.sqrt(zoom / Math.max(0.2, fit))));
+    const img = loadImg(`player-marker:${G.player.photo || G.player.name}`, Portrait.playerURL(G.player, 128));
+    const x = p.x;
+    const y = p.y;
+    const r = size * 0.58;
     ctx.save();
-    ctx.globalAlpha = 0.35 * (1 - hop * 0.45);
-    ctx.fillStyle = '#000';
+    // Sombra neutra anclada al suelo.
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y, r * (1 - hop * 0.4), r * 0.45 * (1 - hop * 0.4), 0, 0, Math.PI * 2);
+    ctx.ellipse(x, y + r * 0.65, r * 0.92, r * 0.28, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.globalAlpha = 1;
-    const g = ctx.createRadialGradient(p.x, p.y - lift, 0, p.x, p.y - lift, r * 3.2);
-    g.addColorStop(0, c);
-    g.addColorStop(0.3, `${c}88`);
-    g.addColorStop(1, `${c}00`);
-    ctx.fillStyle = g;
+    // Marco blanco neutro: no codifica género, clase ni facción.
     ctx.beginPath();
-    ctx.arc(p.x, p.y - lift, r * 3.2, 0, Math.PI * 2);
+    ctx.arc(x, y - r * 0.45, r + 3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(8,10,14,0.92)';
     ctx.fill();
-    const b = ctx.createRadialGradient(p.x - r * 0.3, p.y - lift - r * 0.3, r * 0.1, p.x, p.y - lift, r);
-    b.addColorStop(0, '#fff');
-    b.addColorStop(0.45, c);
-    b.addColorStop(1, c);
-    ctx.fillStyle = b;
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = 'rgba(245,245,245,0.95)';
+    ctx.stroke();
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(p.x, p.y - lift, r, 0, Math.PI * 2);
+    ctx.arc(x, y - r * 0.45, r, 0, Math.PI * 2);
+    ctx.clip();
+    if (ready(img)) ctx.drawImage(img, x - r, y - r * 1.45, r * 2, r * 2);
+    else {
+      ctx.fillStyle = '#252830';
+      ctx.fillRect(x - r, y - r * 1.45, r * 2, r * 2);
+      ctx.fillStyle = '#f1f1f1';
+      ctx.font = 'bold 14px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText((G.player.name || '?').slice(0, 1).toUpperCase(), x, y - r * 0.45);
+    }
+    ctx.restore();
+    const label = String(G.player.name || 'Tu personaje').slice(0, 22);
+    ctx.font = '600 12px system-ui, sans-serif';
+    const width = Math.min(cw - 16, ctx.measureText(label).width + 18);
+    const ly = y + r + 15;
+    ctx.fillStyle = 'rgba(7,9,13,0.9)';
+    roundRect(x - width / 2, ly - 10, width, 20, 6);
     ctx.fill();
+    ctx.strokeStyle = 'rgba(245,245,245,0.75)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, x, ly, width - 10);
     ctx.restore();
   }
 
@@ -1062,7 +1083,7 @@
     }
     mctx.fillStyle = '#7fd0ff';
     for (const f of map.def.fragments) if (!G.codex.includes(f.codex)) mctx.fillRect(f.x * s - 1.5, f.y * s - 1.5, 3, 3);
-    mctx.strokeStyle = '#ff5a8a';
+    mctx.strokeStyle = '#ffffff';
     mctx.lineWidth = 2;
     if (r3d) {
       // Lo que ve la cámara: el trapecio del suelo que cae en pantalla.
@@ -1078,6 +1099,69 @@
     const a = toWorld(0, 0);
     const b = toWorld(cw, ch);
     mctx.strokeRect(Math.max(1, a.x * s), Math.max(1, a.y * s), Math.min(mini.width - 2, (b.x - a.x) * s), Math.min(mini.height - 2, (b.y - a.y) * s));
+  }
+
+  // ---------- Colisiones peatonales ----------
+  const PLAYER_RADIUS = 18;
+  // Huellas aproximadas de los edificios emblemáticos construidos en world3d.js.
+  // Se dejan libres los accesos frontales para poder acercarse a los puntos de interacción.
+  const LANDMARK_FOOTPRINTS = {
+    piltover: {
+      academia: [115, 90], consejo: [124, 124], 'mansion-kiramman': [92, 74],
+      hexpuertas: [132, 78], plaza: [42, 42], 'muelle-stillwater': [96, 64],
+    },
+    zaun: {
+      fabrica: [104, 82], 'ultima-gota': [76, 51], callejones: [100, 45],
+      tejados: [92, 48], 'tienda-benzo': [52, 39], mercado: [96, 22],
+      sumidero: [82, 61], 'escondite-jinx': [54, 46], invernadero: [68, 51], arbol: [32, 32],
+    },
+  };
+
+  /** Comprueba el espacio ocupado contra edificios de manzana y estructuras emblemáticas 3D. */
+  function blockedAt(x, y, radius = PLAYER_RADIUS) {
+    if (!map || x < radius || y < radius || x > map.w - radius || y > map.h - radius) return true;
+    if (map.buildings.some((b) =>
+      x + radius > b.x && x - radius < b.x + b.w &&
+      y + radius > b.y && y - radius < b.y + b.h
+    )) return true;
+    const footprints = LANDMARK_FOOTPRINTS[mapId] || {};
+    for (const l of map.def.locations) {
+      const size = footprints[l.id];
+      if (!size) continue;
+      const [halfW, halfH] = size;
+      const insideX = x + radius > l.x - halfW && x - radius < l.x + halfW;
+      const insideY = y + radius > l.y - halfH && y - radius < l.y + halfH;
+      if (insideX && insideY) return true;
+    }
+    return false;
+  }
+
+  /** Si se pulsa sobre un tejado, busca un punto de calle cercano en vez de colocar al jugador dentro. */
+  function nearestWalkable(x, y, radius = PLAYER_RADIUS) {
+    const px = Math.max(radius, Math.min(map.w - radius, x));
+    const py = Math.max(radius, Math.min(map.h - radius, y));
+    if (!blockedAt(px, py, radius)) return { x: px, y: py };
+    for (let d = 12; d <= 220; d += 12) {
+      for (let i = 0; i < 24; i++) {
+        const a = i * Math.PI / 12;
+        const nx = Math.max(radius, Math.min(map.w - radius, px + Math.cos(a) * d));
+        const ny = Math.max(radius, Math.min(map.h - radius, py + Math.sin(a) * d));
+        if (!blockedAt(nx, ny, radius)) return { x: nx, y: ny };
+      }
+    }
+    return null;
+  }
+
+  /** Mueve por ejes separados: permite deslizarse por una pared sin atravesar el edificio. */
+  function movePlayer(mx, my, distance) {
+    const x = G.world.px;
+    const y = G.world.py;
+    const nx = Math.max(PLAYER_RADIUS, Math.min(map.w - PLAYER_RADIUS, x + mx * distance));
+    const ny = Math.max(PLAYER_RADIUS, Math.min(map.h - PLAYER_RADIUS, y + my * distance));
+    let moved = false;
+    if (!blockedAt(nx, y)) { G.world.px = nx; moved ||= nx !== x; }
+    if (!blockedAt(G.world.px, ny)) { G.world.py = ny; moved ||= ny !== y; }
+    return moved;
   }
 
   // ---------- Lógica ----------
@@ -1099,7 +1183,7 @@
       const ddx = walkTo.x - G.world.px;
       const ddy = walkTo.y - G.world.py;
       const d = Math.hypot(ddx, ddy);
-      const stop = walkTo.thing ? (walkTo.thing.kind === 'char' ? NEAR_CHAR * 0.6 : NEAR_LOC * 0.6) : 4;
+      const stop = walkTo.thing ? (walkTo.thing.kind === 'char' ? NEAR_CHAR * 0.6 : walkTo.thing.kind === 'loc' ? 16 : NEAR_LOC * 0.6) : 4;
       if (d <= stop) {
         const th = walkTo.thing;
         walkTo = null;
@@ -1351,13 +1435,19 @@
         if (thing) {
           hover = thing;
           // Tu personaje va andando hasta allí; si ya está al lado, se abre directamente.
-          const tx = thing.kind === 'char' ? thing.px ?? thing.x : thing.x;
-          const ty = thing.kind === 'char' ? thing.py ?? thing.y : thing.y;
+          const tx = thing.kind === 'char' ? thing.px ?? thing.x : thing.kind === 'loc' ? thing.x : thing.x;
+          const ty = thing.kind === 'char' ? thing.py ?? thing.y : thing.kind === 'loc' ? thing.y + 105 : thing.y;
           if (thing.kind === 'frag' || Math.hypot(tx - G.world.px, ty - G.world.py) < (thing.kind === 'char' ? NEAR_CHAR : NEAR_LOC)) open(thing);
-          else walkTo = { x: tx, y: ty, thing };
+          else {
+            const target = nearestWalkable(tx, ty);
+            if (target) walkTo = { ...target, thing };
+          }
         } else {
           const w = toWorld(p.x, p.y);
-          if (w) walkTo = { x: w.x, y: w.y };
+          if (w) {
+            const target = nearestWalkable(w.x, w.y);
+            if (target) walkTo = target;
+          }
         }
       } else if (performance.now() - (g?.t || 0) > 90) vel = { x: 0, y: 0 };
     } else if (pointers.size === 1) {
@@ -1515,8 +1605,9 @@
     if (loc) { G.world.px = loc.x; G.world.py = loc.y + 90; }
     else if (saved) { G.world.px = saved.x; G.world.py = saved.y; }
     else { G.world.px = G.world.x; G.world.py = G.world.y; }
-    G.world.px = Math.max(40, Math.min(map.w - 40, G.world.px));
-    G.world.py = Math.max(40, Math.min(map.h - 40, G.world.py));
+    const safeSpawn = nearestWalkable(G.world.px, G.world.py);
+    if (safeSpawn) { G.world.px = safeSpawn.x; G.world.py = safeSpawn.y; }
+    else { G.world.px = loc?.x ?? map.w / 2; G.world.py = (loc?.y ?? map.h / 2) + 90; }
     walkTo = null;
     near = null;
     fly = null;
