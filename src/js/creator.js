@@ -158,13 +158,13 @@
   }
 
   // ---------- Estructura ----------
-  // Retrato grande al estilo de la selección de campeón, con nombre, clase y título.
+  // Retrato grande con nombre, profesión y ciudad; no muestra habilidades sin uso.
   function splash() {
     const cls = C().classes.find((c) => c.id === draft.cls);
     return el('div', { class: `splash${draft.photo ? '' : ' empty'}`, id: 'splash', title: '¡Haz clic!', onclick: () => quip() },
       draft.photo
         ? el('img', { src: draft.photo, alt: 'Tu retrato' })
-        : el('div', { class: 'splash-empty' }, el('span', {}, ''), el('p', {}, step < 5 ? 'Tu retrato se elige en el paso «Retrato».' : 'Elige un retrato de la galería o sube tu foto.')),
+        : el('div', { class: 'splash-empty' }, el('span', {}, ''), el('p', {}, step < 2 ? 'Tu retrato se elige en el paso «Retrato».' : 'Elige un retrato de la galería o sube tu foto.')),
       el('div', { class: 'splash-plate' },
         draft.title ? el('small', {}, tpl(draft.title, draft)) : null,
         el('strong', { id: 'stage-name' }, draft.name || 'Sin nombre'),
