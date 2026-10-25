@@ -57,7 +57,6 @@ window.RELATIONS = {
     { id: 'hobby', t: 'Últimamente me ha dado por {hobby}.', tone: 'amable' },
     { id: 'miedo', t: '¿A qué le tienes miedo de verdad?', tone: 'serio', req: { aff: 2 } },
     { id: 'sueno', t: 'Si todo saliera bien… ¿qué harías?', tone: 'amable' },
-    { id: 'familia', t: 'Hablemos de nuestra familia.', tone: 'serio' },
   ],
 
   chars: {
