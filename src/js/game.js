@@ -209,12 +209,13 @@
   // Cinemática de inicio según la ciudad elegida.
   async function playIntro(p) {
     const me = { look: p.look, photo: p.photo, ...Portrait.playerOpts(p) };
+    const introStart = window.I18N.t('Aquí empieza tu historia, {0}.').replace('{0}', p.name);
     const shots = p.origin === 'zaun'
       ? [
         { scene: 'piltover', dur: 6, kicker: 'Runeterra', title: 'Piltover', lines: ['Arriba, la Ciudad del Progreso brilla de oro y cristal.'], zoom: [1.2, 1.05], pan: [[-0.6, -0.4], [0.4, 0.2]] },
         { scene: 'puente', dur: 6, lines: ['Un puente une dos mundos que no se miran a los ojos.'], zoom: [1.0, 1.18], pan: [[0.5, -0.3], [-0.2, 0.4]] },
         { scene: 'zaun', dur: 7, title: 'Zaun', lines: ['Abajo, entre humo verde y neón, la gente sobrevive como puede.'], zoom: [1.15, 1.0], pan: [[0, 0.6], [0, -0.2]] },
-        { scene: 'callejones', dur: 7, lines: [`Aquí empieza tu historia, ${p.name}.`, 'Lo que decidas cambiará las dos ciudades.'], portrait: me, zoom: [1.05, 1.15] },
+        { scene: 'callejones', dur: 7, lines: [introStart, 'Lo que decidas cambiará las dos ciudades.'], portrait: me, zoom: [1.05, 1.15] },
       ]
       : [
         { scene: 'zaun', dur: 6, kicker: 'Runeterra', title: 'Zaun', lines: ['Bajo tus pies, una ciudad respira humo y rabia.'], zoom: [1.2, 1.05], pan: [[0.5, 0.5], [-0.3, 0]] },
