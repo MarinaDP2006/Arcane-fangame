@@ -43,6 +43,7 @@
   const NEAR_CHAR = 95; // y de un personaje, hablar
   let walkTo = null; // { x, y, thing? } destino al tocar el suelo, un lugar o una cara
   let moving = false;
+  let ambientTime = 0; // reloj de las rutinas de los habitantes del barrio
   let near = null; // lugar o personaje al que has llegado
   let gesture = null;
   const imgCache = new Map();
@@ -187,6 +188,35 @@
       const px = loc.x + Math.cos(a) * 85;
       const py = loc.y + Math.sin(a) * 85;
       out.push({ kind: 'char', id, loc: loc.id, slot: n - 1, name: window.WIKI.personajes.find((p) => p.id === id)?.name || id, x: loc.x, y: loc.y, px, py, home: Math.atan2(px - loc.x, py - loc.y) });
+    }
+    return out;
+  }
+
+  /**
+   * Habitantes ambientales de la ciudad. No son contactos del comunicador ni marcadores
+   * interactivos: viven en la capa 3D y recorren pequeños circuitos alrededor de zonas públicas.
+   * Sus identidades y trayectorias son deterministas para evitar que salten al cambiar de fotograma.
+   */
+  function ambientNpcs() {
+    const def = W().maps[mapId];
+    const anchors = (def?.locations || []).filter((l) => l.x > 260 && l.y > 260 && l.x < map.w - 260 && l.y < map.h - 260);
+    if (!anchors.length) return [];
+    const count = Math.min(12, Math.max(8, Math.round(anchors.length * 0.7)));
+    const out = [];
+    for (let i = 0; i < count; i++) {
+      const anchor = anchors[(i * 7 + Math.floor(i / 3)) % anchors.length];
+      const phase = i * 2.399963229728653;
+      const rx = 190 + (i % 4) * 24;
+      const rz = 145 + (i % 3) * 28;
+      const a = ambientTime * (0.16 + (i % 4) * 0.018) + phase;
+      const x = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
+      const y = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
+      const speed = Math.hypot(Math.sin(a) * rx, Math.cos(a) * rz) * (0.16 + (i % 4) * 0.018);
+      out.push({
+        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true,
+        speed: Math.min(82, Math.max(28, speed)),
+        home: Math.atan2(-Math.sin(a), Math.cos(a)),
+      });
     }
     return out;
   }
@@ -487,7 +517,10 @@
         ctx.clearRect(0, 0, cw, ch);
         r3d.render(camState(), t / 1000, dt, {
           player: { x: G.world.px, y: G.world.py, gender: G.player.gender, look: G.player.look, name: G.player.name, moving, speed: WALK },
-          npcs: npcs().map((n) => ({ id: n.id, x: n.px, y: n.py, home: n.home })),
+          npcs: [
+            ...npcs().map((n) => ({ id: n.id, x: n.px, y: n.py, home: n.home })),
+            ...ambientNpcs(),
+          ],
         });
         drawOverlay(t, zaun);
         return;
@@ -1008,6 +1041,7 @@
 
   // ---------- Lógica ----------
   function update(dt) {
+    ambientTime += Math.min(0.05, Math.max(0, dt || 0));
     // Teclado: flechas o WASD desplazan, + y - amplían.
     const dx = Number(keys.has('d') || keys.has('arrowright')) - Number(keys.has('a') || keys.has('arrowleft'));
     const dy = Number(keys.has('s') || keys.has('arrowdown')) - Number(keys.has('w') || keys.has('arrowup'));
