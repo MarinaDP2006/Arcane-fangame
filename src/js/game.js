@@ -1625,9 +1625,17 @@
     }
     const info = window.WIKI.personajes.find((p) => p.id === id);
     const art = Portrait.customChar(id, true) || Portrait.charURL(id, 384, true);
+    // Fondo pintado contextual: usa recursos locales y no genera contenido con IA.
+    const chatBackdrop = ({
+      vi: 'ultima-gota', vander: 'ultima-gota', jinx: 'escondite-jinx', silco: 'fabrica', sevika: 'fabrica',
+      ekko: 'arbol', isha: 'arbol', caitlyn: 'ejecutores', cassandra: 'mansion-kiramman',
+      jayce: 'taller-jayce', viktor: 'comuna-viktor', heimerdinger: 'academia', mel: 'consejo',
+      ambessa: 'noxus', maddie: 'ejecutores', kino: 'consejo',
+    })[id] || (info?.origin === 'zaun' ? 'zaun' : 'piltover');
+    const backdropUrl = window.CustomArt.image('lugares', chatBackdrop) || `img/arte/lugares/${chatBackdrop}.webp`;
     // Comunicador: retrato grande con marco a la izquierda y la conversación a la derecha.
     main.append(
-      el('div', { class: `chat-stage origin-${info?.origin === 'zaun' ? 'zaun' : 'piltover'}` },
+      el('div', { class: `chat-stage origin-${info?.origin === 'zaun' ? 'zaun' : 'piltover'}`, style: `--chat-bg: url("\\${backdropUrl.replace(/"/g, '%22')}\\")` },
         el('aside', { class: 'chat-portrait' },
           el('div', { class: 'cp-frame' },
             el('img', { src: art, alt: '', draggable: 'false' }),
