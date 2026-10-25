@@ -438,8 +438,10 @@
       let swipe = null;
       let pointerStart = null;
       canvas.addEventListener('pointerdown', (e) => {
-        e.preventDefault(); pos(e); mouse.down = true;
-        pointerStart = { x: mouse.x, y: mouse.y, clientX: e.clientX, clientY: e.clientY, id: e.pointerId };
+        e.preventDefault();
+        pos(e);
+        mouse.down = true;
+        pointerStart = { x: mouse.x, y: mouse.y, clientX: e.clientX, clientY: e.clientY, id: e.pointerId, type: e.pointerType };
         swipe = def.swipe && e.pointerType !== 'mouse' ? { x: e.clientX, y: e.clientY, id: e.pointerId } : null;
         try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       });
@@ -448,14 +450,20 @@
         // Ignore releases from unrelated pointers; do not cancel the active drag.
         if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
         mouse.down = false;
+        const start = pointerStart;
+        if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
         pointerStart = null;
-        if (e.type === 'pointercancel' || !running) { swipe = null; return; }
-        const dx = e.clientX - start.clientX, dy = e.clientY - start.clientY;
+        if (e.type === 'pointercancel' || !e.clientX && !e.clientY || !running) { swipe = null; return; }
+        const dx = e.clientX - start.clientX;
+        const dy = e.clientY - start.clientY;
         const moved = Math.max(Math.abs(dx), Math.abs(dy));
         if (swipe && e.pointerId === swipe.id && moved >= 32) {
-          pressed.push(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'arrowleft' : 'arrowright') : (dy < 0 ? 'arrowup' : 'arrowdown'));
+          const k = Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'arrowleft' : 'arrowright') : (dy < 0 ? 'arrowup' : 'arrowdown');
+          pressed.push(k);
           buzz(10);
-        } else if (moved < 18) mouse.clicks.push({ x: start.x, y: start.y });
+        } else if (moved < 18) {
+          mouse.clicks.push({ x: start.x, y: start.y });
+        }
         swipe = null;
       };
       window.addEventListener('pointerup', up);
