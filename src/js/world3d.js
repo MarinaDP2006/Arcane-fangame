@@ -185,7 +185,7 @@
   /** Edificios instanciados: un cuerpo por fachada y remates (tejados, cúpulas, agujas). */
   // Lugares con su propio modelo 3D (src/models): se ven desde arriba en el mapa, en lugar
   // de los bloques genéricos. size = ancho que ocupan en unidades del mapa.
-  const PLACE_MODELS = { 'taller-jayce': { model: 'taller-viktor-jayce', size: 230 } };
+  const PLACE_MODELS = { 'taller-jayce': { model: 'taller-viktor-jayce', size: 180 } };
   // Guardias de Piltover (modelo guardia-piltover) de pie junto a estos lugares.
   const GUARD_POSTS = { ejecutores: 3, consejo: 2, puente: 2 };
 
@@ -553,11 +553,16 @@
     }
 
     function buildActors(map) {
-      actors = { group: new T.Group(), orb: makeOrb(), npcs: new Map(), guards: [], map };
+      actors = { group: new T.Group(), orb: makeOrb(), playerAvatar: null, lastPlayer: null, npcs: new Map(), guards: [], map };
       scene.add(actors.group);
       actors.group.add(actors.orb.root);
       const A = window.Avatars3D;
       if (!A) return;
+      // El marcador luminoso conserva la sombra y el halo, pero el cuerpo es el avatar 3D
+      // del jugador. Su holder usa exactamente las coordenadas del orbe del mapa.
+      actors.playerAvatar = A.create({ player: true });
+      actors.group.add(actors.playerAvatar.holder);
+      actors.orb.ball.visible = false;
       const mine = actors;
       // Decorados con modelo propio.
       for (const l of map.def.locations) {
@@ -617,14 +622,34 @@
           orb.light.color.set(color);
         }
         orb.root.position.set(p.x, 0, p.y);
-        // Al andar da saltitos (aplastándose al tocar el suelo); quieta, flota y respira.
-        if (p.moving) orb.ph += dt * Math.max(7, (p.speed || 230) / 26);
-        const hop = p.moving ? Math.abs(Math.sin(orb.ph)) : 0;
-        const idle = p.moving ? 0 : Math.sin(t * 2.2) * 2;
-        orb.body.position.y = 13 + hop * 26 + idle;
-        const squash = p.moving ? 1 - (1 - hop) * 0.22 : 1;
-        orb.ball.scale.set(1 / Math.sqrt(squash), squash, 1 / Math.sqrt(squash));
-        const s = 1 - hop * 0.45;
+        // El avatar 3D sigue al marcador en el mismo fotograma, sin desfase ni tamaño excesivo.
+        // La escala base de Avatars3D es de 20 unidades frente a calles de 60–96 unidades.
+        const av = actors.playerAvatar;
+        if (av) {
+          av.holder.position.set(p.x, 0, p.y);
+          let yaw = av.yaw || 0;
+          const last = actors.lastPlayer;
+          if (last) {
+            const dx = p.x - last.x;
+            const dy = p.y - last.y;
+            if (Math.hypot(dx, dy) > 0.15) yaw = Math.atan2(dx, dy);
+          }
+          actors.lastPlayer = { x: p.x, y: p.y };
+          window.Avatars3D.update(av, dt, p.moving ? (p.speed || 230) : 0, yaw, t, false);
+          // El halo sigue identificando al jugador, pero no tapa las piernas del modelo.
+          orb.body.position.y = 2;
+          orb.halo.material.opacity = 0.48 + Math.sin(t * 3) * 0.08;
+        } else {
+          // Fallback seguro si no hay módulo de avatares.
+          if (p.moving) orb.ph += dt * Math.max(7, (p.speed || 230) / 26);
+          const hop = p.moving ? Math.abs(Math.sin(orb.ph)) : 0;
+          const idle = p.moving ? 0 : Math.sin(t * 2.2) * 2;
+          orb.body.position.y = 13 + hop * 26 + idle;
+          const squash = p.moving ? 1 - (1 - hop) * 0.22 : 1;
+          orb.ball.visible = true;
+          orb.ball.scale.set(1 / Math.sqrt(squash), squash, 1 / Math.sqrt(squash));
+        }
+        const s = p.moving ? 0.9 : 1;
         orb.shadow.scale.set(s, s, s);
         orb.shadow.material.opacity = 0.35 * s;
         orb.halo.material.opacity = 0.75 + Math.sin(t * 3) * 0.15;
