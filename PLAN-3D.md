@@ -1,5 +1,7 @@
 Modelos 3D de los siete protagonistas
 
+> **En pocas palabras:** Aquí se separa lo que ya existe en el sistema 3D de lo que todavía falta crear o comprobar. Antes de añadir otro sistema, revisa si el juego ya tiene uno que puedas ampliar. Los modelos de respaldo mantienen el juego utilizable, pero no deben presentarse como modelos oficiales ni como réplicas exactas de la serie.
+
 ## Estado comprobado
 El proyecto **ya dispone** de un sistema de avatares 3D en `src/js/avatars3d.js`, con GLTFLoader local, animación y personajes procedurales de respaldo. No es necesario reemplazarlo ni prometer que se han descargado modelos inexistentes. **Los siete GLB fieles a Arcane NO están incorporados todavía.** El nombre visible del juego pasa a **Rifts & Gears**. Se mantiene el identificador interno `grietas-and-gears`, el ID de la app y las claves de las partidas para no romper instalaciones, enlaces ni guardados existentes.
 

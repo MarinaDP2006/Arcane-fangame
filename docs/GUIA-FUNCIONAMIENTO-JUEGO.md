@@ -1,5 +1,7 @@
 # Guía de funcionamiento de Rifts & Gears
 
+> **En pocas palabras:** Esta guía explica el recorrido normal del juego y cómo se relacionan sus partes. Es útil para orientarte antes de tocar código o investigar un fallo. Si una pantalla, un botón o un paso descrito aquí no coincide con la versión que tienes, registra la diferencia en lugar de asumir que la función está rota o terminada.
+
 ## 1. Arranque y primera partida
 1. Abre la web, ejecutable de escritorio o aplicación Android.
 2. En la pantalla de inicio, selecciona iniciar o continuar partida.

@@ -1,5 +1,7 @@
 # Música de Rifts & Gears
 
+> **En pocas palabras:** Este README explica dónde se guardan las pistas de audio del juego y cómo se relacionan con la reproducción. Respeta los nombres exactos que espera el código y revisa los derechos de uso de cada archivo. Después de cambiar una pista, prueba dentro del juego: la presencia del archivo no demuestra que la música se esté reproduciendo correctamente.
+
 ## Estado actual
 
 Rutas objetivo de la integración. Hay que comprobar el código y los paquetes para confirmar que el reproductor realmente las carga:

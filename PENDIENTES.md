@@ -1,4 +1,6 @@
 # Pendientes de la rama de Arcane
+
+> **En pocas palabras:** Esta es la lista corta para ver qué falta por hacer en el fangame. No es una promesa de que las tareas ya estén implementadas: marca algo como terminado solo cuando el código y, cuando corresponda, una partida de prueba lo confirmen. Para el detalle de tareas de desarrollo, consulta también `docs/TAREAS-PENDIENTES.md`.
 Lista viva de lo que falta en el fangame de Arcane. Lo del mundo nuevo va en el repo RIFTS-GEARS.
 Marca con `[x]` lo que se vaya cerrando.
 

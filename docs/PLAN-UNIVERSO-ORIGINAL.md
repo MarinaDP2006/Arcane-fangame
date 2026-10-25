@@ -1,5 +1,7 @@
 # Plan de universo original: narrativa, interfaz y publicación
 
+> **En pocas palabras:** Este documento recoge ideas para un universo narrativo original separado del fangame de Arcane. Sirve para conservar conceptos, tono y dirección creativa sin mezclarlos con personajes, partidas o configuraciones de otro proyecto. Las ideas de la hoja de ruta no deben confundirse con contenido ya implementado.
+
 ## Objetivo
 
 Transformar Rifts & Gears en una obra de fantasía industrial propia. Conservar temas generales como dos ciudades contrastadas y la tensión entre tecnología y desigualdad, pero sustituir personajes, lugares, iconografía, diálogos, trama, nombres y recursos identificables de franquicias existentes. Este documento es un plan de migración, no certifica que todo el contenido del repositorio ya se haya reescrito.

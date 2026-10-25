@@ -1,5 +1,7 @@
 # Servidor de la web (Arcane)
 
+> **En pocas palabras:** Esta carpeta contiene piezas del servidor del modo web. Sus variables de entorno y su proveedor de IA no son lo mismo que la conexión de IA de la aplicación de escritorio. Para probar cambios, ejecuta el servidor en un entorno local y no publiques claves, tokens ni archivos `.env` reales.
+
 `server/roleplay-server.js` solo sirve la web del juego (`web-dist/`, que monta `npm run web`).
 Ya no hace de puente con ninguna IA y no necesita claves.
 

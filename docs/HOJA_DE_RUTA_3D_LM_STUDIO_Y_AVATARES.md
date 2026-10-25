@@ -1,5 +1,7 @@
 # Hoja de ruta: universo original, personajes, animación 2D/3D y LM Studio
 
+> **En pocas palabras:** Aquí se organiza el trabajo de modelos, avatares y herramientas 3D por etapas. La hoja de ruta describe objetivos y experimentos, no una lista de funciones garantizadas. Comprueba qué está implementado, qué depende de archivos que solo tienes en tu ordenador y qué necesita una prueba visual antes de darlo por terminado.
+
 > **Nota (v1.30.0):** la única IA del juego es KoboldCpp ([GUIA-KOBOLDCPP.md](../GUIA-KOBOLDCPP.md)). Lo que este documento dice de LM Studio u otros servicios es histórico y ya no está en el juego.
 
 ## Objetivo

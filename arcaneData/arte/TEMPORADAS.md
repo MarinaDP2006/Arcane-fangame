@@ -1,5 +1,7 @@
 # Imágenes separadas por temporadas
 
+> **En pocas palabras:** Este archivo organiza referencias visuales por temporada y ayuda a saber de dónde procede cada recurso. Consulta las fuentes y los créditos antes de reutilizar una imagen. Que un recurso se use como referencia en el fangame no significa que sea propiedad del proyecto ni que tenga una licencia libre.
+
 El juego elige la imagen según el capítulo que se está jugando: los capítulos `t1`…`t9` y `fin2` son de la temporada 2, el resto de la temporada 1. **Nunca se muestra una imagen de T1 en un capítulo de T2**: si un lugar o personaje no tiene imagen de T2, se usa el escenario dibujado o el retrato de reserva del juego.
 
 ## Dónde está cada cosa

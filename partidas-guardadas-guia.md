@@ -1,5 +1,7 @@
 # Partidas guardadas: guía
 
+> **En pocas palabras:** Aquí encontrarás cómo localizar, respaldar, mover y recuperar tus partidas. Lo más importante: antes de probar una actualización o una función nueva, copia los guardados y trabaja con una ranura de prueba. No borres la carpeta de partidas para intentar arreglar un problema; primero conserva una copia.
+
 ## Dónde se guardan
 
 | Dispositivo | Partidas | Copia automática (desde v1.24.0) |

@@ -1,4 +1,6 @@
 # Manual de usuario, primera partida y testing
+
+> **En pocas palabras:** Este manual está pensado para jugar y probar el juego sin tener que conocer el código. Puedes leer solo la parte que necesitas: empezar una partida, entender las ciudades y los personajes, reconocer las pantallas o informar de un fallo. Las capturas sirven como orientación, pero la interfaz puede cambiar entre versiones; si algo no coincide, anota qué versión estás usando.
 **Para quien nunca ha jugado, para quien no conoce Arcane y para quien prueba el juego**
 
 Esta guía no exige conocimientos de programación y evita spoilers importantes del argumento. Está dividida en tres modos de lectura:

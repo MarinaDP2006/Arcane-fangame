@@ -1,4 +1,6 @@
 # Prompts 3D para la rama Arcane Fan Game
+
+> **En pocas palabras:** Aquí se guardan instrucciones y referencias para crear o encargar recursos 3D para el fangame. Úsalas como punto de partida y revisa cada resultado en el motor: una imagen bonita no garantiza que el modelo tenga escala, materiales, orientación, rendimiento o permisos de uso adecuados.
 **Documento de producción de fan game no oficial. No afiliado a Riot Games ni a Fortiche.**
 
 Esta rama conserva el contexto narrativo de *Arcane* para uso de fan game. No incluye archivos oficiales de modelos ni autoriza su redistribución. Los siguientes prompts sirven para crear modelos de fan-art propios, claramente no oficiales; verifica licencias de texturas, fuentes y referencias antes de publicar una build.

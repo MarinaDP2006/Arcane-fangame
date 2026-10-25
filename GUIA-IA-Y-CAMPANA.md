@@ -1,5 +1,7 @@
 # Guía de IA y campaña
 
+> **En pocas palabras:** Usa esta guía si quieres entender cómo se conectan los diálogos, la campaña y la IA, o si vas a modificar una escena. La idea importante es esta: puedes jugar sin IA; el chat con modelo externo usa actualmente KoboldCpp. Que haya perfiles o instrucciones para Ollama no significa que el juego ya lo utilice. Después de tocar una escena, comprueba sus elecciones, condiciones y consecuencias en una partida real.
+
 Esta guía explica cómo se construye el chat libre, dónde se editan las voces y los diálogos, cómo está organizada la campaña y qué conviene probar antes de publicar cambios.
 
 ## 1. Cómo funciona la IA
