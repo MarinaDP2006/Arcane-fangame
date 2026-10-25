@@ -39,10 +39,11 @@
   const pointers = new Map();
   // Tu personaje en el mapa: una bola de luz que anda (WASD o tocando el suelo) y salta a cada paso.
   const WALK = 230; // unidades por segundo
-  const NEAR_LOC = 120; // a esta distancia de un lugar puedes entrar
+  const NEAR_LOC = 165; // permite interactuar desde el exterior incluso ante edificios grandes
   const NEAR_CHAR = 95; // y de un personaje, hablar
   let walkTo = null; // { x, y, thing? } destino al tocar el suelo, un lugar o una cara
   let moving = false;
+  let ambientTime = 0; // reloj de las rutinas de los habitantes del barrio
   let near = null; // lugar o personaje al que has llegado
   let gesture = null;
   const imgCache = new Map();
@@ -121,6 +122,44 @@
     return cache[id];
   }
 
+  // Colisión circular contra las huellas de los edificios. El mismo sistema de coordenadas
+  // se usa en el mapa 2D y en la escena 3D, así que el bloqueo coincide en ambas vistas.
+  const ACTOR_RADIUS = 20;
+  function blockedAt(x, y, radius = ACTOR_RADIUS) {
+    if (!map || x < radius || y < radius || x > map.w - radius || y > map.h - radius) return true;
+    return map.buildings.some((b) => {
+      const nx = Math.max(b.x, Math.min(x, b.x + b.w));
+      const ny = Math.max(b.y, Math.min(y, b.y + b.h));
+      return (x - nx) ** 2 + (y - ny) ** 2 < radius ** 2;
+    });
+  }
+
+  /** Movimiento con deslizamiento lateral: no se atraviesan esquinas y se conserva control fluido. */
+  function moveOnStreet(x, y, dx, dy, radius = ACTOR_RADIUS) {
+    const nx = Math.max(radius, Math.min(map.w - radius, x + dx));
+    const ny = Math.max(radius, Math.min(map.h - radius, y + dy));
+    if (!blockedAt(nx, ny, radius)) return { x: nx, y: ny, moved: Math.hypot(nx - x, ny - y) > 0.001 };
+    let outX = x;
+    let outY = y;
+    if (!blockedAt(nx, y, radius)) outX = nx;
+    if (!blockedAt(outX, ny, radius)) outY = ny;
+    return { x: outX, y: outY, moved: Math.hypot(outX - x, outY - y) > 0.001 };
+  }
+
+  /** Si un punto de una ruta cae dentro de un edificio, busca la acera libre más cercana. */
+  function nearestWalkable(x, y, radius = ACTOR_RADIUS) {
+    if (!blockedAt(x, y, radius)) return { x, y };
+    for (let ring = 24; ring <= 240; ring += 24) {
+      for (let i = 0; i < 24; i++) {
+        const a = i * Math.PI / 12;
+        const px = Math.max(radius, Math.min(map.w - radius, x + Math.cos(a) * ring));
+        const py = Math.max(radius, Math.min(map.h - radius, y + Math.sin(a) * ring));
+        if (!blockedAt(px, py, radius)) return { x: px, y: py };
+      }
+    }
+    return null;
+  }
+
   // ---------- Imágenes ----------
   function loadImg(key, src) {
     if (imgCache.has(key)) return imgCache.get(key);
@@ -182,11 +221,47 @@
       const loc = locById(W().homes[id]);
       if (!loc || loc.map !== mapId) continue;
       const n = (byLoc[loc.id] = (byLoc[loc.id] || 0) + 1);
-      // De pie alrededor de su lugar, mirando hacia fuera hasta que te acercas.
+      // De pie fuera de la huella del edificio, en un punto de calle despejado.
       const a = 2.3 + (n - 1) * 1.15;
-      const px = loc.x + Math.cos(a) * 85;
-      const py = loc.y + Math.sin(a) * 85;
+      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[loc.id] || [60, 60];
+      const radius = Math.max(85, footprint[0] + 24, footprint[1] + 24);
+      const safe = nearestWalkable(loc.x + Math.cos(a) * radius, loc.y + Math.sin(a) * radius, 10);
+      if (!safe) continue;
+      const px = safe.x;
+      const py = safe.y;
       out.push({ kind: 'char', id, loc: loc.id, slot: n - 1, name: window.WIKI.personajes.find((p) => p.id === id)?.name || id, x: loc.x, y: loc.y, px, py, home: Math.atan2(px - loc.x, py - loc.y) });
+    }
+    return out;
+  }
+
+  /**
+   * Habitantes ambientales de la ciudad. No son contactos del comunicador ni marcadores
+   * interactivos: viven en la capa 3D y recorren pequeños circuitos alrededor de zonas públicas.
+   * Sus identidades y trayectorias son deterministas para evitar que salten al cambiar de fotograma.
+   */
+  function ambientNpcs() {
+    const def = W().maps[mapId];
+    const anchors = (def?.locations || []).filter((l) => l.x > 260 && l.y > 260 && l.x < map.w - 260 && l.y < map.h - 260);
+    if (!anchors.length) return [];
+    const count = Math.min(12, Math.max(8, Math.round(anchors.length * 0.7)));
+    const out = [];
+    for (let i = 0; i < count; i++) {
+      const anchor = anchors[(i * 7 + Math.floor(i / 3)) % anchors.length];
+      const phase = i * 2.399963229728653;
+      const rx = 190 + (i % 4) * 24;
+      const rz = 145 + (i % 3) * 28;
+      const a = ambientTime * (0.16 + (i % 4) * 0.018) + phase;
+      const rawX = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
+      const rawY = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
+      const point = nearestWalkable(rawX, rawY, 16);
+      if (!point) continue;
+      const { x, y } = point;
+      const speed = Math.hypot(Math.sin(a) * rx, Math.cos(a) * rz) * (0.16 + (i % 4) * 0.018);
+      out.push({
+        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true,
+        speed: Math.min(82, Math.max(28, speed)),
+        home: Math.atan2(-Math.sin(a), Math.cos(a)),
+      });
     }
     return out;
   }
@@ -487,7 +562,10 @@
         ctx.clearRect(0, 0, cw, ch);
         r3d.render(camState(), t / 1000, dt, {
           player: { x: G.world.px, y: G.world.py, gender: G.player.gender, look: G.player.look, name: G.player.name, moving, speed: WALK },
-          npcs: npcs().map((n) => ({ id: n.id, x: n.px, y: n.py, home: n.home })),
+          npcs: [
+            ...npcs().map((n) => ({ id: n.id, x: n.px, y: n.py, home: n.home })),
+            ...ambientNpcs(),
+          ],
         });
         drawOverlay(t, zaun);
         return;
@@ -1007,7 +1085,7 @@
     }
     mctx.fillStyle = '#7fd0ff';
     for (const f of map.def.fragments) if (!G.codex.includes(f.codex)) mctx.fillRect(f.x * s - 1.5, f.y * s - 1.5, 3, 3);
-    mctx.strokeStyle = '#ff5a8a';
+    mctx.strokeStyle = '#ffffff';
     mctx.lineWidth = 2;
     if (r3d) {
       // Lo que ve la cámara: el trapecio del suelo que cae en pantalla.
@@ -1025,8 +1103,72 @@
     mctx.strokeRect(Math.max(1, a.x * s), Math.max(1, a.y * s), Math.min(mini.width - 2, (b.x - a.x) * s), Math.min(mini.height - 2, (b.y - a.y) * s));
   }
 
+  // ---------- Colisiones peatonales ----------
+  const PLAYER_RADIUS = 18;
+  // Huellas aproximadas de los edificios emblemáticos construidos en world3d.js.
+  // Se dejan libres los accesos frontales para poder acercarse a los puntos de interacción.
+  const LANDMARK_FOOTPRINTS = {
+    piltover: {
+      academia: [115, 90], consejo: [124, 124], 'mansion-kiramman': [92, 74],
+      hexpuertas: [132, 78], plaza: [42, 42], 'muelle-stillwater': [96, 64],
+    },
+    zaun: {
+      fabrica: [104, 82], 'ultima-gota': [76, 51], callejones: [100, 45],
+      tejados: [92, 48], 'tienda-benzo': [52, 39], mercado: [96, 22],
+      sumidero: [82, 61], 'escondite-jinx': [54, 46], invernadero: [68, 51], arbol: [32, 32],
+    },
+  };
+
+  /** Comprueba el espacio ocupado contra edificios de manzana y estructuras emblemáticas 3D. */
+  function blockedAt(x, y, radius = PLAYER_RADIUS) {
+    if (!map || x < radius || y < radius || x > map.w - radius || y > map.h - radius) return true;
+    if (map.buildings.some((b) =>
+      x + radius > b.x && x - radius < b.x + b.w &&
+      y + radius > b.y && y - radius < b.y + b.h
+    )) return true;
+    const footprints = LANDMARK_FOOTPRINTS[mapId] || {};
+    for (const l of map.def.locations) {
+      const size = footprints[l.id];
+      if (!size) continue;
+      const [halfW, halfH] = size;
+      const insideX = x + radius > l.x - halfW && x - radius < l.x + halfW;
+      const insideY = y + radius > l.y - halfH && y - radius < l.y + halfH;
+      if (insideX && insideY) return true;
+    }
+    return false;
+  }
+
+  /** Si se pulsa sobre un tejado, busca un punto de calle cercano en vez de colocar al jugador dentro. */
+  function nearestWalkable(x, y, radius = PLAYER_RADIUS) {
+    const px = Math.max(radius, Math.min(map.w - radius, x));
+    const py = Math.max(radius, Math.min(map.h - radius, y));
+    if (!blockedAt(px, py, radius)) return { x: px, y: py };
+    for (let d = 12; d <= 220; d += 12) {
+      for (let i = 0; i < 24; i++) {
+        const a = i * Math.PI / 12;
+        const nx = Math.max(radius, Math.min(map.w - radius, px + Math.cos(a) * d));
+        const ny = Math.max(radius, Math.min(map.h - radius, py + Math.sin(a) * d));
+        if (!blockedAt(nx, ny, radius)) return { x: nx, y: ny };
+      }
+    }
+    return null;
+  }
+
+  /** Mueve por ejes separados: permite deslizarse por una pared sin atravesar el edificio. */
+  function movePlayer(mx, my, distance) {
+    const x = G.world.px;
+    const y = G.world.py;
+    const nx = Math.max(PLAYER_RADIUS, Math.min(map.w - PLAYER_RADIUS, x + mx * distance));
+    const ny = Math.max(PLAYER_RADIUS, Math.min(map.h - PLAYER_RADIUS, y + my * distance));
+    let moved = false;
+    if (!blockedAt(nx, y)) { G.world.px = nx; moved ||= nx !== x; }
+    if (!blockedAt(G.world.px, ny)) { G.world.py = ny; moved ||= ny !== y; }
+    return moved;
+  }
+
   // ---------- Lógica ----------
   function update(dt) {
+    ambientTime += Math.min(0.05, Math.max(0, dt || 0));
     // Teclado: flechas o WASD desplazan, + y - amplían.
     const dx = Number(keys.has('d') || keys.has('arrowright')) - Number(keys.has('a') || keys.has('arrowleft'));
     const dy = Number(keys.has('s') || keys.has('arrowdown')) - Number(keys.has('w') || keys.has('arrowup'));
@@ -1043,7 +1185,7 @@
       const ddx = walkTo.x - G.world.px;
       const ddy = walkTo.y - G.world.py;
       const d = Math.hypot(ddx, ddy);
-      const stop = walkTo.thing ? (walkTo.thing.kind === 'char' ? NEAR_CHAR * 0.6 : NEAR_LOC * 0.6) : 4;
+      const stop = walkTo.thing ? (walkTo.thing.kind === 'char' ? NEAR_CHAR * 0.6 : walkTo.thing.kind === 'loc' ? 16 : NEAR_LOC * 0.6) : 4;
       if (d <= stop) {
         const th = walkTo.thing;
         walkTo = null;
@@ -1053,8 +1195,12 @@
     moving = Boolean(mx || my);
     if (moving) {
       const sp = WALK * (opt().camSpeed || 1);
-      G.world.px = Math.max(40, Math.min(map.w - 40, G.world.px + mx * sp * dt));
-      G.world.py = Math.max(40, Math.min(map.h - 40, G.world.py + my * sp * dt));
+      const moved = moveOnStreet(G.world.px, G.world.py, mx * sp * dt, my * sp * dt);
+      G.world.px = moved.x;
+      G.world.py = moved.y;
+      // Si el destino automático queda bloqueado, se cancela para no empujar al jugador contra una pared.
+      if (!moved.moved && walkTo) walkTo = null;
+      moving = moved.moved;
       G.world.face = Math.atan2(mx, my);
       (G.world.pos ||= {})[mapId] = { x: G.world.px, y: G.world.py };
       // La cámara sigue a tu personaje.
@@ -1291,13 +1437,19 @@
         if (thing) {
           hover = thing;
           // Tu personaje va andando hasta allí; si ya está al lado, se abre directamente.
-          const tx = thing.kind === 'char' ? thing.px ?? thing.x : thing.x;
-          const ty = thing.kind === 'char' ? thing.py ?? thing.y : thing.y;
+          const tx = thing.kind === 'char' ? thing.px ?? thing.x : thing.kind === 'loc' ? thing.x : thing.x;
+          const ty = thing.kind === 'char' ? thing.py ?? thing.y : thing.kind === 'loc' ? thing.y + 105 : thing.y;
           if (thing.kind === 'frag' || Math.hypot(tx - G.world.px, ty - G.world.py) < (thing.kind === 'char' ? NEAR_CHAR : NEAR_LOC)) open(thing);
-          else walkTo = { x: tx, y: ty, thing };
+          else {
+            const target = nearestWalkable(tx, ty);
+            if (target) walkTo = { ...target, thing };
+          }
         } else {
           const w = toWorld(p.x, p.y);
-          if (w) walkTo = { x: w.x, y: w.y };
+          if (w) {
+            const target = nearestWalkable(w.x, w.y);
+            if (target) walkTo = target;
+          }
         }
       } else if (performance.now() - (g?.t || 0) > 90) vel = { x: 0, y: 0 };
     } else if (pointers.size === 1) {
@@ -1455,8 +1607,9 @@
     if (loc) { G.world.px = loc.x; G.world.py = loc.y + 90; }
     else if (saved) { G.world.px = saved.x; G.world.py = saved.y; }
     else { G.world.px = G.world.x; G.world.py = G.world.y; }
-    G.world.px = Math.max(40, Math.min(map.w - 40, G.world.px));
-    G.world.py = Math.max(40, Math.min(map.h - 40, G.world.py));
+    const safeSpawn = nearestWalkable(G.world.px, G.world.py);
+    if (safeSpawn) { G.world.px = safeSpawn.x; G.world.py = safeSpawn.y; }
+    else { G.world.px = loc?.x ?? map.w / 2; G.world.py = (loc?.y ?? map.h / 2) + 90; }
     walkTo = null;
     near = null;
     fly = null;
