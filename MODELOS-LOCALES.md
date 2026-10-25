@@ -1,38 +1,58 @@
-# Modelos locales
+# Modelos locales y Ollama
 
-> **En pocas palabras:** Esta guía te ayuda a preparar un modelo local con Ollama para experimentar con el narrador de Arcane. Es una preparación separada del chat que ya utiliza el juego de escritorio: el perfil descrito aquí no se carga automáticamente ni debe considerarse una integración terminada. Sigue los pasos en orden y no confundas que el modelo responda en Ollama con que la aplicación lo tenga conectado.
+> **Alcance de esta fase: documentación separada, sin integración en el juego.** Puedes instalar Ollama y probar un modelo desde la terminal por curiosidad, pero el juego no lo necesita ni lo conecta. No actives ni configures Ollama dentro de Arcane: la historia, los comunicadores y los minijuegos de esta fase usan opciones y textos escritos. No se implementa IA nueva.
 
-Esta guía prepara Ollama para el universo de **Arcane: Piltover y Zaun**. No comparte personajes, historias ni memoria con Las ciudades del Umbral.
+## 1. Instalar y comprobar Ollama por separado
 
-## Requisitos y preparación
+1. Instala Ollama desde https://ollama.com/ y arranca el servicio.
+2. Descarga un modelo compatible con tu equipo:
 
-1. Instala Ollama desde https://ollama.com/.
-2. Abre Ollama y comprueba que el servicio local esté activo en http://127.0.0.1:11434.
-3. Descarga el modelo base ejecutando: ollama pull qwen3:4b
-4. Comprueba que responde: ollama run qwen3:4b
+   ```bash
+   ollama pull qwen3:4b
+   ```
 
-## Crear y probar el narrador de Arcane
+3. Comprueba que el modelo responde en la propia terminal:
 
-El repositorio incluye ollama/Modelfile.arcane, con instrucciones de rol propias de Arcane. Desde la raíz del repositorio ejecuta:
+   ```bash
+   ollama run qwen3:4b
+   ```
 
-    ollama create arcane-narrador -f ollama/Modelfile.arcane
-    ollama run arcane-narrador
+4. Para ver los modelos descargados:
 
-Para consultar los modelos instalados: ollama list.
+   ```bash
+   ollama list
+   ```
 
-## Estado real de la integración en el juego
+Estos pasos prueban únicamente Ollama en tu ordenador. No prueban ni conectan el juego.
 
-**Importante: preparar Ollama y crear arcane-narrador no significa que la IA del juego ya esté conectada a Ollama.** En el estado actual del repositorio, config/ollama.json está desactivado (enabled: false) y la aplicación no lo carga automáticamente. Los controles actuales de IA del juego siguen describiendo KoboldCpp. Por tanto, no se debe afirmar que la IA del chat funciona al 100 % con Ollama hasta que el código del proveedor, los ajustes y las pruebas de conexión estén integrados.
+## 2. Perfil narrativo opcional para experimentación local
 
-La integración pendiente debe, como mínimo:
-- Leer y validar config/ollama.json sin activarlo silenciosamente.
-- Llamar al API local de Ollama con el modelo configurado (arcane-narrador si ya se ha creado).
-- Mostrar en Ajustes el estado de conexión y errores útiles.
-- Permitir desactivar la IA y mantener los diálogos escritos como alternativa.
-- Probar chat libre, continuidad de contexto y recuperación cuando Ollama no esté disponible.
+Desde la raíz del repositorio, si solo quieres experimentar fuera del juego:
 
-El servicio local suele usar http://127.0.0.1:11434. No expongas ese puerto a Internet. El historial y el estado narrativo de cada partida deben guardarse en los datos de la partida, no dentro del modelo. Una web pública no debe llamar directamente al servicio local del jugador sin una integración explícita que gestione conectividad y permisos.
+```bash
+ollama create arcane-narrador -f ollama/Modelfile.arcane
+ollama run arcane-narrador
+```
 
-## Universo independiente
+El perfil sirve como experimento independiente. No sustituye las opciones de diálogo escritas ni modifica el estado de una partida.
 
-Este perfil es exclusivo de Arcane. No reutilices su mundo, personajes ni memoria en **Las ciudades del Umbral**; ese proyecto tiene su propia configuración.
+## 3. Lo que NO está integrado en esta fase
+
+- No hay un proveedor Ollama nuevo conectado al juego por este bloque.
+- No hay que seleccionar Ollama en Ajustes para jugar ni introducir una dirección de API.
+- No se debe asumir que el chat, la historia o las decisiones envían texto a un modelo.
+- La ausencia de Ollama, Internet o una GPU no debe bloquear la creación del personaje, la historia, los comunicadores ni los minijuegos.
+- No se exponen puertos locales a Internet ni se añade una dependencia de IA.
+
+## 4. Posible trabajo futuro (no implementado)
+
+Una integración real requeriría, en otra fase y con pruebas específicas, un adaptador de proveedor, configuración y estado de conexión, manejo de errores y tiempos de espera, controles de privacidad, compatibilidad con escritorio/móvil/navegador y una ruta de respaldo a los diálogos escritos. Nada de eso se activa con esta guía.
+
+## 5. Problemas habituales al probar Ollama por separado
+
+- **El comando no responde:** comprueba que el servicio de Ollama está arrancado.
+- **Modelo no encontrado:** ejecuta `ollama list` y copia el nombre exacto.
+- **Respuestas demasiado lentas:** prueba un modelo más pequeño o una cuantización menor; la primera respuesta puede tardar mientras se carga.
+- **No quieres usar IA:** cierra la terminal; no afecta al juego ni a las partidas.
+
+**Importante:** esta guía es informativa. La experiencia jugable de Arcane en esta fase funciona con contenido local escrito y no depende de Ollama.

@@ -122,6 +122,44 @@
     return cache[id];
   }
 
+  // Colisión circular contra las huellas de los edificios. El mismo sistema de coordenadas
+  // se usa en el mapa 2D y en la escena 3D, así que el bloqueo coincide en ambas vistas.
+  const ACTOR_RADIUS = 20;
+  function blockedAt(x, y, radius = ACTOR_RADIUS) {
+    if (!map || x < radius || y < radius || x > map.w - radius || y > map.h - radius) return true;
+    return map.buildings.some((b) => {
+      const nx = Math.max(b.x, Math.min(x, b.x + b.w));
+      const ny = Math.max(b.y, Math.min(y, b.y + b.h));
+      return (x - nx) ** 2 + (y - ny) ** 2 < radius ** 2;
+    });
+  }
+
+  /** Movimiento con deslizamiento lateral: no se atraviesan esquinas y se conserva control fluido. */
+  function moveOnStreet(x, y, dx, dy, radius = ACTOR_RADIUS) {
+    const nx = Math.max(radius, Math.min(map.w - radius, x + dx));
+    const ny = Math.max(radius, Math.min(map.h - radius, y + dy));
+    if (!blockedAt(nx, ny, radius)) return { x: nx, y: ny, moved: Math.hypot(nx - x, ny - y) > 0.001 };
+    let outX = x;
+    let outY = y;
+    if (!blockedAt(nx, y, radius)) outX = nx;
+    if (!blockedAt(outX, ny, radius)) outY = ny;
+    return { x: outX, y: outY, moved: Math.hypot(outX - x, outY - y) > 0.001 };
+  }
+
+  /** Si un punto de una ruta cae dentro de un edificio, busca la acera libre más cercana. */
+  function nearestWalkable(x, y, radius = ACTOR_RADIUS) {
+    if (!blockedAt(x, y, radius)) return { x, y };
+    for (let ring = 24; ring <= 240; ring += 24) {
+      for (let i = 0; i < 24; i++) {
+        const a = i * Math.PI / 12;
+        const px = Math.max(radius, Math.min(map.w - radius, x + Math.cos(a) * ring));
+        const py = Math.max(radius, Math.min(map.h - radius, y + Math.sin(a) * ring));
+        if (!blockedAt(px, py, radius)) return { x: px, y: py };
+      }
+    }
+    return null;
+  }
+
   // ---------- Imágenes ----------
   function loadImg(key, src) {
     if (imgCache.has(key)) return imgCache.get(key);
@@ -196,11 +234,32 @@
     return out;
   }
 
-  /**
-   * Habitantes ambientales de la ciudad. No son contactos del comunicador ni marcadores
-   * interactivos: viven en la capa 3D y recorren pequeños circuitos alrededor de zonas públicas.
-   * Sus identidades y trayectorias son deterministas para evitar que salten al cambiar de fotograma.
-   */
+  // Habitantes originales del mundo: nombres, oficios y líneas escritas. No son personajes canon
+  // ni se generan con IA; sus pequeños diálogos dan vida a los barrios sin añadir contactos falsos.
+  const CITY_RESIDENTS = {
+    piltover: [
+      { id: 'liora', name: 'Liora Tern', role: 'relojera', lines: ['Si el reloj del Consejo se atrasa, culpan a los relojeros. Si adelanta, se atribuyen el mérito.', 'Las calles brillan, pero quien las limpia nunca sale en los retratos.'] },
+      { id: 'corin', name: 'Corin Vale', role: 'aprendiz hextec', lines: ['La Academia dice que una chispa basta para cambiar el mundo. A mí me bastaría con que no explotara mi mesa.', 'No toques ese prototipo; llevo tres días sin dormir.'] },
+      { id: 'mara', name: 'Mara Bell', role: 'vendedora de telas', lines: ['El oro compra seda, pero no compra buen gusto.', 'Hoy todos quieren azul. Mañana dirán que siempre quisieron verde.'] },
+      { id: 'olan', name: 'Olan Rusk', role: 'mensajero', lines: ['Si ves un sobre con sello del Consejo, no preguntes qué contiene.', 'Cruzo media ciudad antes del desayuno. La gente importante llama a eso puntualidad.'] },
+      { id: 'dalia', name: 'Dalia Wren', role: 'artesana', lines: ['Estas cornisas tardan meses en tallarse y segundos en olvidarse.', 'Zaun también sabe construir cosas hermosas; aquí solo miran hacia arriba.'] },
+      { id: 'bren', name: 'Bren Orlo', role: 'estudiante', lines: ['Heimerdinger dice que la curiosidad es un deber. Mis exámenes dicen que es un problema.', '¿Has visto los globos de las Hexpuertas? Un día viajaré en uno.'] },
+      { id: 'eren', name: 'Eren Sola', role: 'técnico de las Hexpuertas', lines: ['Los globos no flotan por magia: se equilibran por capas. Bueno, y algo de magia.', 'Si oyes tres campanadas en el muelle, aléjate de los anclajes.'] },
+      { id: 'nessa', name: 'Nessa Orl', role: 'guardia civil', lines: ['No busco problemas. Busco que los problemas no lleguen al Consejo.', 'En el puente cambia el uniforme, pero no el cansancio.'] },
+    ],
+    zaun: [
+      { id: 'rook', name: 'Rook Fen', role: 'chatarrero', lines: ['Todo tiene arreglo si no te importa qué pieza sobra.', 'La gente de arriba tira cosas mejores que las que compran abajo.'] },
+      { id: 'sella', name: 'Sella Coil', role: 'vendedora de tuberías', lines: ['Si gotea verde, no lo toques. Si gotea rojo, corre.', 'Hoy vendo válvulas. Ayer vendía cuchillos. La ciudad decide.'] },
+      { id: 'kett', name: 'Kett Varo', role: 'repartidor', lines: ['Si el paquete zumba, no es mío. Si explota, tampoco.', 'Cruzar el Sumidero con botas secas es un milagro.'] },
+      { id: 'vira', name: 'Vira Coil', role: 'mecánica', lines: ['La máquina no está rota; está ofendida.', 'Dame dos tornillos, una cuerda y cinco minutos.'] },
+      { id: 'nilo', name: 'Nilo Dren', role: 'recolector', lines: ['No mires el humo demasiado tiempo. Te empieza a parecer bonito.', 'Las chimeneas hacen más ruido cuando alguien no quiere que le oigan.'] },
+      { id: 'tessa', name: 'Tessa Marr', role: 'sanadora', lines: ['El humo de aquí no cura nada. Cúbrete la boca antes de acercarte.', 'Si alguien se cae, grita. No intentes cargarlo a solas.'] },
+      { id: 'jori', name: 'Jori Pell', role: 'estibador', lines: ['La fábrica paga tarde, pero paga. A veces.', 'He visto cosas salir de ese conducto que no caben en ningún barril.'] },
+      { id: 'puck', name: 'Puck', role: 'mensajero de las Luciérnagas', lines: ['Si ves pintura verde en una pared, sigue el camino. Si ves azul, da la vuelta.', 'No todos los que llevan máscara trabajan para Silco.'] },
+    ],
+  };
+
+  /** Habitantes con rutas seguras y diálogos escritos, separados del reparto canon. */
   function ambientNpcs() {
     const routes = ambientRoutes();
     if (!routes.length) return [];
@@ -221,7 +280,6 @@
     }
     return out;
   }
-
   /** Lugar del objetivo de la historia. */
   function objectiveLoc() {
     const id = cb.objective?.();
@@ -698,7 +756,30 @@
       ctx.restore();
     }
 
-    // Ambiente: humo químico en Zaun, polvo dorado en Piltover.
+    // En el mapa 2D el gas solo aparece alrededor de zonas industriales concretas.
+    if (zaun && !r3d && opt().particles !== false && !opt().reduceMotion) {
+      const toxicIds = ['sumidero', 'fabrica', 'callejones'];
+      toxicIds.forEach((id, i) => {
+        const loc = map.def.locations.find((l) => l.id === id);
+        if (!loc) return;
+        const p = toScreen(loc.x, loc.y);
+        const radius = Math.max(18, Math.min(105, (105 + i * 18) * zoom));
+        const pulse = 0.8 + Math.sin(t / 900 + i * 1.8) * 0.2;
+        const haze = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
+        haze.addColorStop(0, `rgba(92,255,112,${0.16 * pulse})`);
+        haze.addColorStop(0.55, `rgba(50,205,100,${0.09 * pulse})`);
+        haze.addColorStop(1, 'rgba(50,205,100,0)');
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillStyle = haze;
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, radius * 1.35, radius * 0.75, Math.sin(t / 2100 + i) * 0.12, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+    }
+
+    // Ambiente: partículas pequeñas por el aire y humo tóxico localizado en Zaun.
     if (opt().particles !== false && !opt().reduceMotion) {
       for (const p of particles) {
         if (zaun) {
@@ -1235,7 +1316,7 @@
 
     if (particles.length < (mapId === 'zaun' ? 26 : 60) && Math.random() < 0.4) {
       const zaun = mapId === 'zaun';
-      particles.push({ x: Math.random() * cw, y: ch + 10, vy: -(15 + Math.random() * 35), vx: (Math.random() - 0.5) * 12, life: 7 + Math.random() * 6, r: zaun ? 50 + Math.random() * 90 : 1.2 + Math.random() * 2 });
+      particles.push({ x: Math.random() * cw, y: ch + 10, vy: -(15 + Math.random() * 35), vx: (Math.random() - 0.5) * 12, life: 7 + Math.random() * 6, r: zaun ? 8 + Math.random() * 20 : 1.2 + Math.random() * 2 });
     }
     particles.forEach((p) => { p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; });
     particles = particles.filter((p) => p.life > 0);
@@ -1247,8 +1328,11 @@
   function updateNear() {
     let best = null;
     let bd = Infinity;
-    for (const n of npcs()) {
-      const d = Math.hypot(n.px - G.world.px, n.py - G.world.py);
+    const nearbyPeople = [...npcs(), ...(r3d ? ambientNpcs() : [])];
+    for (const n of nearbyPeople) {
+      const nx = n.px ?? n.x;
+      const ny = n.py ?? n.y;
+      const d = Math.hypot(nx - G.world.px, ny - G.world.py);
       if (d < NEAR_CHAR && d < bd) { best = n; bd = d; }
     }
     if (!best) {
@@ -1282,9 +1366,10 @@
     if (!el) return;
     let txt = '';
     const act = U.touch ? 'toca aquí' : 'pulsa <kbd>E</kbd>';
-    if (hover?.kind === 'loc') txt = `<b>${U.esc(hover.name)}</b> · ${U.touch ? 'toca' : 'clic'} para ver qué hacer`;
-    else if (hover?.kind === 'char') txt = `Hablar con <b>${U.esc(hover.name)}</b>`;
+    if (near?.kind === 'resident') txt = `<b>${U.esc(near.name)}</b> · ${U.esc(near.role)} · ${act} para hablar`;
     else if (near?.kind === 'char') txt = `<b>${U.esc(near.name)}</b> te mira · ${act} para hablar`;
+    else if (hover?.kind === 'loc') txt = `<b>${U.esc(hover.name)}</b> · ${U.touch ? 'toca' : 'clic'} para ver qué hacer`;
+    else if (hover?.kind === 'char') txt = `Hablar con <b>${U.esc(hover.name)}</b>`;
     else if (near?.kind === 'loc') txt = `<b>${U.esc(near.name)}</b> · ${act} para entrar`;
     if (el.dataset.txt !== txt) {
       el.innerHTML = txt;
@@ -1298,6 +1383,7 @@
     if (paused || !thing) return;
     Audio2.sfx.click();
     if (thing.kind === 'char') return cb.onTalk?.(thing.id);
+    if (thing.kind === 'resident') return cb.onResident?.(thing);
     if (thing.kind === 'frag') {
       cb.onFragment?.(thing);
       return;
@@ -1327,6 +1413,7 @@
 
   /** Abre el lugar resaltado o, si no hay ninguno, el más cercano al centro de la vista. */
   function interact() {
+    if (near?.kind === 'resident' || near?.kind === 'char') return open(near);
     if (hover) return open(hover);
     if (near) return open(near);
     const l = map.def.locations.reduce((b, x) => (Math.hypot(x.x - G.world.x, x.y - G.world.y) < Math.hypot(b.x - G.world.x, b.y - G.world.y) ? x : b));
