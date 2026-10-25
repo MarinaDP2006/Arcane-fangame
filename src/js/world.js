@@ -486,7 +486,7 @@
       try {
         ctx.clearRect(0, 0, cw, ch);
         r3d.render(camState(), t / 1000, dt, {
-          player: { x: G.world.px, y: G.world.py, gender: G.player.gender, moving, speed: WALK },
+          player: { x: G.world.px, y: G.world.py, gender: G.player.gender, look: G.player.look, name: G.player.name, moving, speed: WALK },
           npcs: npcs().map((n) => ({ id: n.id, x: n.px, y: n.py, home: n.home })),
         });
         drawOverlay(t, zaun);
