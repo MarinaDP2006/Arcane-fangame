@@ -474,8 +474,9 @@
   // ----- Paso 4: Familia y aficiones -----
   function stepFamily(body) {
     const o = C().origins[draft.origin];
-    body.append(el('h2', {}, 'Familia y aficiones'),
-      el('p', { class: 'muted' }, 'La familia es opcional. Si perteneces a una familia conocida, algunos personajes te tratarán distinto.'));
+    body.append(el('h2', {}, 'Familia famosa y repercusión en la historia'),
+      el('p', { class: 'muted' }, 'Tu OC forma parte de la historia, no es un primo lejano ni un extra. Elige un vínculo directo con alguien importante o «Ninguna» para descubrir el mundo sin parentescos predeterminados. Esta elección cambia quién te conoce, la afinidad inicial y los límites de las relaciones.'),
+      el('p', { class: 'creator-consecuencia' }, 'Universo alternativo de rol: el parentesco puede cambiar acontecimientos del canon. Las consecuencias se desarrollan durante la partida, no solo en la ficha.'));
     body.append(el('div', { class: 'option-grid' }, o.families.map((f) =>
       el('button', { class: `option${draft.family === f.id ? ' active' : ''}`, onclick: () => { draft.family = f.id; rerender(); } },
         el('strong', {}, tpl(f.label, draft)), el('small', {}, bonusText(f.stats)),
@@ -513,7 +514,8 @@
     const rows = [
       ['Nombre', p.name], ['Género', C().genders.find((g) => g.id === p.gender)?.label], ['Edad', p.age],
       ['Ciudad', `${C().origins[p.origin].label} · ${p.district}`], ['Profesión', tpl(p.jobLabel, p)],
-      ['Familia', tpl(p.familyLabel, p)],
+      ['Familia y vínculo', tpl(p.familyLabel, p)],
+      ...(p.family !== 'ninguna' ? [['Repercusión narrativa', 'El personaje relacionado te conoce desde el inicio; se activan vínculos familiares, afinidad inicial y escenas de confianza.']] : [['Repercusión narrativa', 'Sin parentesco famoso predefinido: los vínculos se construyen jugando.']]),
       ...(p.parents ? [['Padres', tpl(C().parents.find((x) => x.id === p.parents)?.label || '', p)]] : []),
       ...(p.attraction ? [['Te atraen', C().attractions.find((x) => x.id === p.attraction)?.label || '']] : []),
       ['Aficiones', p.hobbyLabels.join(', ')],

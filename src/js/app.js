@@ -118,8 +118,9 @@
       const P = window.AI.PROVIDERS;
       const c = window.AI.cfg();
       const on = c.provider !== 'off';
-      const d = P.koboldcpp;
-      const save = (patch) => set({ ai: { provider: 'koboldcpp', url: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.url : '', model: App.settings.ai?.provider === 'koboldcpp' ? App.settings.ai.model : '', password: App.settings.ai?.provider === 'koboldcpp' ? (App.settings.ai.password || '') : '', ...patch } }).then(draw);
+      const selected = c.provider === 'ollama' ? 'ollama' : 'koboldcpp';
+      const d = P[selected];
+      const save = (patch) => set({ ai: { provider: selected, url: App.settings.ai?.provider === selected ? App.settings.ai.url : '', model: App.settings.ai?.provider === selected ? App.settings.ai.model : d.model, password: App.settings.ai?.provider === selected ? (App.settings.ai.password || '') : '', ...patch } }).then(draw);
       const status = el('small', { class: 'muted ai-status' });
       const models = el('div', { class: 'chips ai-models' });
       const lan = el('small', { class: 'muted ai-lan' });
@@ -127,22 +128,25 @@
       // DOM append escribe «null» con los huecos: se quitan antes.
       box.append(...[
         el('h3', {}, 'IA de la historia y los chats'),
-        el('p', { class: 'muted small' }, 'Roleplay libre fiel a la temporada 1 y 2: escribes como tu personaje y el reparto te responde, te pregunta y la historia avanza según lo que hagas. La única IA del juego es KoboldCpp, que corre gratis en tu ordenador. Si alguna vez no responde, el juego te ofrece los diálogos escritos para no quedarte atascada.'),
-        el('label', { class: 'switch-row' }, el('span', {}, 'Usar KoboldCpp', el('small', { class: 'muted' }, on ? 'Activada' : 'Desactivada: solo diálogos escritos')),
-          el('input', { type: 'checkbox', checked: on, onchange: (e) => save(e.target.checked ? { provider: 'koboldcpp' } : { provider: 'off' }) })),
+        el('p', { class: 'muted small' }, 'Roleplay libre: el reparto reacciona a tus decisiones y mantiene el contexto de la partida. Puedes usar un modelo local con KoboldCpp u Ollama; si la IA no está disponible, se mantienen los diálogos escritos.'),
+        el('label', { class: 'field' }, el('span', {}, 'Proveedor de IA'),
+          el('select', { class: 'input', value: selected, onchange: (e) => save({ provider: e.target.value, url: '', model: P[e.target.value]?.model || '' }) },
+            el('option', { value: 'koboldcpp' }, 'KoboldCpp'), el('option', { value: 'ollama' }, 'Ollama'))),
+        el('label', { class: 'switch-row' }, el('span', {}, 'Usar IA', el('small', { class: 'muted' }, on ? 'Activada' : 'Desactivada: solo diálogos escritos')),
+          el('input', { type: 'checkbox', checked: on, onchange: (e) => save(e.target.checked ? { provider: selected } : { provider: 'off' }) })),
         on ? el('p', { class: 'small ai-help' }, d.help) : null,
         on ? el('label', { class: 'field' }, el('span', {}, 'Dirección'),
-          el('input', { class: 'input', value: (App.settings.ai?.provider === 'koboldcpp' && App.settings.ai.url ? App.settings.ai.url : d.url).replaceAll('192.168.1.40', '192.168.1.139'), placeholder: 'http://192.168.1.139:5001', inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
+          el('input', { class: 'input', value: (App.settings.ai?.provider === selected && App.settings.ai.url ? App.settings.ai.url : d.url).replaceAll('192.168.1.40', '192.168.1.139'), placeholder: d.url, inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
         on && !window.AI.ready() ? el('p', { class: 'small ai-help' }, 'En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».') : null,
         on ? lan : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Contraseña de KoboldCpp (opcional)'),
-          el('input', { class: 'input', type: 'password', autocomplete: 'off', value: App.settings.ai?.provider === 'koboldcpp' ? (App.settings.ai.password || '') : '', placeholder: 'Déjala vacía si no configuraste Password', onchange: (e) => save({ password: e.target.value }) })) : null,
+        on ? el('label', { class: 'field' }, el('span', {}, 'Contraseña (opcional; solo si el servidor la requiere)'),
+          el('input', { class: 'input', type: 'password', autocomplete: 'off', value: App.settings.ai?.provider === selected ? (App.settings.ai.password || '') : '', placeholder: 'Déjala vacía si no configuraste autenticación', onchange: (e) => save({ password: e.target.value }) })) : null,
         on ? el('p', { class: 'small ai-help' }, 'Si abres KoboldCpp por la red de casa, Chrome puede pedir permiso para acceder a la red local. Pulsa «Permitir» cuando conectes la IA desde esta web.') : null,
         on ? el('label', { class: 'field' }, el('span', {}, 'Modelo'),
           el('input', { class: 'input', value: c.model, placeholder: 'koboldcpp', onchange: (e) => save({ model: e.target.value.trim() }) })) : null,
         on ? models : null,
         on ? el('div', { class: 'row gap' },
-          el('button', { class: 'btn small', onclick: findModels }, 'Ver el modelo abierto'),
+          el('button', { class: 'btn small', onclick: findModels }, selected === 'ollama' ? 'Listar modelos de Ollama' : 'Ver el modelo abierto'),
           el('button', { class: 'btn small', onclick: async () => {
             status.textContent = 'Probando…';
             try {
@@ -161,7 +165,7 @@
         status.textContent = 'Buscando…';
         try {
           const list = await window.AI.models();
-          status.textContent = list.length ? 'Este es el modelo que tiene abierto KoboldCpp.' : 'KoboldCpp no tiene ningún modelo abierto. Ciérralo, elige un .gguf en «Model» y pulsa «Launch».';
+          status.textContent = list.length ? (selected === 'ollama' ? 'Modelos disponibles en Ollama.' : 'Este es el modelo que tiene abierto KoboldCpp.') : (selected === 'ollama' ? 'No se han encontrado modelos en Ollama. Descarga uno y crea el perfil antes de probar.' : 'KoboldCpp no tiene ningún modelo abierto. Ciérralo, elige un .gguf en «Model» y pulsa «Launch».');
           models.replaceChildren(...list.map((m) => el('button', {
             class: `chip${m.name === c.model ? ' active' : ''}`,
             onclick: () => save({ model: m.name }),
