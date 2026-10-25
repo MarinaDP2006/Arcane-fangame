@@ -35,6 +35,7 @@ El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y An
 
 - [Guía completa del código](GUIA.md) y [guía de juego](GUIAJUEGO.md)
 - [Perfiles de modelos locales con Ollama](MODELOS-LOCALES.md)
+- [Instrumentales por ciudad: Zaun y Piltover](docs/INSTRUMENTALES-POR-CIUDAD.md)
 - [Tareas pendientes](docs/TAREAS-PENDIENTES.md)
 - [Releases y compilaciones](docs/RELEASES-ARCANE.md)
 
