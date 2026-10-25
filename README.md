@@ -1,16 +1,16 @@
-# Rifts & Gears · Fangame de Arcane
+# Arcane-fangame · Piltover y Zaun
 
-Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o Zaun y escribes lo que dice o hace. Los personajes responden dentro del canon de la serie.
+Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o Zaun y escribes lo que dice o hace. Los personajes reaccionan dentro del mundo de la serie. Proyecto de fans no oficial.
 
 ## Cómo funciona
 
 1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
 2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
-3. **Perfil de modelo local:** existe un perfil JSON para Ollama en `config/ollama.json` y un archivo independiente con el mundo de Arcane en `config/mundo.json`. El perfil está desactivado por defecto y la app aún no lo carga automáticamente; consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md).
+3. **IA opcional:** el chat de IA del juego de escritorio usa actualmente KoboldCpp. Ollama está preparado como perfil local experimental, pero `config/ollama.json` está desactivado y la aplicación no lo carga automáticamente. No confundas preparar `arcane-narrador` con tener el juego integrado con Ollama; consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md). Los diálogos escritos permiten jugar sin IA.
 
 ## Web y arte
 
-La web pública presenta la historia, ciudades, personajes y una galería de concept art oficial de Arcane. El acceso directo a la demo no aparece en la portada pública; las acciones externas allí son Releases y Problemas.
+La web pública se genera con `npm run web`. La demo del repositorio se mantiene para desarrollo y pruebas y no está enlazada desde la portada. Antes de publicar, comprueba la salida `web-dist/` y las rutas de los recursos.
 
 - `web/index.html`: landing page, ciudades, galería de arte y personajes.
 - `scripts/build-web.js`: copia una selección de imágenes oficiales de entorno y retratos desde `src/img/arte/` a `web-dist/arte-oficial/`.
@@ -33,7 +33,11 @@ El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y An
 
 ## Guías
 
-- [Guía completa del código](GUIA.md) y [guía de juego](GUIAJUEGO.md)
+- [IA y campaña](GUIA-IA-Y-CAMPANA.md)
+- [Modelos 3D y pruebas](GUIA-MODELOS-3D-Y-PRUEBAS.md)
+- [Partidas guardadas](partidas-guardadas-guia.md)
+
+- [Guía técnica](Guía%20técnica.md) y [guía de juego](GUIAJUEGO.md)
 - [Perfiles de modelos locales con Ollama](MODELOS-LOCALES.md)
 - [Instrumentales por ciudad: Zaun y Piltover](docs/INSTRUMENTALES-POR-CIUDAD.md)
 - [Tareas pendientes](docs/TAREAS-PENDIENTES.md)
