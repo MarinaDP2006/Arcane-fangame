@@ -1,4 +1,4 @@
-# Compilación de Arcane: Rifts & Gears para Windows, macOS y Android.
+# Compilación del fangame Arcane para Windows, macOS y Android.
 # Sustituye a los antiguos build.yml (escritorio) y android.yml (móvil): un solo workflow con
 # las comprobaciones primero y una compilación separada por sistema y arquitectura.
 #
