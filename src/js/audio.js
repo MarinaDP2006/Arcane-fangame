@@ -22,11 +22,12 @@
 
   const MUSIC_LEVEL = 0.32;
   const AMB_LEVEL = 0.55;
-  // Temas locales. Si todavía no se ha copiado un MP3, se usa el sintetizador existente.
+  // Temas locales por ciudad. Coloca las pistas autorizadas en assets/music/ con estos nombres.
+  // Si un archivo no existe o no se puede reproducir, se usa el tema original sintetizado.
   const TRACK_FILES = {
     wiki: 'menu-theme.mp3',
-    piltover: 'piltover-theme.mp3',
-    zaun: 'zaun-theme.mp3',
+    piltover: 'a-bicentennial-instrumental.mp3',
+    zaun: 'sucker-instrumental.mp3',
   };
   const audioFileUrl = (filename) => {
     // En escritorio, index.html vive dentro de src/. En Android/otros despliegues,
