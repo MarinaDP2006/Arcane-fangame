@@ -1,5 +1,7 @@
 # Instrumentales por ciudad
 
+> **En pocas palabras:** Este documento explica qué música se asocia a cada ciudad y qué nombres de archivo utiliza el juego. Los nombres deben coincidir exactamente con los archivos reales, incluso si una extensión parece rara. Que el archivo esté en la carpeta no garantiza por sí solo que se escuche: prueba el cambio de ciudad y el comportamiento cuando falta una pista.
+
 El reproductor asigna una pista local a cada zona del juego:
 
 - **Zaun:** assets/music/sucker-instrumental.mp3.mp3 (nombre actual del archivo subido; tiene la extensión .mp3 duplicada).
