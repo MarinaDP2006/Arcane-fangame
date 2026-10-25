@@ -1,5 +1,7 @@
 # Compilaciones y Releases — Arcane-fangame
 
+> **En pocas palabras:** Esta guía ayuda a distinguir una compilación de prueba de una versión publicada para descargar. Las compilaciones de GitHub Actions pueden incluir archivos descargables temporales; una release es una publicación aparte. Antes de compartir un enlace, comprueba que la ejecución terminó correctamente, que el artefacto sigue disponible y para qué sistema operativo se creó.
+
 Repositorio: [MarinaDP2006/Arcane-fangame](https://github.com/MarinaDP2006/Arcane-fangame). Versión fuente actual: la indicada en `package.json` (no copies ejemplos antiguos de versiones).
 
 ## Compilación automatizada
