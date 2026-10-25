@@ -21,6 +21,10 @@ Otras entradas de Zaun pueden reutilizar alguno de los escenarios con nombre pro
 
 Esto evita completar una misión de los lugares implementados pulsando «Continuar historia» desde el exterior. Sigue existiendo el comunicador global para conversaciones ya desbloqueadas y la historia de otras ubicaciones; es una primera fase de integración, no una reestructuración completa de todas las interacciones del RPG.
 
+## Estado actualizado del mapa exterior
+
+El mapa exterior ya añade siluetas 3D diferenciadas para varios lugares clave y evita que la generación aleatoria de edificios los tape. Los hitos están inspirados en la ambientación de Arcane, pero se construyen proceduralmente con geometría básica; no son copias exactas de los fotogramas. Para alcanzar ese nivel se necesitan modelos hechos a mano a partir de referencias, texturas propias y comparación visual ubicación por ubicación.
+
 ## Limitaciones conocidas y mejoras posteriores
 
 - Los seis espacios son **geometría procedimental de Three.js**, no modelos 3D exactos de los fotogramas. Reproducen elementos arquitectónicos y paletas cromáticas, pero el acabado no es todavía una copia del 100 % ni tiene texturas artesanales o interiores de varias plantas realmente conectadas.
@@ -34,7 +38,7 @@ Esto evita completar una misión de los lugares implementados pulsando «Continu
 
 - `src/js/zaun-interiors.js`: escenas 3D, entrada y salida, cámara, movimiento y pistas.
 - `src/js/game.js`: puerta obligatoria de exploración antes de mostrar acciones para los lugares de Zaun.
-- `src/js/world3d.js`: entradas volumétricas de seis lugares en el mundo abierto.
+- `src/js/world3d.js`: hitos exteriores 3D propios para la Fábrica de Brillo, La Última Gota, Callejones, Benzo, Mercado, Sumidero, Escondite de Jinx, Invernadero, Árbol de las Luciérnagas, Puente de Zaun y Foso; sus huellas se reservan del generador aleatorio.
 - `src/data/world.js`: nueva ubicación del invernadero.
 - `src/css/styles.css`: interfaz a pantalla completa para la exploración.
 - `src/index.html`: carga del módulo de exploración.
