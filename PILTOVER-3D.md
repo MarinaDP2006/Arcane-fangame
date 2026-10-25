@@ -1,7 +1,4 @@
 # Piltover 3D: cinco referencias, cinco espacios explorables
-
-Se han integrado cinco escenarios de Piltover inspirados en las imágenes de referencia enviadas por la autora. La arquitectura se genera en Three.js y **no son capturas estáticas pegadas en el fondo**. Las escenas son un primer prototipo de geometría original; aún no reproducen al 100 % la dirección artística y los detalles de los fotogramas.
-
 | Imagen | Espacio jugable | Localización del mapa | Elementos arquitectónicos |
 |---|---|---|---|
 | 1 | Sala del Consejo | `consejo` | Mesa circular, asientos, piedra clara, ventanas monumentales geométricas, adornos de bronce |
