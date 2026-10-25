@@ -62,6 +62,7 @@ window.STORY = {
           { s: 'yo', t: '{name}. De {district}. Me gano la vida como puedo.', cond: { notKin: 'vander' } },
           { s: 'vander', t: '{name}. Siéntate. La primera ronda la pago yo, la segunda te la cobro con favores.', cond: { notKin: 'vander' } },
           { s: 'narrador', t: 'Empujas la puerta de La Última Gota, la única casa que has tenido desde que Vander te recogió de la calle. Huele a cerveza, a serrín y a hogar.', cond: { kin: 'vander' } },
+          { s: 'narrador', t: 'Vander te conoce desde hace años, pero hoy llevas contigo el apellido de Silco. La vieja fractura entre ambos convierte cada mirada en una pregunta que nadie se atreve a hacer.', cond: { kin: 'silco' } },
           { s: 'vander', t: '(Sin levantar la vista de los vasos.) Llegas tarde a cenar, {name}. Te he guardado guiso. Del bueno.', cond: { kin: 'vander' } },
           { s: 'vander', t: 'Aquí abajo hay una regla, y en mi barra se cumple: nada de Brillo, nada de peleas y nada de ejecutores. Lo demás, lo hablamos.' },
           { s: 'vander', t: 'Bueno. Cuéntame qué te trae a mi taberna.', cond: { notKin: 'vander' } },
@@ -575,7 +576,8 @@ window.STORY = {
           { s: 'viktor', t: '(En voz baja, solo para ti.) La prudencia es fácil cuando vas a vivir trescientos años. Algunos no tenemos tanto tiempo.' },
         ], next: 'b2' },
         b_viktor: { bg: 'academia', lines: [
-          { s: 'viktor', t: '(Levanta la vista.) Viktor. Ayudante del profesor. Nací abajo, en Zaun. No suelo decirlo en voz alta en estos pasillos.' },
+          { s: 'viktor', t: '(Levanta la vista.) Viktor. Ayudante del profesor. Nací abajo, en Zaun. No suelo decirlo en voz alta en estos pasillos.', cond: { notKin: 'viktor' } },
+          { s: 'viktor', t: '(Levanta la vista y, al reconocerte, la seriedad se le suaviza.) {name}. No esperaba verte en la Academia. Luego hablamos de casa; ahora debemos evitar que Heimerdinger nos oiga.', cond: { kin: 'viktor' } },
           { s: 'viktor', t: 'Las notas de Talis… son extraordinarias. Ha conseguido que una runa responda a una fórmula. Aunque nadie quiera verlo.' },
         ], next: 'b2' },
         b2: { bg: 'academia', lines: [
@@ -587,7 +589,7 @@ window.STORY = {
           { s: 'narrador', t: 'El taller de Jayce es un caos de pizarras, cristales rotos y una pared con un agujero del tamaño de una puerta. Huele a quemado.' },
           { s: 'jayce', t: '¿Vienes a cerrarme el taller tú también? Adelante. Que vean cómo entierran el futuro de Piltover.', cond: { notKin: 'jayce' } },
           { s: 'jayce', t: '(Se limpia el hollín de la cara.) Jayce Talis. Sí, el del apartamento que voló. No hace falta que lo digas.', cond: { notKin: 'jayce' } },
-          { s: 'jayce', t: '¿{name}? ¿El decano te ha mandado a ti a cerrarme el taller? A mi propi{g:o|a|e} prim{g:o|a|e}. Genial. La familia, siempre la primera en llegar.', cond: { kin: 'jayce' } },
+          { s: 'jayce', t: '¿{name}? ¿El decano te ha mandado a ti a cerrarme el taller? ¿Mi propi{g:o|a|e} herman{g:o|a|e}? Genial. La familia, siempre la primera en llegar.', cond: { kin: 'jayce' } },
           { s: 'jayce', t: 'Cuando era niño, una maga me salvó la vida en una tormenta de nieve. Desde entonces solo quiero una cosa: que la magia sea de todos. No solo de unos pocos.' },
           { s: 'jayce', t: 'Solo necesito estabilizar las runas. Y nadie quiere ayudarme. Me han robado la mitad del material y la otra mitad me la van a confiscar.' },
         ], choices: [
@@ -639,7 +641,8 @@ window.STORY = {
       nodes: {
         a: { bg: 'consejo', lines: [
           { s: 'narrador', t: 'La Sala del Consejo es un círculo de mármol y madera noble bajo una cúpula de cristal. Siete sillas. Siete familias. Ningún asiento para Zaun.' },
-          { s: 'mel', t: 'Tú debes de ser {name}. He oído cosas interesantes de ti. Sobre todo, que sabes estar en la habitación correcta.' },
+          { s: 'mel', t: 'Tú debes de ser {name}. He oído cosas interesantes de ti. Sobre todo, que sabes estar en la habitación correcta.', cond: { notKin: 'mel' } },
+          { s: 'mel', t: '{name}. Qué sorpresa encontrarte aquí. En el Consejo somos consejeros; en casa, herman{g:o|a|e}. No olvides esa diferencia cuando empiece la votación.', cond: { kin: 'mel' } },
           { s: 'cassandra', t: '(En voz baja, sin mirarte.) Ponte recta, {name}. En esta sala, una Kiramman no se encorva. Ni sus sobrinos.', cond: { kin: 'cassandra' } },
           { s: 'cassandra', t: 'Consejera Medarda, aquí se viene a votar, no a reclutar.' },
           { s: 'mel', t: 'Consejera Kiramman, todo voto empieza con una conversación. Usted lo sabe mejor que nadie: su familia lleva generaciones conversando.' },

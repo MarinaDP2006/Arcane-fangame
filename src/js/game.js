@@ -21,7 +21,7 @@
   const isFallen = (id) => (G.fallen || []).includes(id);
   const talkable = () => G.unlocked.filter((id) => !isFallen(id));
   // Familia del jugador elegida en la creación (se conocen desde siempre).
-  const kinOf = (st) => Object.keys(window.RELATIONS.familyLinks[st.player.family] || {});
+  const kinOf = (st) => Object.keys(Relations.familyLinksFor(st.player.family));
 
   // ---------------- Partidas ----------------
   function newState(player, stats) {
