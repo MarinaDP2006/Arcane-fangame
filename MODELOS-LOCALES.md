@@ -1,50 +1,58 @@
 # Modelos locales y Ollama
 
-> **Alcance actual: documentación, no integración.** Este archivo explica cómo probar Ollama por separado en tu ordenador. No añade IA al juego, no cambia el chat ni la historia, no activa `config/ollama.json` y no hace que el juego dependa de Ollama. En esta fase, los cambios de historia y comunicador se implementan con opciones y diálogos escritos. No sigas estos pasos como requisito para jugar.
+> **Alcance de esta fase: documentación separada, sin integración en el juego.** Puedes instalar Ollama y probar un modelo desde la terminal por curiosidad, pero el juego no lo necesita ni lo conecta. No actives ni configures Ollama dentro de Arcane: la historia, los comunicadores y los minijuegos de esta fase usan opciones y textos escritos. No se implementa IA nueva.
 
-## 1. Instalar y comprobar Ollama
+## 1. Instalar y comprobar Ollama por separado
 
 1. Instala Ollama desde https://ollama.com/ y arranca el servicio.
-2. Descarga un modelo compatible:
+2. Descarga un modelo compatible con tu equipo:
 
    ```bash
    ollama pull qwen3:4b
    ```
 
-3. Comprueba que responde:
+3. Comprueba que el modelo responde en la propia terminal:
 
    ```bash
    ollama run qwen3:4b
    ```
 
-## 2. Crear el perfil narrativo de Arcane (opcional)
+4. Para ver los modelos descargados:
 
-Desde la raíz del repositorio:
+   ```bash
+   ollama list
+   ```
+
+Estos pasos prueban únicamente Ollama en tu ordenador. No prueban ni conectan el juego.
+
+## 2. Perfil narrativo opcional para experimentación local
+
+Desde la raíz del repositorio, si solo quieres experimentar fuera del juego:
 
 ```bash
 ollama create arcane-narrador -f ollama/Modelfile.arcane
 ollama run arcane-narrador
 ```
 
-En Ajustes selecciona Ollama y deja el modelo `arcane-narrador`. Si prefieres otro modelo instalado, escribe su identificador o pulsa **Listar modelos de Ollama** y selecciónalo.
+El perfil sirve como experimento independiente. No sustituye las opciones de diálogo escritas ni modifica el estado de una partida.
 
-## 3. Conectar el juego
+## 3. Lo que NO está integrado en esta fase
 
-- En el mismo PC, la dirección predeterminada es `http://127.0.0.1:11434/v1/chat/completions`.
-- Pulsa **Probar conexión** en Ajustes. Si falla, comprueba que Ollama está activo, que el modelo existe (`ollama list`) y que la versión instalada expone la API compatible con OpenAI en `/v1/chat/completions`.
-- Para usar Ollama desde un móvil o tableta, `127.0.0.1` no es el PC: escribe la IP local del PC y el puerto 11434. Configura Ollama para aceptar conexiones desde la red local y comprueba el firewall.
-- No expongas el puerto de Ollama a Internet. Usa solo una red de confianza y restringe el acceso cuando sea posible.
-- En navegador web, las reglas de CORS y los permisos de red local pueden impedir la conexión; prueba primero la aplicación de escritorio o el transporte nativo móvil.
+- No hay un proveedor Ollama nuevo conectado al juego por este bloque.
+- No hay que seleccionar Ollama en Ajustes para jugar ni introducir una dirección de API.
+- No se debe asumir que el chat, la historia o las decisiones envían texto a un modelo.
+- La ausencia de Ollama, Internet o una GPU no debe bloquear la creación del personaje, la historia, los comunicadores ni los minijuegos.
+- No se exponen puertos locales a Internet ni se añade una dependencia de IA.
 
-## 4. Problemas habituales
+## 4. Posible trabajo futuro (no implementado)
 
-- **No conecta:** revisa la dirección, el puerto 11434, el firewall y que el servicio esté iniciado.
-- **Modelo no encontrado:** ejecuta `ollama list` y copia exactamente el nombre mostrado.
-- **Respuestas demasiado lentas:** prueba un modelo más pequeño o una cuantización menor; la primera respuesta puede tardar en cargar el modelo.
-- **No hay respuesta de IA:** desactiva la IA para continuar con los diálogos escritos. El progreso narrativo y la partida no deben depender de que el modelo esté disponible.
+Una integración real requeriría, en otra fase y con pruebas específicas, un adaptador de proveedor, configuración y estado de conexión, manejo de errores y tiempos de espera, controles de privacidad, compatibilidad con escritorio/móvil/navegador y una ruta de respaldo a los diálogos escritos. Nada de eso se activa con esta guía.
 
-## Estado y límites
+## 5. Problemas habituales al probar Ollama por separado
 
-Ollama usa la API compatible con OpenAI para generación de texto y listado de modelos. La calidad, velocidad y consumo de memoria dependen del modelo y del equipo. Esta integración necesita validación práctica en escritorio, navegador y Android; no se afirma que todos los modelos o dispositivos funcionen igual. El estado narrativo de la partida se guarda en el juego, no dentro del modelo.
+- **El comando no responde:** comprueba que el servicio de Ollama está arrancado.
+- **Modelo no encontrado:** ejecuta `ollama list` y copia el nombre exacto.
+- **Respuestas demasiado lentas:** prueba un modelo más pequeño o una cuantización menor; la primera respuesta puede tardar mientras se carga.
+- **No quieres usar IA:** cierra la terminal; no afecta al juego ni a las partidas.
 
-Este perfil es exclusivo de Arcane: no comparte personajes, historias ni memoria con Las ciudades del Umbral.
+**Importante:** esta guía es informativa. La experiencia jugable de Arcane en esta fase funciona con contenido local escrito y no depende de Ollama.
