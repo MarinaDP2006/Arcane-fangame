@@ -1793,3 +1793,175 @@ body[data-city="zaun"] #view-creator::before,body[data-ciudad="zaun"] #view-crea
  #view-creator .creator-body,#view-creator .creator-preview{padding:1rem}
 }
 @media(prefers-reduced-motion:reduce){#view-creator .origin-card::before{transition:none}}
+
+
+/* ARCANE VISUAL PASS — aplicación transversal de las referencias a las pantallas reales.
+   Paleta de latón/piedra de Piltover y teal industrial de Zaun; no modifica el footer legal. */
+:root{
+  --arcane-gold:#e8c77d;--arcane-gold-bright:#f8e2a7;--arcane-brass:#a97835;
+  --arcane-ink:#080b11;--arcane-panel:rgba(13,17,24,.94);--arcane-line:rgba(221,185,111,.28);
+  --arcane-teal:#62d4bb;--arcane-shadow:0 24px 64px rgba(0,0,0,.48);
+}
+body{background:#07090e;color:#f0eee8}
+button,input,select,textarea{accent-color:var(--arcane-gold)}
+.view{isolation:isolate}
+.panel,.overlay-panel,.action-menu,.menu,.settings,.slot,.guia-panel{
+  border:1px solid var(--arcane-line);
+  background:linear-gradient(145deg,rgba(21,25,33,.96),rgba(8,11,17,.97));
+  box-shadow:var(--arcane-shadow);
+  backdrop-filter:blur(14px);
+}
+h1,h2,h3,.title-arcane,.home-title{ text-wrap:balance }
+.muted{color:#b6b6b3}
+.btn{border:1px solid rgba(221,185,111,.34);transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.btn:hover{border-color:var(--arcane-gold);box-shadow:0 7px 22px rgba(0,0,0,.25);transform:translateY(-1px)}
+.btn:focus-visible,.chip:focus-visible,.tab:focus-visible,.home-btn:focus-visible{outline:2px solid var(--arcane-gold-bright);outline-offset:3px}
+.btn.primary{background:linear-gradient(135deg,#f4d997,#b9853c);border-color:#f2d79a;color:#21180c;font-weight:800}
+.btn.ghost{background:rgba(6,9,14,.62)}
+.input,select,textarea{background:rgba(4,7,12,.88);border:1px solid rgba(221,185,111,.3);border-radius:9px;color:#f7f3e9}
+.input:focus,select:focus,textarea:focus{outline:2px solid rgba(232,199,125,.55);outline-offset:1px}
+.chip,.tab{border-color:rgba(221,185,111,.25);background:rgba(8,11,17,.72)}
+.chip.active,.tab.active{border-color:var(--arcane-gold);background:rgba(205,163,82,.18);color:var(--arcane-gold-bright);box-shadow:inset 0 -2px var(--arcane-gold)}
+/* Menú de inicio: conservar la grieta animada, pero enmarcarla como una portada cinematográfica. */
+#view-home{background:#080a10}
+#view-home .home{min-height:100svh}
+#view-home .home-panel{border:1px solid rgba(221,185,111,.25);background:linear-gradient(145deg,rgba(7,10,16,.76),rgba(7,9,14,.45));box-shadow:0 28px 90px #0008;backdrop-filter:blur(5px)}
+#view-home .home-title{filter:drop-shadow(0 8px 28px rgba(0,0,0,.65))}
+#view-home .home-btn{border:1px solid rgba(221,185,111,.35);background:linear-gradient(130deg,rgba(27,30,37,.92),rgba(8,11,17,.92));box-shadow:0 10px 28px #0005}
+#view-home .home-btn:hover{border-color:var(--arcane-gold);background:linear-gradient(130deg,rgba(66,53,34,.92),rgba(8,11,17,.96))}
+#view-home .home-city{border-color:rgba(221,185,111,.3);background:rgba(7,10,15,.7)}
+#view-home .home-city[aria-pressed="true"],#view-home .home-city.active{border-color:var(--arcane-gold);box-shadow:0 0 22px rgba(232,199,125,.18)}
+/* Pantalla de partidas: tarjetas de guardado legibles y diferenciación de procedencia. */
+#view-game{min-height:100svh;padding:clamp(.65rem,2.2vw,2rem);background:radial-gradient(ellipse at 18% 5%,rgba(197,156,83,.1),transparent 40%),linear-gradient(135deg,#0b0d13,#07090e 75%)}
+#view-game .menu{width:min(1100px,100%);margin:clamp(.5rem,4vh,3rem) auto;padding:clamp(1rem,3vw,2rem);border-radius:18px}
+#view-game .title-arcane{color:var(--arcane-gold-bright);letter-spacing:.07em}
+#view-game .slots{gap:1rem}
+#view-game .slot{position:relative;overflow:hidden;border-radius:14px;padding:clamp(.9rem,2vw,1.3rem)}
+#view-game .slot::before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,var(--arcane-gold),transparent)}
+#view-game .slot .tag.origin-zaun{color:#b4f5df;border-color:rgba(98,212,187,.45);background:rgba(17,95,79,.2)}
+#view-game .slot .tag.origin-piltover{color:#f6dfaa;border-color:rgba(232,199,125,.45);background:rgba(128,88,32,.2)}
+#view-game .slot.empty{border-style:dashed;background:rgba(9,12,18,.66)}
+/* Entrada narrativa previa a la creación. */
+#view-game .world-entry-backdrop{background:linear-gradient(90deg,rgba(7,10,16,.94),rgba(7,10,16,.72) 54%,rgba(7,10,16,.88)),url("../img/arte/lugares/piltover.webp") center/cover no-repeat}
+#view-game .world-entry-panel{border:1px solid rgba(232,199,125,.36);border-radius:18px;background:linear-gradient(145deg,rgba(16,20,27,.95),rgba(5,8,13,.96));box-shadow:0 26px 80px #0009;backdrop-filter:blur(14px)}
+#view-game .world-entry-kicker{color:var(--arcane-gold);letter-spacing:.18em;font-size:.75rem;font-weight:800}
+#view-game .world-entry-title{color:#fff0c6;text-shadow:0 3px 24px #000;line-height:1.12}
+#view-game .world-entry-copy{color:#e0dfda;line-height:1.7}
+#view-game .world-entry-foot{color:#aaa9a5}
+/* Creador: reforzar escenario, flujo de pasos, retrato y decisiones como una pantalla de juego. */
+#view-creator{position:relative;isolation:isolate;min-height:100svh;background:#070a10}
+#view-creator .creator-bg{position:fixed;inset:0;z-index:-1;background-position:center;background-size:cover;filter:saturate(.78)}
+#view-creator .creator-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,14,.94),rgba(5,8,14,.72) 50%,rgba(5,8,14,.86))}
+#view-creator .creator-bg-piltover{background-image:url("../img/arte/lugares/piltover.webp")}
+#view-creator .creator-bg-zaun{background-image:url("../img/arte/lugares/zaun.webp")}
+#view-creator .creator{width:min(1480px,100%);margin:auto;padding:clamp(.65rem,2.3vw,2rem)}
+#view-creator .steps{position:sticky;top:.35rem;z-index:5;display:flex;gap:.25rem;overflow-x:auto;padding:.65rem;margin:0 0 1rem;border:1px solid var(--arcane-line);border-radius:12px;background:rgba(6,9,15,.92);backdrop-filter:blur(16px)}
+#view-creator .steps li{flex:1 0 auto;color:#c9c6be}
+#view-creator .steps li span{border-color:rgba(221,185,111,.4);background:#171a20}
+#view-creator .steps li.active{color:var(--arcane-gold-bright)}
+#view-creator .steps li.active span{background:linear-gradient(145deg,#f4dc9c,#ad7830);color:#1c160b}
+#view-creator .steps li.done span{border-color:#77cdb4;color:#a4e9d4}
+#view-creator .creator-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);gap:clamp(.8rem,2vw,1.4rem);align-items:start}
+#view-creator .creator-body{min-width:0;padding:clamp(1rem,2.5vw,2rem);border:1px solid var(--arcane-line);border-radius:16px;background:linear-gradient(145deg,rgba(20,24,31,.96),rgba(7,10,16,.97));box-shadow:var(--arcane-shadow)}
+#view-creator .creator-body h2{color:var(--arcane-gold-bright);font-size:clamp(1.35rem,2.4vw,2.1rem);letter-spacing:.035em}
+#view-creator .creator-body p{line-height:1.6}
+#view-creator .creator-stage{position:sticky;top:5rem;min-width:0;padding:clamp(.7rem,1.5vw,1.15rem);border:1px solid var(--arcane-line);border-radius:16px;background:linear-gradient(145deg,rgba(20,24,31,.92),rgba(7,10,16,.96));box-shadow:var(--arcane-shadow)}
+#view-creator .splash{position:relative;overflow:hidden;min-height:240px;border:1px solid rgba(232,199,125,.38);border-radius:12px;background:radial-gradient(ellipse at 50% 25%,rgba(232,199,125,.18),transparent 60%),#090c12}
+#view-creator .splash img{width:100%;max-height:430px;object-fit:cover;object-position:center 22%}
+#view-creator .splash-plate{background:linear-gradient(0deg,rgba(5,7,11,.97),rgba(5,7,11,.65),transparent);padding:1.2rem .9rem .8rem}
+#view-creator .splash-plate strong{color:#fff0c6;font-size:clamp(1.2rem,2.2vw,1.8rem)}
+#view-creator .build-bar{border-top:1px solid var(--arcane-line);padding-top:.85rem;margin-top:.85rem}
+#view-creator .ability-hex{border-color:rgba(232,199,125,.38);background:linear-gradient(145deg,#22252b,#090c12);box-shadow:0 5px 15px #0005}
+#view-creator .ability-hex:not(.empty){border-color:rgba(232,199,125,.7)}
+#view-creator .stat-bars .bar{background:#25282c;border:1px solid #38352e}
+#view-creator .stat-bars .bar i{background:linear-gradient(90deg,#8a622d,#f0d28b)}
+#view-creator .origin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+#view-creator .origin-card{position:relative;overflow:hidden;isolation:isolate;min-height:clamp(190px,25vw,310px);border:1px solid rgba(255,255,255,.22);border-radius:14px;background:#10141b;box-shadow:0 15px 36px #0006}
+#view-creator .origin-card::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,rgba(4,7,12,.02),rgba(4,7,12,.18) 38%,rgba(4,7,12,.92))}
+#view-creator .origin-card .origin-scene{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+#view-creator .origin-card .origin-info{position:absolute;z-index:1;left:1rem;right:1rem;bottom:1rem}
+#view-creator .origin-card h3{font-size:clamp(1.35rem,2.4vw,2.1rem);color:#fff0c6;letter-spacing:.1em;text-shadow:0 3px 16px #000}
+#view-creator .origin-card p{color:#eee9dd}
+#view-creator .origin-card.active{border-color:var(--arcane-gold-bright);box-shadow:0 0 0 1px var(--arcane-gold),0 0 28px rgba(232,199,125,.2)}
+#view-creator .option,.option{border-color:rgba(221,185,111,.22);background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(5,7,12,.4));border-radius:10px}
+#view-creator .option.active,.option.active{border-color:var(--arcane-gold);background:rgba(183,137,58,.17)}
+#view-creator .creator-nav{display:flex;justify-content:space-between;gap:.7rem;margin-top:1.4rem;padding-top:1rem;border-top:1px solid var(--arcane-line)}
+#view-creator .creator-nav .btn{min-height:46px}
+/* Ventanas de juego: Códice, conversaciones, atlas, guía, minijuegos y pausa. */
+.overlay{background:rgba(2,4,8,.82);backdrop-filter:blur(10px)}
+.overlay-panel,.action-menu{border-radius:16px;overflow:hidden}
+.overlay-head{background:linear-gradient(90deg,rgba(221,185,111,.1),transparent);border-bottom:1px solid var(--arcane-line)}
+.codex{border-color:var(--arcane-line)}
+.codex-tabs,.tabs-v,.settings-tabs{gap:.35rem}
+.codex-tabs .tab,.settings-tabs .tab{border-radius:8px}
+.codex-body{line-height:1.65}
+.guia-ficha,.atlas-card,.atlas-detail,.arcade-card{border:1px solid rgba(221,185,111,.22);background:linear-gradient(145deg,rgba(24,28,35,.95),rgba(7,10,15,.96));border-radius:12px}
+.guia-titulo,.atlas-cityhead h2{color:var(--arcane-gold-bright)}
+.atlas-stage{border:1px solid var(--arcane-line);border-radius:14px;overflow:hidden;background:rgba(6,9,14,.8)}
+.atlas-bar{background:rgba(5,8,13,.8);border-bottom:1px solid var(--arcane-line)}
+.atlas-detail{box-shadow:0 16px 44px #0008}
+.atlas-art,.atlas-thumb{border:1px solid rgba(221,185,111,.22);border-radius:8px}
+.atlas-pin:focus-visible{outline:2px solid var(--arcane-gold);outline-offset:3px}
+.play{gap:0}
+.contacts{background:linear-gradient(180deg,rgba(17,21,28,.98),rgba(7,10,15,.98));border-right:1px solid var(--arcane-line)}
+.contacts .me{border-bottom:1px solid var(--arcane-line)}
+.contact-list button,.tabs-v button{border-color:transparent}
+.contact-list button.active,.contact-list button:hover,.tabs-v button.active{background:rgba(199,155,73,.15);border-color:rgba(221,185,111,.35)}
+.play-main{background:radial-gradient(ellipse at 50% 0,rgba(185,143,65,.08),transparent 50%),rgba(7,10,15,.94)}
+.play-main .bubble,.chat-bubble{border:1px solid rgba(221,185,111,.16);border-radius:12px}
+.arcade-grid{gap:.8rem}
+.arcade-card{min-width:0;padding:1rem;text-align:left;transition:transform .18s ease,border-color .18s ease}
+.arcade-card:hover{transform:translateY(-2px);border-color:var(--arcane-gold)}
+.arcade-card strong{color:#f4d997}
+.settings{border-radius:16px;padding:clamp(1rem,2.4vw,2rem)}
+.settings-tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--arcane-line);padding-bottom:.75rem}
+.settings-page{padding-top:1rem}
+.settings-page .field,.settings-page .switch-row{border-color:rgba(221,185,111,.15)}
+.ai-settings{border:1px solid rgba(221,185,111,.2);border-radius:12px;padding:1rem;background:rgba(4,7,12,.45)}
+/* Mobile-first polish: keep gameplay visible and controls reachable without horizontal overflow. */
+@media(max-width:800px){
+ #view-game{padding:.55rem}
+ #view-game .menu{margin:.35rem auto;padding:1rem;border-radius:13px}
+ #view-game .slots{grid-template-columns:minmax(0,1fr)}
+ #view-creator .creator{padding:.55rem}
+ #view-creator .steps{top:0;gap:.15rem;padding:.45rem}
+ #view-creator .steps li{font-size:.72rem}
+ #view-creator .creator-grid{grid-template-columns:minmax(0,1fr);gap:.7rem}
+ #view-creator .creator-stage{position:relative;top:auto;order:-1;display:grid;grid-template-columns:minmax(100px,32%) minmax(0,1fr);gap:.6rem;align-items:start}
+ #view-creator #stage-splash{grid-row:span 2;min-width:0}
+ #view-creator .splash{min-height:160px}
+ #view-creator .splash img{max-height:220px}
+ #view-creator #stage-build,#view-creator #stage-stats{min-width:0}
+ #view-creator .ability-row{gap:.25rem;flex-wrap:wrap}
+ #view-creator .ability-hex{min-width:35px;min-height:35px}
+ #view-creator .stat-bars{font-size:.78rem}
+ #view-creator .origin-grid{grid-template-columns:minmax(0,1fr)}
+ #view-creator .origin-card{min-height:175px}
+ #view-creator .creator-body{padding:.9rem}
+ .overlay-panel,.action-menu{max-width:100%;max-height:calc(100svh - 1rem);overflow:auto}
+ .play{grid-template-columns:minmax(0,1fr)}
+ .contacts{max-height:30svh;overflow:auto;border-right:0;border-bottom:1px solid var(--arcane-line)}
+ .contact-list{display:flex;gap:.4rem;overflow-x:auto}
+ .contact-list button{flex:0 0 auto;min-width:110px}
+ .play-main{min-width:0;overflow-wrap:anywhere}
+ .atlas-stage{min-height:45svh}
+ .arcade-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .settings-tabs{overflow-x:auto;flex-wrap:nowrap}
+ .settings-tabs .tab{flex:0 0 auto}
+ #view-home .home-panel{width:min(100% - 1rem,600px);padding:clamp(.7rem,3vw,1.4rem)}
+ #view-home .home-menu{width:100%}
+ #view-home .home-btn{min-height:48px}
+}
+@media(max-width:430px){
+ #view-creator .creator-stage{grid-template-columns:92px minmax(0,1fr);padding:.55rem}
+ #view-creator .splash{min-height:140px}
+ #view-creator .splash-plate{padding:.65rem .5rem}
+ #view-creator .splash-plate strong{font-size:1rem}
+ #view-creator .creator-nav{position:sticky;bottom:0;z-index:4;background:rgba(7,10,16,.96);margin-inline:-.9rem;margin-bottom:-.9rem;padding:.75rem .9rem;border-top:1px solid var(--arcane-line)}
+ .arcade-grid{grid-template-columns:minmax(0,1fr)}
+ .world-entry-actions{display:grid;grid-template-columns:minmax(0,1fr)}
+}
+@media(prefers-reduced-motion:reduce){
+ .btn,.arcade-card{transition:none}
+ .btn:hover,.arcade-card:hover{transform:none}
+}
