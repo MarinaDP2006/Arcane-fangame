@@ -34,6 +34,11 @@ window.RELATIONS = {
     jayce_hermana: { jayce: ['hermandad', 'Sois hermanas/os y compartís el peso del apellido Talis'] },
     viktor_hermana: { viktor: ['hermandad', 'Sois hermanas/os; tu vínculo cambia su confianza y sus decisiones'] },
     mel_hermana: { mel: ['hermandad', 'Sois hermanas/os; conoces la presión política de los Medarda desde dentro'] },
+  },
+
+  // Vínculos de versiones antiguas: se mantienen para cargar partidas guardadas, pero no
+  // aparecen como opciones nuevas de creación ni se consideran familias disponibles en el editor.
+  legacyFamilyLinks: {
     vander: { vander: ['pariente', 'Te acogió como a {g:un hijo|una hija|une hije}'], vi: ['hermandad', 'Creciste con ella en La Última Gota'], jinx: ['hermandad', 'Era tu hermanita Powder'] },
     benzo: { ekko: ['hermandad', 'Benzo os crió a los dos entre cachivaches'] },
     luciernagas: { ekko: ['hermandad', 'Creciste en el árbol de las Luciérnagas'], isha: ['hermandad', 'La cuidas como a una hermana pequeña'] },
