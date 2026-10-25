@@ -169,15 +169,17 @@
     return { pareja: 'Tener una cita', familia: 'Pasar la tarde en familia', pariente: 'Pasar la tarde en familia', hermandad: 'Hacer algo juntos', mejor: 'Pasar el rato juntos', amistad: 'Pasar el rato' }[k] || null;
   }
 
-  // Respuestas de charla: al azar entre las variantes (sin repetir la última).
-  const last = {};
+  // Respuestas de charla en bucle: recorre todas las variantes antes de volver a la primera.
+  // La selección se mantiene separada por personaje y tema para que cada charla tenga continuidad.
+  const smallCursor = {};
   function small(id, topic) {
     const list = info(id)?.small?.[topic];
-    if (!list?.length) return null;
-    let i = Math.floor(Math.random() * list.length);
-    if (list.length > 1 && last[`${id}:${topic}`] === i) i = (i + 1) % list.length;
-    last[`${id}:${topic}`] = i;
-    return [].concat(list[i]);
+    if (!Array.isArray(list) || !list.length) return null;
+    const key = `${id}:${topic}`;
+    const previous = smallCursor[key];
+    const index = Number.isInteger(previous) ? (previous + 1) % list.length : 0;
+    smallCursor[key] = index;
+    return [].concat(list[index]);
   }
 
   window.Relations = { adultTimeline, together, spendTime, NEEDS, status, label, partner, applyFamily, relOptions, ask, greet, hang, hangLabel, small, canRomance, needsFamily, info };
