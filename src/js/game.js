@@ -1635,7 +1635,7 @@
     const backdropUrl = window.CustomArt.image('lugares', chatBackdrop) || `img/arte/lugares/${chatBackdrop}.webp`;
     // Comunicador: retrato grande con marco a la izquierda y la conversación a la derecha.
     main.append(
-      el('div', { class: `chat-stage origin-${info?.origin === 'zaun' ? 'zaun' : 'piltover'}`, style: `--chat-bg: url("\\${backdropUrl.replace(/"/g, '%22')}\\")` },
+      el('div', { class: `chat-stage origin-${info?.origin === 'zaun' ? 'zaun' : 'piltover'}`, style: `--chat-bg: url("${backdropUrl.replace(/"/g, '%22')}")` },
         el('aside', { class: 'chat-portrait' },
           el('div', { class: 'cp-frame' },
             el('img', { src: art, alt: '', draggable: 'false' }),
