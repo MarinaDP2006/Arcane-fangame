@@ -1,5 +1,7 @@
 # Web del fangame de Arcane
 
+> **En pocas palabras:** Esta guía trata la parte web del proyecto. Distingue los archivos fuente de la web del resultado generado para publicar; los cambios deben probarse en navegador y no solo en el editor. Si la portada está en reconstrucción, no la presentes como una web terminada hasta comprobar enlaces, imágenes, navegación y diseño adaptable.
+
 La portada pública presenta la historia, Piltover, Zaun, los personajes y el arte oficial de referencia usado por el proyecto. No incluye un enlace público directo a la demo jugable: las únicas acciones externas del sitio son **Releases** y **Problemas**.
 
 - `index.html`: portada, ciudades, personajes, guía y sección de arte oficial.
