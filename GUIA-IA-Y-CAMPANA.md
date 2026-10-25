@@ -1,65 +1,81 @@
-# Personajes con memoria y nueva campaña en dos partes
+# Guía de IA y campaña
 
-## Dónde está el prompt de IA
+Esta guía explica cómo se construye el chat libre, dónde se editan las voces y los diálogos, cómo está organizada la campaña y qué conviene probar antes de publicar cambios.
 
-El prompt que se envía a KoboldCpp (la única IA del juego) se construye en **`src/js/ai.js`**, dentro de **`systemPrompt(G, id)`**.
+## 1. Cómo funciona la IA
 
-La información que utiliza está dividida en:
+El chat libre opcional usa **KoboldCpp**. El juego no incluye un modelo de lenguaje propio: KoboldCpp debe ejecutarse por separado en un ordenador y cargar un modelo compatible. El juego también puede jugarse con los diálogos escritos si no quieres configurar la IA.
 
-- **`src/data/ai-voices.js`**: vocabulario, ritmo, límites y relación inicial.
-- **`src/data/arcane-lore.js`**: pasado, vínculos, miedos, ambiciones y contradicciones de los dieciséis personajes.
-- **`src/data/relations.js`**: vínculos, parentescos, afinidad y pareja definidos en la partida.
-- **`src/data/chat.js`**: ejemplos de conversaciones redactadas a mano.
-- **`src/data/chat-expansion.js`**: temas que aparecen tras las decisiones de la nueva campaña.
-- **`src/data/story.js`** y **`src/data/story-expansion.js`**: historia, capítulos, elecciones y consecuencias.
-- **`src/js/game.js`**: guarda la conversación, aplica cambios de afinidad y permite alternar entre opciones escritas e IA libre.
+- **Código principal:** `src/js/ai.js`.
+- **Función que construye las instrucciones del personaje:** `systemPrompt(G, id)`.
+- **Conexión:** API compatible con OpenAI en `/v1/chat/completions`, normalmente en el puerto `5001`.
+- **Guía de conexión:** [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
 
-La IA recibe los datos del personaje creado (nombre, procedencia, familia, trabajo y biografía), las relaciones existentes, el capítulo en curso, personas conocidas, personas fallecidas, decisiones y recuerdos recientes del chat. El personaje no debe anticipar información del futuro ni afirmar conocer escenas que no ha presenciado.
+La configuración de Ollama que pueda existir en el repositorio es preparatoria: **no significa que Ollama esté integrado automáticamente en el juego**. La aplicación actual selecciona KoboldCpp para el chat con IA, salvo que la IA esté desactivada en Ajustes.
 
-**Editar la interpretación:** para cambiar cómo reacciona Jinx, modifica `ARCANE_LORE.jinx` y `AI_VOICES.jinx`. Para modificar normas compartidas, edita `systemPrompt` de `src/js/ai.js`. Para cambiar diálogos con botones, modifica `chat.js` o `chat-expansion.js`. No pegues claves privadas en estos archivos.
+### Qué contexto recibe el modelo
 
-El modelo que abras en KoboldCpp condiciona los resultados. Un modelo pequeño puede desobedecer el tono o las reglas, incluso con un prompt mejorado. El modo de diálogos escritos sigue disponible sin IA.
+El prompt se construye a partir del personaje de la partida y del estado narrativo disponible, como el capítulo actual, los vínculos, la afinidad, las decisiones y los recuerdos recientes de la conversación. El objetivo es que el personaje respete lo que sabe y lo que ha vivido; aun así, un modelo puede cometer errores o inventar detalles, por lo que hay que probarlo.
 
-## Estructura de la campaña
+No incluyas claves privadas, contraseñas ni datos personales reales en los prompts o en los archivos del juego.
 
-**Parte I · El inicio**: rutas propias de Zaun y Piltover. El personaje decide quién recibe suministros, qué pruebas hace públicas y qué testigos protege. Se han sumado cuatro capítulos originales (`z9`, `z10`, `p9`, `p10`) antes de su final compartido.
+## 2. Dónde editar cada parte
 
-**Parte II · Las consecuencias**: el mismo protagonista afronta pérdidas, refugios y negociaciones previas al conflicto final. Dos capítulos nuevos (`t7`, `t8`) se insertan antes de la conclusión.
+| Archivo | Para qué sirve |
+| --- | --- |
+| `src/js/ai.js` | Conexión con KoboldCpp, construcción del prompt y envío de mensajes. |
+| `src/data/ai-voices.js` | Forma de hablar, trato al protagonista y límites de cada personaje para el chat libre. |
+| `src/data/arcane-lore.js` | Pasado, vínculos y motivaciones que ayudan a mantener la caracterización. |
+| `src/data/relations.js` | Relaciones y su estado dentro de la partida. |
+| `src/data/chat.js` | Conversaciones y diálogos escritos. |
+| `src/data/chat-expansion.js` | Contenido adicional del comunicador desbloqueado durante la partida. |
+| `src/data/story.js` | Estructura narrativa y capítulos base. |
+| `src/data/story-expansion.js` | Capítulos y escenas añadidos a la campaña. |
+| `src/data/alternate-fates.js` | Opciones adicionales para ciertos destinos alternativos. |
+| `src/js/game.js` | Flujo de juego, elecciones, afinidad, progreso y compatibilidad de las partidas guardadas. |
 
-Se conserva la estructura original de acontecimientos de Arcane y el mundo ya creado: **no se ha reemplazado por completo el argumento base**, sino que se ha ampliado con una historia paralela protagonizada por la persona que juega. Se han reemplazado los rótulos visibles de «temporadas» en la interfaz narrativa principal por «partes», pero algunos textos secundarios y sistemas internos continúan usando el nombre de temporada por compatibilidad.
+**Para cambiar una voz:** edita la entrada correspondiente en `AI_VOICES` y, cuando proceda, el perfil de `ARCANE_LORE`.
 
-**Compatibilidad:** los identificadores viejos de ruta, capítulo, escena, finales y `progress.season` se mantienen para leer partidas previas. Al cargar, el índice del capítulo se recalcula a partir del ID guardado. No borres los guardados para probar la campaña.
+**Para cambiar una conversación con opciones escritas:** modifica `chat.js` o `chat-expansion.js`.
 
-## Fuentes de caracterización utilizadas
+**Para ampliar la campaña:** trabaja en los archivos de historia y comprueba que los identificadores de capítulos y nodos, las condiciones y los destinos de cada elección sean válidos. No cambies IDs existentes sin revisar la compatibilidad con las partidas guardadas.
 
-- [Arcane (Riot): personajes y mundo](https://www.arcane.com/es-es/)
-- [Netflix Tudum: personajes de las dos temporadas](https://www.netflix.com/tudum/articles/arcane-every-league-of-legends-character)
-- [Netflix Tudum: recapitulación de la primera parte de la historia](https://www.netflix.com/tudum/articles/arcane-season-1-recap)
+## 3. Estructura narrativa
 
-Los perfiles son **resúmenes originales escritos para este videojuego**, no diálogos copiados de la serie.
+La campaña se presenta en dos partes:
 
-## Historia alternativa: los personajes pueden sobrevivir
+- **Parte I · El inicio:** rutas de Zaun y Piltover, con decisiones sobre suministros, pruebas, testigos y relaciones entre las ciudades. Se añadieron los capítulos identificados como `z9`, `z10`, `p9` y `p10` antes de la conclusión de esta parte.
+- **Parte II · Las consecuencias:** continúa con las pérdidas, los refugios y las negociaciones que conducen al conflicto final. Los capítulos `t7` y `t8` amplían esta sección antes de su conclusión.
 
-La campaña ya no tiene muertes completamente inevitables. Se añade `src/data/alternate-fates.js`, cargado después de `story-expansion.js`, que extiende los nodos originales sin eliminar rutas ni escenas previas.
+La campaña amplía la historia base con una trama paralela protagonizada por el personaje creado por quien juega; no sustituye por completo los acontecimientos originales de Arcane. La interfaz narrativa principal utiliza «partes», aunque algunos identificadores y nombres internos conservan la nomenclatura anterior por compatibilidad.
 
-- **Silco** puede sobrevivir si intervienes en la merienda y evitas el disparo (Valor 3).
-- **Cassandra** puede sobrevivir si organizas una evacuación reforzada del Consejo (Valor 3).
-- **Isha** puede salvarse si bloqueas el Brillo a tiempo durante el encuentro con Warwick (Ingenio 3).
-- **Jinx** puede escapar del enfrentamiento final si habéis construido suficiente confianza (Afinidad 5).
-- **Jayce y Viktor** pueden salir vivos del Hexcore si logras aislar sus conductos (Ingenio 4).
-- Hay un final nuevo, **«Las vidas que elegiste»**, que recuerda tus rescates.
+### Destinos alternativos
 
-Cada salvación activa un indicador persistente. El motor de juego `syncFallen()` lo respeta al actualizar los personajes vivos, el comunicador y sus apariciones. `src/js/ai.js` informa al modelo de las vidas salvadas para evitar que vuelva a la continuidad original.
+`src/data/alternate-fates.js` añade decisiones que pueden cambiar algunos destinos. Entre las situaciones contempladas están:
 
-**Alcance actual:** se han implementado estas cinco situaciones de rescate (seis personajes, porque Jayce y Viktor se salvan juntos). Otras muertes y desenlaces siguen dependiendo del argumento previo. Algunas escenas secundarias pueden requerir nuevas condiciones de continuidad tras pruebas completas. No se garantiza la supervivencia universal de todo el reparto.
+- **Silco:** intervenir durante la escena de la cena; requiere Valor 3.
+- **Cassandra:** organizar una evacuación reforzada; requiere Valor 3.
+- **Isha:** actuar sobre los conductos durante el encuentro con Warwick; requiere Ingenio 3.
+- **Jayce y Viktor:** aislar los conductos del Hexcore; requiere Ingenio 4.
+- **Jinx:** preparar una retirada y haber alcanzado Afinidad 5 con ella.
 
-Los IDs de capítulos, rutas y las partidas anteriores permanecen compatibles. Para probar diferentes desenlaces, utiliza una partida nueva o una copia de una ranura existente. No sobreescribas partidas personales para experimentar con finales.
+Estas opciones no equivalen a que todo el reparto pueda sobrevivir ni a que todos los finales hayan sido reescritos. Tras modificar una de estas escenas, revisa también sus consecuencias posteriores para evitar que el juego vuelva a tratar como fallecido a un personaje salvado.
 
-## Validación y pruebas pendientes
+Los IDs antiguos de rutas, capítulos, escenas y progreso se conservan para favorecer la compatibilidad con partidas anteriores. Para probar finales alternativos, es preferible usar una partida nueva o una copia de una ranura, no sobrescribir una partida personal.
 
-La carga y sintaxis de doce archivos de datos y de IA se han comprobado en un evaluador JavaScript, así como la existencia de treinta capítulos, la integridad de las rutas, las transiciones entre nodos y dieciocho indicadores nuevos de decisiones. No se han ejecutado partidas completas ni se ha generado aquí un instalador Windows para esta revisión.
+## 4. Caracterización y fuentes
 
-Para comprobarlo en un equipo con Windows y Node.js:
+Los perfiles de personajes y los diálogos del juego son textos originales preparados para este proyecto. Se utilizan como referencia el mundo y los personajes de Arcane:
+
+- [Sitio oficial de Arcane](https://www.arcane.com/es-es/)
+- [Netflix Tudum: personajes de Arcane](https://www.netflix.com/tudum/articles/arcane-every-league-of-legends-character)
+- [Netflix Tudum: resumen de la primera temporada](https://www.netflix.com/tudum/articles/arcane-season-1-recap)
+
+Estas fuentes sirven como referencia general; las decisiones y escenas alternativas son contenido propio del juego.
+
+## 5. Comprobaciones antes de publicar
+
+Desde la carpeta del repositorio, con Node.js instalado, ejecuta:
 
 ```powershell
 npm ci
@@ -67,6 +83,14 @@ npm run check
 npm start
 ```
 
-Prueba ambos orígenes, decisiones nuevas, conversación libre con varios personajes, diálogos escritos desbloqueables, historial, cambios de afinidad, guardado/carga en capítulos previos y transición a Parte II.
+Después, prueba manualmente:
 
-La IA debe probarse con KoboldCpp: es local y opcional; el juego no lleva un modelo de lenguaje integrado.
+1. Crear una partida nueva tanto en la ruta de Zaun como en la de Piltover.
+2. Avanzar por las elecciones nuevas y comprobar que cada opción lleva a una escena válida.
+3. Verificar cambios de afinidad, relaciones, indicadores de decisiones y consecuencias.
+4. Probar el guardado y la carga de una partida creada antes de los cambios.
+5. Revisar el salto de la Parte I a la Parte II y los finales alternativos.
+6. Probar el chat libre con KoboldCpp, con más de un personaje, y confirmar que la partida sigue funcionando con la IA desactivada.
+7. Comprobar que los personajes salvados no vuelven a aparecer como fallecidos en escenas posteriores.
+
+`npm run check` ayuda a detectar errores automáticos, pero no sustituye una partida completa de prueba. No se debe afirmar que una campaña está validada hasta haber realizado esas pruebas manuales en la versión que se vaya a publicar.
