@@ -262,29 +262,23 @@
   /** Habitantes con rutas seguras y diálogos escritos, separados del reparto canon. */
   function ambientNpcs() {
     const routes = ambientRoutes();
-    const profiles = CITY_RESIDENTS[mapId] || [];
-    if (!routes.length || !profiles.length) return [];
-    return profiles.slice(0, Math.min(profiles.length, routes.length, 8)).map((profile, i) => {
+    if (!routes.length) return [];
+    const count = Math.min(12, Math.max(8, Math.round(routes.length / 5)));
+    const out = [];
+    for (let i = 0; i < count; i++) {
       const route = routes[(i * 13 + Math.floor(i / 2) * 7) % routes.length];
-      const speed = 30 + (i % 4) * 6;
-      const travel = (ambientTime * speed + i * 37) % (route.length * 2);
-      const reverse = travel > route.length;
-      const distance = reverse ? route.length * 2 - travel : travel;
-      let walked = 0;
-      let seg = route.segments[route.segments.length - 1];
-      let u = 1;
-      for (const s of route.segments) {
-        if (distance <= walked + s.length) { seg = s; u = s.length ? (distance - walked) / s.length : 0; break; }
-        walked += s.length;
-      }
-      const x = seg.x1 + (seg.x2 - seg.x1) * u;
-      const y = seg.y1 + (seg.y2 - seg.y1) * u;
-      return {
-        kind: 'resident', id: `resident-${mapId}-${profile.id}`, name: profile.name, role: profile.role,
-        lines: profile.lines, loc: route.loc, x, y, px: x, py: y, ambient: true, moving: true, speed,
-        home: reverse ? Math.atan2(seg.x1 - seg.x2, seg.y1 - seg.y2) : Math.atan2(seg.x2 - seg.x1, seg.y2 - seg.y1),
-      };
-    });
+      const speed = 34 + (i % 4) * 7;
+      const travel = (ambientTime * speed + i * 41) % (route.len * 2);
+      const reverse = travel > route.len;
+      const u = reverse ? 2 - travel / route.len : travel / route.len;
+      const x = route.x1 + (route.x2 - route.x1) * u;
+      const y = route.y1 + (route.y2 - route.y1) * u;
+      out.push({
+        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true, speed,
+        home: reverse ? Math.atan2(route.x1 - route.x2, route.y1 - route.y2) : Math.atan2(route.x2 - route.x1, route.y2 - route.y1),
+      });
+    }
+    return out;
   }
   /** Lugar del objetivo de la historia. */
   function objectiveLoc() {
@@ -1233,59 +1227,6 @@
     return false;
   }
 
-  const ambientRouteCache = {};
-
-  /**
-   * Crea tramos peatonales seguros alrededor de los lugares. Cada segmento se muestrea antes
-   * de aceptarlo; los residentes recorren cadenas de segmentos válidos, nunca diagonales a través de edificios.
-   */
-  function ambientRoutes() {
-    if (ambientRouteCache[mapId]) return ambientRouteCache[mapId];
-    const routes = [];
-    for (const anchor of map.def.locations) {
-      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[anchor.id] || [60, 60];
-      const baseRadius = Math.max(88, footprint[0], footprint[1]) + 18;
-      for (let ring = 0; ring < 6; ring++) {
-        const radius = baseRadius + ring * 20;
-        const points = [];
-        for (let i = 0; i < 32; i++) {
-          const a = i * Math.PI * 2 / 32;
-          const p = { x: anchor.x + Math.cos(a) * radius, y: anchor.y + Math.sin(a) * radius };
-          points.push(blockedAt(p.x, p.y, 10) ? null : p);
-        }
-        let chain = [];
-        const flush = () => {
-          if (chain.length >= 2) {
-            const segments = [];
-            let length = 0;
-            for (let i = 0; i < chain.length - 1; i++) {
-              const a = chain[i], b = chain[i + 1];
-              const len = Math.hypot(b.x - a.x, b.y - a.y);
-              if (len > 4) { segments.push({ x1: a.x, y1: a.y, x2: b.x, y2: b.y, length: len }); length += len; }
-            }
-            if (length >= 18) routes.push({ loc: anchor.id, segments, length });
-          }
-          chain = [];
-        };
-        for (let i = 0; i < points.length - 1; i++) {
-          const a = points[i], b = points[i + 1];
-          let clear = Boolean(a && b);
-          if (clear) for (let j = 1; j < 5; j++) {
-            const t = j / 5;
-            if (blockedAt(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, 10)) { clear = false; break; }
-          }
-          if (clear) {
-            if (!chain.length) chain.push(a);
-            chain.push(b);
-          } else flush();
-        }
-        flush();
-      }
-    }
-    ambientRouteCache[mapId] = routes;
-    return routes;
-  }
-
   /** Si se pulsa sobre un tejado, busca un punto de calle cercano en vez de colocar al jugador dentro. */
   function nearestWalkable(x, y, radius = PLAYER_RADIUS) {
     const px = Math.max(radius, Math.min(map.w - radius, x));
@@ -1343,12 +1284,7 @@
     moving = Boolean(mx || my);
     if (moving) {
       const sp = WALK * (opt().camSpeed || 1);
-      const moved = moveOnStreet(G.world.px, G.world.py, mx * sp * dt, my * sp * dt);
-      G.world.px = moved.x;
-      G.world.py = moved.y;
-      // Si el destino automático queda bloqueado, se cancela para no empujar al jugador contra una pared.
-      if (!moved.moved && walkTo) walkTo = null;
-      moving = moved.moved;
+      moving = movePlayer(mx, my, sp * dt);
       G.world.face = Math.atan2(mx, my);
       (G.world.pos ||= {})[mapId] = { x: G.world.px, y: G.world.py };
       // La cámara sigue a tu personaje.
