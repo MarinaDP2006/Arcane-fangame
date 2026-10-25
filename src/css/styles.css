@@ -1738,21 +1738,58 @@ html[data-tema="zaun"] #view-settings .settings h2 { color: #8af1cc; }
   .mg-pad-btn { min-width: 52px; min-height: 52px; }
   .home-menu button { min-height: 48px; }
 }
-.inspiration-backdrop { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left)); background: rgba(4,5,10,.88); backdrop-filter: blur(10px); }
-.inspiration-panel { width: min(1180px, 100%); max-height: 100%; overflow: auto; border: 1px solid rgba(202,163,92,.55); border-radius: 18px; background: linear-gradient(145deg,#17151b,#0a0b10 65%); color: #f2e8d5; padding: clamp(14px,2vw,28px); box-shadow: 0 24px 90px #000b; }
-.inspiration-head { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:1rem; }
-.inspiration-head h2 { margin:.2rem 0; font-family:Cinzel,serif; }
-.inspiration-head p { margin:.35rem 0; color:#c7bfaf; }
-.inspiration-head .eyebrow { letter-spacing:.16em; font-size:.72rem; color:#d8b778; }
-.inspiration-close { flex:0 0 46px; width:46px; height:46px; border:1px solid #7e6944; border-radius:50%; color:#fff1d1; background:#24202a; font-size:1.8rem; }
-.inspiration-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; }
-.inspiration-card { min-width:0; border:1px solid #514638; border-radius:12px; padding:.75rem; background:#111117; }
-.inspiration-card img { display:block; width:100%; max-height:42vh; object-fit:contain; background:#09090d; border-radius:8px; }
-.inspiration-card h3 { font-size:1rem; margin:.7rem 0 .35rem; color:#ecd3a0; }
-.inspiration-card p { font-size:.9rem; color:#c5bdaf; line-height:1.45; }
-.inspiration-card a { display:inline-flex; min-height:44px; align-items:center; color:#f3d59a; }
-.inspiration-missing { border-color:#a54b4b; }
-@media (max-width: 700px) { .inspiration-grid { grid-template-columns:minmax(0,1fr); } .inspiration-card img { max-height:none; } .inspiration-head { position:sticky; top:-1px; background:#141218; z-index:1; padding-bottom:.5rem; } }
-
 /* Entrada narrativa previa al creador de personaje. */
-.world-entry{position:relative;min-height:100%;display:grid;place-items:center;overflow:auto;padding:clamp(16px,4vw,56px);isolation:isolate;background:#090a10;color:#f6ead6}.world-entry-backdrop{position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 20% 20%,rgba(76,118,157,.28),transparent 48%),radial-gradient(ellipse at 85% 78%,rgba(174,105,48,.2),transparent 44%),linear-gradient(135deg,#10121b,#08090e 70%)}.world-entry-panel{width:min(780px,100%);border:1px solid rgba(214,178,115,.48);border-radius:20px;padding:clamp(20px,4vw,46px);background:rgba(12,13,20,.9);box-shadow:0 22px 90px #0009;backdrop-filter:blur(12px)}.world-entry-kicker{color:#d9b777;letter-spacing:.17em;font-size:.76rem;font-weight:800}.world-entry-title{margin:.55rem 0 1rem;font-family:Cinzel,Georgia,serif;font-size:clamp(1.65rem,4vw,3rem);line-height:1.12}.world-entry-copy{color:#e0d6c6;font-size:clamp(1rem,1.7vw,1.15rem);line-height:1.7;max-width:65ch}.world-entry-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.6rem}.world-entry-actions button{min-height:50px;padding:.8rem 1.1rem;touch-action:manipulation}.world-entry-foot{margin-top:1.2rem;color:#a9a4a0;font-size:.85rem}@media(max-width:600px){.world-entry{padding:12px}.world-entry-panel{border-radius:14px;padding:20px 16px}.world-entry-actions{display:grid;grid-template-columns:1fr}.world-entry-actions button{width:100%}}
+.world-entry{position:relative;min-height:100%;display:grid;place-items:center;overflow:auto;padding:clamp(16px,4vw,56px);isolation:isolate;background:#090a10;color:#f6ead6}.world-entry-backdrop{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(10,15,25,.91),rgba(10,12,18,.67) 48%,rgba(7,10,13,.88)),url("../img/arte/lugares/piltover.webp") left center/cover no-repeat,linear-gradient(135deg,#10121b,#08090e 70%);transform:scale(1.025)}
+body[data-city="zaun"] .world-entry-backdrop,body[data-ciudad="zaun"] .world-entry-backdrop{background:linear-gradient(90deg,rgba(4,16,15,.9),rgba(5,19,18,.62) 48%,rgba(5,10,12,.88)),url("../img/arte/lugares/zaun.webp") center/cover no-repeat,linear-gradient(135deg,#081614,#08090e 70%)}.world-entry-panel{width:min(780px,100%);border:1px solid rgba(214,178,115,.48);border-radius:20px;padding:clamp(20px,4vw,46px);background:rgba(12,13,20,.9);box-shadow:0 22px 90px #0009;backdrop-filter:blur(12px)}.world-entry-kicker{color:#d9b777;letter-spacing:.17em;font-size:.76rem;font-weight:800}.world-entry-title{margin:.55rem 0 1rem;font-family:Cinzel,Georgia,serif;font-size:clamp(1.65rem,4vw,3rem);line-height:1.12}.world-entry-copy{color:#e0d6c6;font-size:clamp(1rem,1.7vw,1.15rem);line-height:1.7;max-width:65ch}.world-entry-actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.6rem}.world-entry-actions button{min-height:50px;padding:.8rem 1.1rem;touch-action:manipulation}.world-entry-foot{margin-top:1.2rem;color:#a9a4a0;font-size:.85rem}@media(max-width:600px){.world-entry{padding:12px}.world-entry-panel{border-radius:14px;padding:20px 16px}.world-entry-actions{display:grid;grid-template-columns:1fr}.world-entry-actions button{width:100%}}
+
+
+/* Rediseño real inspirado en las referencias: escenarios como fondo, paneles diegéticos y contraste por ciudad.
+   Usa arte que ya existe en el juego; no presenta las imágenes de referencia como contenido de la interfaz. */
+#view-creator{position:relative;isolation:isolate;background:#080b11}
+#view-creator::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(7,10,16,.94),rgba(8,10,16,.76) 42%,rgba(7,9,14,.9)),url("../img/arte/lugares/piltover.webp") center/cover no-repeat;opacity:.94}
+body[data-city="zaun"] #view-creator::before,body[data-ciudad="zaun"] #view-creator::before{background:linear-gradient(90deg,rgba(3,17,16,.94),rgba(4,15,15,.76) 42%,rgba(4,9,12,.91)),url("../img/arte/lugares/zaun.webp") center/cover no-repeat}
+#view-creator .creator{max-width:1320px;padding:clamp(.5rem,2vw,1.4rem)}
+#view-creator .steps{position:sticky;top:-1.2rem;z-index:4;padding:.8rem .9rem;margin:0 0 1rem;border:1px solid rgba(218,184,111,.25);border-radius:12px;background:rgba(7,9,14,.9);backdrop-filter:blur(14px);box-shadow:0 12px 32px #0006}
+#view-creator .steps li{font-size:.82rem;letter-spacing:.025em}
+#view-creator .steps li span{border-color:rgba(221,184,105,.45);background:#111721}
+#view-creator .steps li.active span{background:linear-gradient(145deg,#f5d993,#b98536);box-shadow:0 0 18px rgba(225,181,89,.28)}
+#view-creator .creator-grid{grid-template-columns:minmax(0,1fr) minmax(230px,300px);gap:clamp(.75rem,2vw,1.35rem)}
+#view-creator .creator-body,#view-creator .creator-preview{border:1px solid rgba(213,178,111,.25);border-radius:16px;background:linear-gradient(145deg,rgba(21,25,33,.94),rgba(8,11,17,.96));box-shadow:0 20px 54px rgba(0,0,0,.38);padding:clamp(1rem,2.4vw,1.7rem);backdrop-filter:blur(12px)}
+#view-creator .creator-body h2{font-size:clamp(1.35rem,2.6vw,2.15rem);letter-spacing:.045em;color:#f0d18e;text-shadow:0 2px 16px rgba(218,166,73,.13)}
+#view-creator .creator-body p{line-height:1.55}
+#view-creator .origin-grid{gap:1rem}
+#view-creator .origin-card{position:relative;isolation:isolate;overflow:hidden;min-height:clamp(190px,28vw,310px);padding:1.4rem;border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 -110px 90px -35px rgba(0,0,0,.72),0 16px 34px #0005}
+#view-creator .origin-card::before{content:"";position:absolute;inset:0;z-index:-1;transition:transform .45s ease,filter .35s ease;background-size:cover;background-position:center;filter:saturate(.86)}
+#view-creator .origin-card.origin-piltover{background:linear-gradient(180deg,rgba(231,194,110,.06),rgba(11,13,18,.68));color:#fff0c9}
+#view-creator .origin-card.origin-piltover::before{background-image:linear-gradient(180deg,rgba(23,27,36,.05),rgba(10,12,18,.65)),url("../img/arte/lugares/piltover.webp")}
+#view-creator .origin-card.origin-zaun{background:linear-gradient(180deg,rgba(37,191,151,.04),rgba(4,12,13,.7));color:#d8fff1}
+#view-creator .origin-card.origin-zaun::before{background-image:linear-gradient(180deg,rgba(3,20,18,.05),rgba(2,10,12,.72)),url("../img/arte/lugares/zaun.webp")}
+#view-creator .origin-card:hover::before{transform:scale(1.045);filter:saturate(1.12)}
+#view-creator .origin-card.active{border-color:#f4d58d;box-shadow:0 0 0 1px rgba(244,213,141,.4),0 0 28px rgba(244,213,141,.2)}
+#view-creator .origin-card h3{font-size:clamp(1.55rem,3vw,2.5rem);letter-spacing:.12em;text-shadow:0 3px 16px #000}
+#view-creator .option{background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(5,7,12,.4));border-color:rgba(218,184,111,.2);min-height:66px}
+#view-creator .option:hover,#view-creator .option.active{border-color:#d9b777;background:linear-gradient(145deg,rgba(216,183,119,.18),rgba(9,12,18,.8));box-shadow:inset 0 0 0 1px rgba(216,183,119,.12)}
+#view-creator .input{border-color:rgba(216,183,119,.28);background:rgba(3,6,10,.72);min-height:44px}
+#view-creator .input:focus{outline-color:#e7c777}
+#view-creator .creator-preview{align-items:stretch;text-align:left;top:.7rem}
+#view-creator .preview-art{width:100%;height:auto;aspect-ratio:3/4;max-height:440px;border-radius:12px;border-color:rgba(216,183,119,.38);background:radial-gradient(ellipse at 50% 25%,rgba(219,181,103,.17),transparent 58%),#080a10;box-shadow:0 12px 32px #0006}
+#view-creator .creator-preview h3,#view-creator .creator-preview h2{font-family:var(--display);color:#f0d18e;letter-spacing:.04em}
+#view-creator .creator-nav{gap:.7rem;padding-top:1rem;border-top:1px solid rgba(216,183,119,.2)}
+#view-creator .creator-nav .btn{min-height:48px;padding:.7rem 1.1rem}
+#view-creator .btn.primary{background:linear-gradient(135deg,#f3d68e,#bd8736);color:#211708;box-shadow:0 5px 18px rgba(195,145,56,.18)}
+#view-creator .gender-card{border-color:rgba(216,183,119,.25);background:rgba(8,11,17,.78)}
+#view-creator .gender-card.active{border-color:#e8c875;box-shadow:0 0 0 1px #e8c875,0 0 22px rgba(232,200,117,.16)}
+#view-creator .splash{border-color:rgba(216,183,119,.35);background:radial-gradient(ellipse at 50% 20%,rgba(216,183,119,.14),transparent 58%),#080a10}
+@media(max-width:760px){
+ #view-creator .creator-grid{grid-template-columns:minmax(0,1fr)}
+ #view-creator .creator-preview{position:relative;top:auto;order:-1;display:grid;grid-template-columns:minmax(92px,32%) minmax(0,1fr);align-items:center;gap:.8rem}
+ #view-creator .preview-art{grid-row:span 3;max-height:210px}
+ #view-creator .creator-preview .stat-bars{grid-column:1/-1}
+ #view-creator .steps{top:0;gap:.35rem;overflow-x:auto;flex-wrap:nowrap;white-space:nowrap;margin-inline:-.2rem}
+ #view-creator .steps li{flex:0 0 auto}
+ #view-creator .steps li + li::before{margin-right:.05rem}
+ #view-creator .origin-grid{grid-template-columns:minmax(0,1fr)}
+ #view-creator .origin-card{min-height:180px}
+ #view-creator .creator-body,#view-creator .creator-preview{padding:1rem}
+}
+@media(prefers-reduced-motion:reduce){#view-creator .origin-card::before{transition:none}}
