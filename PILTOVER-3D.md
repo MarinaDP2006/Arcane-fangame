@@ -24,7 +24,7 @@ El botón de Historia ya no inicia directamente capítulos de las ubicaciones ex
 
 - `src/js/piltover-interiors.js`: cinco composiciones 3D, reutilización de variantes, exploración y dos puntos interactivos.
 - `src/js/game.js`: integración con actividades, personajes, objetivo narrativo y protección frente a saltarse la entrada.
-- `src/js/world3d.js`: arcos/umbrales monumentales para identificar los accesos desde las calles de Piltover.
+- `src/js/world3d.js`: hitos exteriores 3D propios para Academia, Consejo, Mansión Kiramman, Plaza, Hexpuertas, Stillwater y Puente del Progreso; se reservan sus huellas para que los edificios aleatorios no los tapen.
 - `src/css/styles.css`: interfaz de exploración clara y dorada.
 - `src/index.html`: carga del motor interior antes de `game.js`.
 
@@ -38,6 +38,10 @@ El módulo de Zaun sigue intacto. No se han eliminado imágenes, audio, capítul
 - Texturas de pincel generadas (piedra, metal, madera), columnas, estandartes, ventanas con arco, cúpulas y agujas, farolas, dirigibles, núcleo hextec, sombras del sol y polvo dorado en el aire.
 - Stillwater y el Puente se rehicieron para que la pista y el objetivo queden sobre la explanada o el tablero (antes quedaban dentro de la geometría).
 - Código común en `src/js/interior-kit.js`.
+
+## Estado actualizado del mapa exterior
+
+El mapa exterior ahora añade siluetas 3D específicas para los principales hitos de Piltover y despeja el generador de edificios a su alrededor. Esto mejora la lectura de la ciudad, pero sigue siendo geometría procedural creada en código; no son modelos oficiales ni una copia exacta de cada fotograma de la serie. Para acercarse más a una reproducción fiel faltan modelos artesanales basados en referencias de cada edificio, materiales/texturas específicos y revisión visual comparativa.
 
 ## Límites y comprobaciones que faltan
 
