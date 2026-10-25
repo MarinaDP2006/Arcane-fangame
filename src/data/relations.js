@@ -57,6 +57,7 @@ window.RELATIONS = {
     { id: 'hobby', t: 'Últimamente me ha dado por {hobby}.', tone: 'amable' },
     { id: 'miedo', t: '¿A qué le tienes miedo de verdad?', tone: 'serio', req: { aff: 2 } },
     { id: 'sueno', t: 'Si todo saliera bien… ¿qué harías?', tone: 'amable' },
+    { id: 'familia', t: 'Hablemos de nuestra familia.', tone: 'personal' },
   ],
 
   chars: {
@@ -91,6 +92,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? Mola. Mientras no te dé por hacer bombas como alguien que yo me sé.', '¿{hobby}? Enséñame algún día. Prometo no romper nada. Mucho.'],
         miedo: ['A llegar tarde otra vez. Llegué tarde una vez y perdí a toda mi familia.', 'A que Powder no exista ya. Que solo quede Jinx.'],
         sueno: ['Un bar pequeño, con mi hermana detrás de la barra sin volar nada. Y Cait en la puerta, quejándose.', 'Dormir. Una semana entera. Y luego desayunar algo que no sea de lata.'],
+        familia: ['Vander nos dio un hogar cuando Zaun solo nos ofrecía esquinas. No hace falta compartir sangre para ser familia.', 'Si eres de los nuestros, te cubro la espalda. No pienso volver a perder a alguien por no llegar a tiempo.'],
       },
     },
 
@@ -125,6 +127,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? ¿Y no explota? Qué aburrido. ¡Podemos arreglar eso!', '¡{hobby}! Llévame un día. Prometo no incendiar nada. (Cruza los dedos detrás de la espalda.)'],
         miedo: ['A que me miren como a un monstruo. Como me miró Vi aquella noche.', 'A quedarme sola otra vez. Sola con ellas. (Se toca la sien.)'],
         sueno: ['¡Volar Piltover entera y luego construirla otra vez con más colores!', 'Que Vi y Silco… y Vander… cenaran juntos. Sin pelear. Ya sé que es imposible.'],
+        familia: ['La familia es complicada. A veces te abraza, a veces te suelta… y a veces explota. Pero si te quedas, quizá podamos hacerlo mejor.', 'No me prometas que nunca te irás. Prométeme que, si necesitas marcharte, me lo dirás.'],
       },
     },
 
@@ -190,6 +193,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? ¡Genial! Podríamos aplicarle hextecnología. A todo se le puede aplicar.', '¿{hobby}? Siempre he querido probarlo. Algún día me enseñas.'],
         miedo: ['A que mi invento haga daño a quien no lo merece. A ser recordado por eso.', 'A perder a Viktor. Está enfermo y no me deja ayudarle.'],
         sueno: ['Que la hextecnología llegue a todo el mundo. A Zaun también. Gratis.', 'Volver a cuando éramos solo Viktor y yo en un laboratorio lleno de chispas.'],
+        familia: ['El apellido Talis pesa más de lo que parece. Pero contigo puedo hablar sin convertir cada palabra en un discurso.', 'No quiero que nuestra relación sea una obligación familiar. Quiero que podamos discutir y seguir estando del mismo lado.'],
       },
     },
 
@@ -224,6 +228,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? Interesante. Toda afición es una forma de investigación.', '¿{hobby}? Me gustaría verlo. La gente con pasiones me inspira.'],
         miedo: ['A morir sin terminar mi trabajo. A que nada de lo que hice importe.', 'A perder lo que me hace humano por intentar salvarme.'],
         sueno: ['Un mundo sin dolor. Sin enfermedad. Sin diferencias entre arriba y abajo.', 'Una tarde normal. Sin tos. Sin plazos.'],
+        familia: ['Crecimos con poco, pero nunca me faltó curiosidad. Me alegra que haya alguien que recuerde de dónde venimos.', 'No necesito que me protejas de todo. Solo que me recuerdes que también puedo parar.'],
       },
     },
 
@@ -255,6 +260,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? Qué refinado. O qué salvaje, según cómo se haga.', '¿{hobby}? Me encanta la gente con pasiones.'],
         miedo: ['A convertirme en mi madre. O a no estar nunca a su altura.', 'A que Piltover descubra que no soy tan fuerte como parezco.'],
         sueno: ['Una ciudad donde el poder no tenga que ser cruel.', 'Volver a casa algún día sin que sea una derrota.'],
+        familia: ['La familia Medarda convierte el afecto en una negociación. Contigo quiero que sea una elección, no una deuda.', 'Si vamos a discrepar, que sea con honestidad. En el Consejo puedo fingir; contigo no quiero hacerlo.'],
       },
     },
 
@@ -315,6 +321,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? Útil, si se aprovecha bien.', '¿{hobby}? Todo talento tiene un precio en esta ciudad. Cobra bien.'],
         miedo: ['A que Jinx me odie. Es lo único que temo.', 'A morir antes de ver Zaun libre.'],
         sueno: ['Una Zaun que no tenga que mirar hacia arriba para ver el sol.', 'Que mi hija sea libre. Del todo.'],
+        familia: ['La lealtad no se exige a gritos; se demuestra cuando todo se viene abajo. Te di un lugar a mi lado porque vi algo en ti.', 'Jinx es mi hija. Si vas a ser parte de esta familia, no intentes arreglarla como si fuera una máquina. Escúchala.'],
       },
     },
 
@@ -347,6 +354,7 @@ window.RELATIONS = {
         hobby: ['¿{hobby}? Bien hecho. Necesitas algo tuyo en esta ciudad.', '¿{hobby}? Me alegro. Mientras no te metas en líos.'],
         miedo: ['A otra guerra. A ver a mis hijos en el puente.', 'A que me descubran débil cuando más me necesiten.'],
         sueno: ['Ver a mis niñas crecer en paz.', 'Una Zaun donde la gente viva en vez de sobrevivir.'],
+        familia: ['No importa cómo llegaste a mi puerta. Si te sientas a mi mesa, tienes un sitio y un plato caliente.', 'No tienes que demostrar que mereces quedarte. La familia no es una deuda que debas pagar.'],
       },
     },
 
