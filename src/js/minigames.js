@@ -446,6 +446,9 @@
         try { canvas.setPointerCapture(e.pointerId); } catch (_) {}
       });
       const up = (e) => {
+        const start = pointerStart;
+        // Ignore releases from unrelated pointers; do not cancel the active drag.
+        if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
         mouse.down = false;
         const start = pointerStart;
         if (!start || (e?.pointerId != null && e.pointerId !== start.id)) return;
