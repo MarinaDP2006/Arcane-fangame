@@ -1,5 +1,7 @@
 # Tareas pendientes — Arcane-fangame
 
+> **En pocas palabras:** Esta es la lista de trabajo pendiente con más detalle que el resumen de la raíz. Sirve para decidir qué conviene abordar después y para no confundir una idea con una función terminada. Marca las tareas solo cuando se hayan comprobado en el repositorio o en una compilación real, y anota qué falta cuando una tarea esté a medias.
+
 Documento de seguimiento. Marca una tarea como completada solo tras verificarla en el repositorio o en una ejecución real.
 
 ## Pendientes prioritarias
