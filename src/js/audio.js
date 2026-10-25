@@ -27,7 +27,7 @@
   const TRACK_FILES = {
     wiki: 'menu-theme.mp3',
     piltover: 'a-bicentennial-instrumental.mp3',
-    zaun: 'sucker-instrumental.mp3',
+    zaun: 'sucker-instrumental.mp3.mp3',
   };
   const audioFileUrl = (filename) => {
     // En escritorio, index.html vive dentro de src/. En Android/otros despliegues,
