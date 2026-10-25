@@ -1573,7 +1573,7 @@
     const at = talkState().at[id] || 'hub';
     if (at === 'bye') return [];
     let base = at === 'hub' ? data.hub : data.nodes?.[at]?.opts || [];
-    // Temas escritos compartidos. «Familia» solo aparece si hay un vínculo familiar real
+    // Temas escritos estáticos, sin generación en tiempo real. «Familia» solo aparece si hay un vínculo familiar real
     // y el personaje tiene respuestas preparadas para ese tema.
     if (at === '__charla') {
       const relation = Relations.status(G, id);
