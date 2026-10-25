@@ -1617,6 +1617,14 @@
     return (data?.hub || []).filter((o) => !dlgHidden(o.req, id) && !seen[dlgKey(id, 'hub', o)]).length;
   }
 
+  // Fondos contextuales del comunicador: cada personaje aparece en un lugar coherente con su historia.
+  const CHAT_BACKDROPS = {
+    vi: 'ultima-gota', vander: 'ultima-gota', jinx: 'fabrica', silco: 'fabrica', sevika: 'fabrica',
+    ekko: 'arbol', isha: 'arbol', caitlyn: 'ejecutores', cassandra: 'mansion-kiramman',
+    jayce: 'taller-jayce', viktor: 'comuna-viktor', heimerdinger: 'academia', mel: 'consejo',
+    ambessa: 'noxus', maddie: 'ejecutores', kino: 'consejo',
+  };
+
   /** Dibuja el comunicador y la conversación actual. */
   function renderChat(main) {
     if (!talkable().length) {
@@ -1631,9 +1639,18 @@
     }
     const info = window.WIKI.personajes.find((p) => p.id === id);
     const art = Portrait.customChar(id, true) || Portrait.charURL(id, 384, true);
+    const bgId = CHAT_BACKDROPS[id] || (info?.origin === 'zaun' ? 'zaun' : info?.origin === 'noxus' ? 'noxus' : 'piltover');
+    const bgFallback = {
+      'ultima-gota': 'img/arte/lugares/ultima-gota.webp', fabrica: 'img/arte/lugares/fabrica.png', arbol: 'img/arte/lugares/arbol.png',
+      ejecutores: 'img/arte/lugares/ejecutores.png', 'mansion-kiramman': 'img/arte/lugares/mansion-kiramman.png',
+      'taller-jayce': 'img/arte/lugares/taller-jayce.webp', 'comuna-viktor': 'img/arte/lugares/comuna-viktor.webp',
+      academia: 'img/arte/lugares/academia.webp', consejo: 'img/arte/lugares/consejo.webp', noxus: 'img/arte/lugares/noxus.png',
+      zaun: 'img/arte/lugares/zaun.webp', piltover: 'img/arte/lugares/piltover.webp',
+    };
+    const bgUrl = window.CustomArt.image('lugares', bgId) || bgFallback[bgId] || bgFallback.piltover;
     // Comunicador: retrato grande con marco a la izquierda y la conversación a la derecha.
     main.append(
-      el('div', { class: `chat-stage origin-${info?.origin === 'zaun' ? 'zaun' : 'piltover'}` },
+      el('div', { class: `chat-stage origin-${info?.origin === 'zaun' ? 'zaun' : 'piltover'}`, style: `--chat-bg: url("${String(bgUrl).replace(/"/g, '%22')}")` },
         el('aside', { class: 'chat-portrait' },
           el('div', { class: 'cp-frame' },
             el('img', { src: art, alt: '', draggable: 'false' }),
