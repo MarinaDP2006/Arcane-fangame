@@ -1,14 +1,25 @@
-# Perfiles de modelos locales
+# Modelos locales — Arcane-fangame
 
-Los ajustes de Ollama están separados del código narrativo en `config/ollama.json` y `config/mundo.json`. El perfil de este repositorio usa `qwen3:4b` y contiene únicamente las reglas del mundo de **Arcane: Piltover y Zaun**.
+Esta guía describe la preparación local de Ollama para el universo de **Arcane: Piltover y Zaun**. No comparte personajes, historias ni memoria con Las ciudades del Umbral.
 
-## Preparar el modelo
+## Modelo base
 
 1. Instala Ollama desde https://ollama.com/.
-2. En una terminal ejecuta `ollama pull qwen3:4b`.
+2. Ejecuta `ollama pull qwen3:4b`.
 3. Comprueba el modelo con `ollama run qwen3:4b`.
-4. Mantén el servicio en `http://127.0.0.1:11434` para uso local.
+4. Para uso local, deja el servicio en `http://127.0.0.1:11434`.
 
-## Estado de la integración
+## Modelo personalizado de Arcane
 
-El JSON es un perfil de configuración preparado y `enabled` permanece en `false`: la aplicación no lo carga automáticamente todavía. No se reactiva la IA por instalar Ollama. Para activarla habrá que conectar explícitamente el proveedor con el flujo narrativo de la versión actual y probarlo en Electron; la web pública no debe llamar directamente a un servicio local. No expongas el puerto de Ollama a Internet ni publiques tu IP privada.
+El modelo personalizado `arcane-narrador` y su `Modelfile` solo se pueden crear cuando `ollama/Modelfile.arcane` esté presente en la rama que has descargado. Desde la raíz de ese repositorio:
+```bash
+ollama create arcane-narrador -f ollama/Modelfile.arcane
+ollama run arcane-narrador
+```
+Si el archivo no existe en tu copia, no ejecutes el comando todavía: actualiza el repositorio o utiliza el modelo base.
+
+## Estado de integración
+
+`config/ollama.json` está desactivado (`enabled: false`) y la aplicación no lo carga automáticamente. Instalar Ollama o crear un modelo no activa la IA dentro del juego. La conexión con el proveedor y las pruebas de integración siguen siendo trabajo separado.
+
+El historial de la partida debe guardarse en los datos de la partida, no dentro del modelo. No expongas el puerto de Ollama a Internet ni publiques direcciones IP privadas. La web pública no debe llamar directamente a un servicio local del jugador.
