@@ -208,8 +208,9 @@
       const phase = i * 2.399963229728653;
       // Las rutas quedan dentro del espacio peatonal despejado alrededor de cada lugar.
       // El mapa reserva un radio de 120 unidades sin edificios en torno a los puntos públicos.
-      const rx = 62 + (i % 3) * 12;
-      const rz = 52 + (i % 3) * 10;
+      const footprint = (LANDMARK_FOOTPRINTS[mapId] || {})[anchor.id] || [60, 60];
+      const rx = Math.max(62, footprint[0] + 24) + (i % 2) * 8;
+      const rz = Math.max(52, footprint[1] + 24) + (i % 2) * 8;
       const a = ambientTime * (0.16 + (i % 4) * 0.018) + phase;
       const x = Math.max(70, Math.min(map.w - 70, anchor.x + Math.cos(a) * rx));
       const y = Math.max(70, Math.min(map.h - 70, anchor.y + Math.sin(a) * rz));
@@ -1043,14 +1044,37 @@
 
   // ---------- Colisiones peatonales ----------
   const PLAYER_RADIUS = 18;
+  // Huellas aproximadas de los edificios emblemáticos construidos en world3d.js.
+  // Se dejan libres los accesos frontales para poder acercarse a los puntos de interacción.
+  const LANDMARK_FOOTPRINTS = {
+    piltover: {
+      academia: [115, 90], consejo: [124, 124], 'mansion-kiramman': [92, 74],
+      hexpuertas: [132, 78], plaza: [42, 42], 'muelle-stillwater': [96, 64],
+    },
+    zaun: {
+      fabrica: [104, 82], 'ultima-gota': [76, 51], callejones: [100, 45],
+      tejados: [92, 48], 'tienda-benzo': [52, 39], mercado: [96, 22],
+      sumidero: [82, 61], 'escondite-jinx': [54, 46], invernadero: [68, 51], arbol: [32, 32],
+    },
+  };
 
-  /** Comprueba el espacio ocupado por el cuerpo contra las huellas de edificios del mapa. */
+  /** Comprueba el espacio ocupado contra edificios de manzana y estructuras emblemáticas 3D. */
   function blockedAt(x, y, radius = PLAYER_RADIUS) {
     if (!map || x < radius || y < radius || x > map.w - radius || y > map.h - radius) return true;
-    return map.buildings.some((b) =>
+    if (map.buildings.some((b) =>
       x + radius > b.x && x - radius < b.x + b.w &&
       y + radius > b.y && y - radius < b.y + b.h
-    );
+    )) return true;
+    const footprints = LANDMARK_FOOTPRINTS[mapId] || {};
+    for (const l of map.def.locations) {
+      const size = footprints[l.id];
+      if (!size) continue;
+      const [halfW, halfH] = size;
+      const insideX = x + radius > l.x - halfW && x - radius < l.x + halfW;
+      const insideY = y + radius > l.y - halfH && y - radius < l.y + halfH;
+      if (insideX && insideY) return true;
+    }
+    return false;
   }
 
   /** Si se pulsa sobre un tejado, busca un punto de calle cercano en vez de colocar al jugador dentro. */
@@ -1100,7 +1124,7 @@
       const ddx = walkTo.x - G.world.px;
       const ddy = walkTo.y - G.world.py;
       const d = Math.hypot(ddx, ddy);
-      const stop = walkTo.thing ? (walkTo.thing.kind === 'char' ? NEAR_CHAR * 0.6 : NEAR_LOC * 0.6) : 4;
+      const stop = walkTo.thing ? (walkTo.thing.kind === 'char' ? NEAR_CHAR * 0.6 : walkTo.thing.kind === 'loc' ? 16 : NEAR_LOC * 0.6) : 4;
       if (d <= stop) {
         const th = walkTo.thing;
         walkTo = null;
@@ -1110,7 +1134,7 @@
     moving = Boolean(mx || my);
     if (moving) {
       const sp = WALK * (opt().camSpeed || 1);
-      movePlayer(mx, my, sp * dt);
+      moving = movePlayer(mx, my, sp * dt);
       G.world.face = Math.atan2(mx, my);
       (G.world.pos ||= {})[mapId] = { x: G.world.px, y: G.world.py };
       // La cámara sigue a tu personaje.
@@ -1347,10 +1371,13 @@
         if (thing) {
           hover = thing;
           // Tu personaje va andando hasta allí; si ya está al lado, se abre directamente.
-          const tx = thing.kind === 'char' ? thing.px ?? thing.x : thing.x;
-          const ty = thing.kind === 'char' ? thing.py ?? thing.y : thing.y;
+          const tx = thing.kind === 'char' ? thing.px ?? thing.x : thing.kind === 'loc' ? thing.x : thing.x;
+          const ty = thing.kind === 'char' ? thing.py ?? thing.y : thing.kind === 'loc' ? thing.y + 105 : thing.y;
           if (thing.kind === 'frag' || Math.hypot(tx - G.world.px, ty - G.world.py) < (thing.kind === 'char' ? NEAR_CHAR : NEAR_LOC)) open(thing);
-          else walkTo = { x: tx, y: ty, thing };
+          else {
+            const target = nearestWalkable(tx, ty);
+            if (target) walkTo = { ...target, thing };
+          }
         } else {
           const w = toWorld(p.x, p.y);
           if (w) {
