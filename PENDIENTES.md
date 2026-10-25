@@ -4,7 +4,11 @@
 Lista viva de lo que falta en el fangame de Arcane. Lo del mundo nuevo va en el repo RIFTS-GEARS.
 Marca con `[x]` lo que se vaya cerrando.
 
-## Historia libre con IA
+## Historia y comunicador sin IA
+- [ ] Mejorar y probar diálogos escritos, opciones de conversación, fondos contextuales y consecuencias de familia en una partida completa de cada ciudad.
+- [ ] No integrar Ollama ni añadir nuevos requisitos de IA durante este bloque; mantener las opciones escritas como experiencia jugable principal.
+
+## Historia libre con IA (función preexistente y opcional; fuera del alcance de este bloque)
 - [ ] Probar con KoboldCpp y un modelo real una partida completa de la ruta de Zaun y otra de la de Piltover.
 - [ ] Ajustar cuántos turnos dura una escena antes de avanzar (ahora como máximo 4 o 6) según cómo se sienta jugando.
 - [ ] Revisar que los finales y los minijuegos se disparan bien cuando la IA elige el camino.
@@ -23,5 +27,5 @@ Marca con `[x]` lo que se vaya cerrando.
 
 ## Web
 - [ ] Reconstruir y validar la portada web (`web/index.html`) y comprobar que `npm run web` genera una `web-dist/` completa antes de publicar.
-- [ ] Integrar Ollama de verdad en el juego (proveedor, ajustes, estado de conexión y pruebas); hasta entonces `config/ollama.json` sigue desactivado y el chat de IA de escritorio continúa usando KoboldCpp.
+- [ ] Integración futura, fuera del alcance actual: Ollama requeriría proveedor, ajustes, estado de conexión y pruebas; hasta entonces `config/ollama.json` sigue desactivado y no se debe presentar como integrado.
 - [ ] Probar la reproducción real de `assets/music/sucker-instrumental.mp3.mp3` (Zaun) y `assets/music/a-bicentennial-instrumental.mp3` (Piltover) en una ejecución del juego. Las rutas están configuradas, pero falta verificar la reproducción en ejecución.
