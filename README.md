@@ -6,10 +6,7 @@ Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 
 
 1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
 2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
-3. **IA local:** KoboldCpp carga un modelo Qwen o Llama GGUF en tu PC. La dirección LAN predeterminada para esta instalación es `http://192.168.1.139:5001` (API OpenAI: `http://192.168.1.139:5001/v1`). Si Windows cambia la IP, actualiza Ajustes → IA.
-4. **PC, móvil y tablet:** el juego instalado usa la IP del PC en la red de casa. Para la demo web en Render/HTTPS, Chrome moderno puede pedir el permiso **Acceso a la red local**. No usamos Remote Tunnel ni Cloudflare. Si un navegador no permite esta conexión, usa el juego instalado o una web servida en tu red local.
-
-Pasos en [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
+3. **Perfil de modelo local:** existe un perfil JSON para Ollama en `config/ollama.json` y un archivo independiente con el mundo de Arcane en `config/mundo.json`. El perfil está desactivado por defecto y la app aún no lo carga automáticamente; consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md).
 
 ## Web y arte
 
@@ -37,8 +34,9 @@ El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y An
 ## Guías
 
 - [Guía completa del código](GUIA.md) y [guía de juego](GUIAJUEGO.md)
-- [KoboldCpp: Qwen/Llama en PC y LAN](GUIA-KOBOLDCPP.md)
+- [Perfiles de modelos locales con Ollama](MODELOS-LOCALES.md)
 - [Releases y compilaciones](docs/RELEASES-ARCANE.md)
+
 
 ## Enlaces del proyecto
 
