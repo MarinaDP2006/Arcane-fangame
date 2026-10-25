@@ -410,6 +410,8 @@
         window.removeEventListener('keyup', ku, true);
         window.removeEventListener('pointerup', up);
         window.removeEventListener('pointercancel', up);
+        window.removeEventListener('blur', releaseInputs);
+        keys.clear(); mouse.down = false; swipe = null; pointerStart = null;
         box.classList.add('out');
         setTimeout(() => box.remove(), 300);
         resolve(win);
@@ -463,7 +465,8 @@
       };
       window.addEventListener('pointerup', up);
       window.addEventListener('pointercancel', up);
-      window.addEventListener('blur', () => { mouse.down = false; keys.clear(); swipe = null; pointerStart = null; });
+      const releaseInputs = () => { mouse.down = false; keys.clear(); swipe = null; pointerStart = null; };
+      window.addEventListener('blur', releaseInputs);
 
       // En pantallas táctiles, los minijuegos de teclado llevan botones grandes.
       if (touchUI() && def.touchKeys) {
