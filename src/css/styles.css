@@ -2654,3 +2654,46 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 @media (prefers-reduced-motion: reduce) {
   .home-panel, .home-btn, .home-letter, .home-slide { animation: none !important; transition: none !important; }
 }
+
+
+/* Recuperación de paneles táctiles: las ayudas largas nunca deben quedar fuera del viewport. */
+@media (pointer: coarse), (max-width: 720px) {
+  #view-game .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    box-sizing: border-box;
+    display: none;
+    align-items: start;
+    justify-items: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: max(12px, env(safe-area-inset-top)) 10px max(12px, env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+  }
+  #view-game .overlay.show { display: grid; }
+  #view-game .overlay .action-menu,
+  #view-game .overlay .guia-panel {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 560px;
+    max-height: none;
+    min-height: 0;
+    overflow: visible;
+    margin: 0;
+    touch-action: pan-y;
+  }
+  #view-game .overlay .action-menu p,
+  #view-game .overlay .guia-panel p { overflow-wrap: anywhere; }
+  #view-game .overlay .action-menu > .btn,
+  #view-game .overlay .guia-panel > .btn {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    flex-shrink: 0;
+    min-height: 44px;
+    margin-top: 8px;
+  }
+}
