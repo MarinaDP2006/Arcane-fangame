@@ -1,37 +1,24 @@
 # Tareas pendientes — Arcane-fangame
 
-Documento vivo de seguimiento. Marca una tarea como completada solo después de verificarla en el repositorio y/o en una ejecución real del juego.
+Documento de seguimiento. Marca una tarea como completada solo tras verificarla en el repositorio o en una ejecución real.
 
-## Pendientes
-
-### Prioridad alta — jugabilidad
-- [ ] Implementar opciones de diálogo seleccionables (varias respuestas por turno) sin depender de una IA.
-- [ ] Comprobar que las elecciones cambian la conversación y que existe una forma clara de continuar o volver atrás.
+## Pendientes prioritarias
+- [ ] Implementar y probar opciones de diálogo seleccionables sin depender de una IA.
+- [ ] Verificar que las elecciones afectan a la conversación y que se puede continuar con acciones libres.
 - [ ] Guardar y cargar por separado el estado de partida y el historial de esta historia.
-- [ ] Probar el flujo completo: iniciar partida, conversar, elegir opciones, guardar, recargar y continuar.
+- [ ] Probar inicio, diálogo, elección, guardado, recarga y continuación.
+- [ ] Revisar la corrección del parallax del título (PR #36) y mantener la navegación por clic.
+- [ ] Probar escritorio y móvil, rutas de recursos, consola y compilación.
+- [ ] Limpiar documentación obsoleta y comprobar que la web generada tiene una portada válida.
+- [ ] Integrar Ollama solo como función opcional, tras conectar el proveedor y probarlo; la configuración actual está desactivada.
+- [ ] Revisar el PR #38 del modelo personalizado, si sigue abierto; no asumir que el modelo está integrado en la app.
 
-### Ollama — opcional, no bloqueante
-- [ ] Revisar y, si procede, integrar el perfil local de Ollama; actualmente la configuración está desactivada y no implica integración automática.
-- [ ] Revisar la propuesta de modelos separados en el PR [#38](https://github.com/MarinaDP2006/Arcane-fangame/pull/38). El modelo de Arcane debe mantenerse aislado del universo de Las ciudades del Umbral.
-- [ ] Probar la selección del modelo y los errores de conexión sin impedir jugar sin IA.
-- [ ] No guardar el historial de la historia dentro del modelo: persistirlo en los datos de la partida.
+## Completadas desde la creación
+- [x] Definida la identidad del fangame y el contexto de Piltover y Zaun.
+- [x] Preparados `config/ollama.json` y `config/mundo.json`; no se cargan automáticamente.
+- [x] Preparados archivos de perfil y Modelfile para el narrador local `arcane-narrador`.
+- [x] Disponible el modo de rol libre mediante texto escrito por el jugador.
+- [x] Documentados los comandos de desarrollo y la compilación/publicación.
 
-### Interfaz, compatibilidad y publicación
-- [ ] Revisar el comportamiento del parallax del título: desactivar el movimiento por puntero y conservar la navegación por clic en las ciudades (PR #36, pendiente de revisión).
-- [ ] Ejecutar pruebas en escritorio y móvil: imágenes, ventanas, navegación entre ciudades y controles.
-- [ ] Revisar consola, errores de carga y rutas de recursos.
-- [ ] Generar y verificar una compilación/publicación reproducible.
-- [ ] Limpiar y actualizar la documentación antigua, eliminando instrucciones obsoletas y señalando qué funciones están realmente integradas.
-- [ ] No integrar el PR #32 de preparación web hasta reconstruir y comprobar web/index.html, que ese cambio deja vacío intencionadamente.
-
-## Completadas desde la creación del juego
-
-- [x] Establecida la identidad del proyecto y el perfil del mundo de Arcane en español.
-- [x] Preparada la estructura de configuración local para Ollama y el perfil de mundo (config/ollama.json y config/mundo.json); la integración automática sigue pendiente.
-- [x] Incorporados elementos de interfaz y presentación para ciudades, imágenes y ventanas.
-- [x] Disponible el modo de rol libre basado en texto escrito por el jugador.
-- [x] Documentadas las instrucciones base para ejecutar un modelo local; los modelos personalizados separados están propuestos en el PR #38 y aún no deben considerarse integrados.
-
-## Criterio de cierre
-
-Una tarea solo se marca como completada después de comprobar el cambio. Las opciones de diálogo, el guardado/carga, la integración de Ollama y la publicación deben probarse en una ejecución real; no se consideran terminadas por existir documentación o configuración.
+## Regla de verificación
+La configuración o documentación no demuestra que una función esté integrada. No marcar diálogos con opciones, guardado/carga ni integración de Ollama como terminados hasta probarlos en el juego.
