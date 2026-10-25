@@ -1,5 +1,5 @@
-// Minijuegos: pelea en el foso, carrera por los tejados, aerotabla, galería de tiro,
-// circuito hextec, runas de la Academia y regateo en el mercado.
+// Diez minijuegos: cinco de Piltover y cinco de Zaun. La persecución en aerodeslizador
+// reúne la antigua carrera de aerotabla en una única experiencia jugable.
 // Minigames.play(id) abre el minijuego a pantalla completa y resuelve true si se gana.
 // Todos comparten un marco común: lienzo nítido en pantallas de alta densidad, cuenta atrás,
 // partículas (chispas, humo, brasas), sacudidas de cámara, destellos, viñeta y botones táctiles.
@@ -1029,7 +1029,8 @@
     };
   }
   GAMES.tejados = runner('run');
-  GAMES.aerotabla = runner('fly');
+  // La persecución por el Carril es la experiencia única de aerodeslizador; evitamos duplicarla
+  // como un minijuego independiente para mantener el total de diez.
 
   // ---------- 3. Galería de tiro ----------
   GAMES.tiro = {
@@ -1357,7 +1358,8 @@
       const R = Math.min(w, h) * 0.3;
       const pos = Array.from({ length: n }, (_, i) => [cx + Math.cos(-Math.PI / 2 + (i * Math.PI * 2) / n) * R, cy + Math.sin(-Math.PI / 2 + (i * Math.PI * 2) / n) * R]);
       const g = {
-        seq: [pick([0, 1, 2, 3, 4, 5])], input: 0, showing: true, showT: 0, lit: -1, litT: 0, lives: 2 + (o.bonus || 0), result: null, msg: 'Observa…', press: Array(n).fill(0),
+        // Empieza un intervalo antes del primer pulso para que la primera runa se ilumine desde el inicio.
+        seq: [pick([0, 1, 2, 3, 4, 5])], input: 0, showing: true, showT: -0.6, lit: -1, litT: 0, lives: 2 + (o.bonus || 0), result: null, msg: 'Observa…', press: Array(n).fill(0),
         light(i, fx) {
           g.lit = i; g.litT = 0.35; g.press[i] = 1; Audio2.sfx.message();
           if (fx) FX.burst(pos[i][0], pos[i][1], 16, { color: [cols[i], '#ffffff'], kind: 'dot', speed: 200, gravity: 0, life: 0.6, size: 2 });
@@ -1703,12 +1705,17 @@
     hexpuertas: ['circuito', 'francotiradora'], 'muelle-stillwater': ['francotiradora', 'persecucion'], puente: ['persecucion', 'francotiradora'],
     'puente-zaun': ['persecucion', 'chompers'], fabrica: ['chompers', 'persecucion'], foso: ['foso'], tejados: ['tejados', 'francotiradora'],
     'ultima-gota': ['foso', 'regateo'], callejones: ['persecucion', 'tejados'], 'tienda-benzo': ['circuito', 'regateo', 'chatarra'], mercado: ['regateo', 'chompers'],
-    sumidero: ['aerotabla', 'persecucion', 'chatarra'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['aerotabla', 'runas'], arbol: ['aerotabla', 'chompers'],
+    sumidero: ['persecucion', 'chatarra'], 'escondite-jinx': ['chompers', 'tiro'], invernadero: ['persecucion', 'runas'], arbol: ['persecucion', 'chompers'],
   };
   // Lista de minijuegos con lo necesario para pintar un botón o una tarjeta.
   function list(ids = Object.keys(GAMES)) {
     return ids.filter((id) => GAMES[id]).map((id) => ({ id, title: GAMES[id].title, goal: GAMES[id].goal, desc: GAMES[id].desc, emblem: emblem(id), place: GAMES[id].scene }));
   }
+  const CITY_GAMES = {
+    piltover: ['tiro', 'circuito', 'runas', 'francotiradora', 'regateo'],
+    zaun: ['foso', 'tejados', 'persecucion', 'chatarra', 'chompers'],
+  };
+  function forCity(cityId) { return list(CITY_GAMES[cityId] || []); }
   function forPlace(placeId) {
     const loc = Object.values(window.WORLD?.maps || {}).flatMap((m) => m.locations || []).find((l) => l.id === placeId);
     const ids = [loc?.activity?.game, ...(PLACE_GAMES[placeId] || [])].filter(Boolean);
@@ -1717,5 +1724,5 @@
 
   // Herramientas compartidas para los minijuegos de otros archivos (minigames-extra.js).
   const kit = { fx: () => FX, bar, glowText, plate, hexPath, glowSprite, buzz, stageLight, EMBLEM, opt };
-  window.Minigames = { play, GAMES, emblem, list, forPlace, PLACE_GAMES, kit };
+  window.Minigames = { play, GAMES, emblem, list, forPlace, forCity, CITY_GAMES, PLACE_GAMES, kit };
 })();
