@@ -28,12 +28,16 @@ window.RELATIONS = {
 
   // Tu familia en la creación crea lazos desde el principio (y con ellos no hay romance).
   familyLinks: {
-    vander: { vander: ['pariente', 'Te acogió como a {g:un hijo|una hija|une hije}'], vi: ['hermandad', 'Creciste con ella en La Última Gota'], jinx: ['hermandad', 'Era tu hermanita Powder'] },
+    vander: { vander: ['pariente', 'Te acogió como a {g:un hijo|una hija|une hije}'], vi: ['pariente', 'Sois herman{g:os|as|es} de crianza; crecisteis en La Última Gota'], jinx: ['pariente', 'Sois herman{g:os|as|es} de crianza; Powder era tu hermana pequeña'] },
+    silco: { silco: ['pariente', 'Eres hij{g:o|a|e} de crianza de Silco'], jinx: ['pariente', 'Silco os crió como herman{g:os|as|es}'] },
+    'hermana-vi': { vi: ['pariente', 'Sois herman{g:os|as|es}'], jinx: ['pariente', 'Vi y tú sois herman{g:os|as|es} de Jinx'] },
+    'hermana-jinx': { jinx: ['pariente', 'Sois herman{g:os|as|es}'], vi: ['pariente', 'Jinx y tú sois herman{g:os|as|es} de Vi'] },
+    viktor: { viktor: ['pariente', 'Sois herman{g:os|as|es}'], jayce: ['amistad', 'Viktor confía en ti como parte de su familia'] },
     benzo: { ekko: ['hermandad', 'Benzo os crió a los dos entre cachivaches'] },
     luciernagas: { ekko: ['hermandad', 'Creciste en el árbol de las Luciérnagas'], isha: ['hermandad', 'La cuidas como a una hermana pequeña'] },
-    kiramman: { caitlyn: ['pariente', 'Tu prima'], cassandra: ['pariente', 'Tu tía'] },
-    talis: { jayce: ['pariente', 'Tu primo'] },
-    medarda: { mel: ['pariente', 'Tu prima'], ambessa: ['pariente', 'La matriarca de tu familia'] },
+    kiramman: { caitlyn: ['pariente', 'Sois herman{g:os|as|es}'], cassandra: ['pariente', 'Cassandra es tu madre'] },
+    talis: { jayce: ['pariente', 'Sois herman{g:os|as|es}'] },
+    medarda: { mel: ['pariente', 'Sois herman{g:os|as|es}'], ambessa: ['pariente', 'Ambessa es tu madre'] },
   },
 
   // Temas de charla (desde «Charlar un rato…»). Cada personaje tiene sus respuestas en small.
