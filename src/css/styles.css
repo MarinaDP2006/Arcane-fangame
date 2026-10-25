@@ -2368,3 +2368,29 @@ button, .btn, .chip, .home-btn, .home-city, a { -webkit-tap-highlight-color: tra
   button, .btn, .chip, .home-btn, .home-city, input[type="checkbox"], input[type="radio"] { min-height: 44px; }
   :where(button, .btn, .chip, .home-btn, .home-city) { touch-action: manipulation; }
 }
+
+
+/* Robustez de paneles, retratos y ventanas en escritorio/tablet/móvil. */
+.view, .view.active, #overlay, #overlay.show, .chat-stage, .chat-convo, .chat-portrait,
+.chat-log, .log, .choices, .choice, .panel, .modal, .slot { min-width:0; max-width:100%; }
+img, picture, video, canvas { max-width:100%; }
+.chat-portrait img, .cp-frame img, .ficha-retrato, .sheet-art img { width:100%; height:auto; object-fit:contain; }
+.chat-stage, .chat-convo, .chat-log, .log { overflow-wrap:anywhere; }
+#overlay { overflow-x:hidden; }
+@media (max-width:900px) {
+  .chat-stage { grid-template-columns:minmax(0, 1fr); }
+  .chat-portrait { width:100%; max-width:100%; }
+  .chat-convo { width:100%; min-width:0; }
+  .cp-frame { max-width:min(100%, 420px); margin-inline:auto; }
+  .choices { grid-template-columns:minmax(0, 1fr); }
+}
+@media (max-width:560px) {
+  .view, #overlay, .modal { padding-inline: max(10px, env(safe-area-inset-left)); }
+  .chat-stage { gap:.75rem; }
+  .chat-portrait { display:grid; grid-template-columns:minmax(84px, 28%) minmax(0,1fr); align-items:start; gap:.65rem; }
+  .chat-portrait .cp-frame { grid-row:span 3; width:100%; margin:0; }
+  .chat-portrait .cp-frame img { aspect-ratio:3/4; object-fit:cover; }
+  .chat-portrait .cp-actions { grid-column:1/-1; flex-wrap:wrap; }
+  .chat-portrait .cp-actions .btn, .choice { min-width:0; white-space:normal; overflow-wrap:anywhere; }
+  .log, .chat-log { max-height: min(48vh, 420px); }
+}
