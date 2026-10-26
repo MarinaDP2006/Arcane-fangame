@@ -641,6 +641,7 @@
     }
     if (!renderer.getContext()) return null;
     renderer.outputColorSpace = T.SRGBColorSpace;
+    renderer.setClearColor(0x070c13, 1);
     renderer.toneMapping = T.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     const shadows = quality() >= 1 && window.App?.settings?.shadows !== false;
@@ -663,6 +664,15 @@
       if (scene) scene.traverse((o) => { o.geometry?.dispose(); if (o.material) [].concat(o.material).forEach((m) => { m.map?.dispose(); m.dispose(); }); });
       scene = new T.Scene();
       const zaun = map.id === 'zaun';
+      renderer.setClearColor(zaun ? 0x05080a : 0xb79b6b, 1);
+      // Si falla la pintura del suelo, usar una textura mínima en color de ciudad, nunca null.
+      if (!groundCanvas) {
+        groundCanvas = document.createElement('canvas');
+        groundCanvas.width = groundCanvas.height = 2;
+        const gc = groundCanvas.getContext('2d');
+        gc.fillStyle = zaun ? '#17221e' : '#b7a27b';
+        gc.fillRect(0, 0, 2, 2);
+      }
       const group = new T.Group();
       ground(group, map, groundCanvas, zaun);
       buildings(group, map, zaun);
@@ -703,7 +713,7 @@
     }
 
     function buildActors(map) {
-      actors = { group: new T.Group(), orb: makeOrb(), playerAvatar: null, lastPlayer: null, npcs: new Map(), guards: [], map };
+      actors = { group: new T.Group(), orb: makeOrb(), playerAvatar: null, lastPlayer: null, npcs: new Map(), guards: [], featured: [], map };
       scene.add(actors.group);
       actors.group.add(actors.orb.root);
       const A = window.Avatars3D;
@@ -737,6 +747,29 @@
             mine.guards.push(g);
           }
         }
+      }
+      // Personajes reconocibles en sus barrios, incluso antes de desbloquear su contacto.
+      // Cuando la historia activa al personaje se utiliza el actor narrativo y se oculta este
+      // marcador para no duplicarlo. Los personajes caídos/ausentes también se ocultan.
+      const featuredIds = map.id === 'zaun'
+        ? ['jinx', 'vi', 'ekko', 'sevika', 'silco', 'vander', 'isha']
+        : ['caitlyn', 'jayce', 'viktor', 'heimerdinger', 'mel', 'cassandra'];
+      const homes = window.WORLD?.homes || {};
+      const perHome = new Map();
+      for (const id of featuredIds) {
+        const homeId = homes[id];
+        const loc = map.def.locations.find((v) => v.id === homeId);
+        if (!loc) continue;
+        const n = perHome.get(homeId) || 0;
+        perHome.set(homeId, n + 1);
+        const angle = n * 2.399963 + 0.75;
+        const radius = 148 + (n % 3) * 18;
+        const x = loc.x + Math.cos(angle) * radius;
+        const y = loc.y + Math.sin(angle) * radius;
+        const av = A.create({ id });
+        av.holder.position.set(x, 0, y);
+        mine.group.add(av.holder);
+        mine.featured.push({ id, av, x, y, home: Math.atan2(loc.x - x, loc.y - y) });
       }
     }
 
@@ -824,6 +857,12 @@
       }
       for (const [id, e] of actors.npcs) if (!seen.has(id)) { A.dispose(e.av); actors.npcs.delete(id); }
       for (const g of actors.guards) turnTo(g.av, g.x, g.y, g.home, p, dt, t);
+      for (const e of actors.featured || []) {
+        const fallen = (st.fallen || []).includes(e.id);
+        const absent = (window.WORLD?.absent?.[e.id] || []).includes(st.progress?.chapterId);
+        e.av.holder.visible = !fallen && !absent && !seen.has(e.id);
+        if (e.av.holder.visible) turnTo(e.av, e.x, e.y, e.home, p, dt, t);
+      }
     }
 
     /** Distancia de la cámara para que el zoom (px por unidad en el centro) se respete. */
