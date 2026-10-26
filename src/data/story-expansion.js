@@ -213,9 +213,8 @@
     { season: 2, act: 2, title: 'Acto II · La fractura', episodes: [4, 5, 6] },
     { season: 2, act: 3, title: 'Acto III · Lo que queda', episodes: [7, 8] },
   ];
-  const canonical = /^(?:[z p]\\d+|t\\d+|fin2?)$/;
   for (const chapter of S.chapters) {
-    const match = /^(?:[zp])(\\d+)$/.exec(chapter.id) || /^t(\\d+)$/.exec(chapter.id);
+    const match = /^(?:[zp])(\d+)$/.exec(chapter.id) || /^t(\d+)$/.exec(chapter.id);
     const isT2 = chapter.route === 't2';
     if (match && Number(match[1]) <= 8) {
       const episode = Number(match[1]);
@@ -228,7 +227,7 @@
       const cleanTitle = chapter.title
         .replace(/^Parte [IVX]+ · /, '')
         .replace(/^T2 · /, '')
-        .replace(/^Capítulo \\d+ · /, '');
+        .replace(/^Capítulo \d+ · /, '');
       chapter.title = `T${season} · ${actTitle} · Episodio ${episode}/8 · ${cleanTitle}`;
     } else if (chapter.id === 'fin' || chapter.id === 'fin2') {
       chapter.season = chapter.id === 'fin2' ? 2 : 1;
