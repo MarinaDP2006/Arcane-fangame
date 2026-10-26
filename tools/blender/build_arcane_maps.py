@@ -555,7 +555,7 @@ def add_human_proxy(f,x,d,base_z,mat_body,mat_limb,tag,height=PERSON_HEIGHT):
 
 def setup_render(city, city_objects, review_collection, f):
     scene=bpy.context.scene
-    scene.render.engine='BLENDER_EEVEE_NEXT'
+    scene.render.engine='BLENDER_EEVEE_NEXT' if bpy.app.version >= (4,2,0) else 'BLENDER_EEVEE'
     scene.render.resolution_x=1440
     scene.render.resolution_y=900
     scene.render.resolution_percentage=72
