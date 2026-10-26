@@ -58,16 +58,16 @@ function buildCapturas() {
   return tarjetas.join('') || '<p class="galeria-vacia">Las capturas oficiales estarán disponibles próximamente.</p>';
 }
 
-// Datos de la demo web: textos de web/demo-base.json + reparto y ciudades reales de src/data.
-function demoData(w) {
-  const base = JSON.parse(fs.readFileSync(path.join(root, 'web', 'demo-base.json'), 'utf8'));
-  const o = w.CREATION.origins;
-  const datos = {
-    ...base,
-    ciudades: Object.fromEntries(Object.entries(o).map(([id, c]) => [id, { label: c.label, tagline: c.tagline, distritos: c.districts, oficios: c.jobs.map((j) => j.label) }])),
-    reparto: w.WIKI.personajes.map((p) => ({ id: p.id, name: p.name, alias: p.alias, origin: p.origin, role: p.role, summary: p.summary, details: p.details, quote: p.quote || '' })),
-  };
-  return '// Generado por scripts/build-web.js a partir de src/data y web/demo-base.json. No editar a mano.\nwindow.DEMO = ' + JSON.stringify(datos) + ';\n';
+// Copia los recursos de estilo y navegación que necesita la portada pública.
+function copyWebAssets() {
+  const cssDir = path.join(root, 'web', 'css');
+  if (fs.existsSync(cssDir)) {
+    for (const file of fs.readdirSync(cssDir)) {
+      const source = path.join(cssDir, file);
+      if (fs.statSync(source).isFile()) copy(source, path.join(out, 'css', file));
+    }
+  }
+  copy(path.join(root, 'web', 'menu.js'), path.join(out, 'menu.js'));
 }
 
 // Copia una selección del arte oficial de Arcane que ya está documentado en arcaneData/arte/FUENTES.json.
@@ -80,25 +80,49 @@ function copyOfficialArt() {
     }
   }
   const places = [
+    // Vistas y lugares de Piltover.
     ['s1/piltover.webp', 'piltover-s1.webp'],
+    ['s2/piltover.webp', 'piltover-s2.webp'],
     ['s1/plaza.webp', 'plaza-piltover-s1.webp'],
     ['s1/hexpuertas.webp', 'hexpuertas-piltover-s1.webp'],
     ['s1/puente.webp', 'puente-piltover-s1.webp'],
     ['s1/taller-jayce.webp', 'taller-piltover-s1.webp'],
+    ['s1/artesanos.webp', 'artesanos-piltover-s1.webp'],
+    ['s2/consejo.webp', 'consejo-piltover-s2.webp'],
+    ['s2/mansion-kiramman.webp', 'mansion-kiramman-piltover-s2.webp'],
+    ['s1/stillwater.webp', 'stillwater-piltover-s1.webp'],
+    // Vistas y lugares de Zaun.
     ['s1/zaun.webp', 'zaun-s1.webp'],
+    ['s2/zaun.webp', 'zaun-s2.webp'],
     ['s1/mercado.webp', 'mercado-zaun-s1.webp'],
     ['s1/arbol.webp', 'firelights-zaun-s1.webp'],
     ['s1/ultima-gota.webp', 'ultima-gota-zaun-s1.webp'],
     ['s1/fabrica.webp', 'fabrica-zaun-s1.webp'],
-    ['s2/piltover.webp', 'piltover-s2.webp'],
-    ['s2/zaun.webp', 'zaun-s2.webp'],
+    ['s1/sumidero.webp', 'sumidero-zaun-s1.webp'],
+    ['s1/tejados.webp', 'tejados-zaun-s1.webp'],
+    ['s2/callejones.webp', 'callejones-zaun-s2.webp'],
+    ['s2/invernadero.webp', 'invernadero-zaun-s2.webp'],
     ['s2/escondite-jinx.webp', 'escondite-jinx-s2.webp'],
+    ['s1/puente-zaun.webp', 'puente-zaun-s1.webp'],
   ];
   const placesDir = path.join(root, 'src', 'img', 'arte', 'lugares');
   for (const [src, dest] of places) {
     const full = path.join(placesDir, src);
     if (fs.existsSync(full)) copy(full, path.join(out, 'arte-oficial', 'lugares', dest));
   }
+  // Imágenes sueltas en la raíz de lugares (versiones de referencia de la web y del Códice).
+  const sueltas = [
+    ['academia.webp', 'academia-piltover.webp'],
+    ['consejo.webp', 'consejo-piltover.webp'],
+    ['mansion-kiramman.png', 'mansion-kiramman-piltover.png'],
+  ];
+  for (const [src, dest] of sueltas) {
+    const full = path.join(placesDir, src);
+    if (fs.existsSync(full)) copy(full, path.join(out, 'arte-oficial', 'lugares', dest));
+  }
+  // Mapa ilustrado de las Dos Ciudades usado por el Códice del juego.
+  const mapa = path.join(root, 'src', 'img', 'arte', 'codice', 'mapa-piltover-zaun.webp');
+  if (fs.existsSync(mapa)) copy(mapa, path.join(out, 'arte-oficial', 'mapa', 'mapa-piltover-zaun.webp'));
 }
 
 // Tarjetas de personajes con los retratos oficiales que existen para su ID (sin spoilers: solo el resumen).
@@ -121,7 +145,8 @@ function build() {
   fs.rmSync(out, { recursive: true, force: true });
   fs.mkdirSync(out, { recursive: true });
 
-  // La web combina arte propio de interfaz con una selección del arte oficial documentado del juego.
+  // La web combina estilos propios con el arte de referencia seleccionado y documentado.
+  copyWebAssets();
   copyOfficialArt();
   const personajes = WIKI.personajes;
   copy(path.join(root, 'build', 'icon.png'), path.join(out, 'icono.png'));
@@ -146,18 +171,11 @@ function build() {
       if (f === 'arte-propio') for (const a of fs.readdirSync(src)) copy(path.join(src, a), path.join(out, f, a));
       continue;
     }
-    if (f === 'demo-base.json' || f === 'README.md') continue;
+    if (f === 'README.md') continue;
     if (/\.(html|css|js)$/.test(f)) {
       const txt = fs.readFileSync(src, 'utf8').replace(/\{\{(\w+)\}\}/g, (m, k) => (k in datos ? datos[k] : m));
       fs.writeFileSync(path.join(out, f), txt);
     } else copy(src, path.join(out, f));
-  }
-  // Copia también las pistas locales cuando existan; la demo no falla si aún no se han añadido.
-  const music = path.join(root, 'assets', 'music');
-  if (fs.existsSync(music)) {
-    for (const file of fs.readdirSync(music).filter(f => /\.(mp3|ogg|opus|m4a|wav)$/i.test(f))) {
-      copy(path.join(music, file), path.join(out, 'assets', 'music', file));
-    }
   }
   // Publicar los mapas mentales originales del diario de desarrollo.
   const notas = path.join(root, 'web', 'notas-desarrollo');
@@ -166,7 +184,6 @@ function build() {
       copy(path.join(notas, file), path.join(out, 'notas-desarrollo', file));
     }
   }
-  fs.writeFileSync(path.join(out, 'demo-datos.js'), demoData(extra));
   fs.writeFileSync(path.join(out, '.nojekyll'), '');
   console.log(`✓ Web lista en web-dist/ (v${pkg.version}, ${personajes.length} personajes, ${ATLAS.places.length} lugares)`);
 }
