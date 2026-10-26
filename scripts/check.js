@@ -17,7 +17,33 @@ const cast = new Set(STORY.cast || []);
 const speakers = new Set([...cast, 'narrador', 'yo', 'sistema']);
 cast.forEach((id) => { if (!chars.has(id)) errors.push(`reparto: "${id}" no está en la wiki`); });
 const FLAG_SET = new Set(['familia_famosa']);
-const GAME_IDS = ['foso', 'tejados', 'aerotabla', 'tiro', 'circuito', 'runas', 'regateo', 'persecucion', 'francotiradora', 'chompers', 'chatarra'];
+// Registra el catálogo de desafíos 3D sin inicializar WebGL: sus funciones de juego se ejecutan solo al abrir un reto.
+ctx.window.Minigames = { GAMES: {} };
+vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', 'js', 'minigames-3d.js'), 'utf8'), ctx, { filename: 'minigames-3d.js' });
+const MINIGAMES = ctx.window.Minigames;
+const GAME_IDS = Object.keys(MINIGAMES.CATALOG || {});
+if (GAME_IDS.length > 15) errors.push(`minijuegos 3D: el catálogo supera el máximo de 15 (${GAME_IDS.length})`);
+if (GAME_IDS.length !== 15) errors.push(`minijuegos 3D: se esperan 15 desafíos, se encontraron ${GAME_IDS.length}`);
+const uniqueCityGames = new Set();
+for (const [city, ids] of Object.entries(MINIGAMES.CITY_GAMES || {})) {
+  if (!['piltover', 'zaun'].includes(city)) errors.push(`minijuegos 3D: ciudad "${city}" desconocida`);
+  for (const id of ids) {
+    if (!MINIGAMES.CATALOG[id]) errors.push(`minijuegos 3D: "${id}" está en ${city}, pero no existe en el catálogo`);
+    else if (MINIGAMES.CATALOG[id].city !== city) errors.push(`minijuegos 3D: "${id}" aparece en ${city}, pero pertenece a ${MINIGAMES.CATALOG[id].city}`);
+    if (uniqueCityGames.has(id)) errors.push(`minijuegos 3D: "${id}" está duplicado entre ciudades`);
+    uniqueCityGames.add(id);
+  }
+}
+for (const id of GAME_IDS) {
+  const def = MINIGAMES.CATALOG[id];
+  if (!MINIGAMES.GAMES[id] || MINIGAMES.GAMES[id].mode3d !== true) errors.push(`minijuego 3D "${id}": falta registro compatible en Minigames.GAMES`);
+  if (!['piltover', 'zaun'].includes(def.city)) errors.push(`minijuego 3D "${id}": ciudad no válida`);
+  if (!def.title || !def.goal || !def.mode || !def.scene) errors.push(`minijuego 3D "${id}": faltan título, objetivo, modo o escenario`);
+  const locations = Object.values(WORLD.maps).flatMap((m) => m.locations || []);
+  if (!locations.some((loc) => loc.id === def.scene)) errors.push(`minijuego 3D "${id}": escenario "${def.scene}" no es una ubicación del mundo`);
+}
+for (const id of uniqueCityGames) if (!MINIGAMES.CATALOG[id]) errors.push(`minijuegos 3D: "${id}" no está disponible`);
+
 
 // Misiones secundarias: objetivos, personajes, temporadas y recompensas deben ser válidos.
 const missionIds = new Set();
