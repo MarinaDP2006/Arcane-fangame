@@ -447,10 +447,19 @@
     onDone(player, computeStats(draft));
   }
 
-  function start(cb) {
+  function start(cb, origin = null) {
     draft = fresh();
-    step = 0;
     onDone = cb;
+    if (origin && C().origins[origin]) {
+      const o = C().origins[origin];
+      draft.origin = origin;
+      draft.district = o.districts[0];
+      draft.job = o.jobs[0].id;
+      draft.family = 'ninguna';
+      draft.look.outfit = origin === 'piltover' ? 'abrigo' : 'chaqueta';
+      draft.look.outfitColor = origin === 'piltover' ? '#c4c0b8' : '#4a3a5a';
+      step = 1; // La ciudad ya se eligió antes de entrar en el editor.
+    } else step = 0;
     rerender();
   }
 
