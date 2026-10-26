@@ -418,3 +418,50 @@ Las wikis pueden mezclar continuidades distintas de Runeterra; usar el arte de A
 > Después de comparar resultados, importa la mejor base a Blender, limpia geometría/materiales, corrige escala y accesos, alinea POI, crea colisiones/zonas transitables y exporta GLB con texturas embebidas. Mantén fuentes y no sustituyas el entorno por edificios procedurales.
 >
 > Primera entrega sin modificar archivos: referencias visuales encontradas, comparación Marble/SpAItial (formatos y límites), plano 2D alineado con POI, plan Blender y lista de archivos a cambiar. Espera aprobación; luego trabaja en una rama aislada y prueba en juego real. Entrega capturas, comandos y resultados; no marques como validado lo que no hayas ejecutado.
+
+
+---
+
+## 9. Actualización de producción visual: lore, mapa 2D/3D, ComfyUI y Open3D Viewer
+
+Esta sección amplía las tareas anteriores. La guía central de producción es src/models/maps/README.md; las descripciones específicas están en PILTOVER-3D.md y ZAUN-3D.md.
+
+### Referencias de lore e imágenes
+- [Zaun — Universo oficial](https://universe.leagueoflegends.com/en_US/region/zaun/) y [galería oficial](https://universe.leagueoflegends.com/en_US/region/zaun/?mv=image-gallery).
+- [Piltover — Universo oficial](https://universe.leagueoflegends.com/en_US/region/piltover/) y [galería oficial](https://universe.leagueoflegends.com/en_US/region/piltover/?mv=image-gallery).
+- [Zaun — Fandom en español](https://leagueoflegends.fandom.com/es/wiki/Zaun).
+- [Piltóver — Fandom en español](https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver).
+- [Referencia visual oficial de Zaun: niveles inferiores](https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d7858e6a65fed5e14321604dbde4f144640bd795-1920x1067.jpg).
+- [Referencia visual de Piltover: avenida dorada](https://cdn.oneesports.gg/cdn-data/2023/09/LeagueofLegends_Piltover_VisionsofProgress.jpg).
+- [Referencia de composición de mapa indicada por la autora](https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298). La herramienta web no ha podido abrir esta página; cualquier agente debe pedir una captura si tampoco puede verla, no inventar su contenido.
+
+### Requisitos artísticos que deben conservarse
+- [ ] Piltover no debe ser solo una ciudad blanca: incluir costa/acantilados, comercio, Academia, Consejo, plazas, mármol/piedra marfil, bronce y latón, vidrio, torres, cúpulas, puentes, Hexpuertas y tecnología hextech azul-dorada. Cultura de progreso, artesanía y prestigio, junto con jerarquía social y poder de los clanes mercantiles.
+- [ ] Zaun no debe ser Piltover recoloreada: ciudad subterránea en cañones y niveles; hierro en celosía, remaches, vidrio coloreado, tuberías, pasarelas, mercados, talleres, tabernas, laboratorios, humo, luces químicas y barrios habitados. Mostrar cultura propia, inventiva, mercado negro, barones químicos y contraste entre zonas vivas y zonas tóxicas.
+- [ ] Shimmer y quimtec deben aparecer como elementos narrativos con localización y consecuencias, no como decoración fluorescente uniforme. Mostrar laboratorios, tráfico clandestino, riesgos y efectos ambientales donde la historia los requiera.
+- [ ] El Puente del Progreso y los accesos entre ciudades deben ser reconocibles. El puente significa progreso para parte de Piltover y control/abandono para muchos zaunitas.
+- [ ] El mapa 2D debe ser una vista superior atractiva, clara y navegable, con distritos, calles, alturas, puentes, accesos y POI. El mapa 3D debe representar esa misma geografía en volumen real, con calles transitables. Ambos deben compartir IDs, coordenadas, misiones y bloqueos.
+
+### Cómo utilizar las herramientas instaladas
+- [ ] Marble (https://marble.worldlabs.ai/): generar propuestas de mundos explorables a partir de texto e imágenes; comprobar el formato que permite descargar la cuenta actual.
+- [ ] SpAItial (https://spaitial.ai/): generar escenarios alternativos desde texto/imágenes; confirmar la salida descargable y priorizar malla convencional cuando se necesite editar y exportar GLB.
+- [ ] ComfyUI (https://docs.comfy.org/): usar primero para moodboards, vistas cenitales, referencias de calles/fachadas, materiales, iluminación y hojas de estilo consistentes. No asumir que la instalación local ya incluye modelos o workflows 3D; revisar qué checkpoints/nodos hay antes de instalar nada.
+- [ ] Open3D Viewer (https://open3d.app/glb-viewer): abrir los GLB descargados, inspeccionar desde varios ángulos, materiales y animaciones incluidas. El visor no prueba colisiones ni navegación del juego.
+- [ ] Blender: limpieza final, escala, orientación, organización de escena, corrección de malla/materiales, POI y exportación.
+- [ ] Freebuff: coordinar el proceso y realizar la integración de código mediante agentes/rama de trabajo. La usuaria no programa; dar pasos guiados y explicados en español. No hacer merge, push ni PR sin autorización.
+
+### Primer trabajo de Freebuff
+- [ ] Antes de generar nada, leer README.md, PILTOVER-3D.md, ZAUN-3D.md, PLAN-3D.md, src/models/maps/README.md y este archivo.
+- [ ] Comprobar si la referencia de Neta es accesible. Si no, pedir a la autora una captura.
+- [ ] Preparar una auditoría y un plan sin editar archivos, instalar dependencias o reemplazar los GLB actuales.
+- [ ] Proponer un workflow de ComfyUI concreto a partir de los modelos/nodos que ya existan en el PC; no indicar que se descargue un workflow arbitrario sin verificar compatibilidad y requisitos de VRAM.
+- [ ] Crear dos escenarios separados (Piltover y Zaun), inspeccionar las salidas con Open3D Viewer, corregir en Blender y probar copias temporales dentro del juego.
+- [ ] Mantener backups y no sustituir los activos actuales hasta comparar capturas, escala, POI, materiales, rendimiento y colisiones.
+- [ ] Entregar instrucciones por pasos de usuario no técnico, con comprobación visual tras cada etapa.
+
+### Criterios de aceptación
+- [ ] Se pueden comparar capturas de mapa 2D, Piltover 3D y Zaun 3D.
+- [ ] Los POI, accesos y misiones apuntan a los lugares correctos en ambos modos.
+- [ ] Los personajes, guardias y NPC se mueven sobre superficies transitables y guardan escala legible.
+- [ ] No se declara listo por una captura bonita: debe cargar el GLB en el juego, funcionar la cámara, respetarse el fallback 2D y pasar las pruebas de rendimiento.
+- [ ] Los agentes entregan informe, archivos cambiados, pruebas y pasos para que la autora pueda revisar la PR manualmente.
