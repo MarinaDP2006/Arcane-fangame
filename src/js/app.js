@@ -175,71 +175,7 @@
         el('button', { class: 'btn ghost', onclick: () => { App.pendingSlot = null; App.go('home'); } }, '← Volver al menú'))));
   }
 
-  // IA opcional para la historia libre y el chat con los personajes: solo KoboldCpp.
-  function aiSettings(set) {
-    const box = el('div', { class: 'ai-settings' });
-    const draw = () => {
-      const P = window.AI.PROVIDERS;
-      const c = window.AI.cfg();
-      const on = c.provider !== 'off';
-      const selected = c.provider === 'ollama' ? 'ollama' : 'koboldcpp';
-      const d = P[selected];
-      const save = (patch) => set({ ai: { provider: selected, url: App.settings.ai?.provider === selected ? App.settings.ai.url : '', model: App.settings.ai?.provider === selected ? App.settings.ai.model : d.model, password: App.settings.ai?.provider === selected ? (App.settings.ai.password || '') : '', ...patch } }).then(draw);
-      const status = el('small', { class: 'muted ai-status' });
-      const models = el('div', { class: 'chips ai-models' });
-      const lan = el('small', { class: 'muted ai-lan' });
-      box.innerHTML = '';
-      // DOM append escribe «null» con los huecos: se quitan antes.
-      box.append(...[
-        el('h3', {}, 'IA de la historia y los chats'),
-        el('p', { class: 'muted small' }, 'Roleplay libre: el reparto reacciona a tus decisiones y mantiene el contexto de la partida. Puedes usar un modelo local con KoboldCpp u Ollama; si la IA no está disponible, se mantienen los diálogos escritos.'),
-        el('label', { class: 'field' }, el('span', {}, 'Proveedor de IA'),
-          el('select', { class: 'input', value: selected, onchange: (e) => save({ provider: e.target.value, url: '', model: P[e.target.value]?.model || '' }) },
-            el('option', { value: 'koboldcpp' }, 'KoboldCpp'), el('option', { value: 'ollama' }, 'Ollama'))),
-        el('label', { class: 'switch-row' }, el('span', {}, 'Usar IA', el('small', { class: 'muted' }, on ? 'Activada' : 'Desactivada: solo diálogos escritos')),
-          el('input', { type: 'checkbox', checked: on, onchange: (e) => save(e.target.checked ? { provider: selected } : { provider: 'off' }) })),
-        on ? el('p', { class: 'small ai-help' }, d.help) : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Dirección'),
-          el('input', { class: 'input', value: (App.settings.ai?.provider === selected && App.settings.ai.url ? App.settings.ai.url : d.url).replaceAll('192.168.1.40', '192.168.1.139'), placeholder: d.url, inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
-        on && !window.AI.ready() ? el('p', { class: 'small ai-help' }, 'En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».') : null,
-        on ? lan : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Contraseña (opcional; solo si el servidor la requiere)'),
-          el('input', { class: 'input', type: 'password', autocomplete: 'off', value: App.settings.ai?.provider === selected ? (App.settings.ai.password || '') : '', placeholder: 'Déjala vacía si no configuraste autenticación', onchange: (e) => save({ password: e.target.value }) })) : null,
-        on ? el('p', { class: 'small ai-help' }, 'Si abres KoboldCpp por la red de casa, Chrome puede pedir permiso para acceder a la red local. Pulsa «Permitir» cuando conectes la IA desde esta web.') : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Modelo'),
-          el('input', { class: 'input', value: c.model, placeholder: 'koboldcpp', onchange: (e) => save({ model: e.target.value.trim() }) })) : null,
-        on ? models : null,
-        on ? el('div', { class: 'row gap' },
-          el('button', { class: 'btn small', onclick: findModels }, selected === 'ollama' ? 'Listar modelos de Ollama' : 'Ver el modelo abierto'),
-          el('button', { class: 'btn small', onclick: async () => {
-            status.textContent = 'Probando…';
-            try {
-              const r = await window.AI.test();
-              status.textContent = `✓ Funciona en ${r.secs.toFixed(1)} s: «${r.text}»${r.secs > 15 ? ' · La primera vez tarda más porque carga el modelo. Prueba otra vez; si sigue lento, elige un modelo más pequeño en KoboldCpp.' : ''}`;
-            } catch (err) { status.textContent = `✗ ${err.message}`; }
-          } }, 'Probar conexión'), status) : null].filter(Boolean));
-      // En el PC: la dirección que hay que escribir en la tablet para usar este KoboldCpp.
-      if (on && window.arcane?.lanIps) {
-        window.arcane.lanIps().then((ips) => {
-          if (ips.length) lan.textContent = `En la tablet o el móvil escribe: ${ips.map((ip) => `http://${ip}:5001`).join(' o ')}`;
-        }).catch(() => {});
-      }
-      /** Pregunta a KoboldCpp qué modelo tiene abierto. */
-      async function findModels() {
-        status.textContent = 'Buscando…';
-        try {
-          const list = await window.AI.models();
-          status.textContent = list.length ? (selected === 'ollama' ? 'Modelos disponibles en Ollama.' : 'Este es el modelo que tiene abierto KoboldCpp.') : (selected === 'ollama' ? 'No se han encontrado modelos en Ollama. Descarga uno y crea el perfil antes de probar.' : 'KoboldCpp no tiene ningún modelo abierto. Ciérralo, elige un .gguf en «Model» y pulsa «Launch».');
-          models.replaceChildren(...list.map((m) => el('button', {
-            class: `chip${m.name === c.model ? ' active' : ''}`,
-            onclick: () => save({ model: m.name }),
-          }, `${m.name}${m.loaded ? ' · cargado' : ''}`)));
-        } catch (err) { status.textContent = `✗ ${err.message}`; }
-      }
-    };
-    draw();
-    return box;
-  }
+  // La interfaz de ajustes no expone IA en esta fase; su integración queda aplazada.
 
   // Clases del <body> que dependen de los ajustes (tamaño de letra, accesibilidad, brillo…).
   function applyLook(s = App.settings) {
@@ -255,7 +191,7 @@
     // Colores de la interfaz: según la ciudad en la que estás, o uno fijo elegido en Ajustes.
     const fixedBlue = App.view === 'home' || App.view === 'city-select';
     h.dataset.tema = fixedBlue ? 'azul' : ((s.uiTheme || 'ciudad') === 'ciudad' ? (b.dataset.ciudad || 'clasico') : s.uiTheme);
-    window.World3D?.applySettings?.();
+    // Esta fase usa escenas 2D; no inicializar ni configurar el renderizador 3D.
   }
   App.applyLook = applyLook;
   App.setCity = (city) => {
@@ -339,7 +275,7 @@
 
     const TABS = [
       ['general', 'General'], ['graficos', 'Gráficos'], ['audio', 'Audio'], ['lectura', 'Lectura'], ['juego', 'Juego'],
-      ['controles', 'Controles'], ['accesibilidad', 'Accesibilidad'], ['ia', 'IA'], ['datos', 'Datos'],
+      ['controles', 'Controles'], ['accesibilidad', 'Accesibilidad'], ['datos', 'Datos'],
       ...(U.desktop ? [['arte', 'Arte personal']] : []), ['acerca', 'Acerca de'],
     ];
     if (!TABS.some(([id]) => id === settingsTab)) settingsTab = 'general';
@@ -400,8 +336,8 @@
       ],
       juego: () => [
         el('h3', {}, 'Partida'),
-        select('storyMode', 'Cómo hablas en la historia', 'Libre: escribes lo que dice o hace tu personaje y la escena te responde con la IA, sin salirse de la temporada 1 y 2. Opciones: los diálogos escritos de siempre.',
-          [['libre', 'Libre (escribes tú, con IA)'], ['opciones', 'Opciones escritas']]),
+        el('p', { class: 'muted small' }, 'La historia usa diálogos escritos y escenas 2D. La integración de IA está aplazada.'),
+        select('storyMode', 'Modo de historia', 'Usa los diálogos escritos disponibles.', [['opciones', 'Diálogos escritos']]),
         select('difficulty', 'Dificultad de los minijuegos', 'Fácil te da una ventaja extra; Difícil te la quita.',
           [['facil', 'Fácil'], ['normal', 'Normal'], ['dificil', 'Difícil']]),
         toggle('objectiveArrow', 'Flecha hacia el objetivo', 'Señala en el mapa a dónde tienes que ir.'),
@@ -420,23 +356,22 @@
       ],
       accesibilidad: () => [
         el('h3', {}, 'Accesibilidad'),
-        toggle('reduceMotion', 'Reducir movimiento', 'Quita animaciones de la interfaz, inclinaciones 3D y balanceo de cámara.'),
+        toggle('reduceMotion', 'Reducir movimiento', 'Reduce las animaciones de la interfaz y el balanceo de cámara.'),
         toggle('highContrast', 'Alto contraste', 'Textos y bordes más marcados.'),
         toggle('readableFont', 'Letra más fácil de leer', 'Cambia la letra decorativa por una sencilla.'),
         select('textSize', 'Tamaño de letra', null, [['pequeno', 'Pequeño'], ['normal', 'Normal'], ['grande', 'Grande'], ['enorme', 'Muy grande']]),
         slider('shake', 'Sacudidas de pantalla', null, 0, 1.5, 0.1, pct),
       ],
-      ia: () => [aiSettings(set)],
       datos: () => [
         el('h3', {}, 'Copias de seguridad'),
-        el('p', { class: 'muted small' }, 'Guarda tus partidas y ajustes en un archivo para pasarlos a otro ordenador o al móvil. La clave de la IA no se copia.'),
+        el('p', { class: 'muted small' }, 'Guarda tus partidas y ajustes en un archivo para pasarlos a otro ordenador o al móvil.'),
         el('div', { class: 'row gap' },
           el('button', { class: 'btn small', onclick: exportData }, 'Guardar copia'),
           el('button', { class: 'btn small', onclick: () => importData(root, onBack) }, 'Cargar copia')),
         el('h3', {}, 'Restablecer'),
         el('div', { class: 'row gap' },
           el('button', { class: 'btn ghost small', onclick: async () => {
-            if (!confirm('¿Volver a los ajustes de fábrica? (El idioma y la IA se mantienen.)')) return;
+            if (!confirm('¿Volver a los ajustes de fábrica?')) return;
             await set({ ...U.SETTINGS_DEFAULTS });
             toast('Ajustes restablecidos', 'good');
             redraw();
@@ -450,9 +385,9 @@
       arte: () => [artSettings(root, onBack)],
       acerca: () => [
         el('h3', {}, 'Acerca de'),
-        el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. Todas las imágenes y datos vienen dentro del juego y la música se sintetiza en tiempo real: no necesita internet (solo el chat libre con IA, si lo activas con un servicio en línea).'),
+        el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. Todas las imágenes y datos vienen dentro del juego y la música se sintetiza en tiempo real: no necesita internet. La integración de IA está aplazada.'),
         el('p', { class: 'muted small' }, 'Este juego se creó según la política «Legal Jibber Jabber» de Riot Games usando recursos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto. Arcane y League of Legends son marcas de Riot Games, Inc.'),
-        el('p', { class: 'muted small' }, 'Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo. Si activas la IA, lo que escribes en la historia y el comunicador (y el contexto del personaje) solo viaja a KoboldCpp, en tu ordenador o en otro de tu red de casa: nunca sale a internet.'),
+        el('p', { class: 'muted small' }, 'Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo.'),
       ],
     };
 
@@ -502,11 +437,7 @@
       'codice/       Ilustraciones del Códice (criaturas, tecnología, mundo y lugares)',
       ...['criaturas', 'tecnologia', 'mundo', 'lugares'].flatMap((c) => [`  -- ${W.categories.find((x) => x.id === c).label}`, ...W[c].map((e) => line(e.id, e.name))]),
       '',
-      'modelos/      Modelos de personajes para una futura modalidad 3D; actualmente se usa el mapa 2D.',
-      '              Un archivo por personaje: vi.zip, jinx.zip, caitlyn.zip, etc. ZIP con FBX + texturas o GLB.',
-      '              ti y generico.glb para quien no tenga el suyo. Si falta, se usa el muñeco pintado del juego.',
-      '  animaciones/ reposo.glb, andar.glb y correr.glb (Mixamo, marca «In Place»). Valen para todos los modelos de Mixamo.',
-      '              Para modelos sin animar, activa Gráficos → NPC quietos y a color. No necesitas Blender.',
+      
       '',
       'Ejemplos: personajes/jinx.png · lugares/ultima-gota.jpg · codice/hextec.png · modelos/vi.glb',
     ].join('\n');
@@ -515,16 +446,14 @@
   /** Construye las opciones de arte personal. */
   function artSettings(root, onBack) {
     const counts = ['avatares', 'personajes', 'caras', 'lugares', 'codice'].map((d) => `${d}: ${Object.keys(window.CustomArt.files[d] || {}).length}`).join(' · ');
-    const models = el('span', {});
-    window.Avatars3D?.listModels().then((m) => { models.textContent = ` · modelos 3D: ${m.size}`; });
     return el('div', {},
       el('h3', {}, 'Arte personal'),
-      el('p', { class: 'muted' }, 'Pon tus imágenes y modelos ZIP, FBX o GLB en la carpeta de arte. El juego los usará en lugar del arte pintado. En el archivo GUIA-DE-ARTE.txt de esa carpeta tienes todos los nombres de archivo que reconoce.'),
-      el('p', { class: 'small' }, `Archivos encontrados → ${counts}`, models),
+      el('p', { class: 'muted' }, 'Añade imágenes a la carpeta de arte. En el archivo GUIA-DE-ARTE.txt encontrarás los nombres de archivo que reconoce el juego.'),
+      el('p', { class: 'small' }, `Archivos encontrados → ${counts}`),
       el('div', { class: 'row gap' },
         el('button', { class: 'btn small', onclick: () => window.arcane.art.open() }, 'Abrir carpeta de arte'),
         ...['avatares', 'personajes', 'caras', 'lugares', 'codice', 'modelos'].map((d) => el('button', { class: 'btn ghost small', onclick: () => window.arcane.art.open(d) }, `${d}`)),
-        el('button', { class: 'btn ghost small', onclick: async () => { await window.CustomArt.load(); window.World3D?.resetActors(); toast('Arte recargado. Algunas imágenes se verán al cambiar de pantalla.', 'good'); renderSettings(root, onBack); } }, 'Recargar arte')),
+        el('button', { class: 'btn ghost small', onclick: async () => { await window.CustomArt.load(); toast('Arte recargado. Algunas imágenes se verán al cambiar de pantalla.', 'good'); renderSettings(root, onBack); } }, 'Recargar arte')),
       el('p', { class: 'muted small' }, 'Todo el arte viene dentro del juego y funciona sin internet. Puedes añadir imágenes a tu carpeta de arte, separadas por Piltover y Zaun.'));
   }
 

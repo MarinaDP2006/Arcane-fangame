@@ -13,8 +13,10 @@ const SYNC = [
   ['mapa/piltover/s1', 'lugares/s1'], ['mapa/zaun/s1', 'lugares/s1'],
   ['mapa/piltover/s2', 'lugares/s2'], ['mapa/zaun/s2', 'lugares/s2'],
   ['personajes/referencias/s1', 'personajes/s1'], ['personajes/referencias/s2', 'personajes/s2'],
+  ['mapa/piltover/atlas', 'mapa/piltover/atlas'], ['mapa/zaun/atlas', 'mapa/zaun/atlas'],
+  ['mapa/otros/atlas', 'mapa/otros/atlas'],
 ];
-const DIRS = ['avatares', 'personajes', 'caras', 'lugares', 'codice', 'mapa/piltover', 'mapa/zaun', 'personajes/s1', 'personajes/s2', 'caras/s1', 'caras/s2', 'lugares/s1', 'lugares/s2'];
+const DIRS = ['avatares', 'personajes', 'caras', 'lugares', 'codice', 'mapa/piltover', 'mapa/zaun', 'mapa/piltover/atlas', 'mapa/zaun/atlas', 'mapa/otros/atlas', 'personajes/s1', 'personajes/s2', 'caras/s1', 'caras/s2', 'lugares/s1', 'lugares/s2'];
 
 function build() {
   const data = {};

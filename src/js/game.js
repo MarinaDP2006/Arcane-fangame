@@ -530,6 +530,10 @@
       }
       return;
     }
+    if (kind === 'misiones') {
+      renderMissions(box);
+      return;
+    }
     if (kind === 'menu') {
       box.append(el('div', { class: 'panel action-menu' },
         el('h2', {}, 'Pausa'),
@@ -630,7 +634,8 @@
 
     // Foto de la carpeta lugares (la propia, o la que viaja con el juego) o, si falta, la ilustración del atlas.
     function placeArt(p) {
-      return (p.scene && window.CustomArt.image('lugares', p.scene)) || `img/atlas/${p.id}.webp`;
+      const atlasCity = ['noxus', 'the-immortal-bastion'].includes(p.id) ? 'otros' : (({ 'bridge-of-progress': 'zaun', 'river-pilt': 'piltover', 'stillwater-hold': 'piltover' })[p.id] || p.city || 'zaun');
+      return (p.scene && window.CustomArt.image('lugares', p.scene)) || `img/arte/mapa/${atlasCity}/atlas/${p.id}.webp`;
     }
 
     /** Abre la ficha del lugar visitado. */
@@ -691,6 +696,86 @@
 
     const start = A.places.find((p) => p.id === placeId);
     if (start) showPlace(start);
+  }
+
+  // ---------------- Diario de misiones ----------------
+  function missionReady(m) {
+    if (m.type === 'atlas') return (G.atlas || []).includes(m.target);
+    if (m.type === 'bond') return affOf(m.target) >= m.affinity && Relations.together(G, m.target) >= m.trust;
+    if (m.type === 'family') return Object.keys(G.rel || {}).some((id) => ['familia', 'pariente'].includes(Relations.status(G, id)));
+    return false;
+  }
+
+  function claimMission(m) {
+    G.flags = G.flags || {};
+    if (G.flags[m.reward.flag] || !missionReady(m)) return;
+    for (const [id, amount] of Object.entries(m.reward.aff || {})) G.aff[id] = Math.max(-10, Math.min(10, affOf(id) + amount));
+    for (const [city, amount] of Object.entries(m.reward.rep || {})) G.rep[city] = (G.rep[city] || 0) + amount;
+    G.flags[m.reward.flag] = true;
+    toast(`Misión completada: ${m.title}`, 'good');
+    persist().then(() => openOverlay('misiones'));
+  }
+
+  function renderMissions(box) {
+    const routeId = G.progress.route || G.player.origin;
+    const route = S().routes[routeId] || [];
+    const currentIndex = Math.max(0, route.indexOf(G.progress.chapterId));
+    const currentChapter = chapterById(G.progress.chapterId);
+    const chapterRows = route.map((id, index) => {
+      const chapter = chapterById(id);
+      if (!chapter) return null;
+      const done = G.progress.finished || index < currentIndex;
+      const active = !G.progress.finished && index === currentIndex;
+      return el('div', { class: `mission-row main-quest ${done ? 'is-done' : active ? 'is-active' : 'is-locked'}` },
+        el('span', { class: 'mission-state' }, done ? '✓' : active ? '◆' : '·'),
+        el('div', { class: 'mission-copy' },
+          el('strong', {}, chapter.title),
+          el('p', {}, chapter.intro || 'Continúa la historia para descubrir este capítulo.'),
+          el('small', {}, done ? 'Completado' : active ? 'En curso · Misión principal' : 'Se desbloquea al avanzar')));
+    }).filter(Boolean);
+    const side = (window.MISSIONS || []).map((m) => {
+      const claimed = Boolean(G.flags?.[m.reward.flag]);
+      const ready = missionReady(m);
+      const progress = m.type === 'atlas'
+        ? ((G.atlas || []).includes(m.target) ? 'Lugar registrado en el Atlas' : 'Pendiente de explorar en el Atlas')
+        : m.type === 'bond'
+          ? `Afinidad ${affOf(m.target)}/${m.affinity} · Confianza ${Relations.together(G, m.target)}/${m.trust}`
+          : Object.keys(G.rel || {}).some((id) => ['familia', 'pariente'].includes(Relations.status(G, id))) ? 'Vínculo familiar establecido' : 'Vínculo familiar pendiente';
+      return el('article', { class: `mission-card ${claimed ? 'is-done' : ready ? 'is-ready' : ''}` },
+        el('div', { class: 'mission-card-top' },
+          el('span', { class: 'mission-kicker' }, m.city === 'ambas' ? 'PILTOVER + ZAUN' : m.city.toUpperCase()),
+          el('span', { class: 'mission-status' }, claimed ? 'COMPLETADA' : ready ? 'LISTA PARA COBRAR' : 'EN CURSO')),
+        el('h3', {}, m.title),
+        el('p', {}, m.description),
+        el('p', { class: 'mission-objective' }, el('strong', {}, 'Objetivo: '), m.objective),
+        el('div', { class: 'mission-progress' }, progress),
+        claimed ? el('span', { class: 'mission-reward' }, '✓ Recompensa obtenida') :
+          ready ? el('button', { class: 'btn primary small', onclick: () => claimMission(m) }, 'Completar y recibir recompensa') :
+            el('span', { class: 'mission-reward' }, rewardLabel(m.reward)));
+    });
+    box.className = 'overlay show mission-overlay';
+    box.innerHTML = '';
+    box.append(el('div', { class: 'panel mission-panel' },
+      el('header', { class: 'overlay-head' },
+        el('div', {}, el('span', { class: 'eyebrow' }, 'DIARIO DE CAMPO'), el('h2', {}, 'Misiones y vínculos')),
+        closeBtn()),
+      el('div', { class: 'mission-scroll' },
+        el('section', { class: 'mission-section' },
+          el('div', { class: 'mission-section-head' }, el('h3', {}, 'Historia principal'), el('span', {}, `${G.progress.finished ? route.length : currentIndex}/${route.length} capítulos`)),
+          el('p', { class: 'muted' }, currentChapter ? currentChapter.intro : 'La historia principal está completada.'),
+          ...chapterRows,
+          G.progress.finished ? el('p', { class: 'mission-reward' }, '✓ Has completado esta ruta.') : el('button', { class: 'btn primary', onclick: () => openOverlay('historia') }, 'Continuar historia')),
+        el('section', { class: 'mission-section' },
+          el('div', { class: 'mission-section-head' }, el('h3', {}, 'Misiones secundarias'), el('span', {}, `${(window.MISSIONS || []).filter((m) => G.flags?.[m.reward.flag]).length}/${(window.MISSIONS || []).length}`)),
+          el('p', { class: 'muted' }, 'Explora lugares, ayuda a la gente y fortalece tus relaciones. Las recompensas se reclaman aquí cuando cumples los requisitos.'),
+          ...side))));
+  }
+
+  function rewardLabel(reward) {
+    const bits = [];
+    for (const [id, n] of Object.entries(reward.aff || {})) bits.push(`+${n} afinidad: ${charName(id)}`);
+    for (const [city, n] of Object.entries(reward.rep || {})) bits.push(`+${n} reputación: ${city === 'zaun' ? 'Zaun' : 'Piltover'}`);
+    return bits.length ? `Recompensa: ${bits.join(' · ')}` : 'Recompensa narrativa';
   }
 
   /** Construye el botón de cierre de un panel. */
@@ -802,6 +887,7 @@
         hudBtn('Ficha', 'F', () => openOverlay('ficha'), ICO.ficha),
         hudBtn('Códice', 'K', () => openOverlay('codice'), ICO.codice),
         hudBtn('Atlas', 'M', () => openOverlay('codice', null, 'atlas'), ICO.atlas),
+        hudBtn('Misiones', 'Q', () => openOverlay('misiones'), ICO.historia),
         hudBtn('Pausa', 'Esc', () => openOverlay('menu'), ICO.pausa)),
       el('div', { id: 'overlay', class: 'overlay' })));
     World.start(G, worldCallbacks(), canvas, mini);
@@ -1084,7 +1170,7 @@
     let lines = node.lines.filter(lineVisible);
     // Historia libre: el guion no habla por el jugador y, tras un turno libre, se adapta a lo
     // que ha escrito (si la IA falla, sale el guion original).
-    const adapting = freeStory() && G.progress.adaptNext;
+    const adapting = false;
     if (freeStory()) {
       const cast = sceneCast(node);
       lines = lines.filter((l) => l.s !== 'yo');
@@ -1092,8 +1178,7 @@
         const typing = tab === 'historia' ? typingIndicator(cast[0] || 'narrador') : null;
         try {
           const ch2 = chapterById(G.progress.chapterId);
-          const adapted = await window.AI.adapt(G, { chapter: ch2.title, cast, beat: lines.map((l) => `${l.s}: ${tpl(l.t, G.player)}`) });
-          if (adapted.length) lines = adapted;
+          // La adaptación con IA está aplazada; se conservan los diálogos escritos.
         } catch { /* se queda el guion escrito */ }
         typing?.remove();
       }
@@ -1220,7 +1305,7 @@
   const FORCE_MOVE = 6; // red de seguridad si la IA no elige camino
 
   function freeStory() {
-    return window.App.settings.storyMode !== 'opciones' && window.AI.ready() && aiFailedNode !== `${G.progress.chapterId}.${G.progress.node}`;
+    return false; // La historia libre con IA queda aplazada; se usan siempre las opciones escritas.
   }
 
   /** Personajes del reparto presentes en la escena actual. */
@@ -1244,7 +1329,6 @@
     box.append(
       el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', 'aria-label': 'Enviar', onclick: send }, '➤')),
       el('small', { class: 'muted ai-note' }, `Habla o actúa como ${G.player.name}: no hay opciones, la escena reacciona a lo que escribas.`));
-    window.AI.warm();
     if (!U.touch) setTimeout(() => input.focus(), 0);
   }
 
@@ -1728,54 +1812,7 @@
     persist();
   }
 
-  /** Muestra la entrada de texto del chat libre con IA. */
-  function showAIBox(id, box) {
-    box.classList.add('ai-box');
-    if (!window.AI.ready()) {
-      box.append(el('div', { class: 'ai-off' },
-        el('p', {}, `Con la IA puedes escribirle a ${charName(id)} lo que quieras y te responderá en su papel. Es gratis: abre KoboldCpp en tu PC y actívalo en Ajustes → «IA de la historia y los chats».`),
-        el('button', { class: 'btn small primary', onclick: openSettingsOverlay }, 'Abrir ajustes')));
-      return;
-    }
-    const input = el('textarea', { class: 'input ai-input', rows: 1, maxlength: 500, placeholder: `Escribe a ${charName(id)}…`,
-      onkeydown: (e) => { if (e.key !== 'Escape') e.stopPropagation(); if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } } });
-    const send = () => { const t = input.value.trim(); if (!t || talking) return; input.value = ''; sendAI(id, t); };
-    box.append(el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', onclick: send }, '➤')));
-    window.AI.warm();
-    if (!U.touch) setTimeout(() => input.focus(), 0);
-  }
-
-  /** Envía el mensaje a KoboldCpp. */
-  async function sendAI(id, text) {
-    talking = true;
-    const thread = G.chats[id];
-    thread.push({ s: 'yo', t: text });
-    $('#chat-log')?.append(bubble('yo', text));
-    showDialog(id);
-    const log = $('#chat-log');
-    const typing = el('div', { class: 'msg them typing' }, el('div', { class: 'bubble' }, el('i'), el('i'), el('i')));
-    log?.append(typing);
-    if (log) log.scrollTop = log.scrollHeight;
-    try {
-      const r = await window.AI.reply(G, id);
-      typing.remove();
-      await speak(id, [{ s: id, t: r.text, raw: true }]);
-      // La afinidad cambia poco a poco: tres mensajes que le gusten = +1; dos que no = −1.
-      const c = (G.aiAff = G.aiAff || {})[id] || { pos: 0, neg: 0 };
-      if (r.aff > 0 && ++c.pos >= 3) { c.pos = 0; applyTalkFx(id, { aff: 1 }); }
-      if (r.aff < 0 && ++c.neg >= 2) { c.neg = 0; applyTalkFx(id, { aff: -1 }); }
-      G.aiAff[id] = c;
-    } catch (err) {
-      typing.remove();
-      const t = `(La IA no responde: ${err.message})`;
-      $('#chat-log')?.append(bubble('sistema', t));
-    }
-    talking = false;
-    if (tab === 'chats' && contact === id) { refreshChatHead(id); showDialog(id); }
-    renderContacts();
-    persist();
-  }
-
+  /** La IA está aplazada: cualquier ajuste guardado de chat libre vuelve al diálogo escrito. */
   /** Presenta las líneas de una conversación con personaje. */
   function showDialog(id) {
     const box = $('#dlg-choices');
@@ -1783,7 +1820,7 @@
     box.innerHTML = '';
     box.classList.remove('ai-box');
     if (talking) return;
-    if (chatMode(id) === 'ai') return showAIBox(id, box);
+    if (chatMode(id) === 'ai') { setChatMode(id); return; }
     if (talkState().at[id] === 'bye') {
       box.append(el('button', { class: 'choice', onclick: () => restartTalk(id) }, el('span', { class: 'num' }, 1), `Volver a hablar con ${charName(id)}`));
       return;

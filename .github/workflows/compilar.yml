@@ -44,6 +44,8 @@ jobs:
           fi
           echo "version=$v" >> "$GITHUB_OUTPUT"
           echo "Versión: $v"
+      - name: Sincronizar arte canónico y manifiesto
+        run: node scripts/art-manifest.js
       - name: Comprobar datos del juego
         run: npm run check
       - name: Verificar sintaxis de todos los scripts del repositorio
@@ -68,6 +70,8 @@ jobs:
           cache: npm
       - name: Instalar dependencias
         run: npm ci
+      - name: Sincronizar arte canónico y manifiesto
+        run: node scripts/art-manifest.js
       - name: Compilar instalador y portable de Windows
         run: npm run dist:win -- --publish never
         env:

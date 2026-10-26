@@ -1,6 +1,6 @@
 # Arcane-fangame · Piltover y Zaun
 
-> **En pocas palabras:** Este es el punto de partida del proyecto. Aquí puedes entender qué juego es, qué puedes hacer ahora mismo, cómo ejecutarlo y dónde encontrar instrucciones más específicas. Es un proyecto de fans, no oficial, y algunas funciones —como ciertos proveedores de IA o partes de la web— siguen en preparación; por eso distinguimos entre lo que ya está disponible y lo que todavía hay que probar.
+> **En pocas palabras:** Fangame narrativo 2D de Piltover y Zaun. Esta fase prioriza escenas ilustradas, diálogos escritos y recursos locales; la integración de IA y los escenarios 3D quedan aplazados.
 
 Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o Zaun y escribes lo que dice o hace. Los personajes reaccionan dentro del mundo de la serie. Proyecto de fans no oficial.
 
@@ -8,7 +8,7 @@ Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 
 
 1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
 2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
-3. **IA opcional:** el chat de IA del juego de escritorio usa actualmente KoboldCpp. Ollama puede seleccionarse como proveedor local experimental desde Ajustes de IA. Consulta [MODELOS-LOCALES.md](MODELOS-LOCALES.md) para instalarlo, configurar el modelo y resolver problemas de conexión. Los diálogos escritos permiten jugar sin IA.
+3. **Diálogos y escenas:** juega con contenido escrito y escenarios 2D ilustrados. La integración de IA queda aplazada; no es necesaria para esta fase.
 
 ## Web y arte
 
@@ -20,11 +20,13 @@ La web pública se genera con `npm run web`. La demo del repositorio se mantiene
 - `web/demo.html` + `web/demo-juego.js`: demo mantenida en el repositorio para desarrollo/pruebas; no enlazada desde la portada.
 - `web/arte-propio/`: recursos gráficos propios de la interfaz.
 
-## Guías de modelos e integración
+## Guías de desarrollo
 
-- [Modelos locales y Ollama](MODELOS-LOCALES.md): instalación, comprobación y estado real de integración.
-- [Guía de modelos 3D](GUIA-MODELOS-3D.md): formatos, rendimiento, integración por etapas y pruebas.
-- [Guía de KoboldCpp](GUIA-KOBOLDCPP.md): proveedor de chat local que usa actualmente el juego de escritorio.
+- [Guía de juego](GUIAJUEGO.md): cómo jugar y usar las funciones disponibles.
+- [Guía técnica](Guía%20técnica.md): estructura y ejecución del proyecto.
+- [Fuentes y créditos del arte](arcaneData/arte/FUENTES.json): procedencia de las imágenes.
+
+La integración de IA y los escenarios 3D están fuera del alcance actual. Se conservan sus archivos históricos mientras se comprueba que no haya dependencias activas.
 
 `npm run web` genera la carpeta `web-dist/` con el contenido listo para Render. Las imágenes de Arcane son propiedad de Riot Games / Fortiche Production; el proyecto es un fangame no oficial.
 
@@ -37,14 +39,13 @@ npm start
 npm run web
 ```
 
-El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y Android. Las releases se publican manualmente; revisa los artefactos disponibles en Releases.
+El workflow de GitHub Actions verifica el proyecto y compila Windows x64. Las releases se publican manualmente; revisa los artefactos disponibles en Releases.
 
-## Mapas 2D/3D y dirección artística
+## Mapas y dirección artística
 
-- [Pendientes y prompt de Freebuff (mapas, personajes, interfaz, lore y misiones)](PENDIENTES.md)
-- [Guía de escenarios 3D, Marble, SpAItial, Blender y referencias de Piltover/Zaun](src/models/maps/README.md)
-- [Piltover 3D: espacios, interiores y dirección artística](PILTOVER-3D.md)
-- En main existen los archivos de escenario piltover.blend, zaun.blend, piltover.glb y zaun.glb. Su integración visual, escala, colisiones, POI y rendimiento aún deben verificarse en una partida real; no se consideran validados solo por existir.
+- Los mapas de juego de esta fase son 2D, legibles y navegables.
+- Usa `arcaneData/arte/FUENTES.json` como registro de procedencia y créditos.
+- Conserva los originales y evita borrar duplicados hasta comprobar todas las referencias.
 
 ## Guías
 
@@ -68,16 +69,6 @@ El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y An
 
 Proyecto de fans gratuito y no respaldado por Riot Games. Arcane, League of Legends, Piltover, Zaun, sus personajes y su arte pertenecen a sus respectivos propietarios. El código está bajo licencia MIT, que no concede derechos sobre marcas ni personajes de terceros.
 
-## Producción de mapas, referencias artísticas y herramientas de IA
+## Producción de arte 2D
 
-La dirección visual de los mapas debe partir de las fuentes de lore y arte enlazadas en PILTOVER-3D.md y ZAUN-3D.md. El mapa debe funcionar en **2D como mapa legible y navegable** y, al entrar en la ciudad, representarse como un escenario 3D con volumen real. Ambos modos deben compartir lugares, accesos, misiones y coordenadas; no son dos mapas inventados por separado.
-
-- PENDIENTES.md: fuente principal de tareas y estado de validación.
-- src/models/maps/README.md: generación, escala, coordenadas, Blender y exportación GLB.
-- PILTOVER-3D.md y ZAUN-3D.md: dirección artística, cultura, arquitectura y accesos de cada ciudad.
-- PLAN-3D.md: integración de modelos de personajes.
-- docs/PROMPTS-3D-ARCANE-FAN-GAME.md: prompts de producción para agentes y generadores.
-
-**Flujo recomendado para una persona que no programa:** usar Marble y SpAItial para generar propuestas de entorno; ComfyUI para preparar/repetir imágenes de referencia y concept art con flujos visuales; Open3D Viewer para abrir y revisar archivos GLB/GLTF/FBX/OBJ; y Blender, con ayuda guiada de Freebuff, para corregir escala, mallas, materiales, orientación y exportar. No hace falta escribir JavaScript para seguir el flujo de arte; los cambios de integración del código deben realizarlos agentes en ramas separadas y explicando los pasos.
-
-El enlace de Neta indicado en PENDIENTES.md es la referencia de composición deseada para el mapa. Si un agente no puede abrir esa página, debe pedir una captura al usuario y no fingir que ha visto su contenido.
+Organiza las referencias por ciudad, lugar y temporada. Antes de integrar una imagen, comprueba que el archivo exista, que el juego use la ruta correcta y que la procedencia figure en `arcaneData/arte/FUENTES.json`. No elimines originales durante una limpieza sin verificar sus usos. Las herramientas de IA y el flujo de escenarios 3D quedan aplazados.

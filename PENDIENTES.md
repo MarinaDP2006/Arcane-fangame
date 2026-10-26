@@ -1,5 +1,7 @@
 # PENDIENTES.md — Hoja de ruta del fangame de Arcane
 
+> **Actualización de alcance — rama `limpieza-2d-sin-ia`:** se aplaza el desarrollo 3D y la integración de IA. La prioridad es mantener un juego 2D estable, usar correctamente las imágenes de `arcaneData/arte` y conservar sus créditos. Las tareas de validación de Blender/GLB que siguen en este documento son históricas y no deben tratarse como prioridad de implementación. No borrar archivos 3D ni originales artísticos hasta completar una auditoría de dependencias.
+
 > **Propósito:** reunir en un único sitio todo lo que falta por validar, diseñar o implementar en el juego. Este documento es el contrato de trabajo para Freebuff y otros agentes. Una tarea solo se marca como terminada cuando hay código o activos reales, comprobaciones automáticas y una prueba de juego cuando corresponda.
 >
 > **Regla de trabajo:** la propietaria del repositorio creará, revisará y fusionará manualmente las PR. Los agentes pueden analizar, proponer y trabajar en ramas aisladas, pero no deben fusionar PR, sobrescribir `main`, borrar ramas ni abrir PR sin permiso expreso.

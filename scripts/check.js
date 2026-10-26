@@ -189,7 +189,8 @@ for (const [fam, links] of Object.entries(RELATIONS.familyLinks)) {
 for (const p of ATLAS.places) {
   if (p.codex && !allIds.has(p.codex)) errors.push(`atlas ${p.id}: entrada de Códice "${p.codex}" no existe`);
   p.people.forEach((id) => { if (!chars.has(id)) errors.push(`atlas ${p.id}: personaje "${id}" no existe`); });
-  if (!fs.existsSync(path.join(__dirname, '..', 'src', 'img', 'atlas', `${p.id}.webp`))) errors.push(`atlas ${p.id}: falta la imagen`);
+  const atlasCity = ['noxus', 'the-immortal-bastion'].includes(p.id) ? 'otros' : (({ 'bridge-of-progress': 'zaun', 'river-pilt': 'piltover', 'stillwater-hold': 'piltover' })[p.id] || p.city || 'zaun');
+  if (!fs.existsSync(path.join(__dirname, '..', 'src', 'img', 'arte', 'mapa', atlasCity, 'atlas', `${p.id}.webp`))) errors.push(`atlas ${p.id}: falta la imagen src/img/arte/mapa/${atlasCity}/atlas/${p.id}.webp`);
   if (p.x < 0 || p.x > 100 || p.y < 0 || p.y > 100) errors.push(`atlas ${p.id}: fuera del mapa`);
 }
 
