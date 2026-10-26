@@ -62,10 +62,10 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "shortcutName": "Arcane-fangame",
-      "artifactName": "Arcane-fangame-${}-Setup.${ext}"
+      "artifactName": "Arcane-fangame-${version}-Setup.${ext}"
     },
     "portable": {
-      "artifactName": "Arcane-fangame-${}-portable.${ext}"
+      "artifactName": "Arcane-fangame-${version}-portable.${ext}"
     },
     "mac": {
       "category": "public.app-category.role-playing-games",
@@ -87,10 +87,10 @@
       ],
       "icon": "build/icon.png",
       "identity": null,
-      "artifactName": "Arcane-fangame-${}-mac-${arch}.${ext}"
+      "artifactName": "Arcane-fangame-${version}-mac-${arch}.${ext}"
     },
     "dmg": {
-      "title": "Arcane-fangame ${}"
+      "title": "Arcane-fangame ${version}"
     }
   }
 }
