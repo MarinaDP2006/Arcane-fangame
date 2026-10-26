@@ -36,7 +36,7 @@ El proyecto dispone de un sistema de avatares 3D en `src/js/avatars3d.js`, con G
 
 ## Mapa 3D exterior de Piltover y Zaun
 
-`src/js/world3d.js` ya no construye edificios, calles, cúpulas, cavernas ni tuberías mediante geometría procedural. El modo 3D ahora exige un entorno urbano completo en `src/models/maps/piltover.glb` o `src/models/maps/zaun.glb`, creado en Blender (u otra herramienta 3D que exporte GLB). El renderizador añade solo actores dinámicos. Si el archivo de ciudad no existe o no contiene mallas, el juego vuelve al mapa ilustrado 2D. Los dos escenarios GLB siguen pendientes de producción y revisión visual; no debe presentarse el mapa como terminado hasta añadirlos.
+`src/js/world3d.js` ya no construye edificios, calles, cúpulas, cavernas ni tuberías mediante geometría procedural. El modo 3D exige un entorno urbano completo en src/models/maps/piltover.glb o src/models/maps/zaun.glb; el renderizador añade actores dinámicos y vuelve al mapa ilustrado 2D si no puede cargar la escena. Los archivos fuente .blend y los GLB ya existen en main, pero su integración y calidad visual aún deben validarse dentro de una partida real. No volver a generarlos a ciegas ni declarar terminado el mapa solo porque los archivos estén presentes. El plan actualizado y los prompts para Marble/SpAItial están en PENDIENTES.md y src/models/maps/README.md.
 
 ## Mejoras de mundo e interfaz aún pendientes
 - Mapa: transiciones consistentes entre vista general, ubicaciones y exploración, marcadores legibles y rutas táctiles.
@@ -46,3 +46,13 @@ El proyecto dispone de un sistema de avatares 3D en `src/js/avatars3d.js`, con G
 - Rendimiento: perfiles de calidad baja/media/alta y pruebas de 30/60 FPS medidos.
 - Interfaz: HUD escalable, controles configurables, subtítulos y accesibilidad.
 - Entrega: compilar Windows, Android y web; comprobar instalación, partidas y carga sin conexión.
+
+
+## Flujo de generación actualizado (Marble + SpAItial)
+
+- Usar imágenes oficiales/de referencia para estudiar la forma de Piltover y Zaun, sus accesos, cultura, Hextech, quimtec y Shimmer.
+- Generar una escena independiente por ciudad con Marble y otra con SpAItial para comparar continuidad, estética y opciones de exportación.
+- Preferir malla convencional editable; verificar si la salida es GLB, malla PLY o Gaussian Splat. No cambiar extensiones ni asumir colisiones.
+- Limpiar la escena en Blender, alinear POI con src/data/world.js y conservar mapa 2D como alternativa.
+- Referencia Neta de la autora: https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298; si no se puede abrir, pedir captura.
+- Consultar PENDIENTES.md como lista principal de trabajo. Este documento es complementario.
