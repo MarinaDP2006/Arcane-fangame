@@ -29,7 +29,7 @@ Render ejecuta `node scripts/build-web.js` durante la compilación y `node serve
 Los instaladores no se guardan en el repositorio como archivos fuente. GitHub Actions compila dos paquetes de Windows x64 (instalador y portable) y los publica como artefactos temporales del workflow. Para obtener la versión más reciente:
 
 1. Abre [Actions · Compilar Arcane](https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml).
-2. Entra en la ejecución más reciente de la rama `main) que haya terminado correctamente.
+2. Entra en la ejecución más reciente de la rama `main` que haya terminado correctamente.
 3. En la sección **Artifacts**, descarga el paquete `arcane-fangame-1.30.2-windows-x64` (el nombre cambia al actualizar la versión).
 4. Descomprime el artefacto ZIP y ejecuta el archivo `Arcane-fangame-1.30.2-Setup.exe` para instalar, o `Arcane-fangame-1.30.2-portable.exe` para usarlo sin instalación.
 
