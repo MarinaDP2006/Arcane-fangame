@@ -107,7 +107,7 @@
       el('div', { class: 'home-hint' }, 'Piltover y Zaun: dos ciudades del mismo mundo'));
     root.append(home);
     Audio2.playMusic('wiki');
-    stopTitleFx = window.TitleFX.mount(home, { reduce: true, particles: false, low: true }); // Grieta estática, sin seguimiento del ratón.
+    stopTitleFx = window.TitleFX.mount(home, { reduce: false, particles: true, low: false }); // Grieta viva, partículas ambientales y respuesta al movimiento.
     // Cada ciudad cambia de ilustración a su ritmo, desfasadas para que nunca cambien a la vez.
     [pilt, zaun].forEach((layerEl, n) => {
       const slides = [...layerEl.firstElementChild.children];
