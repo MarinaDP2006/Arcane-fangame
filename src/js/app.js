@@ -73,8 +73,19 @@
     // Título letra a letra; el «&» lleva detrás un engranaje que gira al mover el cursor.
     const letters = (word, from) => [...word].map((ch, i) => el('span', { class: 'home-letter', style: `--i:${from + i}` }, ch));
     const amp = el('span', { class: 'home-amp', style: '--i:5' }, el('span', { class: 'home-gear', html: window.TitleFX.GEAR_SVG }), el('b', {}, '&'));
-    const city = (id, label) => el('button', { class: 'home-city', 'data-city': id, type: 'button' },
-      el('img', { src: `img/arte/simbolos/${id}.png`, alt: '' }), el('span', {}, label));
+    const city = (id, label) => el('button', {
+      class: `home-city${(document.body.dataset.ciudad || document.body.dataset.city) === id ? ' active' : ''}`,
+      'data-city': id, type: 'button', 'aria-pressed': String((document.body.dataset.ciudad || document.body.dataset.city) === id),
+      title: `Usar el tema de ${label}`,
+      onclick: () => {
+        App.setCity(id);
+        root.querySelectorAll('.home-city').forEach((b) => {
+          const active = b.dataset.city === id;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-pressed', String(active));
+        });
+      },
+    }, el('img', { src: `img/arte/simbolos/${id}.png`, alt: '' }), el('span', {}, label));
     const s = App.settings;
     const home = el('div', { class: 'home' },
       pilt, zaun,
