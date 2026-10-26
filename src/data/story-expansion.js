@@ -202,10 +202,41 @@
   insertBefore('piltover', 'fin', piltover);
   insertBefore('t2', 'fin2', consequences);
 
-  // Los títulos visibles pasan a dos partes; los IDs de los guardados no cambian.
+  // Estructura editorial explícita: cada temporada tiene ocho episodios en tres actos.
+  // Los episodios 1–3 forman el Acto I, 4–6 el Acto II y 7–8 el Acto III.
+  // Las rutas paralelas de Piltover y Zaun comparten la numeración de la temporada 1.
+  S.acts = [
+    { season: 1, act: 1, title: 'Acto I · La chispa', episodes: [1, 2, 3] },
+    { season: 1, act: 2, title: 'Acto II · Las consecuencias', episodes: [4, 5, 6] },
+    { season: 1, act: 3, title: 'Acto III · El precio de la guerra', episodes: [7, 8] },
+    { season: 2, act: 1, title: 'Acto I · Cenizas', episodes: [1, 2, 3] },
+    { season: 2, act: 2, title: 'Acto II · La fractura', episodes: [4, 5, 6] },
+    { season: 2, act: 3, title: 'Acto III · Lo que queda', episodes: [7, 8] },
+  ];
+  const canonical = /^(?:[z p]\\d+|t\\d+|fin2?)$/;
   for (const chapter of S.chapters) {
-    if (/^T2 · /.test(chapter.title)) chapter.title = chapter.title.replace(/^T2 · /, 'Parte II · ');
-    else if (chapter.id === 'fin') chapter.title = 'Parte I · Final · El Puente';
-    else if (!/^Parte [I]+ · /.test(chapter.title) && chapter.route !== 't2') chapter.title = 'Parte I · ' + chapter.title;
+    const match = /^(?:[zp])(\\d+)$/.exec(chapter.id) || /^t(\\d+)$/.exec(chapter.id);
+    const isT2 = chapter.route === 't2';
+    if (match && Number(match[1]) <= 8) {
+      const episode = Number(match[1]);
+      const season = isT2 ? 2 : 1;
+      const act = episode <= 3 ? 1 : episode <= 6 ? 2 : 3;
+      chapter.season = season;
+      chapter.episode = episode;
+      chapter.act = act;
+      const actTitle = S.acts.find((x) => x.season === season && x.act === act).title;
+      const cleanTitle = chapter.title
+        .replace(/^Parte [IVX]+ · /, '')
+        .replace(/^T2 · /, '')
+        .replace(/^Capítulo \\d+ · /, '');
+      chapter.title = `T${season} · ${actTitle} · Episodio ${episode}/8 · ${cleanTitle}`;
+    } else if (chapter.id === 'fin' || chapter.id === 'fin2') {
+      chapter.season = chapter.id === 'fin2' ? 2 : 1;
+      chapter.act = 3;
+      chapter.episode = 8;
+      chapter.title = `T${chapter.season} · Final de temporada · ${chapter.title.replace(/^(?:T2 · |Parte [IVX]+ · )/, '')}`;
+    } else if (chapter.route !== 't2' && !chapter.id.startsWith('z') && !chapter.id.startsWith('p')) {
+      chapter.contentType = chapter.contentType || 'side-story';
+    }
   }
 })();
