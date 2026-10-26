@@ -912,10 +912,10 @@ body[data-city='zaun'] .btn.primary { background: linear-gradient(180deg, #8fe8c
 }
 .home-city[data-city='zaun'] { flex-direction: row-reverse; }
 .home-city img { width: 30px; height: 30px; object-fit: contain; opacity: 0.6; filter: drop-shadow(0 0 6px rgba(0,0,0,0.8)); transition: opacity 0.4s, transform 0.4s, filter 0.4s; }
-.home-city.on, .home-city:hover, .home-city:focus-visible { outline: none; }
-.home-city[data-city='piltover'].on, .home-city[data-city='piltover']:hover { color: #ffe3a0; text-shadow: 0 0 12px rgba(var(--gold-rgb), 0.7); }
-.home-city[data-city='zaun'].on, .home-city[data-city='zaun']:hover { color: #a8ffcb; text-shadow: 0 0 12px rgba(63, 191, 159, 0.8); }
-.home-city.on img { opacity: 1; transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35)); }
+.home-city.on, .home-city.active, .home-city:hover, .home-city:focus-visible { outline: none; }
+.home-city[data-city='piltover'].on, .home-city[data-city='piltover'].active, .home-city[data-city='piltover']:hover { color: #ffe3a0; text-shadow: 0 0 12px rgba(var(--gold-rgb), 0.7); }
+.home-city[data-city='zaun'].on, .home-city[data-city='zaun'].active, .home-city[data-city='zaun']:hover { color: #a8ffcb; text-shadow: 0 0 12px rgba(63, 191, 159, 0.8); }
+.home-city.on img, .home-city.active img { opacity: 1; transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.35)); }
 .home-cities b { width: 70px; height: 2px; background: linear-gradient(90deg, var(--gold), #7fd0ff 50%, var(--zaun)); box-shadow: 0 0 10px rgba(127,208,255,0.7); }
 .home-menu { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 3rem; width: min(360px, 80vw); }
 .home-btn {
