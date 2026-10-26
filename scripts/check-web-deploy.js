@@ -33,7 +33,7 @@ for (const file of htmlFiles) {
     if (!raw || raw.startsWith('#') || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(raw)) continue;
     const clean = decodeURIComponent(raw.split(/[?#]/, 1)[0]);
     if (!clean) continue;
-    const resolved = path.resolve(out, clean.startsWith('/') ? '.' + clean : path.relative(out, file).split(/[\\/]/).slice(0, -1).join('/') + '/' + clean);
+    const resolved = clean.startsWith('/') ? path.resolve(out, '.' + clean) : path.resolve(path.dirname(file), clean);
     if (resolved !== out && !resolved.startsWith(out + path.sep)) {
       fail(path.relative(out, file) + ' intenta salir de web-dist: ' + raw);
       continue;
