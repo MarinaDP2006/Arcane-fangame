@@ -673,7 +673,9 @@
   /** Lo que va encima del mapa (2D o 3D): ruta, ambiente, cristales, lugares, caras y rótulos. */
   /** Marcador del personaje en la carta 2D: retrato real y nombre, sin colores por género o facción. */
   function drawOrb2D(t) {
-    if (r3d || G.world.px == null) return;
+    // El retrato y el nombre del jugador también se dibujan sobre la escena 3D.
+    // El modelo 3D sigue visible debajo; ambos usan la misma posición del mundo.
+    if (G.world.px == null) return;
     const p = toScreen(G.world.px, G.world.py);
     const size = Math.max(18, Math.min(34, 22 * Math.sqrt(zoom / Math.max(0.2, fit))));
     const img = loadImg(`player-marker:${G.player.photo || G.player.name}`, Portrait.playerURL(G.player, 128));
