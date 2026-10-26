@@ -630,7 +630,8 @@
 
     // Foto de la carpeta lugares (la propia, o la que viaja con el juego) o, si falta, la ilustración del atlas.
     function placeArt(p) {
-      return (p.scene && window.CustomArt.image('lugares', p.scene)) || `img/atlas/${p.id}.webp`;
+      const atlasCity = ['noxus', 'the-immortal-bastion'].includes(p.id) ? 'otros' : (({ 'bridge-of-progress': 'zaun', 'river-pilt': 'piltover', 'stillwater-hold': 'piltover' })[p.id] || p.city || 'zaun');
+      return (p.scene && window.CustomArt.image('lugares', p.scene)) || `img/arte/mapa/${atlasCity}/atlas/${p.id}.webp`;
     }
 
     /** Abre la ficha del lugar visitado. */
@@ -1084,7 +1085,7 @@
     let lines = node.lines.filter(lineVisible);
     // Historia libre: el guion no habla por el jugador y, tras un turno libre, se adapta a lo
     // que ha escrito (si la IA falla, sale el guion original).
-    const adapting = freeStory() && G.progress.adaptNext;
+    const adapting = false;
     if (freeStory()) {
       const cast = sceneCast(node);
       lines = lines.filter((l) => l.s !== 'yo');
@@ -1092,8 +1093,7 @@
         const typing = tab === 'historia' ? typingIndicator(cast[0] || 'narrador') : null;
         try {
           const ch2 = chapterById(G.progress.chapterId);
-          const adapted = await window.AI.adapt(G, { chapter: ch2.title, cast, beat: lines.map((l) => `${l.s}: ${tpl(l.t, G.player)}`) });
-          if (adapted.length) lines = adapted;
+          // La adaptación con IA está aplazada; se conservan los diálogos escritos.
         } catch { /* se queda el guion escrito */ }
         typing?.remove();
       }
@@ -1220,7 +1220,7 @@
   const FORCE_MOVE = 6; // red de seguridad si la IA no elige camino
 
   function freeStory() {
-    return window.App.settings.storyMode !== 'opciones' && window.AI.ready() && aiFailedNode !== `${G.progress.chapterId}.${G.progress.node}`;
+    return false; // La historia libre con IA queda aplazada; se usan siempre las opciones escritas.
   }
 
   /** Personajes del reparto presentes en la escena actual. */
@@ -1244,7 +1244,6 @@
     box.append(
       el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', 'aria-label': 'Enviar', onclick: send }, '➤')),
       el('small', { class: 'muted ai-note' }, `Habla o actúa como ${G.player.name}: no hay opciones, la escena reacciona a lo que escribas.`));
-    window.AI.warm();
     if (!U.touch) setTimeout(() => input.focus(), 0);
   }
 
@@ -1728,54 +1727,7 @@
     persist();
   }
 
-  /** Muestra la entrada de texto del chat libre con IA. */
-  function showAIBox(id, box) {
-    box.classList.add('ai-box');
-    if (!window.AI.ready()) {
-      box.append(el('div', { class: 'ai-off' },
-        el('p', {}, `Con la IA puedes escribirle a ${charName(id)} lo que quieras y te responderá en su papel. Es gratis: abre KoboldCpp en tu PC y actívalo en Ajustes → «IA de la historia y los chats».`),
-        el('button', { class: 'btn small primary', onclick: openSettingsOverlay }, 'Abrir ajustes')));
-      return;
-    }
-    const input = el('textarea', { class: 'input ai-input', rows: 1, maxlength: 500, placeholder: `Escribe a ${charName(id)}…`,
-      onkeydown: (e) => { if (e.key !== 'Escape') e.stopPropagation(); if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } } });
-    const send = () => { const t = input.value.trim(); if (!t || talking) return; input.value = ''; sendAI(id, t); };
-    box.append(el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', onclick: send }, '➤')));
-    window.AI.warm();
-    if (!U.touch) setTimeout(() => input.focus(), 0);
-  }
-
-  /** Envía el mensaje a KoboldCpp. */
-  async function sendAI(id, text) {
-    talking = true;
-    const thread = G.chats[id];
-    thread.push({ s: 'yo', t: text });
-    $('#chat-log')?.append(bubble('yo', text));
-    showDialog(id);
-    const log = $('#chat-log');
-    const typing = el('div', { class: 'msg them typing' }, el('div', { class: 'bubble' }, el('i'), el('i'), el('i')));
-    log?.append(typing);
-    if (log) log.scrollTop = log.scrollHeight;
-    try {
-      const r = await window.AI.reply(G, id);
-      typing.remove();
-      await speak(id, [{ s: id, t: r.text, raw: true }]);
-      // La afinidad cambia poco a poco: tres mensajes que le gusten = +1; dos que no = −1.
-      const c = (G.aiAff = G.aiAff || {})[id] || { pos: 0, neg: 0 };
-      if (r.aff > 0 && ++c.pos >= 3) { c.pos = 0; applyTalkFx(id, { aff: 1 }); }
-      if (r.aff < 0 && ++c.neg >= 2) { c.neg = 0; applyTalkFx(id, { aff: -1 }); }
-      G.aiAff[id] = c;
-    } catch (err) {
-      typing.remove();
-      const t = `(La IA no responde: ${err.message})`;
-      $('#chat-log')?.append(bubble('sistema', t));
-    }
-    talking = false;
-    if (tab === 'chats' && contact === id) { refreshChatHead(id); showDialog(id); }
-    renderContacts();
-    persist();
-  }
-
+  /** La IA está aplazada: cualquier ajuste guardado de chat libre vuelve al diálogo escrito. */
   /** Presenta las líneas de una conversación con personaje. */
   function showDialog(id) {
     const box = $('#dlg-choices');
@@ -1783,7 +1735,7 @@
     box.innerHTML = '';
     box.classList.remove('ai-box');
     if (talking) return;
-    if (chatMode(id) === 'ai') return showAIBox(id, box);
+    if (chatMode(id) === 'ai') { setChatMode(id); return; }
     if (talkState().at[id] === 'bye') {
       box.append(el('button', { class: 'choice', onclick: () => restartTalk(id) }, el('span', { class: 'num' }, 1), `Volver a hablar con ${charName(id)}`));
       return;
