@@ -339,22 +339,7 @@ Reglas para todos los agentes:
 
 ---
 
-## 7. GitHub: reducir los correos constantes
-
-Esto es configuración de notificaciones, no un cambio del juego.
-
-- [ ] Abrir [Settings → Notifications](https://github.com/settings/notifications).
-- [ ] En **System → Actions**, elegir **Don't notify** para dejar de recibir correo por cada ejecución de GitHub Actions. Si quieres enterarte solo de errores, elige **Only notify for failed workflows** y guarda los cambios. La documentación oficial describe estas opciones: [Administrar notificaciones de GitHub Actions](https://docs.github.com/es/subscriptions-and-notifications/how-tos/managing-github-actions-notifications).
-- [ ] En **Participating and watching**, desactivar el canal **Email** si no quieres correos de las conversaciones en las que participas o de repositorios observados. Mantén las notificaciones de GitHub activadas si quieres consultarlas en la bandeja web.
-- [ ] En `MarinaDP2006/Arcane-fangame`, abrir el desplegable **Watch** y elegir una opción más limitada o **Ignore** si no quieres notificaciones de ese repositorio. Si los correos provienen de un PR concreto, abre ese PR y pulsa **Unsubscribe**.
-- [ ] Si sigues recibiendo correo, mira el tipo del mensaje: Actions, conversación seguida, mención directa, revisión, alerta de seguridad o actividad de organización. Cada categoría puede tener una configuración distinta.
-
-Desactivar correos **no detiene las compilaciones ni las pruebas**: solo modifica la entrega de avisos. [Documentación oficial de notificaciones](https://docs.github.com/es/subscriptions-and-notifications/get-started/configuring-notifications).
-
----
-
-## 8. Orden de trabajo recomendado para no romper el juego
-
+## 7. Orden de trabajo recomendado para no romper el juego
 1. **Validar mapas ya presentes**: abrir ambos .blend/.glb, probar el render, POI, colisiones, escala y fallback 2D.
 2. **Validar actores 3D**: jugador creado, modelos de personajes, guardias, NPC, animaciones y encuadre.
 3. **Implementar el rediseño visual** pantalla a pantalla, conservando la lógica y rutas existentes.
