@@ -13,7 +13,7 @@ Fangame narrativo gratuito y no oficial ambientado en **Arcane**, temporadas 1 y
 
 ## Web pública y Render
 
-La web pública es la página informativa del proyecto y se publica en Render desde la rama `main`. No es una demo jugable dentro del navegador ni sustituye a la aplicación de escritorio.
+La web pública es la página informativa del proyecto y se publica en Render desde la rama `main`. El juego completo se distribuye como aplicación de escritorio para Windows.
 
 - URL pública: https://arcane-fangame.onrender.com/
 - Configuración de Render: `render.yaml`.
