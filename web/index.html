@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <!-- ==========================================================
+       RIFTS & GEARS · Web del fangame narrativo de Arcane
+       ----------------------------------------------------------
+       Estructura del archivo:
+       1. Cabecera y navegación
+       2. Portada cinematográfica (Piltover / Zaun)
+       3. Todo el juego: en qué consiste y sus sistemas
+       4. Las dos ciudades: lore, barrios y lugares
+       5. El mapa del Códice
+       6. Los 16 personajes
+       7. Cómo se juega
+       8. Pie y aviso legal
+
+       Las imágenes provienen SOLO de src/img/arte/ (caras de
+       personajes, lugares/ciudades y el mapa del Códice). El
+       compilador (scripts/build-web.js) las copia a
+       web-dist/arte-oficial/{personajes,lugares,mapa}/.
+       ========================================================== -->
+
+  <!-- Metadatos para navegadores, móviles y buscadores. -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080a10">
+  <meta name="description" content="Rifts &amp; Gears: fangame narrativo de rol libre ambientado en Arcane. Crea tu personaje en Piltover o Zaun y escribe tu propia historia entre las Dos Ciudades.">
+  <title>Rifts &amp; Gears · Fangame narrativo de Arcane entre Piltover y Zaun</title>
+  <link rel="icon" href="icono-arcane.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- Enlace accesible para saltar directamente al contenido. -->
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <!-- ============================ 1. CABECERA ============================ -->
+  <header class="cabecera">
+    <a class="logo" href="#inicio" aria-label="Rifts and Gears, ir al inicio">
+      <span class="logo-sello" aria-hidden="true">R&amp;G</span>
+      <span class="logo-texto"><strong>Rifts &amp; Gears</strong><small>Fangame narrativo de Arcane</small></span>
+    </a>
+    <!-- En móvil, menu.js convierte este botón en el desplegable de la navegación. -->
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu">Menú</button>
+    <nav class="menu" id="menu" aria-label="Navegación principal">
+      <a href="#juego">El juego</a>
+      <a href="#historia">Historia</a>
+      <a href="#misiones">Misiones</a>
+      <a href="#relaciones">Relaciones</a>
+      <a href="#piltover">Piltover</a>
+      <a href="#zaun">Zaun</a>
+      <a href="#mapa">El mapa</a>
+      <a href="#personajes">Personajes</a>
+      <a href="#como-jugar">Cómo jugar</a>
+      <a class="btn btn-primario btn-sm" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Descargar</a>
+    </nav>
+  </header>
+
+  <main id="contenido">
+    <!-- ======================= 2. PORTADA ======================= -->
+    <!-- La portada usa los fondos de las dos ciudades (arte de lugares)
+         y los retratos de Vi y Jinx; el resto es CSS puro. -->
+    <section class="portada portada-inicio" id="inicio" aria-labelledby="titulo-principal">
+      <div class="portada-fondo" aria-hidden="true">
+        <span class="lado-piltover"></span>
+        <span class="lado-zaun"></span>
+      </div>
+      <div class="portada-texto">
+        <p class="kicker"><span class="latido" aria-hidden="true"></span>Rol libre entre las Dos Ciudades</p>
+        <h1 id="titulo-principal">Elige de qué lado <em>cambiarás</em> el destino.</h1>
+        <p class="entradilla">Piltover brilla sobre el acantilado. Zaun respira bajo su sombra. Crea a alguien nuevo, escríbele un pasado y di tú qué hace o qué dice: el mundo reacciona.</p>
+        <div class="acciones">
+          <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Descargar el juego <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-borde" href="#juego">Ver qué incluye <span aria-hidden="true">↓</span></a>
+        </div>
+        <ul class="sellos-portada" aria-label="Características principales">
+          <li>Versión {{VERSION}}</li>
+          <li>{{PERSONAJES}} personajes</li>
+          <li>{{LUGARES}} lugares</li>
+          <li>IA opcional</li>
+        </ul>
+      </div>
+      <!-- Retratos locales de Vi y Jinx (src/img/arte/caras/). -->
+      <figure class="portada-personajes">
+        <img src="arte-oficial/personajes/vi.webp" alt="Retrato de Vi, luchadora de Zaun" fetchpriority="high">
+        <img src="arte-oficial/personajes/jinx.webp" alt="Retrato de Jinx, inventora de Zaun" fetchpriority="high">
+        <figcaption><span>VI</span><span>JINX</span></figcaption>
+      </figure>
+      <a class="indicador-scroll" href="#juego"><span aria-hidden="true">⌄</span> Sigue leyendo</a>
+    </section>
+
+    <!-- ======================= 3. TODO EL JUEGO ======================= -->
+    <!-- Explica el conjunto del juego: creación, rol libre, mapa, códice,
+         capítulos, partidas guardadas e IA opcional. -->
+    <section class="seccion" id="juego" aria-labelledby="titulo-juego-seccion">
+      <div class="seccion-cabeza">
+        <p class="kicker">Un fangame gratuito y no oficial</p>
+        <h2 id="titulo-juego-seccion">Todo el juego, de un vistazo.</h2>
+        <p>Rifts &amp; Gears es un juego de rol narrativo ambientado en el mundo de <em>Arcane</em> (temporadas 1 y 2). No eliges entre opciones prefabricadas: inventas tu personaje y escribes lo que hace o dice, y la historia responde.</p>
+      </div>
+
+      <!-- Seis tarjetas con los sistemas del juego. -->
+      <div class="caracteristicas">
+        <article class="caracteristica">
+          <span>01</span>
+          <h3>Crea tu personaje</h3>
+          <p>Nombre, pronombres, ciudad de origen, barrio, oficio, familia y un trasfondo escrito por ti. De Zaun a Piltover, tú decides quién eres.</p>
+        </article>
+        <article class="caracteristica">
+          <span>02</span>
+          <h3>Escribe tu rol libre</h3>
+          <p>No hay botones de diálogo: escribes tus acciones y tus palabras con total libertad. Los personajes y el mundo reaccionan a lo que haces.</p>
+        </article>
+        <article class="caracteristica">
+          <span>03</span>
+          <h3>Explora las Dos Ciudades</h3>
+          <p>Piltover y Zaun completas, con sus barrios, lugares y actividades: la Academia, el Consejo, los Callejones, el Sumidero y muchos más.</p>
+        </article>
+        <article class="caracteristica">
+          <span>04</span>
+          <h3>Capítulos y finales</h3>
+          <p>{{CAPITULOS}} capítulos y {{FINALES}} finales distintos. Tus decisiones abren y cierran caminos; la historia puede terminar de muchas formas.</p>
+        </article>
+        <article class="caracteristica">
+          <span>05</span>
+          <h3>Mapa y Códice</h3>
+          <p>Un mapa 2D navegable que se convierte en ciudad 3D al entrar. Recoge fragmentos del Códice para descubrir el lore de personajes, lugares y tecnología.</p>
+        </article>
+        <article class="caracteristica">
+          <span>06</span>
+          <h3>IA opcional</h3>
+          <p>Puedes jugar con diálogos escritos o activar KoboldCpp, una IA que corre en tu propio ordenador. Sin cuentas, sin nube y sin seguimiento.</p>
+        </article>
+      </div>
+
+      <!-- Nota sobre plataformas y privacidad. -->
+      <aside class="nota-ia nota-plataformas">
+        <span class="nota-ia-sello" aria-hidden="true">✳</span>
+        <p><strong>Plataforma y privacidad.</strong> El juego es de escritorio (Windows y macOS) y existe también versión Android. Las partidas y los ajustes se guardan en tu propio dispositivo: no hay cuentas, anuncios ni analítica.</p>
+      </aside>
+    </section>
+
+    <!-- ======================= LA HISTORIA: DOS TEMPORADAS ======================= -->
+    <!-- La serie adaptada al juego en dos partes, con sus tres actos y sus rutas.
+         Datos reales de src/data/story.js y src/data/story-expansion.js. -->
+    <section class="seccion seccion-historia" id="historia" aria-labelledby="titulo-historia">
+      <div class="seccion-cabeza">
+        <p class="kicker">La historia del juego</p>
+        <h2 id="titulo-historia">Dos temporadas, dos partes.</h2>
+        <p>La historia de <em>Arcane</em> se juega en dos partes. En la <strong>Parte I</strong> eliges por dónde vivir la Temporada 1: la ruta de Zaun o la de Piltover, dos relatos paralelos que comparten episodios y terminan en el mismo final. En la <strong>Parte II</strong> continúa la Temporada 2 con todo el reparto y con las consecuencias de lo que has hecho.</p>
+      </div>
+
+      <div class="partes-grid">
+        <!-- PARTE I · TEMPORADA 1 -->
+        <article class="parte-panel parte-i">
+          <p class="parte-kicker">Parte I · El inicio — Temporada 1</p>
+          <h3>Elige tu ciudad</h3>
+          <p class="parte-texto">Empiezas en <strong>Zaun</strong> o en <strong>Piltover</strong> y vives 10 capítulos desde tu lado del puente. Las rutas se entrecruzan y comparten el mismo capítulo final, <em>El Puente</em>.</p>
+          <div class="actos">
+            <div class="acto"><span>Acto I</span><strong>La chispa</strong><small>Episodios 1–3</small></div>
+            <div class="acto"><span>Acto II</span><strong>Las consecuencias</strong><small>Episodios 4–6</small></div>
+            <div class="acto"><span>Acto III</span><strong>El precio de la guerra</strong><small>Episodios 7–8</small></div>
+          </div>
+          <ul class="ruta-lista">
+            <li><b>Ruta Zaun</b> — 10 capítulos: La Última Gota, Humo y traición, Siete años después, Luciérnagas, Reencuentro…</li>
+            <li><b>Ruta Piltover</b> — 10 capítulos: La Academia, Mecenas, El Día del Progreso, Vuelo sobre Zaun…</li>
+            <li><b>Final de la Parte I</b> — El Puente</li>
+          </ul>
+        </article>
+
+        <!-- PARTE II · TEMPORADA 2 -->
+        <article class="parte-panel parte-ii">
+          <p class="parte-kicker">Parte II · Las consecuencias — Temporada 2</p>
+          <h3>Lo que hiciste vuelve</h3>
+          <p class="parte-texto">La T2 continúa con las dos ciudades cambiadas y con las caras nuevas de esta temporada. Aquí el reparto ya es adulto y tus vínculos anteriores pesan en cada escena.</p>
+          <div class="actos">
+            <div class="acto"><span>Acto I</span><strong>Cenizas</strong><small>Episodios 1–3</small></div>
+            <div class="acto"><span>Acto II</span><strong>La fractura</strong><small>Episodios 4–6</small></div>
+            <div class="acto"><span>Acto III</span><strong>Lo que queda</strong><small>Episodios 7–8</small></div>
+          </div>
+          <ul class="ruta-lista">
+            <li><b>Capítulos</b> — Cenizas, La niña de las gafas, El Heraldo, La loba y la rosa, Ecos del tiempo…</li>
+            <li><b>Nuevos en el reparto</b> — Ambessa, Maddie, Isha y Kino</li>
+            <li><b>Final de temporada</b> — La guerra por el puente</li>
+          </ul>
+        </article>
+      </div>
+      <p class="nota-arte">Cada capítulo ofrece decisiones con requisitos: estadísticas, banderas y afinidad. Ninguna partida es igual a otra.</p>
+    </section>
+
+    <!-- ======================= MISIONES ======================= -->
+    <!-- Misiones principales (capítulos) y secundarias (actividades, Códice y charlas). -->
+    <section class="seccion" id="misiones" aria-labelledby="titulo-misiones">
+      <div class="seccion-cabeza">
+        <p class="kicker">Qué puedes hacer</p>
+        <h2 id="titulo-misiones">La historia y todo lo que hay alrededor.</h2>
+        <p>La línea principal son los capítulos; alrededor, misiones secundarias que suben tus estadísticas, tu afinidad y tu confianza con cada personaje.</p>
+      </div>
+
+      <div class="misiones-grid">
+        <article class="mision-card"><span class="mision-cifra">{{CAPITULOS}}</span><h3>Misión principal</h3><p>Los capítulos de la Parte I y la Parte II, con decisiones que piden Ingenio, Carisma, Valor o Sigilo y afinidad mínima.</p></article>
+        <article class="mision-card"><span class="mision-cifra">15</span><h3>Secundarias del mapa</h3><p>8 en Piltover y 7 en Zaun: descifrar runas, pelear en el foso, desactivar Chompers, carrera por los tejados…</p></article>
+        <article class="mision-card"><span class="mision-cifra">23</span><h3>Fragmentos del Códice</h3><p>Piezas escondidas por las dos ciudades que desbloquean entradas de lore: hextec, quimtec, personajes y facciones.</p></article>
+        <article class="mision-card"><span class="mision-cifra">{{FINALES}}</span><h3>Finales posibles</h3><p>Tus decisiones, tus estadísticas y tu afinidad abren y cierran el final de cada parte.</p></article>
+      </div>
+
+      <h3 class="subtitulo-zona">Ejemplos de secundarias</h3>
+      <ul class="ejemplos-misiones">
+        <li>Descifrar runas con Heimerdinger</li>
+        <li>Ajustar un circuito hextec con Jayce</li>
+        <li>Descargar barcos en el muelle</li>
+        <li>Seguir a un contrabandista</li>
+        <li>Pelear en el foso</li>
+        <li>Carrera por los tejados</li>
+        <li>Desactivar una Chomper de Jinx</li>
+        <li>Atender la barra de La Última Gota</li>
+        <li>Persecución en aerodeslizador con las Luciérnagas</li>
+        <li>Clasificar chatarra con Benzo</li>
+      </ul>
+    </section>
+
+    <!-- ======================= AFINIDAD Y CONFIANZA ======================= -->
+    <!-- Sistema de relaciones real: src/data/relations.js y src/js/relations.js (NEEDS). -->
+    <section class="seccion seccion-relaciones" id="relaciones" aria-labelledby="titulo-relaciones">
+      <div class="seccion-cabeza">
+        <p class="kicker">Afinidad y confianza</p>
+        <h2 id="titulo-relaciones">De desconocidos a familia.</h2>
+        <p>Con cada personaje llevas dos cuentas: la <strong>afinidad</strong> (de 0 a 10, lo que le caes bien) y la <strong>confianza</strong> (el tiempo real que habéis compartido, que sube como mucho una vez por capítulo). Nada se consigue de golpe: se gana con hechos.</p>
+      </div>
+
+      <!-- Escalera de relaciones con los requisitos reales del juego. -->
+      <div class="escalera">
+        <article class="escalera-paso"><span class="rel-icono" aria-hidden="true">✦</span><h3>Amistad</h3><p class="escalera-requisitos">Afinidad 4 · Confianza 2</p><p>Todo empieza aquí: nadie pasa de desconocido a pareja o familia de golpe.</p></article>
+        <article class="escalera-paso"><span class="rel-icono" aria-hidden="true">✧</span><h3>Mejor amig@</h3><p class="escalera-requisitos">Afinidad 8 · Confianza 6</p><p>La persona a la que llamas primero cuando hay un problema.</p></article>
+        <article class="escalera-paso rel-romantica"><span class="rel-icono" aria-hidden="true">♥</span><h3>Pareja</h3><p class="escalera-requisitos">Afinidad 8 · Confianza 6</p><p>Solo entre adultos que os atraigáis y nunca con quien es tu familia o tu herman@ de corazón.</p></article>
+        <article class="escalera-paso"><span class="rel-icono" aria-hidden="true">⌂</span><h3>Familia elegida</h3><p class="escalera-requisitos">Afinidad 7 · Confianza 5</p><p>Padre, madre, abuelo o mentor: quien se convierte en tu familia si te faltan.</p></article>
+        <article class="escalera-paso"><span class="rel-icono" aria-hidden="true">❖</span><h3>Herman@ de corazón</h3><p class="escalera-requisitos">Afinidad 7 · Confianza 5</p><p>Un lazo de hermandad sin parentesco de por medio.</p></article>
+      </div>
+
+      <div class="reglas-rel">
+        <p><strong>Cómo sube la afinidad:</strong> las decisiones de la historia (+1 o −1), las charlas del comunicador (el cumplido sube afinidad; los secretos piden afinidad 3 y hablar de miedos, afinidad 2) y pasar la tarde con alguien.</p>
+        <p><strong>Cómo sube la confianza:</strong> tiempo compartido real, una vez por capítulo y por tipo de rato. Por eso una relación seria lleva varios capítulos.</p>
+        <p><strong>Cuándo hay romance:</strong> se abre tras el salto de «Siete años después» (capítulo 3) de la Parte I o en la Parte II. Si en la creación elegiste familia —hij@ de Vander, criad@ por Silco, herman@ de Jayce, Viktor o Mel— con ellos nunca hay romance: ahí el vínculo es de familia y de hermandad.</p>
+        <p><strong>Desde la creación:</strong> puedes empezar ya con un parentesco (afinidad inicial y escenas familiares propias) o sin familia famosa y construir todos los vínculos jugando.</p>
+      </div>
+    </section>
+
+    <!-- ======================= 4. LAS DOS CIUDADES ======================= -->
+    <!-- Transición editorial hacia la sección de ciudades. -->
+    <section class="seccion umbral" id="ciudades" aria-labelledby="titulo-umbral">
+      <div class="umbral-marca" aria-hidden="true"><span>02</span><i></i></div>
+      <div>
+        <p class="kicker">Dos ciudades. Un mismo río.</p>
+        <h2 id="titulo-umbral">Arriba, el progreso. Abajo, la supervivencia.</h2>
+        <p>Piltover y Zaun fueron una sola ciudad y hoy son dos sociedades que se necesitan y se culpan. El puente las une; la desigualdad las separa. Tu historia empieza en una de las dos.</p>
+      </div>
+      <p class="umbral-cita">«No hay ciudad sin cicatrices. Ni futuro escrito de antemano.»</p>
+    </section>
+
+    <!-- ----------------------- 4a. PILTOVER ----------------------- -->
+    <!-- Lore basado en la ficha oficial de Universe y en el diseño de la serie. -->
+    <section class="seccion seccion-ciudad" id="piltover" aria-labelledby="titulo-piltover">
+      <div class="seccion-cabeza">
+        <p class="kicker">La Ciudad del Progreso</p>
+        <h2 id="titulo-piltover">Piltover</h2>
+        <p>Puerto mercantil construido sobre acantilados, Piltover vive del comercio que entra por sus puertas marítimas y de la iniciativa de sus clanes mercantiles, que financian arte, monumentos e investigación hextec. Su influencia se basa en el dinero y la innovación, más que en el ejército. Es una ciudad de geometría, simetría y belleza mecánica, con aire Art Decó: mármol, latón y cristal que se desgastan con el uso y se sienten habitadas.</p>
+        <p>La hextec —la fusión de magia y tecnología mediante gemas grabadas con runas— nació aquí de la mano de Jayce y Viktor, y lo cambió todo: transportes, armas y negocios. Arriba se celebra el Día del Progreso; abajo se cuenta como un recordatorio de quién queda fuera.</p>
+        <p class="fuentes-nota">Lore de referencia: <a href="https://universe.leagueoflegends.com/es_ES/region/piltover/" target="_blank" rel="noopener">Piltover en Universe ↗</a></p>
+      </div>
+
+      <!-- Vista panorámica de la ciudad (arte de lugares). -->
+      <figure class="ciudad-vista">
+        <img src="arte-oficial/lugares/piltover-s1.webp" alt="Vista de Piltover: cúpulas, torres y terrazas sobre el acantilado" loading="lazy">
+        <figcaption>Vista de Piltover · arte de referencia de Arcane</figcaption>
+      </figure>
+
+      <!-- Barrios jugables de Piltover (tal y como aparecen en el mapa del juego). -->
+      <h3 class="subtitulo-zona">Sus barrios en el juego</h3>
+      <div class="barrios">
+        <article class="barrio barrio-alto"><h4>Barrio Académico</h4><p>La Academia y los talleres donde se investiga con runas y cristales. Ahí empiezan las carreras… y los secretos de la hextec.</p></article>
+        <article class="barrio barrio-alto"><h4>Distrito del Consejo</h4><p>El centro del poder: la Sala del Consejo, los salones de los clanes y la política que decide el destino de las Dos Ciudades.</p></article>
+        <article class="barrio barrio-alto"><h4>Las Terrazas Kiramman</h4><p>Jardines, invernaderos y mansiones de las familias influyentes. El privilegio presentado como arquitectura doméstica.</p></article>
+        <article class="barrio barrio-alto"><h4>Barrio de los Artesanos</h4><p>Talleres, mercados y oficios: el Pulso de la ciudad, donde el progreso se fabrica a mano y se vende a pie de calle.</p></article>
+        <article class="barrio barrio-alto"><h4>Los Muelles de las Hexpuertas</h4><p>Barcos, grúas y portales hextec. El umbral por el que entra casi todo lo que mueve la riqueza de Piltover.</p></article>
+      </div>
+
+      <!-- Lugares destacados de Piltover con su arte. -->
+      <h3 class="subtitulo-zona">Sus lugares</h3>
+      <div class="lugares-grid lugares-grid-ancha">
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/academia-piltover.webp" alt="La Academia de Piltover, cuna de la hextec" loading="lazy">
+          <div><span>PILTOVER · BARRIO ACADÉMICO</span><h3>La Academia</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/consejo-piltover-s2.webp" alt="La Sala del Consejo de Piltover" loading="lazy">
+          <div><span>PILTOVER · DISTRITO DEL CONSEJO</span><h3>La Sala del Consejo</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/mansion-kiramman-piltover-s2.webp" alt="La Mansión Kiramman y sus terrazas" loading="lazy">
+          <div><span>PILTOVER · TERRAZAS KIRAMMAN</span><h3>La Mansión Kiramman</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/hexpuertas-piltover-s1.webp" alt="Las Hexpuertas sobre los muelles de Piltover" loading="lazy">
+          <div><span>PILTOVER · MUELLES</span><h3>Las Hexpuertas</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/artesanos-piltover-s1.webp" alt="El Barrio de los Artesanos de Piltover" loading="lazy">
+          <div><span>PILTOVER · BARRIO DE LOS ARTESANOS</span><h3>El Mercado de Artesanos</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/taller-piltover-s1.webp" alt="El taller y laboratorio de Jayce" loading="lazy">
+          <div><span>PILTOVER · BARRIO ACADÉMICO</span><h3>El Taller de Jayce</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/plaza-piltover-s1.webp" alt="La Plaza del Progreso y sus calles" loading="lazy">
+          <div><span>PILTOVER · CENTRO CÍVICO</span><h3>La Plaza del Progreso</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/puente-piltover-s1.webp" alt="El Puente del Progreso que une las dos ciudades" loading="lazy">
+          <div><span>PILTOVER / ZAUN · EL PUENTE</span><h3>El Puente del Progreso</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-alto">
+          <img src="arte-oficial/lugares/stillwater-piltover-s1.webp" alt="La prisión de Stillwater" loading="lazy">
+          <div><span>PILTOVER · PRISIÓN DE STILLWATER</span><h3>Stillwater</h3></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ----------------------- 4b. ZAUN ----------------------- -->
+    <section class="seccion seccion-ciudad seccion-zaun" id="zaun" aria-labelledby="titulo-zaun">
+      <div class="seccion-cabeza">
+        <p class="kicker">La Subciudad</p>
+        <h2 id="titulo-zaun">Zaun</h2>
+        <p>Bajo los cañones de Piltover se extiende Zaun: un mundo de niveles, humos y luces de color filtrándose entre tuberías y vidrio coloreado. La luz nunca llega entera; hay un crepúsculo perpetuo de niebla química. Aun así, no es solo ruina: su gente es vibrante, inventiva y orgullosa, con mercados, comunidad y cultura propias.</p>
+        <p>Su tecnología es la quimtec: más barata y más peligrosa que la hextec, hecha de química, chatarra y prótesis. En sus fábricas se produce también el Brillo, la sustancia violeta que financia el poder de los químbarones y que da fuerza sobrehumana a cambio del cuerpo y la cordura. Frente a ellos, las Luciérnagas de Ekko sabotean los envíos y protegen a los olvidados.</p>
+        <p class="fuentes-nota">Lore de referencia: <a href="https://universe.leagueoflegends.com/en_US/region/zaun/" target="_blank" rel="noopener">Zaun en Universe ↗</a> · <a href="https://arcane.fandom.com/wiki/Arcane_Wiki" target="_blank" rel="noopener">Arcane Wiki ↗</a></p>
+      </div>
+
+      <figure class="ciudad-vista">
+        <img src="arte-oficial/lugares/zaun-s1.webp" alt="Vista de Zaun: calles industriales, humo y luces de neón" loading="lazy">
+        <figcaption>Vista de Zaun · arte de referencia de Arcane</figcaption>
+      </figure>
+
+      <h3 class="subtitulo-zona">Sus barrios en el juego</h3>
+      <div class="barrios">
+        <article class="barrio barrio-bajo"><h4>Las Fábricas de Entresuelo</h4><p>Naves, hornos y maquinaria que no paran. Aquí se trabaja para los químbarones y se respira lo que arriba no quieren oler.</p></article>
+        <article class="barrio barrio-bajo"><h4>Barrio de las Chimeneas</h4><p>Chimeneas, tejados y persecuciones. El aire es peor, pero las vistas permiten avisar, esconderse o correr sin ser visto.</p></article>
+        <article class="barrio barrio-bajo"><h4>Los Callejones</h4><p>El corazón de Zaun: puestos de comida, talleres, buhardillas y rumores. Lo primero que se ve al bajar del puente.</p></article>
+        <article class="barrio barrio-bajo"><h4>El Mercado de las Tuberías</h4><p>Mercancía, trueques y noticias a tres pisos de andamios remendados. Aquí todo se compra y todo se vende.</p></article>
+        <article class="barrio barrio-bajo"><h4>El Sumidero</h4><p>Lo más profundo, donde la niebla química nunca se levanta. Pocos bajan por gusto; laboratorios clandestinos y gente olvidada comparten la oscuridad.</p></article>
+      </div>
+
+      <h3 class="subtitulo-zona">Sus lugares</h3>
+      <div class="lugares-grid lugares-grid-ancha">
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/callejones-zaun-s2.webp" alt="Los Callejones de Zaun, con sus mercados y luces" loading="lazy">
+          <div><span>ZAUN · LOS CALLEJONES</span><h3>Los Callejones</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/mercado-zaun-s1.webp" alt="El Mercado de las Tuberías de Zaun" loading="lazy">
+          <div><span>ZAUN · MERCADO DE LAS TUBERÍAS</span><h3>El Mercado Vertical</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/ultima-gota-zaun-s1.webp" alt="El interior de La Última Gota, taberna de Zaun" loading="lazy">
+          <div><span>ZAUN · LOS CALLEJONES</span><h3>La Última Gota</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/fabrica-zaun-s1.webp" alt="Fábrica industrial de Zaun con tuberías y cubas" loading="lazy">
+          <div><span>ZAUN · FÁBRICAS DE ENTRESUELO</span><h3>La Fábrica de Brillo</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/sumidero-zaun-s1.webp" alt="El Sumidero, las profundidades de Zaun" loading="lazy">
+          <div><span>ZAUN · EL SUMIDERO</span><h3>El Sumidero</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/firelights-zaun-s1.webp" alt="El árbol que sirve de refugio a las Luciérnagas" loading="lazy">
+          <div><span>ZAUN · REFUGIO DE LAS LUCIÉRNAGAS</span><h3>El Árbol</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/tejados-zaun-s1.webp" alt="Los tejados y chimeneas de Zaun" loading="lazy">
+          <div><span>ZAUN · BARRIO DE LAS CHIMENEAS</span><h3>Los Tejados</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/escondite-jinx-s2.webp" alt="El escondite de Jinx en las profundidades" loading="lazy">
+          <div><span>ZAUN · EL SUMIDERO</span><h3>El Escondite de Jinx</h3></div>
+        </article>
+        <article class="lugar-card lugar-card-bajo">
+          <img src="arte-oficial/lugares/puente-zaun-s1.webp" alt="El paso desde Zaun hacia el Puente del Progreso" loading="lazy">
+          <div><span>ZAUN · HACIA EL PUENTE</span><h3>La Subida al Puente</h3></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ======================= 5. EL MAPA ======================= -->
+    <!-- El mapa ilustrado del Códice y la explicación del sistema 2D/3D. -->
+    <section class="seccion" id="mapa" aria-labelledby="titulo-mapa">
+      <div class="seccion-cabeza">
+        <p class="kicker">Un mapa, dos formas de recorrerlo</p>
+        <h2 id="titulo-mapa">El mapa del Códice.</h2>
+        <p>En el juego, el mapa es un plano 2D legible y navegable de las Dos Ciudades. Al entrar en una ciudad, el mismo lugar se representa en 3D con volumen real. Ambos modos comparten lugares, accesos, misiones y coordenadas: no son dos mapas distintos, sino dos vistas del mismo mundo.</p>
+      </div>
+      <figure class="mapa-codice">
+        <img src="arte-oficial/mapa/mapa-piltover-zaun.webp" alt="Mapa ilustrado de Piltover y Zaun con sus lugares" loading="lazy">
+        <figcaption>Mapa de Piltover y Zaun · ilustración de Charles Lee; símbolos y escenas de Arcane, uso de aficionada.</figcaption>
+      </figure>
+      <div class="mapa-datos">
+        <div><strong>{{LUGARES}}</strong><span>Lugares visitables</span></div>
+        <div><strong>{{CAPITULOS}}</strong><span>Capítulos</span></div>
+        <div><strong>{{FINALES}}</strong><span>Finales posibles</span></div>
+        <div><strong>{{PERSONAJES}}</strong><span>Personajes</span></div>
+      </div>
+    </section>
+
+    <!-- ======================= 6. PERSONAJES ======================= -->
+    <!-- Los 16 personajes del juego con sus retratos locales (arte/caras/). -->
+    <section class="seccion reparto-seccion" id="personajes" aria-labelledby="titulo-personajes">
+      <div class="seccion-cabeza">
+        <p class="kicker">Gente que deja huella</p>
+        <h2 id="titulo-personajes">Las calles nunca están vacías.</h2>
+        <p>Cada ciudad tiene su gente. Sus historias ya están en marcha; tus decisiones pueden cruzarse con las suyas dentro del juego.</p>
+      </div>
+      <div class="reparto-grid reparto-grid-completo">
+        <!-- ZAUN -->
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/vi.webp" alt="Vi" loading="lazy"><div><span>ZAUN · LUCHADORA</span><h3>Vi</h3><p>Puños de acero y una lealtad que no sabe rendirse.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/jinx.webp" alt="Jinx" loading="lazy"><div><span>ZAUN · INVENTORA</span><h3>Jinx</h3><p>Un genio de los explosivos y un mundo que no deja de hacer ruido.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/ekko.webp" alt="Ekko" loading="lazy"><div><span>ZAUN · LUCIÉRNAGAS</span><h3>Ekko</h3><p>Ingenio, comunidad y aerotablas para un futuro que aún vale defender.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/vander.webp" alt="Vander" loading="lazy"><div><span>ZAUN · TABERNERO</span><h3>Vander</h3><p>El viejo león de La Última Gota: familia por encima de todo.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/sevika.webp" alt="Sevika" loading="lazy"><div><span>ZAUN · LUGARTENIENTE</span><h3>Sevika</h3><p>Brazo mecánico, pragmatismo y una lealtad forjada a golpes.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/silco.webp" alt="Silco" loading="lazy"><div><span>ZAUN · EL BARÓN DEL BRILLO</span><h3>Silco</h3><p>Antiguo hermano de armas de Vander que sueña con un Zaun libre.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/viktor.webp" alt="Viktor" loading="lazy"><div><span>ZAUN · CIENTÍFICO</span><h3>Viktor</h3><p>Una mente brillante decidida a superar los límites del dolor.</p></div></article>
+        <article class="reparto-card reparto-zaun"><img src="arte-oficial/personajes/isha.webp" alt="Isha" loading="lazy"><div><span>ZAUN</span><h3>Isha</h3><p>Una niña de gestos y travesuras que devuelve algo de Powder a Jinx.</p></div></article>
+        <!-- PILTOVER -->
+        <article class="reparto-card reparto-alto"><img src="arte-oficial/personajes/caitlyn.webp" alt="Caitlyn Kiramman" loading="lazy"><div><span>PILTOVER · EJECUTORA</span><h3>Caitlyn</h3><p>Detective obstinada y tiradora excepcional; sigue las pruebas hasta el fondo.</p></div></article>
+        <article class="reparto-card reparto-alto"><img src="arte-oficial/personajes/jayce.webp" alt="Jayce Talis" loading="lazy"><div><span>PILTOVER · INVENTOR</span><h3>Jayce</h3><p>El hombre del progreso: idealismo, ambición y un martillo hextec.</p></div></article>
+        <article class="reparto-card reparto-alto"><img src="arte-oficial/personajes/heimerdinger.webp" alt="Heimerdinger" loading="lazy"><div><span>PILTOVER · DECANO</span><h3>Heimerdinger</h3><p>Yordle centenario, prudente hasta el exceso y memoria viva de la ciudad.</p></div></article>
+        <article class="reparto-card reparto-alto"><img src="arte-oficial/personajes/mel.webp" alt="Mel Medarda" loading="lazy"><div><span>PILTOVER · CONSEJERA</span><h3>Mel Medarda</h3><p>Elegante, calculadora y más compasiva de lo que deja ver.</p></div></article>
+        <article class="reparto-card reparto-alto"><img src="arte-oficial/personajes/cassandra.webp" alt="Cassandra Kiramman" loading="lazy"><div><span>PILTOVER · CONSEJERA</span><h3>Cassandra</h3><p>Madre de Caitlyn y voz firme de una de las familias de la ciudad.</p></div></article>
+        <article class="reparto-card reparto-alto"><img src="arte-oficial/personajes/maddie.webp" alt="Maddie Nolen" loading="lazy"><div><span>PILTOVER · EJECUTORA</span><h3>Maddie</h3><p>Eficiente, cercana y siempre con una taza de té a mano.</p></div></article>
+        <!-- NOXUS -->
+        <article class="reparto-card reparto-noxus"><img src="arte-oficial/personajes/ambessa.webp" alt="Ambessa Medarda" loading="lazy"><div><span>NOXUS · SEÑORA DE LA GUERRA</span><h3>Ambessa</h3><p>La loba de Noxus: la hextec como arma y la familia como debilidad.</p></div></article>
+        <article class="reparto-card reparto-noxus"><img src="arte-oficial/personajes/kino.webp" alt="Kino Medarda" loading="lazy"><div><span>NOXUS</span><h3>Kino</h3><p>Hijo de Ambessa y hermano de Mel: prefería las palabras a las espadas.</p></div></article>
+      </div>
+      <p class="nota-arte">Los retratos son imágenes de referencia de Arcane; los derechos pertenecen a Riot Games y Fortiche Production.</p>
+    </section>
+
+    <!-- ======================= 7. CÓMO SE JUEGA ======================= -->
+    <section class="seccion seccion-juego" id="como-jugar" aria-labelledby="titulo-como-jugar">
+      <div class="seccion-cabeza">
+        <p class="kicker">Tu voz mueve la escena</p>
+        <h2 id="titulo-como-jugar">No hay botones para elegir qué decir.</h2>
+        <p>El rol es libre: escribes tus propias acciones y palabras, y la historia responde.</p>
+      </div>
+      <ol class="pasos-juego">
+        <li><span>01</span><div><h3>Imagina tu personaje</h3><p>Elige nombre, pronombres, ciudad, barrio, oficio y trasfondo. Puede llevar familia conocida… o ninguna.</p></div></li>
+        <li><span>02</span><div><h3>Escribe lo que haces</h3><p>Habla con la gente, explora tu barrio, trabaja, investiga y decide a quién apoyar. Tú escribes; el mundo reacciona.</p></div></li>
+        <li><span>03</span><div><h3>Mira cómo cambia el destino</h3><p>Las decisiones abren capítulos y finales distintos. Guarda la partida en tu dispositivo y vuelve cuando quieras.</p></div></li>
+      </ol>
+      <!-- IA opcional: se explica sin prometer nada que el juego no haga. -->
+      <aside class="nota-ia">
+        <span class="nota-ia-sello" aria-hidden="true">✳</span>
+        <p><strong>La IA es opcional.</strong> El chat de IA del juego de escritorio usa KoboldCpp, que se ejecuta en tu propio ordenador: tu texto no pasa por servidores. También puedes jugar sin IA, con los diálogos escritos incluidos. Consulta la guía del proyecto para instalarlo.</p>
+      </aside>
+    </section>
+
+    <!-- ======================= LLAMADA FINAL ======================= -->
+    <section class="cierre" aria-labelledby="titulo-cierre">
+      <p class="kicker">El puente sigue abierto</p>
+      <h2 id="titulo-cierre">Tu historia empieza con una decisión.</h2>
+      <p>Descarga la última versión, revisa las notas y empieza a escribir.</p>
+      <div class="acciones acciones-centradas">
+        <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Ver descargas <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-borde" href="https://github.com/MarinaDP2006/Arcane-fangame/issues">Proponer ideas <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= 8. PIE ======================= -->
+  <footer class="pie pie-final">
+    <a class="logo" href="#inicio" aria-label="Volver al inicio"><span class="logo-sello" aria-hidden="true">R&amp;G</span><span class="logo-texto"><strong>Rifts &amp; Gears</strong><small>Un proyecto de fans, no oficial</small></span></a>
+    <nav aria-label="Enlaces del proyecto">
+      <a href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Descargas</a>
+      <a href="https://github.com/MarinaDP2006/Arcane-fangame/issues">Problemas</a>
+      <a href="privacidad.html">Privacidad y aviso legal</a>
+    </nav>
+    <p>Arcane, League of Legends, Piltover, Zaun, sus personajes y su arte pertenecen a sus respectivos titulares. Rifts &amp; Gears es un fangame gratuito, independiente y no respaldado por Riot Games.</p>
+    <small>© {{ANIO}} Rifts &amp; Gears · Hecho por fans, con cariño y muchas ideas.</small>
+  </footer>
+  <script src="menu.js" defer></script>
+</body>
+</html>
