@@ -85,7 +85,7 @@
       el('div', { class: 'home-shade' }),
       el('div', { class: 'home-panel' },
         el('div', { class: 'home-logo' },
-          el('h1', { class: 'home-title', 'aria-label': 'Arcane-fangame' }, el('span', { class: 'home-word' }, ...letters('ARCANE', 0)), el('span', { class: 'home-amp', style: '--i:6' }, el('span', { class: 'home-gear', html: window.TitleFX.GEAR_SVG }), el('b', {}, '-')), el('span', { class: 'home-word' }, ...letters('FANGAME', 7))),
+          el('h1', { class: 'home-title', 'aria-label': 'Rifts & Gears' }, el('span', { class: 'home-word' }, ...letters('RIFTS', 0)), el('span', { class: 'home-amp', style: '--i:5' }, el('span', { class: 'home-gear', html: window.TitleFX.GEAR_SVG }), el('b', {}, '&')), el('span', { class: 'home-word' }, ...letters('GEARS', 6))),
           el('div', { class: 'home-cities' }, city('piltover', 'Piltover'), el('b', {}), city('zaun', 'Zaun'))),
         el('nav', { class: 'home-menu' },
           hasSave ? btn('Continuar', async () => { if (!(await Game.continueLatest())) toast('No hay partidas', 'warn'); }, 'primary') : null,
