@@ -67,3 +67,17 @@ El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y An
 ## Aviso legal
 
 Proyecto de fans gratuito y no respaldado por Riot Games. Arcane, League of Legends, Piltover, Zaun, sus personajes y su arte pertenecen a sus respectivos propietarios. El código está bajo licencia MIT, que no concede derechos sobre marcas ni personajes de terceros.
+
+## Producción de mapas, referencias artísticas y herramientas de IA
+
+La dirección visual de los mapas debe partir de las fuentes de lore y arte enlazadas en PILTOVER-3D.md y ZAUN-3D.md. El mapa debe funcionar en **2D como mapa legible y navegable** y, al entrar en la ciudad, representarse como un escenario 3D con volumen real. Ambos modos deben compartir lugares, accesos, misiones y coordenadas; no son dos mapas inventados por separado.
+
+- PENDIENTES.md: fuente principal de tareas y estado de validación.
+- src/models/maps/README.md: generación, escala, coordenadas, Blender y exportación GLB.
+- PILTOVER-3D.md y ZAUN-3D.md: dirección artística, cultura, arquitectura y accesos de cada ciudad.
+- PLAN-3D.md: integración de modelos de personajes.
+- docs/PROMPTS-3D-ARCANE-FAN-GAME.md: prompts de producción para agentes y generadores.
+
+**Flujo recomendado para una persona que no programa:** usar Marble y SpAItial para generar propuestas de entorno; ComfyUI para preparar/repetir imágenes de referencia y concept art con flujos visuales; Open3D Viewer para abrir y revisar archivos GLB/GLTF/FBX/OBJ; y Blender, con ayuda guiada de Freebuff, para corregir escala, mallas, materiales, orientación y exportar. No hace falta escribir JavaScript para seguir el flujo de arte; los cambios de integración del código deben realizarlos agentes en ramas separadas y explicando los pasos.
+
+El enlace de Neta indicado en PENDIENTES.md es la referencia de composición deseada para el mapa. Si un agente no puede abrir esa página, debe pedir una captura al usuario y no fingir que ha visto su contenido.
