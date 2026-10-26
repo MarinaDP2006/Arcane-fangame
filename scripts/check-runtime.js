@@ -42,3 +42,27 @@ if (errors.length) {
   console.error('Errores de recursos:\n' + errors.map(x => ' - ' + x).join('\n'));
   process.exitCode = 1;
 } else console.log('OK: scripts locales válidos y ' + total + ' lugares con escenario 2D.');
+
+
+/** El mapa 3D debe cargar una escena de ciudad modelada, nunca generar la arquitectura por código. */
+const world3dFile = path.join(src, 'js', 'world3d.js');
+const worldFile = path.join(src, 'js', 'world.js');
+const world3dSource = fs.readFileSync(world3dFile, 'utf8');
+const worldSource = fs.readFileSync(worldFile, 'utf8');
+ensure(
+  world3dSource.includes('models/maps/${id}.glb') && world3dSource.includes('GLTFLoader'),
+  'World3D debe cargar una escena GLB completa desde models/maps'
+);
+ensure(
+  !/function\\s+(buildings|landmarks|ground|piltoverWorld|zaunWorld|water)\\s*\\(/.test(world3dSource),
+  'World3D no debe recrear la arquitectura del mapa mediante generadores geométricos'
+);
+ensure(
+  /if \\(!loaded\\)[\\s\\S]*?use3d\\(false\\)/.test(worldSource),
+  'Si falta el GLB de la ciudad, el mapa debe volver a 2D'
+);
+ensure(
+  fs.existsSync(path.join(src, 'models', 'maps', 'README.md')) &&
+  fs.existsSync(path.join(root, 'tools', 'blender', 'export_arcane_map.py')),
+  'Falta la guía de escenarios Blender/GLB o su validador'
+);
