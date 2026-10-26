@@ -218,7 +218,8 @@
     },
   };
 
-  // Arte personal de la jugadora (carpeta «arte» en escritorio).\n  window.CustomArt = {
+  // Arte personal de la jugadora (carpeta «arte» en escritorio).
+  window.CustomArt = {
     season() {
       const id = window.Game?.current?.()?.progress?.chapterId || '';
       return /^t\d+$|^fin2$/.test(id) ? 's2' : 's1';
