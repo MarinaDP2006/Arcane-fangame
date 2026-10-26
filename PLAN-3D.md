@@ -56,3 +56,23 @@ El proyecto dispone de un sistema de avatares 3D en `src/js/avatars3d.js`, con G
 - Limpiar la escena en Blender, alinear POI con src/data/world.js y conservar mapa 2D como alternativa.
 - Referencia Neta de la autora: https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298; si no se puede abrir, pedir captura.
 - Consultar PENDIENTES.md como lista principal de trabajo. Este documento es complementario.
+
+
+## Flujo práctico para integrar personajes con Marble/SpAItial, ComfyUI y Open3D Viewer
+
+Estas herramientas tienen funciones distintas y no deben confundirse:
+- **Marble** y **SpAItial**: generar una primera versión de mundo/entorno a partir de texto e imágenes. Se utilizan para escenarios completos, no como garantía de que cada edificio tenga colisiones o mallas limpias.
+- **ComfyUI**: crear y repetir concept art, referencias de iluminación, materiales, vestuario, retratos y hojas de vistas mediante workflows visuales de nodos. No es un editor de escenas 3D ni exporta automáticamente una ciudad jugable. Si hay workflows/modelos 3D instalados, probarlos como experimento separado; primero usarlo para imágenes consistentes de referencia.
+- **Open3D Viewer**: inspeccionar localmente GLB/GLTF/FBX/OBJ/PLY, girar y acercar el modelo, revisar materiales y reproducir animaciones disponibles. Sirve para detectar problemas antes de integrarlos, no para crear el rig, corregir todo el mesh o garantizar el funcionamiento en Three.js.
+- **Blender**: limpieza final de mallas, pivotes, escala, materiales, colisiones/zonas, organización de escena y exportación GLB.
+- **Freebuff**: asistencia para preparar prompts, automatizar auditorías de archivos, revisar código e integrar los recursos en ramas aisladas. La persona usuaria no necesita programar en JavaScript: debe pedir al agente pasos verificables, comandos sencillos y capturas, sin dar permisos para fusionar PR automáticamente.
+
+### Revisión de cada personaje
+1. Abrir el GLB en Open3D Viewer; guardar captura frontal, lateral y tres cuartos.
+2. Comprobar altura, orientación, pies, materiales, transparencia, pelo y accesorios; verificar si hay animaciones y esqueleto real.
+3. Comparar con una referencia autorizada/propia; no copiar assets extraídos de juegos comerciales.
+4. Importar en Blender solo si hace falta corregir algo; conservar el archivo fuente y exportar una copia GLB de prueba.
+5. Probar en el juego a distancia general, media y de conversación, junto a un avatar de referencia y un guardia/NPC.
+6. Registrar resultado, defectos y licencia en una tabla; no declarar animado un modelo que no contiene animaciones.
+
+Para instrucciones por pantalla y criterios de aceptación, la fuente principal sigue siendo PENDIENTES.md.
