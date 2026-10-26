@@ -50,7 +50,7 @@ window.STORY = {
   chapters: [
     // ======================= RUTA ZAUN =======================
     {
-      id: 'z1', route: 'zaun', title: 'Capítulo 1 · La Última Gota',
+      id: 'z1', route: 'zaun', season: 1, episode: 1, act: 1, title: 'Capítulo 1 · La Última Gota',
       intro: 'Zaun, años antes de la hextec. El humo verde sube por las grietas y en la taberna de Vander huele a cerveza y a problemas.',
       unlocks: ['vander', 'vi', 'jinx'],
       start: 'a',
@@ -183,7 +183,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z2', route: 'zaun', title: 'Capítulo 2 · Humo y traición',
+      id: 'z2', route: 'zaun', season: 1, episode: 2, act: 1, title: 'Capítulo 2 · Humo y traición',
       intro: 'El robo ha despertado a Piltover. Los ejecutores bajan cada noche, y alguien en la sombra se aprovecha del caos.',
       unlocks: ['ekko', 'silco'],
       start: 'a',
@@ -304,7 +304,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z3', route: 'zaun', title: 'Capítulo 3 · Siete años después',
+      id: 'z3', route: 'zaun', season: 1, episode: 3, act: 1, title: 'Capítulo 3 · Siete años después',
       intro: 'Siete años. Zaun brilla de violeta: el Brillo corre por las calles y Silco manda. Has sobrevivido. Ahora toca decidir para quién.',
       unlocks: ['sevika'],
       start: 'a',
@@ -381,7 +381,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z4', route: 'zaun', title: 'Capítulo 4 · Luciérnagas',
+      id: 'z4', route: 'zaun', season: 1, episode: 4, act: 2, title: 'Capítulo 4 · Luciérnagas',
       intro: 'Un cargamento de Brillo ha desaparecido. Dicen que las Luciérnagas han vuelto a atacar. Silco quiere nombres.',
       unlocks: [],
       start: 'a',
@@ -465,7 +465,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z5', route: 'zaun', title: 'Capítulo 5 · Reencuentro',
+      id: 'z5', route: 'zaun', season: 1, episode: 5, act: 2, title: 'Capítulo 5 · Reencuentro',
       intro: 'Vi ha vuelto. Busca a Powder… y a Silco. Y una ejecutora de Piltover la sigue como su sombra.',
       unlocks: ['caitlyn'],
       start: 'a',
@@ -551,7 +551,7 @@ window.STORY = {
 
     // ======================= RUTA PILTOVER =======================
     {
-      id: 'p1', route: 'piltover', title: 'Capítulo 1 · La Academia',
+      id: 'p1', route: 'piltover', season: 1, episode: 1, act: 1, title: 'Capítulo 1 · La Academia',
       intro: 'Piltover, la Ciudad del Progreso. Latón, cristal y ambición. En la Academia, alguien está a punto de convertir la magia en ciencia.',
       unlocks: ['jayce', 'heimerdinger', 'viktor'],
       start: 'a',
@@ -634,7 +634,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p2', route: 'piltover', title: 'Capítulo 2 · Mecenas',
+      id: 'p2', route: 'piltover', season: 1, episode: 2, act: 1, title: 'Capítulo 2 · Mecenas',
       intro: 'El Consejo debate. La hextec podría ser el mayor logro de Piltover… o su ruina. El dinero, como siempre, decide.',
       unlocks: ['mel', 'cassandra'],
       start: 'a',
@@ -709,7 +709,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p3', route: 'piltover', title: 'Capítulo 3 · Placa y pólvora',
+      id: 'p3', route: 'piltover', season: 1, episode: 3, act: 1, title: 'Capítulo 3 · Placa y pólvora',
       intro: 'Siete años después. Piltover vive su edad dorada. Pero alguien ataca los envíos hextec, y el Brillo sube por el puente.',
       unlocks: ['caitlyn'],
       start: 'a',
@@ -791,7 +791,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p4', route: 'piltover', title: 'Capítulo 4 · El Día del Progreso',
+      id: 'p4', route: 'piltover', season: 1, episode: 4, act: 2, title: 'Capítulo 4 · El Día del Progreso',
       intro: 'Las hexpuertas abren. Piltover celebra. En el laboratorio, Viktor tose sangre y Sky le sostiene la mano.',
       unlocks: [],
       start: 'a',
@@ -849,7 +849,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p5', route: 'piltover', title: 'Capítulo 5 · Bajar',
+      id: 'p5', route: 'piltover', season: 1, episode: 5, act: 2, title: 'Capítulo 5 · Bajar',
       intro: 'Por primera vez, cruzas el puente hacia abajo. El aire pica, las luces son verdes, y nadie te sonríe.',
       unlocks: ['vi', 'ekko'],
       start: 'a',
@@ -936,7 +936,7 @@ window.STORY = {
     },
 
     {
-      id: 'z6', route: 'zaun', title: 'Capítulo 6 · El foso de Sevika',
+      id: 'z6', route: 'zaun', season: 1, episode: 6, act: 2, title: 'Capítulo 6 · El foso de Sevika',
       intro: 'Silco prepara algo grande. Sevika sabe qué es, pero en Zaun la información se gana a puñetazos.',
       unlocks: [],
       start: 'a',
@@ -982,7 +982,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z7', route: 'zaun', title: 'Capítulo 7 · Persecución en los tejados',
+      id: 'z7', route: 'zaun', season: 1, episode: 7, act: 3, title: 'Capítulo 7 · Persecución en los tejados',
       intro: 'Los ejecutores barren Zaun puerta por puerta. Ekko necesita que alguien lleve un aviso al árbol… atravesando la ciudad por arriba.',
       unlocks: [],
       start: 'a',
@@ -1037,7 +1037,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z8', route: 'zaun', title: 'Capítulo 8 · Lo que oculta Singed',
+      id: 'z8', route: 'zaun', season: 1, episode: 8, act: 3, title: 'Capítulo 8 · Lo que oculta Singed',
       intro: 'El laboratorio del Sumidero está abierto y vacío. Las máquinas siguen zumbando. Y en las paredes, alguien ha escrito un nombre: Vander.',
       unlocks: [],
       start: 'a',
@@ -1091,7 +1091,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p6', route: 'piltover', title: 'Capítulo 6 · Prueba de puntería',
+      id: 'p6', route: 'piltover', season: 1, episode: 6, act: 2, title: 'Capítulo 6 · Prueba de puntería',
       intro: 'Antes de volver a bajar a Zaun, Caitlyn quiere asegurarse de que sabes defenderte.',
       unlocks: [],
       start: 'a',
@@ -1136,7 +1136,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p7', route: 'piltover', title: 'Capítulo 7 · Las runas de la gema',
+      id: 'p7', route: 'piltover', season: 1, episode: 7, act: 3, title: 'Capítulo 7 · Las runas de la gema',
       intro: 'Entre pizarras y planos, los padres de la hextec por fin tienen respuestas. Y miedo.',
       unlocks: [],
       start: 'a',
@@ -1185,7 +1185,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p8', route: 'piltover', title: 'Capítulo 8 · Vuelo sobre Zaun',
+      id: 'p8', route: 'piltover', season: 1, episode: 8, act: 3, title: 'Capítulo 8 · Vuelo sobre Zaun',
       intro: 'Desde una aerotabla, Zaun parece otra cosa: un mar de luces verdes, tuberías y vida.',
       unlocks: [],
       start: 'a',
@@ -1230,7 +1230,7 @@ window.STORY = {
 
     // ======================= FINAL COMPARTIDO =======================
     {
-      id: 'fin', route: 'ambas', title: 'Capítulo final · El Puente',
+      id: 'fin', route: 'ambas', season: 1, episode: 8, act: 3, title: 'Capítulo final · El Puente',
       intro: 'Las dos ciudades contienen el aliento. El Consejo vota la paz. Jinx tiene un cohete. Y tú estás en medio.',
       unlocks: ['jinx', 'jayce', 'mel', 'caitlyn', 'vi'],
       start: 'a0',
@@ -1312,7 +1312,7 @@ window.STORY = {
     // Sigue la segunda temporada de Arcane. Los que mueren (STORY.deaths) dejan de hablar
     // a partir del capítulo siguiente; tus decisiones cambian quién confía en ti y cómo acaba tu historia.
     {
-      id: 't1', route: 't2', title: 'T2 · Capítulo 1 · Cenizas',
+      id: 't1', route: 't2', season: 2, episode: 1, act: 1, title: 'T2 · Capítulo 1 · Cenizas',
       intro: 'El humo del ataque aún no se ha disipado. Piltover entierra a sus consejeros y exige un culpable. Todas las miradas apuntan hacia abajo.',
       unlocks: ['ambessa', 'jayce', 'mel', 'sevika'],
       start: 'a',
@@ -1391,7 +1391,7 @@ window.STORY = {
       },
     },
     {
-      id: 't2', route: 't2', title: 'T2 · Capítulo 2 · La niña de las gafas',
+      id: 't2', route: 't2', season: 2, episode: 2, act: 1, title: 'T2 · Capítulo 2 · La niña de las gafas',
       intro: 'Jinx se ha convertido en un símbolo para Zaun. Y en los callejones, una niña muda con unas gafas enormes la sigue a todas partes.',
       unlocks: ['isha'],
       start: 'a',
@@ -1469,7 +1469,7 @@ window.STORY = {
       },
     },
     {
-      id: 't3', route: 't2', title: 'T2 · Capítulo 3 · El Heraldo',
+      id: 't3', route: 't2', season: 2, episode: 3, act: 1, title: 'T2 · Capítulo 3 · El Heraldo',
       intro: 'Una fila de zaunitas enfermos espera ante la fábrica. Salen caminando erguidos, con la mirada tranquila… demasiado tranquila.',
       unlocks: ['viktor'],
       start: 'a0',
@@ -1529,7 +1529,7 @@ window.STORY = {
       },
     },
     {
-      id: 't4', route: 't2', title: 'T2 · Capítulo 4 · La loba y la rosa',
+      id: 't4', route: 't2', season: 2, episode: 4, act: 2, title: 'T2 · Capítulo 4 · La loba y la rosa',
       intro: 'Piltover ya no tiene Consejo: tiene una comandante y un estado de guerra. Mel parte hacia Noxus. Y tú tienes que elegir dónde estar.',
       unlocks: ['maddie', 'kino'],
       start: 'a',
@@ -1618,7 +1618,7 @@ window.STORY = {
       },
     },
     {
-      id: 't5', route: 't2', title: 'T2 · Capítulo 5 · La bestia del Sumidero',
+      id: 't5', route: 't2', season: 2, episode: 5, act: 2, title: 'T2 · Capítulo 5 · La bestia del Sumidero',
       intro: 'Garras en el metal, aullidos en la niebla. La criatura de Singed anda suelta… y parece buscar a alguien.',
       unlocks: [],
       start: 'a0',
@@ -1699,7 +1699,7 @@ window.STORY = {
       },
     },
     {
-      id: 't6', route: 't2', title: 'T2 · Capítulo 6 · Ecos del tiempo',
+      id: 't6', route: 't2', season: 2, episode: 6, act: 2, title: 'T2 · Capítulo 6 · Ecos del tiempo',
       intro: 'Un resto del Hexcore ha abierto una grieta en el aire. Al otro lado: un Zaun donde nada de esto pasó.',
       unlocks: [],
       start: 'a',
@@ -1756,8 +1756,106 @@ window.STORY = {
         ], end: true },
       },
     },
+
     {
-      id: 'fin2', route: 't2', title: 'T2 · Final · La guerra por el puente',
+      id: 't7', route: 't2', season: 2, episode: 7, act: 3,
+      title: 'T2 · Capítulo 7 · La última tregua',
+      intro: 'La anomalía ha dejado una pregunta imposible: qué mundo merece salvarse. Mientras Piltover y Zaun se preparan para la batalla, cada alianza exige un precio y las heridas antiguas vuelven a abrirse.',
+      unlocks: [],
+      start: 'a',
+      nodes: {
+        a: { bg: 'consejo', lines: [
+          { s: 'narrador', t: 'La sala del Consejo está llena de mapas, vendas y tazas de café frío. Nadie se sienta en el lugar que ocupaba antes de la caída.' },
+          { s: 'caitlyn', t: 'Los exploradores han visto columnas de soldados noxianos al norte y a los seguidores del Heraldo avanzando desde las fábricas. No podemos detener a ambos ejércitos por separado.' },
+          { s: 'sevika', t: 'Zaun no va a morir para que Piltover conserve sus ventanas limpias. Si queremos que luchemos juntos, quiero un compromiso que pueda llevar a las calles.' },
+          { s: 'mel', t: 'Mi madre llama a esto orden. La Rosa Negra lo llama destino. Yo lo llamo una guerra que otros eligieron por nosotros.' },
+          { s: 'narrador', t: 'Todas las miradas recaen sobre ti. No eres consejero ni comandante, pero has estado en ambos lados del puente y conoces el coste de cada decisión.' }
+        ], choices: [
+          { t: 'Exigir que Zaun tenga voz propia en las decisiones después de la guerra.', next: 'b_union', fx: { rep: { zaun: 2, piltover: 1 }, aff: { sevika: 2, caitlyn: 1 }, flags: ['voz_zaun', 'union'] } },
+          { t: 'Proponer una tregua táctica: cooperar ahora y negociar el futuro después.', next: 'b_tregua', fx: { rep: { zaun: 1, piltover: 1 }, aff: { caitlyn: 2, mel: 1 }, flags: ['tregua_tactica'] } },
+          { t: 'Negarte a legitimar a los mandos y pedir un plan de evacuación para civiles.', next: 'b_civiles', fx: { aff: { vi: 2, ekko: 1 }, stats: { carisma: 1 }, flags: ['evacuacion_civiles'] } }
+        ] },
+        b_union: { bg: 'consejo', lines: [
+          { s: 'sevika', t: 'Eso sí lo puedo vender. No como una promesa bonita: como una silla, una firma y gente que responda si vuelve a haber redadas.' },
+          { s: 'caitlyn', t: 'No puedo prometer que todos en Piltover lo acepten. Puedo prometer que esta vez no hablaré por Zaun sin Zaun en la mesa.' },
+          { s: 'narrador', t: 'La alianza nace con desconfianza, no con abrazos. Por primera vez, eso parece suficiente.' }
+        ], next: 'c' },
+        b_tregua: { bg: 'consejo', lines: [
+          { s: 'mel', t: 'Una tregua no es paz. Es el tiempo que compramos para que la siguiente decisión no la tome el enemigo.' },
+          { s: 'caitlyn', t: 'Acepto. Pero nadie dispara contra civiles ni usa la evacuación para ajustar cuentas.' },
+          { s: 'sevika', t: 'Si tus soldados cumplen esa parte, comandante, quizá consigamos llegar vivos a la negociación.' }
+        ], next: 'c' },
+        b_civiles: { bg: 'puente', lines: [
+          { s: 'vi', t: 'Por una vez, alguien está pensando en la gente que no lleva uniforme.' },
+          { s: 'ekko', t: 'Los Firelights pueden abrir rutas por los túneles. No podremos salvar a todo el mundo, pero sí evitar que la ciudad se convierta en una trampa.' },
+          { s: 'narrador', t: 'No todos aceptan tu plan. Aun así, empiezan a llegar nombres, direcciones y listas de personas que deben salir antes del amanecer.' }
+        ], next: 'c' },
+        c: { bg: 'escondite-jinx', lines: [
+          { s: 'narrador', t: 'Encuentras a Jinx sola, desmontando una bomba que ya estaba desmontada. Sobre la mesa descansa la granada rosa de Isha.' },
+          { s: 'jinx', t: 'Si has venido a decirme que todo va a salir bien, ahórratelo. Las cosas salen como salen. Y luego alguien tiene que recoger los pedazos.' },
+          { s: 'yo', t: 'No sé cómo va a acabar. Pero no tienes que decidirlo todo tú sola.' },
+          { s: 'jinx', t: '(Se queda quieta. Por un instante parece Powder; después vuelve a esconderse detrás de una sonrisa torcida.) No prometo nada. Pero voy a estar allí.' }
+        ], choices: [
+          { t: 'Ofrecerte a luchar a su lado sin pedirle que se convierta en otra persona.', next: 'd', fx: { aff: { jinx: 2, vi: 1 }, flags: ['junto_a_jinx'] } },
+          { t: 'Pedirle que ayude a sacar a los civiles antes de la batalla.', next: 'd', fx: { aff: { jinx: 1, ekko: 1 }, flags: ['jinx_ayuda_evacuacion'] } },
+          { t: 'Respetar su silencio y quedarte un rato sin hacer preguntas.', next: 'd', fx: { aff: { jinx: 2 }, stats: { carisma: 1 } } }
+        ] },
+        d: { bg: 'puente', lines: [
+          { s: 'narrador', t: 'Al amanecer, el puente está cubierto de niebla y señales improvisadas. Nadie cree que vaya a ser una victoria limpia. La única esperanza es que las dos ciudades decidan, por fin, no abandonarse.' }
+        ], end: true }
+      }
+    },
+    {
+      id: 't8', route: 't2', season: 2, episode: 8, act: 3,
+      title: 'T2 · Capítulo 8 · El corazón del Hexgate',
+      intro: 'La última batalla se acerca al núcleo hextec. Los planes se rompen, las alianzas se ponen a prueba y el futuro de Piltover y Zaun depende de decisiones tomadas bajo fuego.',
+      unlocks: [],
+      start: 'a',
+      nodes: {
+        a: { bg: 'hexpuertas', lines: [
+          { s: 'narrador', t: 'El Hexgate ruge como una tormenta encerrada en una máquina. Las luces del núcleo parpadean con un ritmo que no corresponde a ningún circuito conocido.' },
+          { s: 'jayce', t: 'He visto un futuro donde todo queda inmóvil bajo una sola voluntad. No sé si lo que vi era inevitable. Sí sé que no podemos permitir que ocurra.' },
+          { s: 'viktor', t: 'La gente me pidió que terminara con el sufrimiento. Les ofrecí un mundo sin miedo y no comprendí que también les estaba quitando la elección.' },
+          { s: 'narrador', t: 'Por un instante, Viktor parece escuchar una voz que viene de muy lejos. Después levanta la mirada hacia el núcleo.' }
+        ], choices: [
+          { t: 'Confiar en Jayce y ayudarle a llegar hasta Viktor.', next: 'b_jayce', fx: { aff: { jayce: 2, viktor: 1 }, flags: ['confia_jayce'] } },
+          { t: 'Intentar hablar con Viktor antes de que el combate sea inevitable.', next: 'b_viktor', fx: { aff: { viktor: 2 }, stats: { carisma: 1 }, flags: ['apela_viktor'] } },
+          { t: 'Priorizar el cierre de los conductos y proteger a quienes siguen atrapados.', next: 'b_rescate', fx: { aff: { ekko: 2, sevika: 1 }, stats: { ingenio: 1 }, flags: ['protege_atrapados'] } }
+        ] },
+        b_jayce: { bg: 'hexcore', lines: [
+          { s: 'jayce', t: 'No te voy a pedir que me perdones por lo que hice con la hextec. Solo necesito que me ayudes a llegar hasta él antes de que el núcleo vuelva a abrirse.' },
+          { s: 'narrador', t: 'Te cubres tras una columna agrietada y calculas el ritmo de las descargas. Cuando Jayce se mueve, tú desactivas el cierre de seguridad para abrirle paso.' },
+          { s: 'jayce', t: 'Gracias. Si volvemos, quiero que me recuerdes que la ciencia no sirve de nada si olvidamos a quién debía ayudar.' }
+        ], next: 'c' },
+        b_viktor: { bg: 'fabrica', lines: [
+          { s: 'yo', t: 'No puedes curar el dolor quitándole a todo el mundo la posibilidad de elegir.' },
+          { s: 'viktor', t: 'Y tú no puedes pedir a los heridos que acepten el sufrimiento como si fuera una virtud.' },
+          { s: 'narrador', t: 'No hay respuesta que cierre la discusión. Pero durante un segundo Viktor vacila, y Jayce aprovecha ese instante para acercarse.' }
+        ], next: 'c' },
+        b_rescate: { bg: 'hexpuertas', lines: [
+          { s: 'ekko', t: '¡Por aquí! El conducto está cediendo. Si sincronizamos las válvulas, la gente del nivel inferior tendrá una salida.' },
+          { s: 'sevika', t: 'Nunca pensé que acabaría siguiendo instrucciones de un crío con una tabla voladora. No te acostumbres.' },
+          { s: 'narrador', t: 'El rescate cuesta tiempo y equipo, pero decenas de personas alcanzan los túneles antes de que el núcleo se desestabilice.' }
+        ], next: 'c' },
+        c: { bg: 'puente', lines: [
+          { s: 'narrador', t: 'La batalla estalla en varios frentes. Caitlyn mantiene abierta la ruta de evacuación; Mel se enfrenta a la magia de la Rosa Negra; Vi busca a Jinx entre el humo; Ekko corre hacia el corazón de la anomalía.' },
+          { s: 'caitlyn', t: '¡No persigas una victoria que te cueste la ciudad entera! ¡Saca a la gente de aquí!' },
+          { s: 'mel', t: 'La Rosa Negra no decide quién soy. Ni siquiera mi madre puede hacerlo.' },
+          { s: 'vi', t: '(A lo lejos, entre el estruendo.) ¡Pow! ¡No vuelvas a desaparecer sin decirme nada!' },
+          { s: 'narrador', t: 'No puedes estar en todas partes. Elige dónde tu presencia tendrá más consecuencias.' }
+        ], choices: [
+          { t: 'Cubrir la retirada y mantener abierto el paso del puente.', next: 'd', fx: { rep: { zaun: 1, piltover: 1 }, aff: { caitlyn: 1, sevika: 1 }, flags: ['puente_abierto'] } },
+          { t: 'Ayudar a Vi a encontrar a Jinx entre los restos de la torre.', next: 'd', fx: { aff: { vi: 2, jinx: 2 }, flags: ['busca_jinx'] } },
+          { t: 'Acompañar a Mel para contener el ataque de la Rosa Negra.', next: 'd', fx: { aff: { mel: 2 }, flags: ['apoya_mel'] } }
+        ] },
+        d: { bg: 'puente', lines: [
+          { s: 'narrador', t: 'El núcleo se ilumina hasta borrar las sombras. Jayce y Viktor se acercan a la misma luz desde lados opuestos. Nadie sabe si volverán.' },
+          { s: 'narrador', t: 'La guerra no termina con una respuesta sencilla. Termina con pérdidas que no se pueden deshacer y con la obligación de decidir qué construir después.' }
+        ], end: true }
+      }
+    },
+    {
+      id: 'fin2', route: 't2', season: 2, episode: 8, act: 3, title: 'T2 · Final · La guerra por el puente',
       intro: 'Todo converge en el Puente del Progreso: soldados de Noxus, ejecutores, zaunitas y los silenciosos ascendidos de Viktor.',
       unlocks: [],
       start: 'a0',
@@ -1836,7 +1934,7 @@ window.STORY = {
   routes: {
     zaun: ['z1', 'z2', 'z3', 'z4', 'z5', 'z6', 'z7', 'z8', 'fin'],
     piltover: ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'fin'],
-    t2: ['t1', 't2', 't3', 't4', 't5', 't6', 'fin2'],
+    t2: ['t1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 'fin2'],
   },
 
   // Finales de la Temporada 2. Lo que pasa en el canon pasa siempre (Jayce y Viktor desaparecen,
