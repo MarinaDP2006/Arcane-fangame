@@ -834,7 +834,11 @@
           el('p', { class: 'muted' }, currentChapter ? currentChapter.intro : 'La historia principal está completada.'),
           ...chapterRows,
           G.progress.finished
-            ? el('p', { class: 'mission-reward' }, G.progress.season === 2 ? '✓ Has completado la Parte II.' : '✓ Has completado la Parte I.')
+            ? G.progress.season === 2
+              ? el('p', { class: 'mission-reward' }, '✓ Has completado la Parte II.')
+              : el('div', { class: 'row gap wrap' },
+                el('p', { class: 'mission-reward' }, '✓ Has completado la Parte I.'),
+                el('button', { class: 'btn primary', onclick: startSeason2 }, 'Comenzar Parte II · Las consecuencias'))
             : el('button', { class: 'btn primary', onclick: () => openStory() }, 'Continuar historia')),
         el('section', { class: 'mission-section' },
           el('div', { class: 'mission-section-head' },
