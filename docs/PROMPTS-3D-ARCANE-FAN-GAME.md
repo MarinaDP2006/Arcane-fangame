@@ -48,3 +48,24 @@ Esta rama conserva el contexto narrativo de *Arcane* para uso de fan game. No in
 2. No incluir assets extraídos del juego o la serie.
 3. Los prototipos generados por código en esta rama son formas de bloqueo visual; no deben describirse como modelos artísticos terminados ni animaciones completas.
 4. Para publicación, marcar el juego como fan-made y no oficial, revisar las políticas de la plataforma y consultar las directrices vigentes de fan content.
+
+
+## Prompt maestro actualizado para Freebuff: mapas 2D/3D y herramientas disponibles
+
+> Soy la propietaria de MarinaDP2006/Arcane-fangame. No soy programadora: no sé programar fuera de JavaScript ni tengo experiencia con lógica de juego. Explica los pasos en español sencillo, por fases, con nombres exactos de archivos y comprobaciones visibles. No supongas que sé usar Blender, terminal o nodos complejos; si hace falta, guíame de una acción cada vez.
+>
+> **Antes de actuar**, lee PENDIENTES.md, PILTOVER-3D.md, ZAUN-3D.md, PLAN-3D.md y src/models/maps/README.md; inspecciona la rama, el estado de Git y el contenido actual. No hagas cambios destructivos, no reemplaces archivos originales, no hagas push/merge ni abras PR. Yo crearé y revisaré manualmente las PR.
+>
+> **Referencias de lore y arte:** estudia [Piltover oficial](https://universe.leagueoflegends.com/en_US/region/piltover/), [Zaun oficial](https://universe.leagueoflegends.com/en_US/region/zaun/), las galerías de ambas regiones y las páginas [Piltóver Fandom ES](https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver) y [Zaun Fandom ES](https://leagueoflegends.fandom.com/es/wiki/Zaun). Busca y compara imágenes de arquitectura, calles, niveles, puentes, controles de acceso, población, mercados, laboratorios, shimmer, quimtec y hextech. Usa fuentes oficiales primero y Fandom como apoyo de lore. No descargues imágenes de terceros al juego sin verificar derechos.
+>
+> **Referencia visual que ha indicado la autora:** [proyecto de Neta](https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298). Intenta abrirlo y estudiar la composición del mapa 2D. Si la página no es accesible, no finjas haberla visto: pide una captura al usuario y continúa solo con las demás referencias hasta recibirla.
+>
+> **Herramientas que ya tengo:** Marble (https://marble.worldlabs.ai/), SpAItial (https://spaitial.ai/), ComfyUI instalado en mi PC y Open3D Viewer. Propón un flujo que use realmente estas herramientas y distingue sus funciones: Marble/SpAItial para generar mundos a partir de prompts e imágenes; ComfyUI para moodboards, vistas cenitales, materiales, fachadas, iluminación y referencias consistentes (no asumir que genera una ciudad GLB completa sin workflows/modelos específicos); Open3D Viewer para abrir/inspeccionar archivos 3D y animaciones disponibles; Blender para limpiar y exportar mallas; tú/Freebuff para guiar los pasos e integrar el resultado en el código.
+>
+> **Diseño requerido:** el mapa 2D debe ser una vista superior clara, atractiva y jugable con distritos, calles, niveles, puentes, accesos, marcadores y POI. El mapa 3D debe representar esa misma geografía en volumen real, con edificios completos y calles transitables. No sustituir la ciudad por cajas o geometría procedural. Piltover debe transmitir una ciudad costera de progreso, comercio y artesanía: piedra/mármol marfil, latón/bronce, vidrio, torres, cúpulas, puentes monumentales y hextech azul-dorada. Zaun debe ser una ciudad subterránea vertical de hierro y cristal: edificios superpuestos, tuberías, escaleras, mercados, talleres, humo, vidrio coloreado, luces químicas, quimtec y presencia narrativa del shimmer. Mostrar niveles superiores/intermedios/profundos y accesos entre ciudades; el Puente del Progreso tiene significado cultural distinto para ambas.
+>
+> **Proceso:** (1) auditoría sin editar; (2) moodboard/hojas de referencia con ComfyUI; (3) generar Piltover y Zaun por separado en Marble/SpAItial; (4) comprobar formato y malla en Open3D Viewer; (5) corrección en Blender; (6) alinear POI y colisiones con src/data/world.js; (7) probar GLB en juego con personajes, cámara y mapa 2D; (8) ejecutar comprobaciones; (9) entregar informe y pasos para que yo cree una PR manual.
+>
+> **Formato técnico:** priorizar GLB/glTF 2.0 con geometría convencional, materiales/texturas y escala consistente. Si Marble/SpAItial entrega Gaussian Splat, PLY u otro formato, explica qué significa y cómo convertirlo o por qué no sirve directamente. No declarar que hay colisiones o navegación solo porque la ciudad se vea bien. No sobrescribir piltover.glb, zaun.glb, .blend fuente o modelos de personajes sin una copia temporal y mi aprobación.
+>
+> **Mi primer pedido:** no generes ni edites nada todavía. Dame un plan paso a paso adaptado a las herramientas que ya tengo, dime qué debo pulsar o descargar primero y cómo sabremos si el resultado sirve. Después espera mi aprobación.
