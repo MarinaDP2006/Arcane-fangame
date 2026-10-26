@@ -52,7 +52,7 @@ Esta rama conserva el contexto narrativo de *Arcane* para uso de fan game. No in
 
 ## Prompt maestro actualizado para Freebuff: mapas 2D/3D y herramientas disponibles
 
-> Soy la propietaria de MarinaDP2006/Arcane-fangame. No soy programadora: no sé programar fuera de JavaScript ni tengo experiencia con lógica de juego. Explica los pasos en español sencillo, por fases, con nombres exactos de archivos y comprobaciones visibles. No supongas que sé usar Blender, terminal o nodos complejos; si hace falta, guíame de una acción cada vez.
+> Soy la propietaria de MarinaDP2006/Arcane-fangame. No sé programar ni conozco la lógica interna del juego; aunque el proyecto usa JavaScript, necesito que me guíes en español sencillo y no des por hecho que sé modificar código. Explica los pasos en español sencillo, por fases, con nombres exactos de archivos y comprobaciones visibles. No supongas que sé usar Blender, terminal o nodos complejos; si hace falta, guíame de una acción cada vez.
 >
 > **Antes de actuar**, lee PENDIENTES.md, PILTOVER-3D.md, ZAUN-3D.md, PLAN-3D.md y src/models/maps/README.md; inspecciona la rama, el estado de Git y el contenido actual. No hagas cambios destructivos, no reemplaces archivos originales, no hagas push/merge ni abras PR. Yo crearé y revisaré manualmente las PR.
 >
