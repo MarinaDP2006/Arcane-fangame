@@ -143,15 +143,24 @@
     input.click();
   }
 
-  /** Nueva partida: ofrece contexto opcional antes de crear personaje. */
-  function newGame(s) {
-    slot = s;
-    // Las presentaciones del reparto solo se muestran a quien indique que es nuevo en Arcane.
-    let showCharacterDescriptions = false;
+  /** Nueva partida: primero se elige la ciudad y después se abre el creador. */
+  function newGame(s, origin = null) {
+    if (!origin) {
+      window.App.pendingSlot = s || null;
+      window.App.go('city-select');
+      return;
+    }
+    if (!s) {
+      toast('No hay ranuras vacías. Abre «Cargar partida» y elige una ranura para reemplazar.', 'warn');
+      window.App.go('game');
+      return;
+    }
+    slot = String(s);
     const root = document.querySelector('#view-creator');
+    window.App.setCity(origin);
     window.App.go('creator');
-    const launchCreator = () => Creator.start(async (player, stats) => {
-      player.showCharacterDescriptions = showCharacterDescriptions;
+    Creator.start(async (player, stats) => {
+      player.showCharacterDescriptions = false;
       G = newState(player, stats);
       tab = 'historia';
       contact = null;
@@ -159,23 +168,7 @@
       await playIntro(player);
       window.App.go('game');
       toast(`Objetivo: ve a ${objectiveName()}`, 'good');
-    });
-    root.innerHTML = '';
-    const screen = document.createElement('section');
-    screen.className = 'world-entry';
-    screen.innerHTML = `<div class="world-entry-backdrop" aria-hidden="true"></div><article class="world-entry-panel">
-      <p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">¿Conoces Arcane y a sus personajes?</h1>
-      <p class="world-entry-copy">Si estás descubriendo la serie, verás presentaciones breves de los personajes en el comunicador. Si ya la conoces, las ocultaremos para no romper la inmersión.</p>
-      <div class="world-entry-actions"><button class="btn primary world-entry-new" type="button">Estoy descubriendo Arcane</button><button class="btn world-entry-known" type="button">Ya conozco Arcane</button></div>
-      <p class="world-entry-foot">La partida comienza después de crear el personaje.</p></article>`;
-    root.append(screen);
-    screen.querySelector('.world-entry-known').addEventListener('click', () => { showCharacterDescriptions = false; launchCreator(); }, { once: true });
-    screen.querySelector('.world-entry-new').addEventListener('click', () => {
-      showCharacterDescriptions = true;
-      screen.querySelector('.world-entry-panel').innerHTML = `<p class="world-entry-kicker">PRIMER CONTACTO · PILTOVER / ZAUN</p><h1 class="world-entry-title">Antes de cruzar la grieta…</h1>
-      <p class="world-entry-copy">Piltover presume de progreso, academias y poder; Zaun sobrevive entre humo, talleres y alianzas frágiles. Tus decisiones, tus vínculos y el lugar de donde vienes cambiarán cómo te trata la gente. No necesitas conocer la serie: descubrirás el mundo jugando.</p><div class="world-entry-actions"><button class="btn primary world-entry-continue" type="button">Entendido, crear personaje</button></div>`;
-      screen.querySelector('.world-entry-continue').addEventListener('click', launchCreator, { once: true });
-    }, { once: true });
+    }, origin);
   }
   /** Restaura una partida guardada. */
   async function loadGame(s) {

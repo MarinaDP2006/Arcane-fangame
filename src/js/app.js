@@ -5,10 +5,12 @@
   const App = {
     settings: {},
     view: 'home',
+    pendingSlot: null,
     go(view) {
       App.view = view;
       // Mantiene la identidad visual al moverse entre el creador, los ajustes y el juego.
       const body = document.body;
+      body.dataset.screen = view;
       const savedCity = body.dataset.ciudad || body.dataset.city;
       const gameCity = window.Game?.current()?.player?.origin;
       const city = view === 'game' ? (gameCity || savedCity || 'piltover') : (savedCity || gameCity || 'piltover');
@@ -18,6 +20,7 @@
       $$('.view').forEach((v) => v.classList.toggle('active', v.id === `view-${view}`));
       if (view !== 'game') window.World?.stop();
       if (view === 'home') renderTitle();
+      if (view === 'city-select') renderCitySelection();
       if (view === 'game') Game.mount();
       if (view === 'settings') {
         App.renderSettings($('#view-settings'), () => App.go('home'));
@@ -122,6 +125,56 @@
     });
   }
 
+  /** Selector cinematográfico de ciudad: ocupa la pantalla completa y precede al creador. */
+  function renderCitySelection() {
+    const root = $('#view-city-select');
+    if (!root) return;
+    root.innerHTML = '';
+    const card = (id, label, motto, detail) => {
+      const art = window.CustomArt.image('lugares', id) || `img/arte/lugares/${id}.webp`;
+      return el('button', {
+        class: `city-choice city-choice-${id}`,
+        style: `--city-art:url("${art}")`,
+        type: 'button',
+        'aria-label': `Comenzar una partida en ${label}`,
+        onclick: async () => {
+          Audio2.sfx.choice();
+          App.setCity(id);
+          let slot = App.pendingSlot;
+          if (!slot) {
+            const slots = await store.listSlots();
+            slot = slots.find((s) => s.empty)?.slot || null;
+          }
+          if (!slot) {
+            toast('Las tres ranuras están ocupadas. Entra en «Cargar partida» y elige una ranura.', 'warn');
+            return;
+          }
+          App.pendingSlot = null;
+          Game.newGame(slot, id);
+        },
+      },
+        el('span', { class: 'city-choice-art', 'aria-hidden': 'true' }),
+        el('span', { class: 'city-choice-content' },
+          el('img', { class: 'city-choice-emblem', src: `img/arte/simbolos/${id}.png`, alt: '' }),
+          el('span', { class: 'city-choice-kicker' }, id === 'piltover' ? 'LA CIUDAD DEL PROGRESO' : 'LA CIUDAD SUBTERRÁNEA'),
+          el('strong', { class: 'city-choice-title' }, label),
+          el('span', { class: 'city-choice-motto' }, motto),
+          el('span', { class: 'city-choice-detail' }, detail),
+          el('span', { class: 'city-choice-enter' }, 'Elegir ciudad  ↗')));
+    };
+    root.append(el('div', { class: 'city-select-screen' },
+      el('header', { class: 'city-select-heading' },
+        el('p', { class: 'eyebrow' }, 'RIFTS & GEARS · NUEVA PARTIDA'),
+        el('h1', {}, '¿Dónde comienza tu historia?'),
+        el('p', {}, 'Elige una ciudad. Tu decisión abre el editor y determina tu barrio, tus primeros vínculos y el aspecto de tu mundo.')),
+      el('div', { class: 'city-choice-grid' },
+        card('piltover', 'Piltover', 'Progreso · Ciencia · Orden', 'Torres hextech, academias y salones dorados.'),
+        card('zaun', 'Zaun', 'Resistencia · Libertad · Vida', 'Tuberías, callejones, neón y humo verde.')),
+      el('div', { class: 'city-select-footer' },
+        el('span', {}, 'DOS CIUDADES · UNA MISMA HISTORIA'),
+        el('button', { class: 'btn ghost', onclick: () => { App.pendingSlot = null; App.go('home'); } }, '← Volver al menú'))));
+  }
+
   // IA opcional para la historia libre y el chat con los personajes: solo KoboldCpp.
   function aiSettings(set) {
     const box = el('div', { class: 'ai-settings' });
@@ -200,7 +253,8 @@
     b.classList.toggle('readable-font', Boolean(s.readableFont));
     b.classList.toggle('no-minimap', s.minimap === false);
     // Colores de la interfaz: según la ciudad en la que estás, o uno fijo elegido en Ajustes.
-    h.dataset.tema = (s.uiTheme || 'ciudad') === 'ciudad' ? (b.dataset.ciudad || 'clasico') : s.uiTheme;
+    const fixedBlue = App.view === 'home' || App.view === 'city-select';
+    h.dataset.tema = fixedBlue ? 'azul' : ((s.uiTheme || 'ciudad') === 'ciudad' ? (b.dataset.ciudad || 'clasico') : s.uiTheme);
     window.World3D?.applySettings?.();
   }
   App.applyLook = applyLook;
