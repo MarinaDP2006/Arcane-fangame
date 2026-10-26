@@ -175,71 +175,7 @@
         el('button', { class: 'btn ghost', onclick: () => { App.pendingSlot = null; App.go('home'); } }, '← Volver al menú'))));
   }
 
-  // IA opcional para la historia libre y el chat con los personajes: solo KoboldCpp.
-  function aiSettings(set) {
-    const box = el('div', { class: 'ai-settings' });
-    const draw = () => {
-      const P = window.AI.PROVIDERS;
-      const c = window.AI.cfg();
-      const on = c.provider !== 'off';
-      const selected = c.provider === 'ollama' ? 'ollama' : 'koboldcpp';
-      const d = P[selected];
-      const save = (patch) => set({ ai: { provider: selected, url: App.settings.ai?.provider === selected ? App.settings.ai.url : '', model: App.settings.ai?.provider === selected ? App.settings.ai.model : d.model, password: App.settings.ai?.provider === selected ? (App.settings.ai.password || '') : '', ...patch } }).then(draw);
-      const status = el('small', { class: 'muted ai-status' });
-      const models = el('div', { class: 'chips ai-models' });
-      const lan = el('small', { class: 'muted ai-lan' });
-      box.innerHTML = '';
-      // DOM append escribe «null» con los huecos: se quitan antes.
-      box.append(...[
-        el('h3', {}, 'IA de la historia y los chats'),
-        el('p', { class: 'muted small' }, 'Roleplay libre: el reparto reacciona a tus decisiones y mantiene el contexto de la partida. Puedes usar un modelo local con KoboldCpp u Ollama; si la IA no está disponible, se mantienen los diálogos escritos.'),
-        el('label', { class: 'field' }, el('span', {}, 'Proveedor de IA'),
-          el('select', { class: 'input', value: selected, onchange: (e) => save({ provider: e.target.value, url: '', model: P[e.target.value]?.model || '' }) },
-            el('option', { value: 'koboldcpp' }, 'KoboldCpp'), el('option', { value: 'ollama' }, 'Ollama'))),
-        el('label', { class: 'switch-row' }, el('span', {}, 'Usar IA', el('small', { class: 'muted' }, on ? 'Activada' : 'Desactivada: solo diálogos escritos')),
-          el('input', { type: 'checkbox', checked: on, onchange: (e) => save(e.target.checked ? { provider: selected } : { provider: 'off' }) })),
-        on ? el('p', { class: 'small ai-help' }, d.help) : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Dirección'),
-          el('input', { class: 'input', value: (App.settings.ai?.provider === selected && App.settings.ai.url ? App.settings.ai.url : d.url).replaceAll('192.168.1.40', '192.168.1.139'), placeholder: d.url, inputmode: 'url', onchange: (e) => save({ url: e.target.value.trim() }) })) : null,
-        on && !window.AI.ready() ? el('p', { class: 'small ai-help' }, 'En el móvil o la tablet escribe la dirección de tu PC (la que sale en Ajustes del juego en el PC), no «localhost».') : null,
-        on ? lan : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Contraseña (opcional; solo si el servidor la requiere)'),
-          el('input', { class: 'input', type: 'password', autocomplete: 'off', value: App.settings.ai?.provider === selected ? (App.settings.ai.password || '') : '', placeholder: 'Déjala vacía si no configuraste autenticación', onchange: (e) => save({ password: e.target.value }) })) : null,
-        on ? el('p', { class: 'small ai-help' }, 'Si abres KoboldCpp por la red de casa, Chrome puede pedir permiso para acceder a la red local. Pulsa «Permitir» cuando conectes la IA desde esta web.') : null,
-        on ? el('label', { class: 'field' }, el('span', {}, 'Modelo'),
-          el('input', { class: 'input', value: c.model, placeholder: 'koboldcpp', onchange: (e) => save({ model: e.target.value.trim() }) })) : null,
-        on ? models : null,
-        on ? el('div', { class: 'row gap' },
-          el('button', { class: 'btn small', onclick: findModels }, selected === 'ollama' ? 'Listar modelos de Ollama' : 'Ver el modelo abierto'),
-          el('button', { class: 'btn small', onclick: async () => {
-            status.textContent = 'Probando…';
-            try {
-              const r = await window.AI.test();
-              status.textContent = `✓ Funciona en ${r.secs.toFixed(1)} s: «${r.text}»${r.secs > 15 ? ' · La primera vez tarda más porque carga el modelo. Prueba otra vez; si sigue lento, elige un modelo más pequeño en KoboldCpp.' : ''}`;
-            } catch (err) { status.textContent = `✗ ${err.message}`; }
-          } }, 'Probar conexión'), status) : null].filter(Boolean));
-      // En el PC: la dirección que hay que escribir en la tablet para usar este KoboldCpp.
-      if (on && window.arcane?.lanIps) {
-        window.arcane.lanIps().then((ips) => {
-          if (ips.length) lan.textContent = `En la tablet o el móvil escribe: ${ips.map((ip) => `http://${ip}:5001`).join(' o ')}`;
-        }).catch(() => {});
-      }
-      /** Pregunta a KoboldCpp qué modelo tiene abierto. */
-      async function findModels() {
-        status.textContent = 'Buscando…';
-        try {
-          const list = await window.AI.models();
-          status.textContent = list.length ? (selected === 'ollama' ? 'Modelos disponibles en Ollama.' : 'Este es el modelo que tiene abierto KoboldCpp.') : (selected === 'ollama' ? 'No se han encontrado modelos en Ollama. Descarga uno y crea el perfil antes de probar.' : 'KoboldCpp no tiene ningún modelo abierto. Ciérralo, elige un .gguf en «Model» y pulsa «Launch».');
-          models.replaceChildren(...list.map((m) => el('button', {
-            class: `chip${m.name === c.model ? ' active' : ''}`,
-            onclick: () => save({ model: m.name }),
-          }, `${m.name}${m.loaded ? ' · cargado' : ''}`)));
-        } catch (err) { status.textContent = `✗ ${err.message}`; }
-      }
-    };
-    draw();
-    return box;
-  }
+  // La interfaz de ajustes no expone IA en esta fase; su integración queda aplazada.
 
   // Clases del <body> que dependen de los ajustes (tamaño de letra, accesibilidad, brillo…).
   function applyLook(s = App.settings) {
