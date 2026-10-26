@@ -138,5 +138,31 @@ window.ART_BUNDLED = {
     "stillwater": "img/arte/lugares/s2/stillwater.webp",
     "taller-jayce": "img/arte/lugares/s2/taller-jayce.webp",
     "tejados": "img/arte/lugares/s2/tejados.webp"
+  },
+  "mapa/piltover/atlas": {
+    "airship-docks": "img/arte/mapa/piltover/atlas/airship-docks.webp",
+    "council-chamber": "img/arte/mapa/piltover/atlas/council-chamber.webp",
+    "hextech-lab": "img/arte/mapa/piltover/atlas/hextech-lab.webp",
+    "kiramman-estate": "img/arte/mapa/piltover/atlas/kiramman-estate.webp",
+    "piltover-academy": "img/arte/mapa/piltover/atlas/piltover-academy.webp",
+    "piltover": "img/arte/mapa/piltover/atlas/piltover.webp",
+    "river-pilt": "img/arte/mapa/piltover/atlas/river-pilt.webp",
+    "stillwater-hold": "img/arte/mapa/piltover/atlas/stillwater-hold.webp",
+    "the-hexgates": "img/arte/mapa/piltover/atlas/the-hexgates.webp"
+  },
+  "mapa/zaun/atlas": {
+    "benzos-pawn-shop": "img/arte/mapa/zaun/atlas/benzos-pawn-shop.webp",
+    "bridge-of-progress": "img/arte/mapa/zaun/atlas/bridge-of-progress.webp",
+    "firelight-sanctuary": "img/arte/mapa/zaun/atlas/firelight-sanctuary.webp",
+    "shimmer-factory": "img/arte/mapa/zaun/atlas/shimmer-factory.webp",
+    "the-lanes": "img/arte/mapa/zaun/atlas/the-lanes.webp",
+    "the-last-drop": "img/arte/mapa/zaun/atlas/the-last-drop.webp",
+    "undercity": "img/arte/mapa/zaun/atlas/undercity.webp",
+    "viktors-commune": "img/arte/mapa/zaun/atlas/viktors-commune.webp",
+    "zaun": "img/arte/mapa/zaun/atlas/zaun.webp"
+  },
+  "mapa/otros/atlas": {
+    "noxus": "img/arte/mapa/otros/atlas/noxus.webp",
+    "the-immortal-bastion": "img/arte/mapa/otros/atlas/the-immortal-bastion.webp"
   }
 };
