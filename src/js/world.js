@@ -30,6 +30,7 @@
   let vel = { x: 0, y: 0 }; // inercia al soltar un arrastre
   let hover = null; // lugar, personaje o cristal bajo el ratón
   let r3d = null; // escena 3D (null = carta 2D)
+  let webglWarned = false;
   let yaw = 0; // giro de la cámara 3D
   let pitch = 0.9; // inclinación (0 = cenital)
   let drawn = { pins: [], frags: [] }; // dónde se pintó cada cosa en el último fotograma (para tocarla)
@@ -303,7 +304,8 @@
   };
   const PAD_TOP = 26; // px de pantalla libres arriba y abajo (la barra de botones tapa el borde inferior)
   const PAD_BOTTOM = 76;
-  const zMax = () => Math.max(fit * 4, 0.9);
+  // Permite acercarse hasta ver caras/cuerpos individuales, sin cambiar la escala del mundo.
+  const zMax = () => Math.max(fit * 10, 1.2);
 
   /** Mantiene la ciudad dentro de la vista (centrada si cabe entera). */
   function clampView() {
@@ -1732,13 +1734,33 @@
         if (r3d) {
           const b = canvas.parentElement.getBoundingClientRect();
           r3d.resize(Math.max(320, b.width), Math.max(240, b.height), Math.min(2, window.devicePixelRatio || 1));
+          // Si el contexto gráfico se pierde, abandonar 3D inmediatamente en lugar de congelar negro.
+          r3d.el?.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            console.error('Mapa 3D: se perdió el contexto WebGL; se vuelve al mapa ilustrado.');
+            G.world.view = '2d';
+            use3d(false);
+            resize();
+            if (!webglWarned) {
+              toast('La gráfica ha perdido WebGL. Se ha recuperado el mapa 2D; prueba calidad Media o Baja.', 'warn');
+              webglWarned = true;
+            }
+          }, { once: true });
           r3d.setMap(map, paintBackground(true));
           if (!map.bg) paintBackground();
+        } else if (!webglWarned) {
+          toast('WebGL no está disponible en este equipo. Se mostrará el mapa ilustrado 2D.', 'warn');
+          webglWarned = true;
         }
       } catch (err) {
         console.error('Mapa 3D desactivado:', err);
         r3d?.dispose();
         r3d = null;
+        G.world.view = '2d';
+        if (!webglWarned) {
+          toast('El mapa 3D no pudo iniciarse. Se ha recuperado el mapa ilustrado 2D.', 'warn');
+          webglWarned = true;
+        }
       }
     } else if (r3d) {
       r3d.dispose();
