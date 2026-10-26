@@ -11,15 +11,11 @@ on:
         description: "Días que se guardan los artefactos para descargarlos (1-90)"
         type: number
         default: 14
-      publicar:
-        description: "Publicar la Release arcane-v<versión de package.json> con lo compilado (solo desde main)"
-        type: boolean
-        default: false
 permissions:
   contents: read
 concurrency:
   group: compilar-${{ github.ref }}
-  # Una ejecución manual (que puede publicar) nunca se cancela a medias.
+  # La compilación manual solo genera artefactos; las Releases se crean fuera de este workflow.
   cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' }}
 env:
   PROYECTO: arcane-fangame
@@ -88,31 +84,3 @@ jobs:
           path: dist/*.exe
           if-no-files-found: error
           retention-days: ${{ env.RETENCION }}
-  
-  # Solo a mano: Run workflow en main con «publicar» marcado. Ningún push ni etiqueta publica.
-  release:
-    name: Publicar Release (manual)
-    if: github.event_name == 'workflow_dispatch' && inputs.publicar && github.ref == 'refs/heads/main'
-    needs: [comprobaciones, windows]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    env:
-      TAG: arcane-v${{ needs.comprobaciones.outputs.version }}
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: ${{ env.PROYECTO }}-${{ needs.comprobaciones.outputs.version }}-*
-          path: dist
-          merge-multiple: true
-      - uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ env.TAG }}
-          target_commitish: ${{ github.sha }}
-          name: Arcane Fangame ${{ env.TAG }}
-          body: |
-            Instaladores del fangame de Arcane (no oficial).
-            - Windows: el `Setup` (instalador) o el `portable` (sin instalar).
-          files: dist/*
-          overwrite_files: true
-          fail_on_unmatched_files: true
