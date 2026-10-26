@@ -20,7 +20,7 @@ for (const m of html.matchAll(/<script\s+src="([^"]+)"\s*><\/script>/g)) {
   }
 }
 // El motor de minijuegos 3D debe cargarse después de Three.js y del catálogo base, pero antes del motor de partida.
-const scriptOrder = [...html.matchAll(/<script\\s+src="([^"]+)"\\s*><\\/script>/g)].map((m) => m[1]);
+const scriptOrder = html.split('<script src="').slice(1).map((chunk) => chunk.split('"')[0]);
 const threeIndex = scriptOrder.indexOf('vendor/three.min.js');
 const baseMiniIndex = scriptOrder.indexOf('js/minigames.js');
 const extraMiniIndex = scriptOrder.indexOf('js/minigames-extra.js');
