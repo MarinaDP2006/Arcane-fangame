@@ -9,7 +9,7 @@
 # Android: sin llave de firma sale un APK de prueba (debug) que se instala directamente en la
 # tablet. Con los secretos ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS
 # y ANDROID_KEY_PASSWORD también se genera el APK firmado y el AAB para Google Play.
-name: Compilar Arcane (Windows, macOS y Android)
+name: Compilar Arcane (solo Windows)
 on:
   push:
     branches: [main]
@@ -100,116 +100,12 @@ jobs:
           path: dist/*.exe
           if-no-files-found: error
           retention-days: ${{ env.RETENCION }}
-
-  macos:
-    name: macOS (${{ matrix.arch }})
-    needs: comprobaciones
-    runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [x64, arm64]
-    env:
-      VERSION: ${{ needs.comprobaciones.outputs.version }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - name: Instalar dependencias
-        run: npm ci
-      # Sin certificado de Apple: la app sale sin firmar. La primera vez en el Mac hay que
-      # abrirla con clic derecho → Abrir (lo explica la web y el README).
-      - name: Compilar DMG y ZIP de Mac (${{ matrix.arch }})
-        run: npm run dist:mac -- "dmg:${{ matrix.arch }}" "zip:${{ matrix.arch }}" --publish never
-        env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
-      - name: Comprobar que existen el DMG y el ZIP de esta arquitectura
-        run: |
-          ls -la dist
-          test -f "dist/Arcane-Fangame-$VERSION-mac-${{ matrix.arch }}.dmg"
-          test -f "dist/Arcane-Fangame-$VERSION-mac-${{ matrix.arch }}.zip"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.PROYECTO }}-${{ env.VERSION }}-macos-${{ matrix.arch }}
-          path: |
-            dist/Arcane-Fangame-${{ env.VERSION }}-mac-${{ matrix.arch }}.dmg
-            dist/Arcane-Fangame-${{ env.VERSION }}-mac-${{ matrix.arch }}.zip
-          if-no-files-found: error
-          retention-days: ${{ env.RETENCION }}
-
-  android:
-    name: Android (universal)
-    needs: comprobaciones
-    runs-on: ubuntu-latest
-    env:
-      VERSION: ${{ needs.comprobaciones.outputs.version }}
-      # Solo se usa para saber si existe la llave; nunca se imprime.
-      HAY_LLAVE: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      # Capacitor 8 y el plugin de Android 8.13 piden JDK 21.
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
-      # compileSdk/targetSdk 36 (android/variables.gradle).
-      - uses: android-actions/setup-android@v3
-        with:
-          packages: platform-tools platforms;android-36
-          log-accepted-android-sdk-licenses: false
-      - uses: gradle/actions/wrapper-validation@v4
-      - name: Instalar dependencias (sin descargar Electron)
-        run: npm ci --ignore-scripts
-      - name: Copiar el juego al proyecto Android
-        run: npm run android:sync
-      - name: Compilar APK de prueba (debug)
-        working-directory: android
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
-          mkdir -p ../apk
-          cp app/build/outputs/apk/debug/app-debug.apk "../apk/$PROYECTO-$VERSION-android-universal-debug.apk"
-      - name: Compilar APK firmado y AAB (si hay llave)
-        if: env.HAY_LLAVE == 'true'
-        working-directory: android
-        env:
-          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_FILE: ${{ runner.temp }}/release.keystore
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: |
-          for s in ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
-            if [ -z "${!s}" ]; then echo "::error::Falta el secreto $s (hay llave pero la firma está incompleta)"; exit 1; fi
-          done
-          printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$ANDROID_KEYSTORE_FILE"
-          ./gradlew assembleRelease bundleRelease --no-daemon
-          cp app/build/outputs/apk/release/app-release.apk "../apk/$PROYECTO-$VERSION-android-universal-release.apk"
-          cp app/build/outputs/bundle/release/app-release.aab "../apk/$PROYECTO-$VERSION-android-universal-release.aab"
-      - name: Borrar la llave del runner
-        if: always()
-        run: rm -f "$RUNNER_TEMP/release.keystore"
-      - name: Comprobar que existe el APK
-        run: ls -la apk && test -f "apk/$PROYECTO-$VERSION-android-universal-debug.apk"
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.PROYECTO }}-${{ env.VERSION }}-android-universal
-          path: apk/*
-          if-no-files-found: error
-          retention-days: ${{ env.RETENCION }}
-
+  
   # Solo a mano: Run workflow en main con «publicar» marcado. Ningún push ni etiqueta publica.
   release:
     name: Publicar Release (manual)
     if: github.event_name == 'workflow_dispatch' && inputs.publicar && github.ref == 'refs/heads/main'
-    needs: [comprobaciones, windows, macos, android]
+    needs: [comprobaciones, windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -229,9 +125,6 @@ jobs:
           body: |
             Instaladores del fangame de Arcane (no oficial).
             - Windows: el `Setup` (instalador) o el `portable` (sin instalar).
-            - Mac: `arm64` (Apple Silicon) o `x64` (Intel). Sin firmar: la primera vez, clic derecho → Abrir.
-            - Android de prueba: `arcane-fangame-*-android-universal-debug.apk` (instalación directa; no es una versión de Play Store).
-            - Android firmado: `arcane-fangame-*-android-universal-release.apk` y `*-android-universal-release.aab` si están configurados los secretos de firma.
           files: dist/*
           overwrite_files: true
           fail_on_unmatched_files: true
