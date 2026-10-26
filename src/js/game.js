@@ -699,11 +699,63 @@
   }
 
   // ---------------- Diario de misiones ----------------
+  function missionAvailable(m) {
+    const season = Number(G.progress.season || 1);
+    if (m.seasonMin && season < m.seasonMin) return false;
+    if (m.seasonMax && season > m.seasonMax) return false;
+    return (m.requiresMet || []).every((id) => G.met.includes(id) || G.unlocked.includes(id));
+  }
+
+  function missionLockReason(m) {
+    const season = Number(G.progress.season || 1);
+    if (m.seasonMin && season < m.seasonMin) return `Se desbloquea en la Parte ${m.seasonMin}`;
+    if (m.seasonMax && season > m.seasonMax) return 'Esta misión pertenece a una parte anterior';
+    const missing = (m.requiresMet || []).find((id) => !G.met.includes(id) && !G.unlocked.includes(id));
+    if (missing) return `Conoce a ${charName(missing)} en la historia para desbloquearla`;
+    return '';
+  }
+
   function missionReady(m) {
+    if (!missionAvailable(m)) return false;
     if (m.type === 'atlas') return (G.atlas || []).includes(m.target);
-    if (m.type === 'bond') return affOf(m.target) >= m.affinity && Relations.together(G, m.target) >= m.trust;
-    if (m.type === 'family') return Object.keys(G.rel || {}).some((id) => ['familia', 'pariente'].includes(Relations.status(G, id)));
+    if (m.type === 'bond') {
+      const rel = Relations.status(G, m.target);
+      return affOf(m.target) >= m.affinity
+        && Relations.together(G, m.target) >= m.trust
+        && (!m.requiresRelation || Boolean(rel));
+    }
+    if (m.type === 'relation') return Relations.status(G, m.target) === m.relation
+      && affOf(m.target) >= m.affinity && Relations.together(G, m.target) >= m.trust;
+    if (m.type === 'family') {
+      return Object.keys(G.rel || {}).some((id) =>
+        ['familia', 'pariente'].includes(Relations.status(G, id))
+        && affOf(id) >= (m.affinity || 0)
+        && Relations.together(G, id) >= (m.trust || 0));
+    }
+    if (m.type === 'specific-family') return ['familia', 'pariente'].includes(Relations.status(G, m.target))
+      && affOf(m.target) >= m.affinity && Relations.together(G, m.target) >= m.trust;
     return false;
+  }
+
+  function missionProgress(m) {
+    if (m.type === 'atlas') return (G.atlas || []).includes(m.target)
+      ? 'Lugar registrado en el Atlas'
+      : 'Pendiente de explorar en el Atlas';
+    if (m.type === 'bond' || m.type === 'relation' || m.type === 'specific-family') {
+      const relation = Relations.status(G, m.target);
+      const relationText = relation ? (RELATIONS_LABEL(relation)) : 'Vínculo todavía no establecido';
+      return `Afinidad ${affOf(m.target)}/${m.affinity} · Confianza ${Relations.together(G, m.target)}/${m.trust} · ${relationText}`;
+    }
+    if (m.type === 'family') {
+      const ids = Object.keys(G.rel || {}).filter((id) => ['familia', 'pariente'].includes(Relations.status(G, id)));
+      if (!ids.length) return 'Vínculo familiar pendiente';
+      return ids.map((id) => `${charName(id)}: afinidad ${affOf(id)}/${m.affinity || 0} · confianza ${Relations.together(G, id)}/${m.trust || 0}`).join(' · ');
+    }
+    return 'Objetivo pendiente';
+  }
+
+  function RELATIONS_LABEL(kind) {
+    return window.RELATIONS.kinds[kind]?.label || kind;
   }
 
   function claimMission(m) {
@@ -721,11 +773,15 @@
     const route = S().routes[routeId] || [];
     const currentIndex = Math.max(0, route.indexOf(G.progress.chapterId));
     const currentChapter = chapterById(G.progress.chapterId);
+    const completedChapters = G.progress.finished ? route.length : Math.min(route.length, currentIndex + (G.progress.chapterEnded ? 1 : 0));
+    const partLabel = G.progress.season === 2
+      ? 'PARTE II · LAS CONSECUENCIAS'
+      : `PARTE I · EL INICIO · ${G.progress.route === 'zaun' ? 'ZAUN' : 'PILTOVER'}`;
     const chapterRows = route.map((id, index) => {
       const chapter = chapterById(id);
       if (!chapter) return null;
-      const done = G.progress.finished || index < currentIndex;
-      const active = !G.progress.finished && index === currentIndex;
+      const done = G.progress.finished || index < currentIndex || (index === currentIndex && G.progress.chapterEnded);
+      const active = !G.progress.finished && index === currentIndex && !G.progress.chapterEnded;
       return el('div', { class: `mission-row main-quest ${done ? 'is-done' : active ? 'is-active' : 'is-locked'}` },
         el('span', { class: 'mission-state' }, done ? '✓' : active ? '◆' : '·'),
         el('div', { class: 'mission-copy' },
@@ -733,41 +789,58 @@
           el('p', {}, chapter.intro || 'Continúa la historia para descubrir este capítulo.'),
           el('small', {}, done ? 'Completado' : active ? 'En curso · Misión principal' : 'Se desbloquea al avanzar')));
     }).filter(Boolean);
-    const side = (window.MISSIONS || []).map((m) => {
+    const allMissions = window.MISSIONS || [];
+    const side = allMissions.map((m) => {
       const claimed = Boolean(G.flags?.[m.reward.flag]);
+      const available = missionAvailable(m);
       const ready = missionReady(m);
-      const progress = m.type === 'atlas'
-        ? ((G.atlas || []).includes(m.target) ? 'Lugar registrado en el Atlas' : 'Pendiente de explorar en el Atlas')
-        : m.type === 'bond'
-          ? `Afinidad ${affOf(m.target)}/${m.affinity} · Confianza ${Relations.together(G, m.target)}/${m.trust}`
-          : Object.keys(G.rel || {}).some((id) => ['familia', 'pariente'].includes(Relations.status(G, id))) ? 'Vínculo familiar establecido' : 'Vínculo familiar pendiente';
-      return el('article', { class: `mission-card ${claimed ? 'is-done' : ready ? 'is-ready' : ''}` },
+      const lockReason = missionLockReason(m);
+      const classes = ['mission-card', claimed ? 'is-done' : !available ? 'is-locked' : ready ? 'is-ready' : ''];
+      const actions = [];
+      if (!claimed && available && m.type === 'atlas' && m.target) {
+        actions.push(el('button', { class: 'btn small ghost', onclick: () => openOverlay('codice', m.target, 'atlas') }, 'Abrir lugar en el Atlas'));
+      }
+      if (!claimed && available && m.target && ['bond', 'relation', 'specific-family'].includes(m.type) && G.unlocked.includes(m.target) && !isFallen(m.target)) {
+        actions.push(el('button', { class: 'btn small ghost', onclick: () => openOverlay('chats', m.target) }, `Hablar con ${charName(m.target)}`));
+      }
+      return el('article', { class: classes.filter(Boolean).join(' ') },
         el('div', { class: 'mission-card-top' },
-          el('span', { class: 'mission-kicker' }, m.city === 'ambas' ? 'PILTOVER + ZAUN' : m.city.toUpperCase()),
-          el('span', { class: 'mission-status' }, claimed ? 'COMPLETADA' : ready ? 'LISTA PARA COBRAR' : 'EN CURSO')),
+          el('span', { class: 'mission-kicker' }, m.city === 'ambas' ? 'PILTOVER + ZAUN' : String(m.city || 'ambas').toUpperCase()),
+          el('span', { class: 'mission-status' }, claimed ? 'COMPLETADA' : !available ? 'BLOQUEADA' : ready ? 'LISTA PARA COBRAR' : 'EN CURSO')),
         el('h3', {}, m.title),
         el('p', {}, m.description),
         el('p', { class: 'mission-objective' }, el('strong', {}, 'Objetivo: '), m.objective),
-        el('div', { class: 'mission-progress' }, progress),
-        claimed ? el('span', { class: 'mission-reward' }, '✓ Recompensa obtenida') :
-          ready ? el('button', { class: 'btn primary small', onclick: () => claimMission(m) }, 'Completar y recibir recompensa') :
-            el('span', { class: 'mission-reward' }, rewardLabel(m.reward)));
+        el('div', { class: 'mission-progress' }, claimed ? 'Recompensa obtenida' : !available ? lockReason : missionProgress(m)),
+        el('div', { class: 'row gap wrap mission-actions' },
+          ...actions,
+          !claimed && available && ready
+            ? el('button', { class: 'btn primary small', onclick: () => claimMission(m) }, 'Completar y recibir recompensa')
+            : null,
+          claimed ? el('span', { class: 'mission-reward' }, '✓ Recompensa obtenida')
+            : !available ? el('span', { class: 'mission-reward' }, 'Avanza en la historia para desbloquear esta misión')
+              : !ready ? el('span', { class: 'mission-reward' }, rewardLabel(m.reward)) : null));
     });
     box.className = 'overlay show mission-overlay';
     box.innerHTML = '';
     box.append(el('div', { class: 'panel mission-panel' },
       el('header', { class: 'overlay-head' },
-        el('div', {}, el('span', { class: 'eyebrow' }, 'DIARIO DE CAMPO'), el('h2', {}, 'Misiones y vínculos')),
+        el('div', {}, el('span', { class: 'eyebrow' }, partLabel), el('h2', {}, 'Misiones y vínculos')),
         closeBtn()),
       el('div', { class: 'mission-scroll' },
         el('section', { class: 'mission-section' },
-          el('div', { class: 'mission-section-head' }, el('h3', {}, 'Historia principal'), el('span', {}, `${G.progress.finished ? route.length : currentIndex}/${route.length} capítulos`)),
+          el('div', { class: 'mission-section-head' },
+            el('h3', {}, 'Historia principal'),
+            el('span', {}, `${completedChapters}/${route.length} capítulos`)),
           el('p', { class: 'muted' }, currentChapter ? currentChapter.intro : 'La historia principal está completada.'),
           ...chapterRows,
-          G.progress.finished ? el('p', { class: 'mission-reward' }, '✓ Has completado esta ruta.') : el('button', { class: 'btn primary', onclick: () => openOverlay('historia') }, 'Continuar historia')),
+          G.progress.finished
+            ? el('p', { class: 'mission-reward' }, G.progress.season === 2 ? '✓ Has completado la Parte II.' : '✓ Has completado la Parte I.')
+            : el('button', { class: 'btn primary', onclick: () => openStory() }, 'Continuar historia')),
         el('section', { class: 'mission-section' },
-          el('div', { class: 'mission-section-head' }, el('h3', {}, 'Misiones secundarias'), el('span', {}, `${(window.MISSIONS || []).filter((m) => G.flags?.[m.reward.flag]).length}/${(window.MISSIONS || []).length}`)),
-          el('p', { class: 'muted' }, 'Explora lugares, ayuda a la gente y fortalece tus relaciones. Las recompensas se reclaman aquí cuando cumples los requisitos.'),
+          el('div', { class: 'mission-section-head' },
+            el('h3', {}, 'Misiones secundarias'),
+            el('span', {}, `${allMissions.filter((m) => G.flags?.[m.reward.flag]).length}/${allMissions.length}`)),
+          el('p', { class: 'muted' }, 'Las misiones se desbloquean al conocer personajes y avanzar de parte. La afinidad, el tiempo compartido y las decisiones abren nuevos vínculos y recompensas.'),
           ...side))));
   }
 
