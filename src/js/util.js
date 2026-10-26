@@ -200,8 +200,25 @@
     return { out, unknown, direct };
   }
 
-  // Arte personal de la jugadora (carpeta «arte» en escritorio).
-  window.CustomArt = {
+  // Variantes de alta resolución procedentes de los ZIP de referencia de las ciudades.
+  // Los nombres apuntan al manifiesto generado: no se cargan rutas fuera de src/img/arte.
+  const CITY_REFERENCE_ART = {
+    s1: {
+      zaun: 'zaun-centro',
+      arbol: 'zaun-arbol-fireflight',
+      mercado: 'zaun-mercado-reference',
+      'ultima-gota': 'zaun-ultima-gota-bar',
+      sumidero: 'zaun-punto-seguridad',
+      'puente-zaun': 'zaun-muelles',
+    },
+    s2: {
+      callejones: 'zaun-fisuras-superiores',
+      'escondite-jinx': 'zaun-escondite-jinx',
+      fabrica: 'zaun-singed-laboratorio',
+    },
+  };
+
+  // Arte personal de la jugadora (carpeta «arte» en escritorio).\n  window.CustomArt = {
     season() {
       const id = window.Game?.current?.()?.progress?.chapterId || '';
       return /^t\d+$|^fin2$/.test(id) ? 's2' : 's1';
@@ -228,6 +245,11 @@
     image(cat, id) {
       if (['personajes', 'caras', 'lugares'].includes(cat)) {
         const season = this.season();
+        if (cat === 'lugares') {
+          const referenceId = CITY_REFERENCE_ART[season]?.[id];
+          const reference = referenceId && (this.files[`lugares/${season}`]?.[referenceId] || window.ART_BUNDLED?.[`lugares/${season}`]?.[referenceId]);
+          if (reference) return reference;
+        }
         const seasonal = this.files[`${cat}/${season}`]?.[id] || window.ART_BUNDLED?.[`${cat}/${season}`]?.[id];
         if (seasonal) return seasonal;
         // Nunca usar retratos o escenarios de T1 como imágenes de T2. Las caras que sube la
