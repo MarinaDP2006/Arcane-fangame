@@ -19,6 +19,18 @@ for (const m of html.matchAll(/<script\s+src="([^"]+)"\s*><\/script>/g)) {
     catch (e) { errors.push('Error de sintaxis en ' + url + ': ' + e.message); }
   }
 }
+// El motor de minijuegos 3D debe cargarse después de Three.js y del catálogo base, pero antes del motor de partida.
+const scriptOrder = [...html.matchAll(/<script\\s+src="([^"]+)"\\s*><\\/script>/g)].map((m) => m[1]);
+const threeIndex = scriptOrder.indexOf('vendor/three.min.js');
+const baseMiniIndex = scriptOrder.indexOf('js/minigames.js');
+const extraMiniIndex = scriptOrder.indexOf('js/minigames-extra.js');
+const mini3dIndex = scriptOrder.indexOf('js/minigames-3d.js');
+const gameIndex = scriptOrder.indexOf('js/game.js');
+ensure(threeIndex >= 0, 'Falta Three.js para los minijuegos 3D');
+ensure(mini3dIndex >= 0, 'Falta cargar js/minigames-3d.js');
+ensure(threeIndex < mini3dIndex && baseMiniIndex < mini3dIndex && extraMiniIndex < mini3dIndex && mini3dIndex < gameIndex,
+  'Orden de scripts incorrecto: Three.js y los catálogos base deben preceder a minigames-3d.js, y este al motor del juego');
+
 /** Cada lugar de los dos mapas debe tener su escenario 2D, con una imagen que exista. */
 const ctx = { window: {} };
 vm.runInNewContext(fs.readFileSync(path.join(src, 'js', 'scenes2d.js'), 'utf8'), ctx);
