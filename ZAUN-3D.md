@@ -46,3 +46,23 @@ El mapa exterior ya añade siluetas 3D diferenciadas para varios lugares clave y
 - `src/index.html`: carga del módulo de exploración.
 
 No se han ejecutado ni certificado pruebas de rendimiento o jugabilidad completas en Windows. Se deben realizar antes de afirmar que está terminado.
+
+
+## Referencias de lore, cultura y diseño
+
+- Universo oficial de Zaun: https://universe.leagueoflegends.com/en_US/region/zaun/
+- Wiki en español: https://leagueoflegends.fandom.com/es/wiki/Zaun
+- Universo oficial de Piltover: https://universe.leagueoflegends.com/en_US/region/piltover/
+- Wiki en español: https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver
+- Análisis de diseño de ambas ciudades: https://80.lv/articles/riot-games-on-designing-arcane-s-piltover-zaun
+- Referencia visual de la autora: https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298 (si el agente no puede abrirla, pedir captura).
+
+Zaun debe sentirse como una ciudad subterránea de hierro y cristal, construida en fisuras y cañones bajo Piltover. La arquitectura combina niveles densos, fachadas remendadas, hierro remachado, tuberías corroídas, vidrio de color, pasarelas, escaleras, ascensores y callejones. La niebla industrial debe crear profundidad, no ocultar rutas, personajes ni señales.
+
+La cultura zaunita no se limita a la delincuencia: incluir mercados, talleres, bares, música, lugares comunitarios, santuarios, inventores, redes de apoyo y orgullo local. Los barones químicos, la desigualdad y los mercados negros deben expresarse mediante zonas y relaciones espaciales concretas.
+
+Shimmer/Brillo debe mostrarse como una sustancia peligrosa ligada a laboratorios, distribución, control territorial y consecuencias físicas/narrativas; no como decoración púrpura en cada calle. Quimtec debe parecer experimental, industrial y a menudo improvisada. Hextech se diferencia por sus cristales/energía mágica y acabado más refinado, aunque pueden existir contrabando e investigación compartida.
+
+La ciudad necesita conexiones jugables con Piltover: puentes, descensores/ascensores, escaleras, túneles, pasarelas y estaciones. El Puente del Progreso es un hito con significado político diferente para cada ciudad. Los POI y accesos deben coincidir con el mapa 2D y los IDs de src/data/world.js.
+
+Para el mapa completo, no pedir a Freebuff que sustituya el escenario por edificios procedurales. Generar y comparar mundos independientes con Marble (https://marble.worldlabs.ai/) y SpAItial (https://spaitial.ai/), corregir la mejor base en Blender y exportar GLB convencional. Comprobar los formatos: un Gaussian Splat no es automáticamente una malla GLB con colisiones. El estado real está en PENDIENTES.md y src/models/maps/README.md.
