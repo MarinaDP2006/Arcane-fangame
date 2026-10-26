@@ -1066,29 +1066,28 @@
   function showHelp() {
     if (U.touch) {
       showNotice('Controles', [
-        'Mapa: arrastra con un dedo para moverte y pellizca para acercar o alejar. Los botones de la derecha acercan, alejan, enseñan la ciudad entera, te llevan al objetivo y cambian de ciudad.',
+        'Mapa 2D: arrastra con un dedo para desplazarte y pellizca para acercar o alejar. Usa los controles de la pantalla para centrar el objetivo o cambiar de ciudad.',
         'Toca un lugar para ver qué puedes hacer allí: seguir la historia, hablar con quien esté, jugar su minijuego, explorarlo o viajar. Toca una cara para hablar con ese personaje.',
         'La línea dorada discontinua marca el camino hasta el objetivo de la historia.',
-        'En 3D gira la ciudad con dos dedos (o los botones de giro); el botón 2D/3D cambia de vista.',
-        'Los botones de abajo abren la historia, el comunicador, la ficha, el Códice, el Atlas y la pausa. El botón «atrás» del móvil cierra ventanas y pausa.',
+        'El mundo se recorre con mapas 2D ilustrados. Sigue la línea dorada hasta el siguiente objetivo y toca los lugares para ver sus acciones.',
+        'Los botones inferiores abren la historia, el comunicador, la ficha, el Códice, el Atlas, las misiones y la pausa. El botón «atrás» cierra ventanas.',
         'Recoge los hexágonos azules del mapa para completar el Códice. Las actividades de cada lugar suben tus estadísticas, que desbloquean opciones en la historia.',
       ].join('\n'));
       return;
     }
     showNotice('Controles', [
-      'Mapa: arrastra para moverte (o flechas / WASD), rueda o + y - para acercar y alejar, 0 para ver la ciudad entera. Doble clic acerca.',
+      'Mapa 2D: arrastra para moverte (o flechas / WASD), usa la rueda o + y - para acercar y alejar, y 0 para ver la ciudad entera. Doble clic acerca.',
       'Haz clic en un lugar (o E) para ver qué puedes hacer allí: seguir la historia, hablar con quien esté, jugar su minijuego, explorarlo o viajar. Clic en una cara para hablar con ese personaje.',
       'La línea dorada discontinua marca el camino hasta el objetivo. Los números 1-9 eligen una opción del menú del lugar.',
-      'En 3D: botón derecho (o Mayús) arrastrando gira e inclina la cámara; Q y R giran, Re Pág y Av Pág inclinan. El botón 2D/3D cambia de vista.',
-      'H: historia · C: comunicador · F: ficha · K: Códice · M: Atlas de las Dos Ciudades · Esc: pausa.',
+      'El mapa permanece en 2D; utiliza los controles de desplazamiento para explorar los barrios y las rutas entre ciudades.',
+      'H: historia · C: comunicador · F: ficha · K: Códice · M: Atlas · Q: misiones · Esc: pausa.',
       'Recoge los hexágonos azules del mapa para completar el Códice. Las actividades de cada lugar suben tus estadísticas, que desbloquean opciones en la historia.',
     ].join('\n'));
   }
 
   /** Abre la interfaz narrativa del capítulo. */
   function openStory() {
-    // Evita iniciar o continuar capítulos de un edificio desde el botón H del mapa
-    // sin haber investigado antes su espacio 3D, también en partidas nuevas.
+    // La historia puede iniciarse desde el objetivo del mapa sin depender de una visita interior ni de un motor 3D.
     const required = objectiveId();
     const isExplorable = false; // No se requiere un recorrido 3D para avanzar.
     if (!G.progress.finished && isExplorable && !G.acts[`interior:${G.progress.chapterId}`]) {
