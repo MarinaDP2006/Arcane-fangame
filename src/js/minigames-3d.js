@@ -1,8 +1,7 @@
 // Minijuegos 3D de Arcane-fangame. Motor reutilizable en Three.js, sin sprites retro.
 // El mundo principal continúa siendo 2D; solo estas actividades usan escenarios WebGL.
 (function () {
-  const old = window.Minigames || {};
-  const GAMES = old.GAMES || {};
+  const GAMES = {};
   const CATALOG = {
     tiro: { title: 'Galería de precisión', city: 'piltover', mode: 'shoot', goal: 'Impacta 6 dianas antes de que termine el tiempo.', quota: 6, secs: 28, scene: 'ejecutores', difficulty: 1, winText: 'La galería reconoce tu precisión.' },
     circuito: { title: 'Circuito hextech', city: 'piltover', mode: 'circuit', goal: 'Activa los nodos en el orden que marca el núcleo.', quota: 4, secs: 35, scene: 'taller-jayce', difficulty: 1, winText: 'El flujo hextech vuelve a estabilizarse.' },
@@ -659,7 +658,6 @@
   }
 
   window.Minigames = {
-    ...old,
     GAMES,
     CATALOG,
     CITY_GAMES,
