@@ -31,6 +31,8 @@ ensure(threeIndex < mini3dIndex && mini3dIndex < gameIndex,
   'Orden de scripts incorrecto: Three.js debe preceder a minigames-3d.js y este al motor del juego');
 ensure(!scriptOrder.includes('js/minigames.js') && !scriptOrder.includes('js/minigames-extra.js'),
   'El index todavía carga los motores de minijuegos retro');
+ensure(!fs.existsSync(path.join(src, 'js', 'minigames.js')) && !fs.existsSync(path.join(src, 'js', 'minigames-extra.js')),
+  'Los módulos Canvas antiguos deben permanecer retirados; el juego usa minijuegos 3D.');
 ensure(html.includes('href="icono-arcane.svg"') && fs.existsSync(path.join(src, 'icono-arcane.svg')),
   'Falta el favicon canónico web/icono-arcane.svg en el index del juego');
 
