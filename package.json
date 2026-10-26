@@ -12,7 +12,9 @@
     "check": "node scripts/check.js && node scripts/check-runtime.js",
     "dist": "electron-builder --win",
     "dist:win": "electron-builder --win",
-    "serve:web": "node server/roleplay-server.js"
+    "serve:web": "node server/roleplay-server.js",
+    "web": "node scripts/build-web.js",
+    "check:web": "npm run web && node scripts/check-web-deploy.js"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.3",

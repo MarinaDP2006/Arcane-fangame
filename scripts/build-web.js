@@ -61,13 +61,14 @@ function buildCapturas() {
 // Copia los recursos de estilo y navegación que necesita la portada pública.
 function copyWebAssets() {
   const cssDir = path.join(root, 'web', 'css');
-  if (fs.existsSync(cssDir)) {
-    for (const file of fs.readdirSync(cssDir)) {
-      const source = path.join(cssDir, file);
-      if (fs.statSync(source).isFile()) copy(source, path.join(out, 'css', file));
-    }
+  if (!fs.existsSync(cssDir)) throw new Error('Falta web/css/: no se puede construir la web pública.');
+  for (const file of fs.readdirSync(cssDir)) {
+    const source = path.join(cssDir, file);
+    if (fs.statSync(source).isFile()) copy(source, path.join(out, 'css', file));
   }
-  copy(path.join(root, 'web', 'menu.js'), path.join(out, 'menu.js'));
+  const menu = path.join(root, 'web', 'menu.js');
+  if (!fs.existsSync(menu)) throw new Error('Falta web/menu.js, requerido por la navegación móvil.');
+  copy(menu, path.join(out, 'menu.js'));
 }
 
 // Copia una selección del arte oficial de Arcane que ya está documentado en arcaneData/arte/FUENTES.json.
@@ -165,14 +166,13 @@ function build() {
     REPARTO: repartoHtml(personajes),
     ANIO: new Date().getFullYear(),
   };
-  for (const f of fs.readdirSync(path.join(root, 'web'))) {
+  // Publica solo las páginas y el icono que forman parte del sitio. No se copian
+  // README, páginas de desarrollo ni archivos añadidos a web/ por accidente.
+  const publicFiles = new Set(['index.html', 'privacidad.html', 'icono-arcane.svg']);
+  for (const f of publicFiles) {
     const src = path.join(root, 'web', f);
-    if (fs.statSync(src).isDirectory()) {
-      if (f === 'arte-propio') for (const a of fs.readdirSync(src)) copy(path.join(src, a), path.join(out, f, a));
-      continue;
-    }
-    if (f === 'README.md') continue;
-    if (/\.(html|css|js)$/.test(f)) {
+    if (!fs.existsSync(src) || !fs.statSync(src).isFile()) throw new Error(`Falta el archivo público obligatorio web/${f}`);
+    if (/\.html$/i.test(f)) {
       const txt = fs.readFileSync(src, 'utf8').replace(/\{\{(\w+)\}\}/g, (m, k) => (k in datos ? datos[k] : m));
       fs.writeFileSync(path.join(out, f), txt);
     } else copy(src, path.join(out, f));
