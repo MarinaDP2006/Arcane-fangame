@@ -44,6 +44,37 @@ Usa el generador de mallas para **un activo por generación**, no para pedirle t
 
 La fidelidad nace sobre todo de la **composición y los materiales del escenario completo en Blender**: los activos generados no conocen la distribución de los barrios ni las ubicaciones de la historia. No uses una generación 3D como ciudad final sin rehacer la escala, los empalmes, las calles transitables, la iluminación y los detalles característicos.
 
+
+## Flujo recomendado con IA para generar el escenario completo
+
+La opción prioritaria para **probar una ciudad completa a partir de referencias** es [World Labs Marble](https://marble.worldlabs.ai/): acepta texto, imágenes y panoramas y permite explorar el mundo generado. Su documentación describe exportación de Gaussian splats y mallas trianguladas; el tipo de exportación disponible depende del plan. Para el juego, el objetivo final sigue siendo una malla/escena que podamos limpiar en Blender y exportar como GLB. No des por hecho que cualquier descarga de Marble sea un GLB listo para Three.js.
+
+Alternativa para generar mundos desde una imagen o prompt: [SpAItial](https://spaitial.ai/), que anuncia mundos navegables, edición y exportación en varios formatos. Comprueba el formato exacto y los límites de exportación antes de invertir tiempo.
+
+Para **piezas sueltas**, no ciudades enteras:
+- [Tripo](https://www.tripo3d.ai/product-doc/model-generation/image-to-3d): convierte una imagen de referencia en un objeto 3D; sirve para torres, puentes, fachadas, maquinaria y atrezo.
+- [Meshy](https://docs.meshy.ai/en): genera modelos desde texto o imágenes y admite flujos de exportación; es adecuado para activos modulares que después se ensamblan.
+
+### Procedimiento de producción
+
+1. Usa arte de referencia de varias vistas por ciudad: vista panorámica, nivel de calle, arquitectura característica y un plano cenital aproximado. No envíes un collage con Piltover y Zaun mezclados como si fuese una sola escena.
+2. Genera en Marble una primera versión navegable de Piltover y otra independiente de Zaun. Pide una vista amplia y calles/terrazas conectadas. La IA produce un primer borrador, no garantiza que respete la geografía exacta de la serie ni que los edificios sean transitables.
+3. Exporta la malla de mayor calidad disponible. Si solo se obtiene un Gaussian splat, no lo renombres a GLB: debe integrarse con un renderizador compatible o convertirse/reconstruirse con un proceso adecuado. Para el mapa actual, preferimos malla y materiales reales.
+4. Abre la salida en Blender. Corrige escala, normales, materiales, piezas flotantes, intersecciones, calles, colisiones y huecos; elimina ruido y reconstruye zonas que la IA haya deformado. Conserva una silueta arquitectónica reconocible de cada ciudad.
+5. Crea/coloca los empties `POI__<id>` de este README y alinea los puntos con `src/data/world.js`. La IA no debe mover silenciosamente lugares que usa la historia.
+6. Exporta a `piltover.glb` o `zaun.glb` con texturas embebidas. Optimiza la malla y las texturas para el rendimiento en Windows y dispositivos modestos.
+7. Valida la escala con una figura humana de referencia de 1,7 unidades de altura (aproximación de producción): cámara cenital, media altura y nivel de calle; comprueba también los niveles de zoom mínimo/máximo. La escala final del avatar del juego debe ajustarse a los datos reales de los modelos, no solo al tamaño nominal de la malla.
+8. Coloca después NPC y guardias como entidades dinámicas del juego, no como parte fija de la malla estática. Distribuye residentes de forma determinista por zonas transitables, excluye agua/tejados y evita puntos de historia, entradas y bloqueos.
+9. Prueba ambas ciudades dentro del juego. Solo entonces considera listo el mapa; una previsualización bonita de la IA no demuestra que el GLB sea funcional, ligero ni jugable.
+
+### Referencias visuales y derechos
+
+- [Arte y proceso de Arcane — Fortiche](https://forticheprod.com/blog/the-art-and-making-of-arcane-artbook-arcane/)
+- [Material oficial de Zaun — League of Legends Wiki](https://wiki.leagueoflegends.com/en-us/Zaun)
+- [Arte de producción de Zaun con créditos de autoría](https://wiki.leagueoflegends.com/en-us/File%3AZaun_Characters_Arcane_Model_01.jpg)
+
+Usa estas imágenes para estudiar siluetas, iluminación y materiales. No asumas que una imagen de la serie se puede redistribuir en el juego por el mero hecho de estar en Internet; revisa la política de Riot y la licencia de cada recurso. La referencia final debe guiar una reconstrucción original de fan art, no prometer una réplica exacta generada automáticamente.
+
 ## Exportar y validar
 
 Con Blender instalado, abre el .blend de la ciudad y ejecuta desde la raíz del repositorio:
