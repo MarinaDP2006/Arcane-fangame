@@ -50,7 +50,7 @@ window.STORY = {
   chapters: [
     // ======================= RUTA ZAUN =======================
     {
-      id: 'z1', route: 'zaun', title: 'Capítulo 1 · La Última Gota',
+      id: 'z1', route: 'zaun', season: 1, episode: 1, act: 1, title: 'Capítulo 1 · La Última Gota',
       intro: 'Zaun, años antes de la hextec. El humo verde sube por las grietas y en la taberna de Vander huele a cerveza y a problemas.',
       unlocks: ['vander', 'vi', 'jinx'],
       start: 'a',
@@ -183,7 +183,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z2', route: 'zaun', title: 'Capítulo 2 · Humo y traición',
+      id: 'z2', route: 'zaun', season: 1, episode: 2, act: 1, title: 'Capítulo 2 · Humo y traición',
       intro: 'El robo ha despertado a Piltover. Los ejecutores bajan cada noche, y alguien en la sombra se aprovecha del caos.',
       unlocks: ['ekko', 'silco'],
       start: 'a',
@@ -304,7 +304,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z3', route: 'zaun', title: 'Capítulo 3 · Siete años después',
+      id: 'z3', route: 'zaun', season: 1, episode: 3, act: 1, title: 'Capítulo 3 · Siete años después',
       intro: 'Siete años. Zaun brilla de violeta: el Brillo corre por las calles y Silco manda. Has sobrevivido. Ahora toca decidir para quién.',
       unlocks: ['sevika'],
       start: 'a',
@@ -381,7 +381,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z4', route: 'zaun', title: 'Capítulo 4 · Luciérnagas',
+      id: 'z4', route: 'zaun', season: 1, episode: 4, act: 2, title: 'Capítulo 4 · Luciérnagas',
       intro: 'Un cargamento de Brillo ha desaparecido. Dicen que las Luciérnagas han vuelto a atacar. Silco quiere nombres.',
       unlocks: [],
       start: 'a',
@@ -465,7 +465,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z5', route: 'zaun', title: 'Capítulo 5 · Reencuentro',
+      id: 'z5', route: 'zaun', season: 1, episode: 5, act: 2, title: 'Capítulo 5 · Reencuentro',
       intro: 'Vi ha vuelto. Busca a Powder… y a Silco. Y una ejecutora de Piltover la sigue como su sombra.',
       unlocks: ['caitlyn'],
       start: 'a',
@@ -551,7 +551,7 @@ window.STORY = {
 
     // ======================= RUTA PILTOVER =======================
     {
-      id: 'p1', route: 'piltover', title: 'Capítulo 1 · La Academia',
+      id: 'p1', route: 'piltover', season: 1, episode: 1, act: 1, title: 'Capítulo 1 · La Academia',
       intro: 'Piltover, la Ciudad del Progreso. Latón, cristal y ambición. En la Academia, alguien está a punto de convertir la magia en ciencia.',
       unlocks: ['jayce', 'heimerdinger', 'viktor'],
       start: 'a',
@@ -634,7 +634,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p2', route: 'piltover', title: 'Capítulo 2 · Mecenas',
+      id: 'p2', route: 'piltover', season: 1, episode: 2, act: 1, title: 'Capítulo 2 · Mecenas',
       intro: 'El Consejo debate. La hextec podría ser el mayor logro de Piltover… o su ruina. El dinero, como siempre, decide.',
       unlocks: ['mel', 'cassandra'],
       start: 'a',
@@ -709,7 +709,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p3', route: 'piltover', title: 'Capítulo 3 · Placa y pólvora',
+      id: 'p3', route: 'piltover', season: 1, episode: 3, act: 1, title: 'Capítulo 3 · Placa y pólvora',
       intro: 'Siete años después. Piltover vive su edad dorada. Pero alguien ataca los envíos hextec, y el Brillo sube por el puente.',
       unlocks: ['caitlyn'],
       start: 'a',
@@ -791,7 +791,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p4', route: 'piltover', title: 'Capítulo 4 · El Día del Progreso',
+      id: 'p4', route: 'piltover', season: 1, episode: 4, act: 2, title: 'Capítulo 4 · El Día del Progreso',
       intro: 'Las hexpuertas abren. Piltover celebra. En el laboratorio, Viktor tose sangre y Sky le sostiene la mano.',
       unlocks: [],
       start: 'a',
@@ -849,7 +849,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p5', route: 'piltover', title: 'Capítulo 5 · Bajar',
+      id: 'p5', route: 'piltover', season: 1, episode: 5, act: 2, title: 'Capítulo 5 · Bajar',
       intro: 'Por primera vez, cruzas el puente hacia abajo. El aire pica, las luces son verdes, y nadie te sonríe.',
       unlocks: ['vi', 'ekko'],
       start: 'a',
@@ -936,7 +936,7 @@ window.STORY = {
     },
 
     {
-      id: 'z6', route: 'zaun', title: 'Capítulo 6 · El foso de Sevika',
+      id: 'z6', route: 'zaun', season: 1, episode: 6, act: 2, title: 'Capítulo 6 · El foso de Sevika',
       intro: 'Silco prepara algo grande. Sevika sabe qué es, pero en Zaun la información se gana a puñetazos.',
       unlocks: [],
       start: 'a',
@@ -982,7 +982,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z7', route: 'zaun', title: 'Capítulo 7 · Persecución en los tejados',
+      id: 'z7', route: 'zaun', season: 1, episode: 7, act: 3, title: 'Capítulo 7 · Persecución en los tejados',
       intro: 'Los ejecutores barren Zaun puerta por puerta. Ekko necesita que alguien lleve un aviso al árbol… atravesando la ciudad por arriba.',
       unlocks: [],
       start: 'a',
@@ -1037,7 +1037,7 @@ window.STORY = {
       },
     },
     {
-      id: 'z8', route: 'zaun', title: 'Capítulo 8 · Lo que oculta Singed',
+      id: 'z8', route: 'zaun', season: 1, episode: 8, act: 3, title: 'Capítulo 8 · Lo que oculta Singed',
       intro: 'El laboratorio del Sumidero está abierto y vacío. Las máquinas siguen zumbando. Y en las paredes, alguien ha escrito un nombre: Vander.',
       unlocks: [],
       start: 'a',
@@ -1091,7 +1091,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p6', route: 'piltover', title: 'Capítulo 6 · Prueba de puntería',
+      id: 'p6', route: 'piltover', season: 1, episode: 6, act: 2, title: 'Capítulo 6 · Prueba de puntería',
       intro: 'Antes de volver a bajar a Zaun, Caitlyn quiere asegurarse de que sabes defenderte.',
       unlocks: [],
       start: 'a',
@@ -1136,7 +1136,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p7', route: 'piltover', title: 'Capítulo 7 · Las runas de la gema',
+      id: 'p7', route: 'piltover', season: 1, episode: 7, act: 3, title: 'Capítulo 7 · Las runas de la gema',
       intro: 'Entre pizarras y planos, los padres de la hextec por fin tienen respuestas. Y miedo.',
       unlocks: [],
       start: 'a',
@@ -1185,7 +1185,7 @@ window.STORY = {
       },
     },
     {
-      id: 'p8', route: 'piltover', title: 'Capítulo 8 · Vuelo sobre Zaun',
+      id: 'p8', route: 'piltover', season: 1, episode: 8, act: 3, title: 'Capítulo 8 · Vuelo sobre Zaun',
       intro: 'Desde una aerotabla, Zaun parece otra cosa: un mar de luces verdes, tuberías y vida.',
       unlocks: [],
       start: 'a',
@@ -1230,7 +1230,7 @@ window.STORY = {
 
     // ======================= FINAL COMPARTIDO =======================
     {
-      id: 'fin', route: 'ambas', title: 'Capítulo final · El Puente',
+      id: 'fin', route: 'ambas', season: 1, episode: 8, act: 3, title: 'Capítulo final · El Puente',
       intro: 'Las dos ciudades contienen el aliento. El Consejo vota la paz. Jinx tiene un cohete. Y tú estás en medio.',
       unlocks: ['jinx', 'jayce', 'mel', 'caitlyn', 'vi'],
       start: 'a0',
@@ -1312,7 +1312,7 @@ window.STORY = {
     // Sigue la segunda temporada de Arcane. Los que mueren (STORY.deaths) dejan de hablar
     // a partir del capítulo siguiente; tus decisiones cambian quién confía en ti y cómo acaba tu historia.
     {
-      id: 't1', route: 't2', title: 'T2 · Capítulo 1 · Cenizas',
+      id: 't1', route: 't2', season: 2, episode: 1, act: 1, title: 'T2 · Capítulo 1 · Cenizas',
       intro: 'El humo del ataque aún no se ha disipado. Piltover entierra a sus consejeros y exige un culpable. Todas las miradas apuntan hacia abajo.',
       unlocks: ['ambessa', 'jayce', 'mel', 'sevika'],
       start: 'a',
@@ -1391,7 +1391,7 @@ window.STORY = {
       },
     },
     {
-      id: 't2', route: 't2', title: 'T2 · Capítulo 2 · La niña de las gafas',
+      id: 't2', route: 't2', season: 2, episode: 2, act: 1, title: 'T2 · Capítulo 2 · La niña de las gafas',
       intro: 'Jinx se ha convertido en un símbolo para Zaun. Y en los callejones, una niña muda con unas gafas enormes la sigue a todas partes.',
       unlocks: ['isha'],
       start: 'a',
@@ -1469,7 +1469,7 @@ window.STORY = {
       },
     },
     {
-      id: 't3', route: 't2', title: 'T2 · Capítulo 3 · El Heraldo',
+      id: 't3', route: 't2', season: 2, episode: 3, act: 1, title: 'T2 · Capítulo 3 · El Heraldo',
       intro: 'Una fila de zaunitas enfermos espera ante la fábrica. Salen caminando erguidos, con la mirada tranquila… demasiado tranquila.',
       unlocks: ['viktor'],
       start: 'a0',
@@ -1529,7 +1529,7 @@ window.STORY = {
       },
     },
     {
-      id: 't4', route: 't2', title: 'T2 · Capítulo 4 · La loba y la rosa',
+      id: 't4', route: 't2', season: 2, episode: 4, act: 2, title: 'T2 · Capítulo 4 · La loba y la rosa',
       intro: 'Piltover ya no tiene Consejo: tiene una comandante y un estado de guerra. Mel parte hacia Noxus. Y tú tienes que elegir dónde estar.',
       unlocks: ['maddie', 'kino'],
       start: 'a',
@@ -1618,7 +1618,7 @@ window.STORY = {
       },
     },
     {
-      id: 't5', route: 't2', title: 'T2 · Capítulo 5 · La bestia del Sumidero',
+      id: 't5', route: 't2', season: 2, episode: 5, act: 2, title: 'T2 · Capítulo 5 · La bestia del Sumidero',
       intro: 'Garras en el metal, aullidos en la niebla. La criatura de Singed anda suelta… y parece buscar a alguien.',
       unlocks: [],
       start: 'a0',
@@ -1699,7 +1699,7 @@ window.STORY = {
       },
     },
     {
-      id: 't6', route: 't2', title: 'T2 · Capítulo 6 · Ecos del tiempo',
+      id: 't6', route: 't2', season: 2, episode: 6, act: 2, title: 'T2 · Capítulo 6 · Ecos del tiempo',
       intro: 'Un resto del Hexcore ha abierto una grieta en el aire. Al otro lado: un Zaun donde nada de esto pasó.',
       unlocks: [],
       start: 'a',
@@ -1855,7 +1855,7 @@ window.STORY = {
       }
     },
     {
-      id: 'fin2', route: 't2', title: 'T2 · Final · La guerra por el puente',
+      id: 'fin2', route: 't2', season: 2, episode: 8, act: 3, title: 'T2 · Final · La guerra por el puente',
       intro: 'Todo converge en el Puente del Progreso: soldados de Noxus, ejecutores, zaunitas y los silenciosos ascendidos de Viktor.',
       unlocks: [],
       start: 'a0',
