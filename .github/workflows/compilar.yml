@@ -109,13 +109,13 @@ jobs:
         if: steps.maps.outputs.generate == 'true'
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y blender
+          sudo apt-get install -y blender python3-numpy
           blender --version
       - name: Modelar ciudades, exportar GLB y renderizar pruebas de cámara
         if: steps.maps.outputs.generate == 'true'
         run: |
           python3 -m py_compile tools/blender/build_arcane_maps.py
-          blender --background --factory-startup --python tools/blender/build_arcane_maps.py
+          PYTHONPATH="/usr/lib/python3/dist-packages:${PYTHONPATH:-}" blender --background --factory-startup --python tools/blender/build_arcane_maps.py
           test -s src/models/maps/piltover.glb
           test -s src/models/maps/zaun.glb
           test -s src/models/maps/piltover.blend
