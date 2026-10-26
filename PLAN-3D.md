@@ -3,7 +3,7 @@ Modelos 3D de los siete protagonistas
 > **En pocas palabras:** Aquí se separa lo que ya existe en el sistema 3D de lo que todavía falta crear o comprobar. Antes de añadir otro sistema, revisa si el juego ya tiene uno que puedas ampliar. Los modelos de respaldo mantienen el juego utilizable, pero no deben presentarse como modelos oficiales ni como réplicas exactas de la serie.
 
 ## Estado comprobado
-El proyecto **ya dispone** de un sistema de avatares 3D en `src/js/avatars3d.js`, con GLTFLoader local, animación y personajes procedurales de respaldo. No es necesario reemplazarlo ni prometer que se han descargado modelos inexistentes. **Los siete GLB fieles a Arcane NO están incorporados todavía.** El nombre visible del juego pasa a **Rifts & Gears**. Se mantiene el identificador interno `grietas-and-gears`, el ID de la app y las claves de las partidas para no romper instalaciones, enlaces ni guardados existentes.
+El proyecto dispone de un sistema de avatares 3D en `src/js/avatars3d.js`, con GLTFLoader local, animaciones cuando el archivo las trae y personajes procedurales de respaldo. Existen archivos con los nombres previstos en `src/models/`, pero **la presencia de un GLB no demuestra que sea un modelo completo, fiel a Arcane o que sus texturas y animaciones funcionen**: cada archivo debe inspeccionarse y probarse en escena. No se reemplaza este sistema por uno nuevo. El nombre visible del juego es **Rifts & Gears**; se mantiene el identificador interno `grietas-and-gears`, el ID de la app y las claves de las partidas.
 
 ## Catálogo de modelos que faltan
 | Personaje | Archivo previsto | Estado |
@@ -36,11 +36,11 @@ El proyecto **ya dispone** de un sistema de avatares 3D en `src/js/avatars3d.js`
 
 ## Mapa 3D exterior de Piltover y Zaun
 
-`src/js/world3d.js` ahora construye hitos con siluetas diferenciadas para edificios y lugares clave de ambas ciudades y deja espacio libre a su alrededor. Esta es una mejora estructural del mapa, no una reconstrucción exacta de la serie. La fidelidad final aún requiere modelado artesanal, materiales específicos y validación visual contra referencias.
+`src/js/world3d.js` ya no construye edificios, calles, cúpulas, cavernas ni tuberías mediante geometría procedural. El modo 3D ahora exige un entorno urbano completo en `src/models/maps/piltover.glb` o `src/models/maps/zaun.glb`, creado en Blender (u otra herramienta 3D que exporte GLB). El renderizador añade solo actores dinámicos. Si el archivo de ciudad no existe o no contiene mallas, el juego vuelve al mapa ilustrado 2D. Los dos escenarios GLB siguen pendientes de producción y revisión visual; no debe presentarse el mapa como terminado hasta añadirlos.
 
 ## Mejoras de mundo e interfaz aún pendientes
 - Mapa: transiciones consistentes entre vista general, ubicaciones y exploración, marcadores legibles y rutas táctiles.
-- Mundo 3D: escenarios explorables con colisiones, cámara y NPCs, no solo fondos o avatares tridimensionales.
+- Mundo 3D: modelar/exportar los entornos urbanos completos de Piltover y Zaun con Blender, comprobar los anclajes de POI, definir colisiones transitables y validar cámara/NPCs con los GLB reales.
 - Interacción: misiones, pistas, diálogos y relaciones que cambian según las decisiones.
 - Móvil/tablet: verificar la PR #47 de controles táctiles en dispositivo real antes de fusionarla.
 - Rendimiento: perfiles de calidad baja/media/alta y pruebas de 30/60 FPS medidos.

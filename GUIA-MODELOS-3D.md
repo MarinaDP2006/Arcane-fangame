@@ -1,6 +1,6 @@
 # Guía de modelos 3D para Arcane-fangame
 
-Esta guía explica cómo preparar e integrar modelos 3D sin asumir que el juego ya dispone de un renderizador 3D completo. El personaje jugable se muestra actualmente mediante su retrato elegido y la interfaz del creador; no reemplaces esa ruta por un modelo 3D obligatorio.
+Esta guía cubre dos recursos distintos: avatares en `src/js/avatars3d.js` y escenarios urbanos completos en `src/models/maps/{piltover,zaun}.glb`, cargados por `src/js/world3d.js`. El editor conserva su retrato y el avatar 3D se usa después de crear la partida; ni un avatar ni un escenario 3D son requisito para abrir el editor o jugar en 2D.
 
 ## 1. Preparar el recurso
 
@@ -11,10 +11,10 @@ Esta guía explica cómo preparar e integrar modelos 3D sin asumir que el juego 
 
 ## 2. Dónde colocar los archivos
 
-1. Crea una carpeta con nombre descriptivo bajo `src/assets/3d/` (por ejemplo, `src/assets/3d/oc-principal/`).
-2. Añade un `README.md` junto al recurso con autoría, licencia, formato, escala, controles de animación y fuente.
-3. No sobrescribas `src/img/arte/` ni las galerías de retratos: el modelo 3D es un recurso adicional.
-4. Revisa `package.json`, la configuración de empaquetado y el constructor web antes de añadir archivos grandes; confirma que se incluyan en Windows, Android y web.
+1. Para modelos incorporados al juego, usa `src/models/<id>.glb` y añade el nombre base a `src/models/index.json`.
+2. Para modelos personales fuera del repositorio, usa Ajustes → Arte personal → modelos; Electron los lee desde la carpeta de arte del usuario y prepara ZIP/FBX/OBJ mediante `modelos.js`.
+3. Añade una nota de autoría, licencia, formato, escala, orientación y animaciones. No sobrescribas `src/img/arte/` ni las galerías de retratos.
+4. Revisa `package.json`, el empaquetado y las rutas de web/Electron. Las rutas deben funcionar sin depender de carpetas absolutas del ordenador del desarrollador.
 
 ## 3. Integración recomendada por etapas
 
@@ -36,4 +36,4 @@ Esta guía explica cómo preparar e integrar modelos 3D sin asumir que el juego 
 
 ## Estado
 
-Esta guía es un plan de integración. No afirma que el juego ya incluya un motor 3D ni que exista una pantalla de visor terminada. La primera implementación debería ser un prototipo aislado antes de cambiar el creador o las escenas principales.
+El runtime de mapa ya admite escenarios GLB completos y no genera arquitectura urbana por código. Los archivos `src/models/maps/piltover.glb` y `src/models/maps/zaun.glb` todavía deben crearse y añadirse: sin ellos el juego debe regresar al mapa 2D, no mostrar edificios falsos. Usa Blender como herramienta de composición/exportación y consulta `src/models/maps/README.md` junto con `tools/blender/export_arcane_map.py`. Antes de dar la tarea por terminada, verifica visualmente los dos escenarios, los puntos de interés, las fachadas, las calles, la cámara y los personajes desde zoom general y de calle.

@@ -30,6 +30,7 @@
   let vel = { x: 0, y: 0 }; // inercia al soltar un arrastre
   let hover = null; // lugar, personaje o cristal bajo el ratón
   let r3d = null; // escena 3D (null = carta 2D)
+  let webglWarned = false;
   let yaw = 0; // giro de la cámara 3D
   let pitch = 0.9; // inclinación (0 = cenital)
   let drawn = { pins: [], frags: [] }; // dónde se pintó cada cosa en el último fotograma (para tocarla)
@@ -246,6 +247,10 @@
       { id: 'bren', name: 'Bren Orlo', role: 'estudiante', lines: ['Heimerdinger dice que la curiosidad es un deber. Mis exámenes dicen que es un problema.', '¿Has visto los globos de las Hexpuertas? Un día viajaré en uno.'] },
       { id: 'eren', name: 'Eren Sola', role: 'técnico de las Hexpuertas', lines: ['Los globos no flotan por magia: se equilibran por capas. Bueno, y algo de magia.', 'Si oyes tres campanadas en el muelle, aléjate de los anclajes.'] },
       { id: 'nessa', name: 'Nessa Orl', role: 'guardia civil', lines: ['No busco problemas. Busco que los problemas no lleguen al Consejo.', 'En el puente cambia el uniforme, pero no el cansancio.'] },
+      { id: 'tovin', name: 'Tovin Senn', role: 'mecánico de globos', lines: ['Si el viento cambia, las rutas de las Hexpuertas cambian con él.', 'Nunca mires hacia abajo desde un globo si no has comido.'] },
+      { id: 'elara', name: 'Elara Voss', role: 'archivista', lines: ['Los archivos viejos recuerdan promesas que el Consejo prefiere olvidar.', 'Una ciudad también se construye con las historias que guarda.'] },
+      { id: 'pavo', name: 'Pavo Durn', role: 'aprendiz de farero', lines: ['Al anochecer enciendo las luces del puente una por una.', 'La niebla parece bonita desde aquí; abajo nadie piensa lo mismo.'] },
+      { id: 'renni', name: 'Renni Vale', role: 'joyera', lines: ['El hexcristal no es más valioso por brillar más.', 'Los mejores encargos son los que no llevan sello.'] },
     ],
     zaun: [
       { id: 'rook', name: 'Rook Fen', role: 'chatarrero', lines: ['Todo tiene arreglo si no te importa qué pieza sobra.', 'La gente de arriba tira cosas mejores que las que compran abajo.'] },
@@ -256,6 +261,10 @@
       { id: 'tessa', name: 'Tessa Marr', role: 'sanadora', lines: ['El humo de aquí no cura nada. Cúbrete la boca antes de acercarte.', 'Si alguien se cae, grita. No intentes cargarlo a solas.'] },
       { id: 'jori', name: 'Jori Pell', role: 'estibador', lines: ['La fábrica paga tarde, pero paga. A veces.', 'He visto cosas salir de ese conducto que no caben en ningún barril.'] },
       { id: 'puck', name: 'Puck', role: 'mensajero de las Luciérnagas', lines: ['Si ves pintura verde en una pared, sigue el camino. Si ves azul, da la vuelta.', 'No todos los que llevan máscara trabajan para Silco.'] },
+      { id: 'mox', name: 'Mox Deller', role: 'reparador de válvulas', lines: ['El vapor te avisa antes de quemarte. Casi siempre.', 'No cierres esa llave; es la que mantiene viva la calle de arriba.'] },
+      { id: 'ziri', name: 'Ziri Coil', role: 'vendedora ambulante', lines: ['Hoy vendo filtros. Ayer, mapas. Mañana depende de quién pregunte.', 'Guarda tus tornillos: aquí siempre valen algo.'] },
+      { id: 'brakka', name: 'Brakka Fen', role: 'estibador', lines: ['Las cajas que llegan cerradas salen abiertas. Nadie sabe quién lo hace.', 'Si quieres cruzar el puente, aprende a no mirar los uniformes.'] },
+      { id: 'lenn', name: 'Lenn Rusk', role: 'aprendiz de mecánico', lines: ['La mitad de las máquinas de Zaun funcionan por rabia.', 'Cuando el neón parpadea tres veces, desconecta el motor.'] },
     ],
   };
 
@@ -270,9 +279,12 @@
     const out = [];
     for (let i = 0; i < count; i++) {
       const resident = residents[i];
-      const route = routes[(i * 13 + Math.floor(i / 2) * 7) % routes.length];
-      const speed = 28 + (i % 4) * 6;
-      const travel = (ambientTime * speed + i * 41) % (route.len * 2);
+      // Desfase por residente: las rutas y el punto de partida parecen aleatorios, pero son
+      // estables durante la partida para evitar que la gente salte de calle en cada fotograma.
+      const hash = resident.id.split('').reduce((n, ch) => (n * 33 + ch.charCodeAt(0)) >>> 0, map.def.seed || 1);
+      const route = routes[(hash + i * 13 + Math.floor(i / 2) * 7) % routes.length];
+      const speed = 26 + (hash % 5) * 5;
+      const travel = (ambientTime * speed + (hash % 997)) % (route.len * 2);
       const reverse = travel > route.len;
       const u = reverse ? 2 - travel / route.len : travel / route.len;
       const x = route.x1 + (route.x2 - route.x1) * u;
@@ -303,7 +315,8 @@
   };
   const PAD_TOP = 26; // px de pantalla libres arriba y abajo (la barra de botones tapa el borde inferior)
   const PAD_BOTTOM = 76;
-  const zMax = () => Math.max(fit * 4, 0.9);
+  // Permite acercarse hasta ver caras/cuerpos individuales, sin cambiar la escala del mundo.
+  const zMax = () => Math.max(fit * 10, 1.2);
 
   /** Mantiene la ciudad dentro de la vista (centrada si cabe entera). */
   function clampView() {
@@ -1732,13 +1745,58 @@
         if (r3d) {
           const b = canvas.parentElement.getBoundingClientRect();
           r3d.resize(Math.max(320, b.width), Math.max(240, b.height), Math.min(2, window.devicePixelRatio || 1));
-          r3d.setMap(map, paintBackground(true));
-          if (!map.bg) paintBackground();
+          // Si el contexto gráfico se pierde, abandonar 3D inmediatamente en lugar de congelar negro.
+          r3d.el?.addEventListener('webglcontextlost', (event) => {
+            event.preventDefault();
+            console.error('Mapa 3D: se perdió el contexto WebGL; se vuelve al mapa ilustrado.');
+            G.world.view = '2d';
+            use3d(false);
+            resize();
+            if (!webglWarned) {
+              toast('La gráfica ha perdido WebGL. Se ha recuperado el mapa 2D; prueba calidad Media o Baja.', 'warn');
+              webglWarned = true;
+            }
+          }, { once: true });
+          const renderer = r3d;
+          const requestedCity = mapId;
+          renderer.setMap(map).then((loaded) => {
+            // No activar un GLB antiguo si el jugador ya ha viajado a otra ciudad.
+            if (renderer !== r3d || requestedCity !== mapId) return;
+            if (!loaded) {
+              G.world.view = '2d';
+              use3d(false);
+              resize();
+              if (!webglWarned) {
+                toast(`No existe un escenario GLB válido para ${requestedCity}. Se mantiene el mapa ilustrado 2D; añade models/maps/${requestedCity}.glb exportado desde Blender para activar el 3D.`, 'warn');
+                webglWarned = true;
+              }
+              return;
+            }
+            clampView();
+          }).catch((err) => {
+            console.error('No se pudo cargar el escenario 3D:', err);
+            if (renderer !== r3d || requestedCity !== mapId) return;
+            G.world.view = '2d';
+            use3d(false);
+            resize();
+            if (!webglWarned) {
+              toast('No se pudo cargar el escenario GLB. Se mantiene el mapa ilustrado 2D.', 'warn');
+              webglWarned = true;
+            }
+          });
+        } else if (!webglWarned) {
+          toast('WebGL no está disponible en este equipo. Se mostrará el mapa ilustrado 2D.', 'warn');
+          webglWarned = true;
         }
       } catch (err) {
         console.error('Mapa 3D desactivado:', err);
         r3d?.dispose();
         r3d = null;
+        G.world.view = '2d';
+        if (!webglWarned) {
+          toast('El mapa 3D no pudo iniciarse. Se ha recuperado el mapa ilustrado 2D.', 'warn');
+          webglWarned = true;
+        }
       }
     } else if (r3d) {
       r3d.dispose();
