@@ -37,3 +37,18 @@ Esta guía cubre dos recursos distintos: avatares en `src/js/avatars3d.js` y esc
 ## Estado
 
 El runtime admite escenarios GLB completos y conserva el mapa 2D como alternativa si no puede cargar el escenario. En main ya existen src/models/maps/piltover.blend, zaun.blend, piltover.glb y zaun.glb; no hay que volver a crearlos a ciegas. La tarea es validar su contenido y su integración real: materiales, escala, POI, accesos, colisiones, cámara, personajes y rendimiento. Consulta src/models/maps/README.md y PENDIENTES.md. La presencia de los archivos no significa que se haya completado una prueba visual dentro del juego.
+
+
+## Herramientas de generación e inspección que ya tienes
+
+Para una persona que no programa, separa el trabajo en pasos visuales y no empieces editando código:
+
+1. **ComfyUI** (documentación: https://docs.comfy.org/): úsalo para crear referencias de estilo consistentes, vistas cenitales de barrios, fachadas, iluminación, materiales y hojas de diseño de personajes. Primero revisa qué modelos y workflows están instalados; no asumas que ComfyUI ya puede generar una escena GLB completa.
+2. **Marble** (https://marble.worldlabs.ai/) y **SpAItial** (https://spaitial.ai/): generar dos entornos independientes, uno de Piltover y otro de Zaun. Confirmar el formato de descarga y si es malla editable o Gaussian Splat.
+3. **Open3D Viewer** (https://open3d.app/glb-viewer): abrir los GLB/GLTF y revisar mallas, materiales, texturas y animaciones presentes. Guardar capturas desde arriba, frontal y tres cuartos.
+4. **Blender**: ajustar pivotes, escala, materiales, geometría, colisiones/zonas transitables y exportar un GLB convencional.
+5. **Freebuff**: pedir primero una auditoría y que guíe una acción por vez en español sencillo. No es necesario que la autora programe JavaScript; los agentes deben explicar los cambios y aportar pruebas, sin fusionar PR.
+
+La referencia visual de mapa 2D indicada por la autora está en https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298. Si no se abre, pedir una captura. El mapa 2D debe mostrar distritos, calles, alturas, puentes, accesos y POI; el 3D debe coincidir con esa geografía, no ser una ciudad sin relación con el atlas.
+
+Para el lore y las imágenes, partir de las galerías oficiales de [Piltover](https://universe.leagueoflegends.com/en_US/region/piltover/?mv=image-gallery) y [Zaun](https://universe.leagueoflegends.com/en_US/region/zaun/?mv=image-gallery), con las páginas Fandom en español como referencia complementaria. Véase también [PILTOVER-3D.md](PILTOVER-3D.md), [ZAUN-3D.md](ZAUN-3D.md) y [PENDIENTES.md](PENDIENTES.md).
