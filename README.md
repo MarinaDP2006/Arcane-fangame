@@ -1,74 +1,60 @@
 # Arcane-fangame · Piltover y Zaun
 
-> **En pocas palabras:** Fangame narrativo 2D de Piltover y Zaun. Esta fase prioriza escenas ilustradas, diálogos escritos y recursos locales; la integración de IA y los escenarios 3D quedan aplazados.
+Fangame narrativo gratuito y no oficial ambientado en **Arcane**, temporadas 1 y 2. La versión actual combina historia escrita, decisiones, vínculos, exploración 2D por Piltover y Zaun y minijuegos 3D disponibles según la ciudad.
 
-Fangame gratuito y no oficial de rol libre ambientado en **Arcane** (temporadas 1 y 2). Creas tu personaje en Piltover o Zaun y escribes lo que dice o hace. Los personajes reaccionan dentro del mundo de la serie. Proyecto de fans no oficial.
+## Qué incluye el juego
 
-## Cómo funciona
+- Creación del personaje y partidas locales.
+- Capítulos, escenas y decisiones narrativas.
+- Dos ciudades conectadas mediante el mapa 2D.
+- Personajes, códice, relaciones y misiones secundarias.
+- Catálogo de minijuegos 3D por ciudad.
+- Aplicación de escritorio para Windows (instalador y versión portable).
 
-1. **Creación de personaje:** nombre, pronombres, ciudad, oficio y trasfondo escrito por ti.
-2. **Rol libre:** el jugador escribe; la historia y los personajes reaccionan sin opciones prefabricadas.
-3. **Diálogos y escenas:** juega con contenido escrito y escenarios 2D ilustrados. La integración de IA queda aplazada; no es necesaria para esta fase.
+## Web pública y Render
 
-## Web y arte
+La web pública es la página informativa del proyecto y se publica en Render desde la rama `main`. No es una demo jugable dentro del navegador ni sustituye a la aplicación de escritorio.
 
-La web pública se genera con `npm run web`. La demo del repositorio se mantiene para desarrollo y pruebas y no está enlazada desde la portada. Antes de publicar, comprueba la salida `web-dist/` y las rutas de los recursos.
+- URL pública: https://arcane-fangame.onrender.com/
+- Configuración de Render: `render.yaml`.
+- `web/index.html`: página pública.
+- `scripts/build-web.js`: prepara `web-dist/` con las páginas y recursos públicos.
+- `server/roleplay-server.js`: sirve `web-dist/` en el puerto que Render proporciona y expone `/api/health`.
+- `npm run check:web`: construye la web y valida que los recursos locales publicados existan.
 
-- `web/index.html`: landing page, ciudades, galería de arte y personajes.
-- `scripts/build-web.js`: copia una selección de imágenes oficiales de entorno y retratos desde `src/img/arte/` a `web-dist/arte-oficial/`.
-- `arcaneData/arte/FUENTES.json`: fuentes, créditos, nombres de archivos y procedencia de los recursos.
-- `web/demo.html` + `web/demo-juego.js`: demo mantenida en el repositorio para desarrollo/pruebas; no enlazada desde la portada.
-- `web/arte-propio/`: recursos gráficos propios de la interfaz.
+Render ejecuta `node scripts/build-web.js` durante la compilación y `node server/roleplay-server.js` al iniciar el servicio. Si cambias archivos públicos, comprueba primero `npm run check:web`.
 
-## Guías de desarrollo
+## Descargar y ejecutar en Windows
 
-- [Guía de juego](GUIAJUEGO.md): cómo jugar y usar las funciones disponibles.
-- [Guía técnica](Guía%20técnica.md): estructura y ejecución del proyecto.
-- [Fuentes y créditos del arte](arcaneData/arte/FUENTES.json): procedencia de las imágenes.
+Los instaladores no se guardan en el repositorio como archivos fuente. GitHub Actions compila dos paquetes de Windows x64 (instalador y portable) y los publica como artefactos temporales del workflow. Para obtener la versión más reciente:
 
-La integración de IA y los escenarios 3D están fuera del alcance actual. Se conservan sus archivos históricos mientras se comprueba que no haya dependencias activas.
+1. Abre [Actions · Compilar Arcane](https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml).
+2. Entra en la ejecución más reciente de la rama `main) que haya terminado correctamente.
+3. En la sección **Artifacts**, descarga el paquete `arcane-fangame-1.30.2-windows-x64` (el nombre cambia al actualizar la versión).
+4. Descomprime el artefacto ZIP y ejecuta el archivo `Arcane-fangame-1.30.2-Setup.exe` para instalar, o `Arcane-fangame-1.30.2-portable.exe` para usarlo sin instalación.
 
-`npm run web` genera la carpeta `web-dist/` con el contenido listo para Render. Las imágenes de Arcane son propiedad de Riot Games / Fortiche Production; el proyecto es un fangame no oficial.
+Los artefactos se conservan durante un periodo limitado. Las versiones publicadas de forma permanente se enlazan en [Releases](https://github.com/MarinaDP2006/Arcane-fangame/releases). Si no aparece ningún artefacto en una ejecución, la compilación aún no ha terminado o ha fallado.
 
 ## Desarrollo
+
+Requisitos: Node.js 22 y npm.
 
 ```bash
 npm ci
 npm run check
+npm run check:web
 npm start
-npm run web
 ```
 
-El workflow de GitHub Actions verifica el proyecto y compila Windows x64. Las releases se publican manualmente; revisa los artefactos disponibles en Releases.
+- `npm start`: inicia el juego de escritorio con Electron.
+- `npm run check`: valida los datos y la sintaxis del juego.
+- `npm run check:web`: genera y comprueba la salida para Render.
+- `npm run web`: genera solo la carpeta `web-dist/`.
 
-## Mapas y dirección artística
+## Arte y créditos
 
-- Los mapas de juego de esta fase son 2D, legibles y navegables.
-- Usa `arcaneData/arte/FUENTES.json` como registro de procedencia y créditos.
-- Conserva los originales y evita borrar duplicados hasta comprobar todas las referencias.
+- `arcaneData/arte/FUENTES.json` documenta la procedencia de los recursos.
+- Conserva los originales y comprueba las referencias antes de eliminar o sustituir arte.
+- El código está bajo licencia MIT; esta licencia no concede derechos sobre marcas, personajes ni arte de terceros.
 
-## Guías
-
-- [IA y campaña](GUIA-IA-Y-CAMPANA.md)
-- [Modelos 3D y pruebas](GUIA-MODELOS-3D-Y-PRUEBAS.md)
-- [Partidas guardadas](partidas-guardadas-guia.md)
-
-- [Guía técnica](Guía%20técnica.md) y [guía de juego](GUIAJUEGO.md)
-- [Perfiles de modelos locales con Ollama](MODELOS-LOCALES.md)
-- [Instrumentales por ciudad: Zaun y Piltover](docs/INSTRUMENTALES-POR-CIUDAD.md)
-- [Tareas pendientes](docs/TAREAS-PENDIENTES.md)
-- [Releases y compilaciones](docs/RELEASES-ARCANE.md)
-
-
-## Enlaces del proyecto
-
-- [Releases](https://github.com/MarinaDP2006/Arcane-fangame/releases)
-- [Problemas / Issues](https://github.com/MarinaDP2006/Arcane-fangame/issues)
-
-## Aviso legal
-
-Proyecto de fans gratuito y no respaldado por Riot Games. Arcane, League of Legends, Piltover, Zaun, sus personajes y su arte pertenecen a sus respectivos propietarios. El código está bajo licencia MIT, que no concede derechos sobre marcas ni personajes de terceros.
-
-## Producción de arte 2D
-
-Organiza las referencias por ciudad, lugar y temporada. Antes de integrar una imagen, comprueba que el archivo exista, que el juego use la ruta correcta y que la procedencia figure en `arcaneData/arte/FUENTES.json`. No elimines originales durante una limpieza sin verificar sus usos. Las herramientas de IA y el flujo de escenarios 3D quedan aplazados.
+Arcane, League of Legends, Piltover, Zaun, sus personajes y su arte pertenecen a sus respectivos titulares. Este es un proyecto de fans independiente, gratuito y no respaldado por Riot Games.
