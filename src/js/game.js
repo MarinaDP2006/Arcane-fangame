@@ -630,7 +630,7 @@
 
     // Foto de la carpeta lugares (la propia, o la que viaja con el juego) o, si falta, la ilustración del atlas.
     function placeArt(p) {
-      const atlasCity = ['noxus', 'the-immortal-bastion'].includes(p.id) ? 'otros' : (p.city || ({ 'bridge-of-progress': 'zaun', 'river-pilt': 'piltover', 'stillwater-hold': 'piltover' })[p.id] || 'zaun');
+      const atlasCity = ['noxus', 'the-immortal-bastion'].includes(p.id) ? 'otros' : (({ 'bridge-of-progress': 'zaun', 'river-pilt': 'piltover', 'stillwater-hold': 'piltover' })[p.id] || p.city || 'zaun');
       return (p.scene && window.CustomArt.image('lugares', p.scene)) || `img/arte/mapa/${atlasCity}/atlas/${p.id}.webp`;
     }
 
