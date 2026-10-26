@@ -43,6 +43,21 @@ for (const id of GAME_IDS) {
   if (!locations.some((loc) => loc.id === def.scene)) errors.push(`minijuego 3D "${id}": escenario "${def.scene}" no es una ubicación del mundo`);
 }
 for (const id of uniqueCityGames) if (!MINIGAMES.CATALOG[id]) errors.push(`minijuegos 3D: "${id}" no está disponible`);
+const cityGameCounts = { piltover: (MINIGAMES.CITY_GAMES?.piltover || []).length, zaun: (MINIGAMES.CITY_GAMES?.zaun || []).length };
+if (cityGameCounts.piltover !== 7 || cityGameCounts.zaun !== 8) errors.push(`minijuegos 3D: reparto esperado 7 Piltover / 8 Zaun; encontrado ${cityGameCounts.piltover}/${cityGameCounts.zaun}`);
+const worldLocations = Object.entries(WORLD.maps).flatMap(([city, map]) => (map.locations || []).map((loc) => ({ ...loc, city })));
+const placeGameIds = new Set();
+for (const [placeId, ids] of Object.entries(MINIGAMES.PLACE_GAMES || {})) {
+  const loc = worldLocations.find((item) => item.id === placeId);
+  if (!loc) errors.push(`minijuegos 3D: la ubicación "${placeId}" no existe en los mapas`);
+  for (const id of ids) {
+    const def = MINIGAMES.CATALOG[id];
+    if (!def) errors.push(`minijuegos 3D: "${id}" está ligado a "${placeId}", pero no está en el catálogo`);
+    else if (loc && def.city !== loc.city) errors.push(`minijuegos 3D: "${id}" pertenece a ${def.city}, pero "${placeId}" está en ${loc.city}`);
+    placeGameIds.add(id);
+  }
+}
+for (const id of GAME_IDS) if (!placeGameIds.has(id)) errors.push(`minijuego 3D "${id}": no se puede iniciar desde ninguna ubicación`);
 
 
 // Misiones secundarias: objetivos, personajes, temporadas y recompensas deben ser válidos.
