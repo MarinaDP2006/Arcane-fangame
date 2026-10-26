@@ -8,12 +8,12 @@ Fangame narrativo gratuito y no oficial ambientado en **Arcane**, temporadas 1 y
 - Capítulos, escenas y decisiones narrativas.
 - Dos ciudades conectadas mediante el mapa 2D.
 - Personajes, códice, relaciones y misiones secundarias.
-- Catálogo de minijuegos 3D por ciudad.
+- Catálogo de 15 minijuegos 3D por ciudad: 7 en Piltover y 8 en Zaun, accesibles desde sus localizaciones.
 - Aplicación de escritorio para Windows (instalador y versión portable).
 
 ## Web pública y Render
 
-La web pública es la página informativa del proyecto y se publica en Render desde la rama `main`. El juego completo se distribuye como aplicación de escritorio para Windows.
+La web pública es informativa (no contiene una demo jugable) y se publica en Render desde `main`. El juego completo se distribuye como aplicación de escritorio para Windows. El mapa de exploración sigue siendo 2D; los escenarios 3D se usan en los minijuegos.
 
 - URL pública: https://arcane-fangame.onrender.com/
 - Configuración de Render: `render.yaml`.
@@ -30,8 +30,8 @@ Los instaladores no se guardan en el repositorio como archivos fuente. GitHub Ac
 
 1. Abre [Actions · Compilar Arcane](https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml).
 2. Entra en la ejecución más reciente de la rama `main` que haya terminado correctamente.
-3. En la sección **Artifacts**, descarga el paquete `arcane-fangame-1.30.2-windows-x64` (el nombre cambia al actualizar la versión).
-4. Descomprime el artefacto ZIP y ejecuta el archivo `Arcane-fangame-1.30.2-Setup.exe` para instalar, o `Arcane-fangame-1.30.2-portable.exe` para usarlo sin instalación.
+3. En la sección **Artifacts**, descarga el paquete `arcane-fangame-1.30.3-windows-x64` (el nombre cambia al actualizar la versión).
+4. Descomprime el artefacto ZIP y ejecuta el archivo `Arcane-fangame-1.30.3-Setup.exe` para instalar, o `Arcane-fangame-1.30.3-portable.exe` para usarlo sin instalación.
 
 Los artefactos se conservan durante un periodo limitado. Las versiones publicadas de forma permanente se enlazan en [Releases](https://github.com/MarinaDP2006/Arcane-fangame/releases). Si no aparece ningún artefacto en una ejecución, la compilación aún no ha terminado o ha fallado.
 
