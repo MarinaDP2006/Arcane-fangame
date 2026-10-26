@@ -123,3 +123,40 @@ No uses una única imagen como textura del mapa ni copies una captura como si fu
 - El agente debe abrir la referencia en su navegador. Si no carga, pedir a la autora una captura; no inventar lo que muestra.
 - El mapa 2D debe seguir siendo legible y jugable: distritos, etiquetas, accesos, POI y rutas claras. El 3D debe representar la misma geografía en volumen real, alineado con IDs y coordenadas de src/data/world.js.
 - El mapa 2D y el 3D deben compartir una sola fuente de verdad para lugares, misiones, accesos y estado desbloqueado.
+
+
+## Referencia artística, mapa 2D y producción con IA (actualización)
+
+### Fuentes para estudiar antes de generar
+- [Piltover — universo oficial](https://universe.leagueoflegends.com/en_US/region/piltover/) y [galería de imágenes](https://universe.leagueoflegends.com/en_US/region/piltover/?mv=image-gallery).
+- [Zaun — universo oficial](https://universe.leagueoflegends.com/en_US/region/zaun/) y [galería de imágenes](https://universe.leagueoflegends.com/en_US/region/zaun/?mv=image-gallery).
+- [Piltóver en Fandom (español)](https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver) y [Zaun en Fandom (español)](https://leagueoflegends.fandom.com/es/wiki/Zaun).
+- [Referencia visual oficial de Zaun](https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d7858e6a65fed5e14321604dbde4f144640bd795-1920x1067.jpg).
+- [Referencia visual de Piltover](https://cdn.oneesports.gg/cdn-data/2023/09/LeagueofLegends_Piltover_VisionsofProgress.jpg).
+- [Composición/mapa de referencia indicado por la autora](https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298). Si el agente no puede abrirlo, pedir a la autora una captura; no afirmar que lo ha visto.
+
+### Dos representaciones coordinadas: mapa 2D y escenario 3D
+- El **mapa 2D** debe ser una vista superior estilizada y legible, con contorno real de distritos, calles, niveles, puentes, puertas y puntos de interés. No debe ser un tablero genérico con botones dispersos. Diferenciar Piltover (marfil/azul/oro) y Zaun (carbón/verde químico/magenta), e indicar alturas y accesos entre niveles.
+- El **escenario 3D** debe corresponder a esa misma geografía: calles, edificios y puentes deben encontrarse donde indica el mapa 2D. Las localizaciones se vinculan mediante IDs/POI de src/data/world.js; el mapa no puede inventar ubicaciones sin registrarlas en datos.
+- Mantener una única fuente de verdad para nombres, coordenadas, accesos, misiones y bloqueos. El mapa 2D no es un reemplazo del 3D, y el 3D no debe perder la función de navegación clara del mapa 2D.
+- El acceso Piltover↔Zaun debe expresarse mediante pasos, escaleras, ascensores/descensores, controles y puentes según la geografía; el Puente del Progreso tiene peso cultural y narrativo, no es un simple portal.
+
+### Herramientas: qué hace cada una
+1. **Marble** — https://marble.worldlabs.ai/ : crear prototipos de mundos explorables a partir de prompts e imágenes. Confirmar qué exportación está disponible en la cuenta. Un Gaussian Splat no equivale a una malla convencional con colisiones.
+2. **SpAItial** — https://spaitial.ai : crear mundos desde texto/imágenes y comprobar qué formatos de exportación están disponibles en la sesión. Elegir salida de malla convencional cuando se necesite editar/exportar a GLB.
+3. **ComfyUI** — https://docs.comfy.org/ : usar para producir moodboards y referencias de estilo consistentes, vistas cenitales, materiales, fachadas, iluminación y hojas de referencia. Cada workflow depende de modelos y nodos instalados; no asumir que ComfyUI por sí solo genera una ciudad GLB completa.
+4. **Open3D Viewer** — https://open3d.app/glb-viewer : abrir localmente los GLB, rotarlos, revisar PBR y reproducir animaciones incluidas. No sustituye Blender ni prueba las colisiones del juego.
+5. **Blender** — corrección artística/técnica, pivotes, materiales, escala, organización de POI, zonas de colisión y exportación final.
+6. **Freebuff** — coordinar agentes y revisar integración de código. Para una persona que no programa, pedir primero análisis y plan, después cambios en ramas separadas, pruebas y pasos explicados en lenguaje sencillo. No dar permiso automático para mergear o borrar ramas.
+
+### Flujo recomendado para la autora (sin necesidad de programar)
+1. Abrir en el navegador la referencia de Neta y guardar una captura de pantalla del mapa 2D que se desea imitar en composición; si se utiliza una imagen de terceros, mantenerla como referencia y no incluirla directamente en la distribución sin permiso.
+2. En ComfyUI, crear una carpeta de referencias para Piltover y otra para Zaun. Generar vistas de arriba, calle, horizonte y materiales; mantener paleta y arquitectura consistentes entre imágenes. Guardar prompts y workflow junto a las imágenes.
+3. Generar una ciudad por separado en Marble y/o SpAItial. No mezclar ambas ciudades en un único mundo. Comparar resultados con las referencias y elegir la base más coherente y editable.
+4. Descargar el formato de salida disponible y abrirlo en Open3D Viewer para inspección inicial. Si no es GLB/GLTF convencional, anotar formato exacto y no sobrescribir los GLB del juego.
+5. Si el resultado es una malla compatible, importarla a Blender con ayuda guiada de Freebuff, corregir geometría, escala, suelo, materiales y calles; alinear POI con src/data/world.js y exportar a una carpeta temporal.
+6. Validar la copia en Open3D Viewer y solo entonces sustituir el archivo de prueba. Ejecutar npm run check y probar en el juego antes de proponer la PR.
+7. Si no sabes hacer un paso en Blender, pedir a Freebuff una instrucción por turno, con nombres exactos de menús/botones y una comprobación visible al final. No ejecutar comandos destructivos ni reemplazar archivos fuente sin copia de seguridad.
+
+### Prompt de agente de mapas
+> Audita el repositorio y las referencias visuales antes de tocar archivos. Usa Marble y SpAItial para explorar/generar dos escenarios separados; usa ComfyUI para producir referencias consistentes de estilo y Open3D Viewer para revisar los GLB localmente. La referencia de Neta debe consultarse si es accesible; si no, pide captura. Respeta la diferencia cultural entre Piltover (comercio, artesanía, arquitectura de mármol/latón/vidrio, hextech azul-dorada) y Zaun (niveles subterráneos, hierro/vidrio, mercados, quimtec, shimmer, humo y luces químicas). El mapa 2D y la escena 3D deben coincidir en geometría, accesos y POI. No generes edificios procedurales por código ni declares una salida válida sin revisar formato, mallas, escala, materiales, colisiones y resultado dentro del juego. No sobrescribas archivos fuente, no hagas push/merge ni abras PR sin autorización. Explica cada paso para una usuaria que no programa.
