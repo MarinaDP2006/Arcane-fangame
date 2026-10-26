@@ -2697,3 +2697,28 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     margin-top: 8px;
   }
 }
+
+
+/* Ajustes de composición para el diseño de referencia Rifts & Gears. */
+.home-panel { padding: clamp(1.25rem, 5.5vw, 7rem); }
+.home-menu { width: min(390px, 86vw); gap: 0.35rem; margin-top: clamp(1.6rem, 4vh, 3rem); }
+.home-btn { min-height: 48px; }
+.home-cities { gap: clamp(0.3rem, 1.5vw, 0.8rem); flex-wrap: wrap; }
+.home-cities b { width: clamp(24px, 5vw, 70px); }
+.home-city { letter-spacing: clamp(0.12em, 0.4vw, 0.4em); }
+.home-hint { max-width: min(90vw, 440px); }
+.home-art, .home-art-in, .home-slide { will-change: transform, opacity; }
+@media (max-width: 700px) {
+  .home-panel { justify-content: flex-end; align-items: center; text-align: center; padding: 1.5rem 1rem max(2rem, env(safe-area-inset-bottom)); }
+  .home-logo { width: 100%; }
+  .home-title { justify-content: center; font-size: clamp(2rem, 9vw, 4rem); letter-spacing: 0.025em; }
+  .home-cities { justify-content: center; margin: 0.8rem 0 0; }
+  .home-menu { width: min(360px, 92vw); margin-top: 1.4rem; }
+  .home-hint { font-size: 0.7rem; }
+}
+@media (max-height: 620px) {
+  .home-panel { justify-content: center; padding-top: 0.7rem; padding-bottom: 0.7rem; }
+  .home-menu { gap: 0.1rem; margin-top: 0.8rem; }
+  .home-btn { min-height: 38px; padding-top: 0.35rem; padding-bottom: 0.35rem; }
+  .home-cities { margin-top: 0.5rem; }
+}
