@@ -2949,3 +2949,117 @@ input[type="range"] { accent-color: var(--gold); }
   .city-choice-grid { min-height: 55vh; }
   .city-choice-content { min-height: 260px; }
 }
+
+
+/* Acabado final del sistema visual: azul hextech neutro para inicio/HUD y detalles de Arcane
+   en Historia, Ficha, Comunicador, Códice y Atlas. Las pantallas narrativas heredan la ciudad. */
+.home-panel {
+  background: linear-gradient(145deg, rgba(8, 18, 34, .92), rgba(13, 23, 38, .78) 58%, rgba(7, 12, 22, .92));
+  border: 1px solid rgba(122, 195, 249, .38);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, .58), inset 0 1px 0 rgba(225, 244, 255, .06);
+}
+.home-panel::before { border-color: rgba(117, 190, 248, .35); }
+.home-city {
+  color: #d9ecff;
+  border-color: rgba(122, 195, 249, .24);
+  background: rgba(7, 17, 31, .68);
+}
+.home-city.active {
+  color: #07182b;
+  border-color: #9ddcff;
+  background: linear-gradient(120deg, #a8e0ff, #5b9ed3 72%, #285a88);
+  box-shadow: 0 0 22px rgba(87, 173, 238, .22), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.home-cities > b {
+  background: linear-gradient(90deg, #4e99d6, #b9e7ff, #4b8ec5);
+  box-shadow: 0 0 12px rgba(104, 184, 244, .28);
+}
+.home-btn {
+  color: #e9f5ff;
+  border-color: rgba(123, 194, 248, .31);
+  background: linear-gradient(120deg, rgba(15, 31, 50, .92), rgba(7, 14, 25, .94));
+}
+.home-btn:first-child, .home-btn.primary {
+  color: #061629;
+  background: linear-gradient(120deg, #b5e5ff, #5fa5da 67%, #2e628f);
+  border-color: #9bd9ff;
+  box-shadow: 0 8px 22px rgba(24, 94, 151, .22), inset 0 1px 0 rgba(255,255,255,.55);
+}
+.home-btn:first-child .home-gem, .home-btn.primary .home-gem { border-color: #e764da; }
+.home-btn:hover:not(:disabled), .home-btn:focus-visible {
+  border-color: #b6e5ff;
+  box-shadow: 0 0 24px rgba(84, 168, 232, .2);
+}
+.home-hint { color: #9bcaef; }
+.home-cities .active img { filter: drop-shadow(0 0 8px rgba(32, 121, 194, .45)); }
+
+.story-body {
+  background: radial-gradient(ellipse at 65% 25%, rgba(47, 91, 142, .13), transparent 62%),
+    linear-gradient(180deg, rgba(7, 13, 23, .25), rgba(4, 8, 15, .4));
+}
+.story-body .log { background: linear-gradient(90deg, rgba(5, 9, 16, .12), rgba(5, 9, 16, .5)); }
+.speaker-art {
+  background: linear-gradient(135deg, var(--gold), rgba(var(--gold-rgb), .22) 56%, #223e5b);
+  border: 1px solid rgba(var(--gold-rgb), .4);
+  box-shadow: 0 18px 50px rgba(0,0,0,.62), 0 0 28px rgba(var(--gold-rgb), .08);
+}
+.msg .bubble { border-color: rgba(var(--gold-rgb), .27); }
+.msg.them .bubble {
+  background: linear-gradient(135deg, rgba(15, 25, 41, .95), rgba(8, 13, 22, .94));
+}
+.msg.me .bubble {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #071423;
+  box-shadow: 0 5px 18px rgba(var(--gold-rgb), .13);
+}
+.msg.narr .bubble {
+  color: #c5d3e4;
+  background: rgba(4, 10, 18, .72);
+  border-color: rgba(130, 175, 216, .25);
+}
+.sheet {
+  background: radial-gradient(ellipse at 5% 0%, rgba(var(--gold-rgb), .08), transparent 42%),
+    linear-gradient(150deg, rgba(11, 19, 31, .95), rgba(6, 10, 17, .96));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.sheet-art {
+  border-color: rgba(var(--gold-rgb), .46);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, .42), 0 0 0 3px rgba(var(--gold-rgb), .05);
+}
+.sheet-story-context {
+  border-color: rgba(var(--gold-rgb), .24);
+  background: linear-gradient(120deg, rgba(var(--gold-rgb), .09), rgba(7, 13, 22, .62));
+}
+.stat .bar { background: rgba(175, 204, 229, .1); }
+.atlas-stage {
+  background: radial-gradient(ellipse at 50% 42%, rgba(55, 104, 157, .2), rgba(8, 13, 22, .94) 76%);
+  border-color: rgba(var(--gold-rgb), .28);
+}
+.atlas-map {
+  border-color: rgba(var(--gold-rgb), .62);
+  box-shadow: 0 12px 48px rgba(0,0,0,.68), 0 0 28px rgba(var(--gold-rgb), .08);
+}
+.atlas-detail { background: linear-gradient(145deg, rgba(10, 19, 32, .97), rgba(5, 9, 16, .97)); }
+.codex .wiki-detail {
+  background: linear-gradient(145deg, rgba(12, 22, 36, .82), rgba(6, 11, 19, .8));
+  border-color: var(--line);
+}
+.wiki-card { box-shadow: inset 0 1px 0 rgba(255,255,255,.025); }
+.wiki-card:hover, .wiki-card.active {
+  box-shadow: 0 0 0 1px rgba(var(--gold-rgb), .08), 0 8px 24px rgba(0,0,0,.2);
+}
+.chat-stage.origin-piltover { --acc: #86caff; --acc-rgb: 101, 174, 229; }
+.chat-stage.origin-zaun { --acc: #6be0b7; --acc-rgb: 63, 191, 159; }
+.chat-portrait { background: linear-gradient(180deg, rgba(7, 15, 26, .55), rgba(4, 9, 16, .22)); }
+.chat-convo .log { background: linear-gradient(180deg, rgba(7, 15, 26, .14), rgba(4, 8, 14, .18)); }
+.world { background: radial-gradient(ellipse at top, #111d2c, #05080e 72%); }
+.hud-card, .hud-btn {
+  background: linear-gradient(140deg, rgba(7, 17, 30, .9), rgba(5, 10, 19, .87));
+  border-color: rgba(var(--gold-rgb), .35);
+  box-shadow: 0 8px 26px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.035);
+}
+.hud-card:hover, .hud-btn:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(var(--gold-rgb), .1); }
+@media (prefers-reduced-motion: reduce) {
+  .city-choice, .city-choice::before, .home-btn, .home-city, .wiki-card { transition: none !important; }
+}
