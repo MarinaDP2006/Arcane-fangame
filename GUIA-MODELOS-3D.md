@@ -1,6 +1,6 @@
 # Guía de modelos 3D para Arcane-fangame
 
-Esta guía cubre la integración de modelos 3D en el mapa abierto que ya existe en `src/js/world3d.js` y el sistema de avatares `src/js/avatars3d.js`. El editor conserva su retrato y el avatar 3D del mundo se usa después de crear la partida; el modelo importado no debe ser requisito para abrir el editor ni para jugar en 2D.
+Esta guía cubre dos recursos distintos: avatares en `src/js/avatars3d.js` y escenarios urbanos completos en `src/models/maps/{piltover,zaun}.glb`, cargados por `src/js/world3d.js`. El editor conserva su retrato y el avatar 3D se usa después de crear la partida; ni un avatar ni un escenario 3D son requisito para abrir el editor o jugar en 2D.
 
 ## 1. Preparar el recurso
 
@@ -36,4 +36,4 @@ Esta guía cubre la integración de modelos 3D en el mapa abierto que ya existe 
 
 ## Estado
 
-El mapa exterior 3D y el cargador de modelos ya están implementados. La calidad de los modelos de cada personaje y la fidelidad arquitectónica de cada barrio aún deben comprobarse visualmente: un archivo `.glb` presente no garantiza malla completa, materiales correctos, buena escala ni animaciones. Antes de fusionar cambios, valida el mapa con zoom general y cercano y conserva el mapa 2D como alternativa.
+El runtime de mapa ya admite escenarios GLB completos y no genera arquitectura urbana por código. Los archivos `src/models/maps/piltover.glb` y `src/models/maps/zaun.glb` todavía deben crearse y añadirse: sin ellos el juego debe regresar al mapa 2D, no mostrar edificios falsos. Usa Blender como herramienta de composición/exportación y consulta `src/models/maps/README.md` junto con `tools/blender/export_arcane_map.py`. Antes de dar la tarea por terminada, verifica visualmente los dos escenarios, los puntos de interés, las fachadas, las calles, la cámara y los personajes desde zoom general y de calle.
