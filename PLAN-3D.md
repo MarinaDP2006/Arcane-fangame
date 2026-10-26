@@ -36,11 +36,11 @@ El proyecto dispone de un sistema de avatares 3D en `src/js/avatars3d.js`, con G
 
 ## Mapa 3D exterior de Piltover y Zaun
 
-`src/js/world3d.js` ahora construye hitos con siluetas diferenciadas para edificios y lugares clave de ambas ciudades y deja espacio libre a su alrededor. Esta es una mejora estructural del mapa, no una reconstrucción exacta de la serie. La fidelidad final aún requiere modelado artesanal, materiales específicos y validación visual contra referencias.
+`src/js/world3d.js` ya no construye edificios, calles, cúpulas, cavernas ni tuberías mediante geometría procedural. El modo 3D ahora exige un entorno urbano completo en `src/models/maps/piltover.glb` o `src/models/maps/zaun.glb`, creado en Blender (u otra herramienta 3D que exporte GLB). El renderizador añade solo actores dinámicos. Si el archivo de ciudad no existe o no contiene mallas, el juego vuelve al mapa ilustrado 2D. Los dos escenarios GLB siguen pendientes de producción y revisión visual; no debe presentarse el mapa como terminado hasta añadirlos.
 
 ## Mejoras de mundo e interfaz aún pendientes
 - Mapa: transiciones consistentes entre vista general, ubicaciones y exploración, marcadores legibles y rutas táctiles.
-- Mundo 3D: escenarios explorables con colisiones, cámara y NPCs, no solo fondos o avatares tridimensionales.
+- Mundo 3D: modelar/exportar los entornos urbanos completos de Piltover y Zaun con Blender, comprobar los anclajes de POI, definir colisiones transitables y validar cámara/NPCs con los GLB reales.
 - Interacción: misiones, pistas, diálogos y relaciones que cambian según las decisiones.
 - Móvil/tablet: verificar la PR #47 de controles táctiles en dispositivo real antes de fusionarla.
 - Rendimiento: perfiles de calidad baja/media/alta y pruebas de 30/60 FPS medidos.
