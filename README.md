@@ -39,6 +39,13 @@ npm run web
 
 El workflow de GitHub Actions verifica el proyecto y compila Windows, macOS y Android. Las releases se publican manualmente; revisa los artefactos disponibles en Releases.
 
+## Mapas 2D/3D y dirección artística
+
+- [Pendientes y prompt de Freebuff (mapas, personajes, interfaz, lore y misiones)](PENDIENTES.md)
+- [Guía de escenarios 3D, Marble, SpAItial, Blender y referencias de Piltover/Zaun](src/models/maps/README.md)
+- [Piltover 3D: espacios, interiores y dirección artística](PILTOVER-3D.md)
+- En main existen los archivos de escenario piltover.blend, zaun.blend, piltover.glb y zaun.glb. Su integración visual, escala, colisiones, POI y rendimiento aún deben verificarse en una partida real; no se consideran validados solo por existir.
+
 ## Guías
 
 - [IA y campaña](GUIA-IA-Y-CAMPANA.md)
