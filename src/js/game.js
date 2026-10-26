@@ -359,6 +359,36 @@
       else rows.push(act(tag, a.label, done ? 'Ya lo hiciste en este capítulo.' : `${stat} ya está al máximo.`, () => {}, { disabled: true }));
     }
 
+    // Retos 3D disponibles en este lugar: Minigames.forPlace ya filtra por ciudad.
+    // Si el lugar ya ofrece el minijuego de su actividad, no repetimos la misma tarjeta.
+    const linked3D = (Minigames.forPlace?.(loc.id) || []).filter((g) => g.id !== loc.activity?.game);
+    linked3D.forEach((g) => {
+      rows.push(act('Minijuego 3D', g.title, g.goal, async () => {
+        World.pause(true);
+        try {
+          const won = await Minigames.play(g.id, { bonus: mgBonus(g.id), place: loc.id, city: loc.map || G.world.map });
+          if (!won) return;
+          G.flags = G.flags || {};
+          const flag = `minijuego3d:recompensa:${g.id}`;
+          if (!G.flags[flag]) {
+            const stat = ({ shoot: 'valor', precision: 'ingenio', circuit: 'ingenio', runes: 'ingenio',
+              bargain: 'carisma', assembly: 'ingenio', arena: 'valor', runner: 'sigilo',
+              stealth: 'sigilo', scrap: 'ingenio', throw: 'sigilo', contain: 'ingenio' })[Minigames.GAMES[g.id]?.mode] || 'ingenio';
+            const gain = G.player.keystone === 'estudioso' ? 2 : 1;
+            G.stats[stat] = Math.min(window.WORLD.maxStat, (G.stats[stat] || 0) + gain);
+            G.flags[flag] = true;
+            toast(`Reto completado: +${gain} ${S().stats[stat].label}`, 'good');
+          } else {
+            toast('Reto superado. Ya recibiste la recompensa de este minijuego.', 'good');
+          }
+          updateHud();
+          await persist();
+        } finally {
+          World.pause(false);
+        }
+      }));
+    });
+
     // Explorar el escenario 2D (pista del capítulo)
     if (window.Scenes2D?.has(loc.id) && window.Scenes2D.imageFor(loc.id, place[1])) {
       const seen = `visto:${G.progress.chapterId}:${loc.id}`;

@@ -139,14 +139,21 @@ window.ART_BUNDLED = {
     "muelle-stillwater": "img/arte/lugares/s1/muelle-stillwater.webp",
     "piltover": "img/arte/lugares/s1/piltover.webp",
     "plaza": "img/arte/lugares/s1/plaza.webp",
-    "puente-zaun": "img/arte/lugares/s1/puente-zaun.webp",
     "puente": "img/arte/lugares/s1/puente.webp",
+    "puente-zaun": "img/arte/lugares/s1/puente-zaun.webp",
     "stillwater": "img/arte/lugares/s1/stillwater.webp",
     "sumidero": "img/arte/lugares/s1/sumidero.webp",
     "taller-jayce": "img/arte/lugares/s1/taller-jayce.webp",
     "tejados": "img/arte/lugares/s1/tejados.webp",
     "ultima-gota": "img/arte/lugares/s1/ultima-gota.webp",
-    "zaun": "img/arte/lugares/s1/zaun.webp"
+    "zaun": "img/arte/lugares/s1/zaun.webp",
+    "zaun-arbol-fireflight": "img/arte/lugares/s1/zaun-arbol-fireflight.jpg",
+    "zaun-centro": "img/arte/lugares/s1/zaun-centro.jpg",
+    "zaun-ciudad-subterranea": "img/arte/lugares/s1/zaun-ciudad-subterranea.jpg",
+    "zaun-mercado-reference": "img/arte/lugares/s1/zaun-mercado-reference.png",
+    "zaun-muelles": "img/arte/lugares/s1/zaun-muelles.jpg",
+    "zaun-punto-seguridad": "img/arte/lugares/s1/zaun-punto-seguridad.jpg",
+    "zaun-ultima-gota-bar": "img/arte/lugares/s1/zaun-ultima-gota-bar.jpg"
   },
   "lugares/s2": {
     "artesanos": "img/arte/lugares/s2/artesanos.webp",
@@ -163,6 +170,10 @@ window.ART_BUNDLED = {
     "puente-zaun": "img/arte/lugares/s2/puente-zaun.webp",
     "stillwater": "img/arte/lugares/s2/stillwater.webp",
     "taller-jayce": "img/arte/lugares/s2/taller-jayce.webp",
-    "tejados": "img/arte/lugares/s2/tejados.webp"
+    "tejados": "img/arte/lugares/s2/tejados.webp",
+    "zaun-comuna-viktor": "img/arte/lugares/s2/zaun-comuna-viktor.jpg",
+    "zaun-escondite-jinx": "img/arte/lugares/s2/zaun-escondite-jinx.jpg",
+    "zaun-fisuras-superiores": "img/arte/lugares/s2/zaun-fisuras-superiores.jpg",
+    "zaun-singed-laboratorio": "img/arte/lugares/s2/zaun-singed-laboratorio.png"
   }
 };

@@ -46,6 +46,22 @@ function sync(fix) {
 }
 
 const check = process.argv.includes('--check');
+const sourceIcon = path.join(__dirname, '..', 'web', 'icono-arcane.svg');
+const bundledIcon = path.join(__dirname, '..', 'src', 'icono-arcane.svg');
+function syncIcon(fix) {
+  if (!fs.existsSync(sourceIcon)) throw new Error('Falta web/icono-arcane.svg: es el icono canónico de la aplicación.');
+  if (fs.existsSync(bundledIcon) && fs.readFileSync(sourceIcon).equals(fs.readFileSync(bundledIcon))) return false;
+  if (fix) {
+    fs.mkdirSync(path.dirname(bundledIcon), { recursive: true });
+    fs.copyFileSync(sourceIcon, bundledIcon);
+  }
+  return true;
+}
+const iconUnsynced = syncIcon(!check);
+if (check && iconUnsynced) {
+  console.error('✗ src/icono-arcane.svg está desactualizado respecto a web/icono-arcane.svg. Ejecuta node scripts/art-manifest.js');
+  process.exit(1);
+}
 const unsynced = sync(!check);
 if (check && unsynced.length) { console.error(`✗ Copias de arcaneData/arte sin pasar a src/img/arte: ${unsynced.join(', ')}. Ejecuta node scripts/art-manifest.js`); process.exit(1); }
 const text = build();

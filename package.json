@@ -1,7 +1,7 @@
 {
   "name": "arcane-fangame",
   "productName": "Arcane-fangame",
-  "version": "1.30.2",
+  "version": "1.30.3",
   "description": "Fangame narrativo de rol libre ambientado en Arcane, con Piltover, Zaun y personajes de las temporadas 1 y 2.",
   "main": "main.js",
   "author": "MarinaDP2006",

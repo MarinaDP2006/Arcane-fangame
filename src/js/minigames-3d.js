@@ -1,8 +1,7 @@
 // Minijuegos 3D de Arcane-fangame. Motor reutilizable en Three.js, sin sprites retro.
 // El mundo principal continúa siendo 2D; solo estas actividades usan escenarios WebGL.
 (function () {
-  const old = window.Minigames || {};
-  const GAMES = old.GAMES || {};
+  const GAMES = {};
   const CATALOG = {
     tiro: { title: 'Galería de precisión', city: 'piltover', mode: 'shoot', goal: 'Impacta 6 dianas antes de que termine el tiempo.', quota: 6, secs: 28, scene: 'ejecutores', difficulty: 1, winText: 'La galería reconoce tu precisión.' },
     circuito: { title: 'Circuito hextech', city: 'piltover', mode: 'circuit', goal: 'Activa los nodos en el orden que marca el núcleo.', quota: 4, secs: 35, scene: 'taller-jayce', difficulty: 1, winText: 'El flujo hextech vuelve a estabilizarse.' },
@@ -124,11 +123,12 @@
       footer.innerHTML = `<span>${def.city === 'piltover' ? 'Ciudad alta · Tecnología hextech' : 'Ciudad subterránea · Tecnología improvisada'}</span><span>ESC · Pausa y salida</span>`;
       box.append(head, stage, controls, footer);
       document.body.append(box);
-      let renderer, scene, camera, raf = 0, running = true, done = false, resultShown = false, elapsed = 0, last = 0, spawnT = 0;
+      let renderer, scene, camera, raf = 0, running = true, done = false, disposed = false, resultShown = false, elapsed = 0, last = 0, spawnT = 0;
       let score = 0, mistakes = 0, rounds = 0, seqIndex = 0;
       let objectCount = 0, worldSpeed = 0, currentRound = 0, actionUsed = false;
       let attack = 'izquierda', attackWait = 2.2, runnerLane = 0, jump = 0, jumpV = 0, progress = 0;
       let currentNeed = 0, bargainRounds = 0, bargainDeals = 0;
+      let stealthLane = 0, stealthSpawn = 0;
       const interactive = [], moving = [], projectiles = [];
       const disposables = new Set();
       const keys = new Set();
@@ -153,9 +153,10 @@
       const updateHud = () => {
         scoreEl.innerHTML = `<small>MARCADOR</small><strong>${score}<i> / ${scoreMax}</i></strong>`;
         timeEl.innerHTML = `<small>TIEMPO</small><strong>${Math.max(0, Math.ceil(def.secs - elapsed))}<i>s</i></strong>`;
-        progressEl.innerHTML = `<small>ESTADO</small><strong>${def.mode === 'bargain' ? `${bargainDeals}/3 tratos` : def.mode === 'arena' ? `${rounds}/4 asaltos` : def.mode === 'runner' ? `${Math.floor(progress)}% de ruta` : def.mode === 'runes' ? `Secuencia ${Math.min(3, Math.floor(seqIndex / 4) + 1)}/3` : `${Math.min(score, scoreMax)}/${scoreMax} objetivos`}</strong>`;
+        progressEl.innerHTML = `<small>ESTADO</small><strong>${def.mode === 'bargain' ? `${bargainDeals}/3 tratos` : def.mode === 'arena' ? `${rounds}/4 asaltos` : def.mode === 'runner' ? `${Math.floor(progress)}% de ruta` : def.mode === 'runes' ? `${Math.min(score, scoreMax)}/${scoreMax} símbolos` : `${Math.min(score, scoreMax)}/${scoreMax} objetivos`}</strong>`;
       };
       const disposeScene = () => {
+        disposed = true;
         if (raf) cancelAnimationFrame(raf);
         running = false;
         window.removeEventListener('keydown', onKey, true);
@@ -171,8 +172,8 @@
         if (scene) {
           scene.traverse((obj) => {
             obj.geometry?.dispose?.();
-            if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose?.());
-            else obj.material?.dispose?.();
+            const materials = Array.isArray(obj.material) ? obj.material : obj.material ? [obj.material] : [];
+            materials.forEach((m) => { m.map?.dispose?.(); m.dispose?.(); });
           });
           scene.clear();
         }
@@ -238,6 +239,25 @@
         const floorMat = material(zaun ? '#132d2a' : '#2a2c31', zaun ? '#0a4b3c' : '#5a471f', { metalness: .6, roughness: .65 });
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 90), floorMat);
         floor.rotation.x = -Math.PI / 2; floor.position.y = -0.16; floor.receiveShadow = true; scene.add(floor);
+        // Fondo de localización de Arcane a modo de telón 3D: el escenario conserva profundidad,
+        // luces y colisiones propias, pero deja de parecer un prototipo abstracto sin ciudad.
+        const season = window.CustomArt?.season?.() || 's1';
+        const artUrl = window.CustomArt?.image?.('lugares', def.scene)
+          || window.ART_BUNDLED?.[`lugares/${season}`]?.[def.scene]
+          || window.ART_BUNDLED?.['lugares/s1']?.[zaun ? 'zaun' : 'piltover'];
+        if (artUrl && THREE.TextureLoader) {
+          new THREE.TextureLoader().load(artUrl, (texture) => {
+            if (done || disposed || !scene) { texture.dispose?.(); return; }
+            if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+            const backdrop = new THREE.Mesh(
+              new THREE.PlaneGeometry(64, 38),
+              new THREE.MeshBasicMaterial({ map: texture, color: 0x849397, transparent: true, opacity: .64, side: THREE.DoubleSide, depthWrite: false })
+            );
+            backdrop.position.set(0, -1.5, -38);
+            backdrop.renderOrder = -10;
+            scene.add(backdrop);
+          }, undefined, () => { /* el escenario geométrico sigue disponible si falla el recurso */ });
+        }
         // Plataformas geométricas y arquitectura estilizada, siempre con volumen 3D real.
         for (let i = 0; i < 7; i++) {
           const x = (i % 2 ? -1 : 1) * rand(6, 11);
@@ -322,11 +342,13 @@
           } else {
             const move = k.includes('left') ? -1 : k.includes('right') ? 1 : 0;
             runnerLane = Math.max(-1, Math.min(1, runnerLane + move));
-            jump = k.includes('up') ? 1 : 0;
-            if (Math.random() > .3) { score++; labelMessage('Has avanzado sin activar la alarma.', 'good'); }
-            else { mistakes++; labelMessage('Una cámara te ha detectado. Cambia de ruta.', 'bad'); }
-            if (score >= def.quota) finish(true);
-            if (mistakes >= 3) finish(false);
+            if (k.includes('up')) {
+              jump = jump ? 0 : 1; // En sigilo, ↑ alterna entre ir erguido y agacharse.
+              if (player) player.scale.y = jump ? .62 : 1;
+              labelMessage(jump ? 'Agachada: el haz alto no te alcanza.' : 'Te has levantado. Observa el próximo barrido.', 'hint');
+            } else if (move) {
+              labelMessage(`Te has desplazado al carril ${runnerLane + 2}. Vigila el haz rojo.`, 'hint');
+            }
           }
         }
       }
@@ -382,6 +404,17 @@
             { label: 'Cubrirte · Espacio', run: () => pressAction('Space') },
             { label: 'Esquivar →', run: () => pressAction('ArrowRight') },
           ]);
+        } else if (mode === 'stealth') {
+          player = playerMesh();
+          worldSpeed = 7;
+          stealthSpawn = 1.0;
+          spawnStealthBeam();
+          labelMessage('Cruza sin que el haz rojo te detecte: cambia de carril o agáchate antes del barrido.', 'hint');
+          addActionButtons([
+            { label: '← Cambiar carril', run: () => pressAction('ArrowLeft') },
+            { label: 'Agacharse · ↑', run: () => pressAction('ArrowUp') },
+            { label: 'Cambiar carril →', run: () => pressAction('ArrowRight') },
+          ]);
         } else if (mode === 'runner') {
           player = playerMesh();
           worldSpeed = def.variant === 'chase' ? 13.5 : def.variant === 'hover' ? 10.5 : 8.5;
@@ -402,12 +435,13 @@
           }
           labelMessage('Recoge seis piezas verdes, doradas o azules; las piezas rojas están contaminadas.');
         } else if (mode === 'contain') {
-          for (let i = 0; i < 8; i++) {
+          // Cinco fugas rojas reales, intercaladas con cinco reguladores verdes seguros.
+          for (let i = 0; i < 10; i++) {
             const leak = i % 2 === 0;
-            const node = makeNode(i, (i % 4 - 1.5) * 2.35, -3 - Math.floor(i / 4) * 1.8, leak ? '#f05d77' : '#4fcfb7');
+            const node = makeNode(i, (i % 5 - 2) * 1.85, -3 - Math.floor(i / 5) * 2.2, leak ? '#f05d77' : '#4fcfb7');
             addInteractive(node.children[1], { kind: leak ? 'leak' : 'safe', parent: node, index: i });
           }
-          labelMessage('Cierra las fugas rojas. No toques los reguladores verdes estables.');
+          labelMessage('Cierra las cinco fugas rojas. No toques los reguladores verdes estables.');
         }
         addMobileControls();
       }
@@ -426,6 +460,14 @@
           };
           controls.append(b);
         }
+      }
+      function spawnStealthBeam() {
+        stealthLane = Math.floor(rand(-1, 2));
+        const beam = cube(1.95, .07, .1, '#e74b68', [stealthLane * 2.5, 1.55, -20], '#ff4267');
+        beam.userData.kind = 'scan';
+        beam.userData.lane = stealthLane;
+        beam.userData.judged = false;
+        moving.push(beam);
       }
       function spawnObstacle() {
         const lane = Math.floor(rand(-1, 2));
@@ -514,6 +556,22 @@
         });
         for (const o of moving) {
           if (o.userData?.phase != null) o.rotation.y += dt * 1.25;
+          if (o.userData?.kind === 'scan' && def.mode === 'stealth') {
+            o.position.z += worldSpeed * dt;
+            if (!o.userData.judged && o.position.z >= 2.5) {
+              o.userData.judged = true;
+              if (runnerLane === o.userData.lane && !jump) {
+                mistakes++;
+                labelMessage('¡Te ha detectado la cámara! Cambia de carril o agáchate antes del próximo barrido.', 'bad');
+                if (mistakes >= 3) finish(false);
+              } else {
+                score++;
+                labelMessage('Barrido superado: has evitado la vigilancia.', 'good');
+                if (score >= def.quota) finish(true);
+              }
+            }
+            if (o.position.z > 5) o.visible = false;
+          }
           if (o.userData?.kind === 'obstacle' || o.userData?.kind === 'charge') {
             o.position.z += worldSpeed * dt;
             if (!o.userData.scored && o.position.z > 3.3) {
@@ -557,9 +615,10 @@
           }
         }
         if (def.mode === 'stealth') {
-          progress += dt * 9;
-          if (progress > 100) finish(score >= def.quota);
-          if (Math.random() < dt * .25) { const beam = cube(4.8, .08, .08, '#e74b68', [rand(-.8, .8), .8, -4], '#ff4267'); beam.userData.temporary = true; }
+          progress += dt * 4.5;
+          stealthSpawn += dt;
+          if (stealthSpawn > 2.15) { stealthSpawn = 0; spawnStealthBeam(); }
+          if (progress >= 100) finish(score >= def.quota);
         }
         if (elapsed > def.secs) finish(score >= def.quota);
       }
@@ -600,7 +659,6 @@
   }
 
   window.Minigames = {
-    ...old,
     GAMES,
     CATALOG,
     CITY_GAMES,
