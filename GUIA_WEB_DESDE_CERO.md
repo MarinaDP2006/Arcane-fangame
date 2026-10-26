@@ -1,14 +1,9 @@
 # Guía para reconstruir la web desde cero
-
-> **En pocas palabras:** Esta es una guía de reconstrucción, no una afirmación de que la web ya esté terminada. Explica cómo organizar una web nueva, qué responsabilidad tiene cada carpeta y cómo comprobar que los enlaces y recursos funcionan antes de publicarla. La antigua portada se conserva como referencia; no la confundas con una página activa lista para desplegar.
-
-Esta guía se aplica a **Arcane-fangame**. La página principal `web/index.html` se deja vacía a propósito para empezar una web nueva; la versión anterior queda guardada en `web/archivo/index-anterior.html` como referencia, no como página activa.
-
 ## 1. Estructura recomendada
 
 ```text
 web/
-├── index.html                 # Punto de entrada nuevo (vacío hasta empezar)
+├── index.html                 # Punto de entrada 
 ├── privacidad.html            # Política de privacidad independiente
 ├── css/
 │   └── estilos.css            # Estilos de la web, no del juego
@@ -36,14 +31,8 @@ Los recursos artísticos que ya existen en `web/arte-oficial/`, `web/arte-propio
 
 ## 2. Crear el HTML principal
 
-1. Abre `web/index.html` y escribe el esqueleto HTML semántico.
-2. Añade `<meta charset="utf-8">`, el viewport móvil y un título descriptivo.
-3. Enlaza `css/estilos.css` y, al final de `body`, `js/app.js` con `defer`.
-4. Construye la web por secciones pequeñas: cabecera, portada, ciudades, personajes, características del juego y pie.
-5. Mantén el contenido y la navegación accesibles por teclado y con textos alternativos para imágenes.
 
 Esqueleto inicial sugerido (cópialo cuando quieras empezar a rellenar el index):
-
 ```html
 <!doctype html>
 <html lang="es">
@@ -64,7 +53,6 @@ Esqueleto inicial sugerido (cópialo cuando quieras empezar a rellenar el index)
 ```
 
 ## 3. Convención de nombres
-
 - Archivos y carpetas en minúsculas, sin espacios ni tildes: `como-jugar.html`, `personajes/`, `menu-principal.js`.
 - Una responsabilidad por archivo; evita nombres vagos como `misc.js`, `final2.css` o `nuevo.html`.
 - `web/css/` contiene solo estilos de la web. Los estilos del juego permanecen en `src/css/`.
@@ -74,7 +62,6 @@ Esqueleto inicial sugerido (cópialo cuando quieras empezar a rellenar el index)
 - No guardes claves privadas, tokens ni secretos en JavaScript del navegador.
 
 ## 4. Cómo trabajar por fases
-
 1. **Base:** HTML semántico, estilos globales, variables de color y tipografía.
 2. **Diseño adaptable:** móvil primero; después tablet y escritorio con Grid/Flexbox.
 3. **Componentes:** cabecera, botones, tarjetas, galerías y pie.
@@ -82,10 +69,3 @@ Esqueleto inicial sugerido (cópialo cuando quieras empezar a rellenar el index)
 5. **Interacción:** solo funciones que realmente estén conectadas.
 6. **Accesibilidad y rendimiento:** contraste, foco visible, `prefers-reduced-motion`, imágenes optimizadas y carga diferida.
 7. **Pruebas:** comprobar enlaces, imágenes, consola, teclado y anchos de 360, 768, 1280 y 1440 px.
-
-## 5. Antes de publicar
-
-- Verifica que el servidor está configurado para servir la carpeta correcta.
-- Comprueba rutas relativas desde cada HTML: una página en `pages/` necesita rutas distintas de `index.html`.
-- No publiques una web vacía como si fuera una web terminada; este cambio es una base de reconstrucción intencionada.
-- Abre un PR por fase, explica el alcance y prueba en navegador antes de integrar.
