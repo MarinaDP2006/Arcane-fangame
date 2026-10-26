@@ -1,6 +1,6 @@
 # Guía de modelos 3D para Arcane-fangame
 
-Esta guía explica cómo preparar e integrar modelos 3D sin asumir que el juego ya dispone de un renderizador 3D completo. El personaje jugable se muestra actualmente mediante su retrato elegido y la interfaz del creador; no reemplaces esa ruta por un modelo 3D obligatorio.
+Esta guía cubre la integración de modelos 3D en el mapa abierto que ya existe en `src/js/world3d.js` y el sistema de avatares `src/js/avatars3d.js`. El editor conserva su retrato y el avatar 3D del mundo se usa después de crear la partida; el modelo importado no debe ser requisito para abrir el editor ni para jugar en 2D.
 
 ## 1. Preparar el recurso
 
@@ -11,10 +11,10 @@ Esta guía explica cómo preparar e integrar modelos 3D sin asumir que el juego 
 
 ## 2. Dónde colocar los archivos
 
-1. Crea una carpeta con nombre descriptivo bajo `src/assets/3d/` (por ejemplo, `src/assets/3d/oc-principal/`).
-2. Añade un `README.md` junto al recurso con autoría, licencia, formato, escala, controles de animación y fuente.
-3. No sobrescribas `src/img/arte/` ni las galerías de retratos: el modelo 3D es un recurso adicional.
-4. Revisa `package.json`, la configuración de empaquetado y el constructor web antes de añadir archivos grandes; confirma que se incluyan en Windows, Android y web.
+1. Para modelos incorporados al juego, usa `src/models/<id>.glb` y añade el nombre base a `src/models/index.json`.
+2. Para modelos personales fuera del repositorio, usa Ajustes → Arte personal → modelos; Electron los lee desde la carpeta de arte del usuario y prepara ZIP/FBX/OBJ mediante `modelos.js`.
+3. Añade una nota de autoría, licencia, formato, escala, orientación y animaciones. No sobrescribas `src/img/arte/` ni las galerías de retratos.
+4. Revisa `package.json`, el empaquetado y las rutas de web/Electron. Las rutas deben funcionar sin depender de carpetas absolutas del ordenador del desarrollador.
 
 ## 3. Integración recomendada por etapas
 
@@ -36,4 +36,4 @@ Esta guía explica cómo preparar e integrar modelos 3D sin asumir que el juego 
 
 ## Estado
 
-Esta guía es un plan de integración. No afirma que el juego ya incluya un motor 3D ni que exista una pantalla de visor terminada. La primera implementación debería ser un prototipo aislado antes de cambiar el creador o las escenas principales.
+El mapa exterior 3D y el cargador de modelos ya están implementados. La calidad de los modelos de cada personaje y la fidelidad arquitectónica de cada barrio aún deben comprobarse visualmente: un archivo `.glb` presente no garantiza malla completa, materiales correctos, buena escala ni animaciones. Antes de fusionar cambios, valida el mapa con zoom general y cercano y conserva el mapa 2D como alternativa.
