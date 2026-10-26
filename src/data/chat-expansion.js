@@ -14,7 +14,7 @@
     say: ['(Se queda mirando tu mano.) Quemaste el papel. No los nombres. Eso es lo que me da miedo.',
       'Mira, no pienso decirte cómo vivir. Pero si vienen a por ti, no vas a enfrentarte a ellos sin alguien a tu lado.'] });
   topic('vi', { t: 'Quería acompañarte, no arreglarte la vida.', tone: 'amable',
-    req: { flag: 'acompanaste_vi' }, once: true, fx: { aff: 2 },
+    req: { flag: 'busca_jinx' }, once: true, fx: { aff: 2 },
     say: ['(Exhala lentamente.) Bien. Porque no hay nada que arreglar en cinco minutos.',
       'Puedes quedarte un rato. Sin hablar también vale.'] });
   topic('jinx', { t: '¿Y si construimos algo que no explote?', tone: 'astuto',
@@ -26,7 +26,7 @@
     say: ['Me arrepiento de no haber preguntado antes cómo se escribieron esos nombres.',
       'Hay informes que pueden destruir carreras. Lo preocupante es que algunos puedan destruir vidas.'] });
   topic('caitlyn', { t: 'Gracias por priorizar la evacuación.', tone: 'amable',
-    req: { flag: 'evacuacion_previa' }, once: true, fx: { aff: 2 },
+    req: { flag: 'evacuacion_civiles' }, once: true, fx: { aff: 2 },
     say: ['No fue una elección noble. Fue la única orden que podría defender mirando a esa gente a los ojos.',
       '(Baja la mirada un instante.) Antes quizá habría pensado otra cosa.'] });
   topic('ekko', { t: '¿Llegaron los filtros a todas las familias?', tone: 'pregunta',
@@ -34,7 +34,7 @@
     say: ['No a todas. Pero ayer una niña pudo correr sin quedarse sin aire a mitad de la escalera.',
       'Lo sé porque volvió para devolverme la caja. La había pintado de azul. (Sonríe.)'] });
   topic('ekko', { t: 'Quiero saber qué pasó con los refugios.', tone: 'pregunta',
-    req: { flag: 'refugios_consecuencias' }, once: true, fx: { aff: 1 },
+    req: { flag: 'evacuacion_civiles' }, once: true, fx: { aff: 1 },
     say: ['Quedan mantas para dos noches. Después habrá que improvisar.',
       'Lo bueno es que ya no improviso solo. Has aparecido cuando la gente necesitaba manos.'] });
   topic('jayce', { t: 'Vi la alteración de los registros hextec.', tone: 'serio',
@@ -46,7 +46,7 @@
     say: ['Sirvió para que las cajas cruzaran el puente. No para que el Consejo aprendiera la lección.',
       'Una negociación puede salvar una vida sin salvar una institución. Son dos trabajos diferentes, {name}.'] });
   topic('mel', { t: 'Dijiste que había llegado el momento de revelar la verdad.', tone: 'serio',
-    req: { flag: 'verdad_noxus' }, once: true, fx: { aff: 1 },
+    req: { flag: 'apoya_mel' }, once: true, fx: { aff: 1 },
     say: ['La verdad no pierde su peso porque quien la pronuncie sea mi madre.',
       'No te prometo que no me duela. Te prometo que no cambiaré las pruebas para ahorrarme el dolor.'] });
   topic('silco', { t: 'Nunca olvidé el trato sobre los filtros.', tone: 'serio',
