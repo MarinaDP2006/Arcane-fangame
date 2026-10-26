@@ -1,1 +1,667 @@
+/* Rifts & Gears · fangame de Arcane · estilos de la web.
+   Paleta: noche (fondo), oro y azul hextec de Piltover, verde químico y rosa neón de Zaun. */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
+:root {
+  --fondo: #0b0d14;
+  --fondo-2: #11141e;
+  --panel: #161a26;
+  --panel-2: #1e2333;
+  --linea: rgba(214, 220, 255, .12);
+  --texto: #eef0f7;
+  --suave: #a6abc0;
+  --laton: #e3b65b;
+  --laton-osc: #9b7633;
+  --cobre: #ff4fa3;
+  --reso: #7cf0a1;
+  --hextec: #57c7ff;
+  --aurelia: #e3b65b;
+  --nacar: #7cf0a1;
+  --peligro: #ff6b6b;
+  --radio: 6px;
+  --radio-sm: 4px;
+  --sombra: 0 18px 50px rgba(0, 0, 0, .45);
+  --serif: "Oswald", "Arial Narrow", sans-serif;
+  --sans: "Nunito Sans", system-ui, sans-serif;
+  --mono: "Space Mono", ui-monospace, monospace;
+  --ancho: 1160px;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fondo); color: var(--texto); font: 16px/1.65 var(--sans); overflow-x: hidden; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.08; letter-spacing: .005em; text-transform: uppercase; margin: 0 0 .6em; }
+h1 { font-size: clamp(2.2rem, 5.4vw, 4.4rem); }
+h2 { font-size: clamp(1.8rem, 3.6vw, 2.9rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0 0 1em; }
+em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240, 161, .35); }
+:focus-visible { outline: 2px solid var(--reso); outline-offset: 3px; border-radius: 4px; }
+.saltar { position: absolute; left: -9999px; top: 0; }
+.saltar:focus { left: 1rem; top: 1rem; z-index: 100; background: var(--texto); color: var(--fondo); padding: .6rem 1rem; }
+
+.kicker { font: 500 .74rem/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--reso); margin-bottom: 1rem; }
+.latido { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--reso); margin-right: .45rem; vertical-align: 1px; animation: latido 2.4s infinite; }
+@keyframes latido { 0%, 100% { box-shadow: 0 0 0 0 rgba(95, 211, 184, .5); } 50% { box-shadow: 0 0 0 7px rgba(95, 211, 184, 0); } }
+
+/* Botones */
+.btn { white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 46px; padding: .7rem 1.25rem; border-radius: var(--radio-sm); border: 1px solid transparent; font: 600 .95rem/1 var(--sans); text-decoration: none; cursor: pointer; transition: transform .15s, background .15s, border-color .15s; }
+.btn:hover { transform: translateY(-1px); }
+.btn:disabled { opacity: .55; cursor: wait; transform: none; }
+.btn-primario { background: linear-gradient(90deg, var(--laton), #f3cf7f); color: #1a1205; text-transform: uppercase; letter-spacing: .06em; }
+.btn-primario:hover { box-shadow: 0 0 24px rgba(227, 182, 91, .35); }
+.btn-borde { border-color: var(--linea); background: transparent; color: var(--texto); }
+.btn-borde:hover { border-color: var(--laton); }
+.btn-texto { background: none; color: var(--suave); padding-inline: .4rem; }
+.btn-texto:hover { color: var(--texto); }
+.btn-sm { min-height: 40px; padding: .55rem 1rem; font-size: .88rem; }
+
+/* Cabecera */
+.cabecera { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 68px; padding: .6rem max(16px, calc((100% - var(--ancho)) / 2)); background: rgba(14, 17, 19, .9); backdrop-filter: blur(14px); border-bottom: 1px solid var(--linea); }
+.logo { display: flex; align-items: center; gap: .7rem; text-decoration: none; min-width: 0; }
+.logo-sello { flex: none; width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--laton); border-radius: 50%; color: var(--laton); font: 650 1.1rem var(--serif); }
+.logo-texto { display: flex; flex-direction: column; min-width: 0; }
+.logo-texto strong { font: 650 1rem/1.2 var(--serif); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logo-texto small { font: .68rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--suave); }
+.menu { display: flex; align-items: center; gap: 1.4rem; font-size: .92rem; }
+.menu a:not(.btn) { color: var(--suave); text-decoration: none; padding: .4rem 0; }
+.menu a:not(.btn):hover { color: var(--texto); }
+.menu-boton { display: none; min-height: 44px; padding: 0 1rem; border: 1px solid var(--linea); border-radius: var(--radio-sm); background: none; color: var(--texto); font: 500 .9rem var(--sans); cursor: pointer; }
+
+/* Secciones */
+.seccion { width: min(var(--ancho), calc(100% - 32px)); margin: 0 auto; padding: clamp(3.5rem, 8vw, 6.5rem) 0; }
+.seccion-cabeza { max-width: 720px; margin-bottom: 2.6rem; }
+.seccion-cabeza > p:last-child { color: var(--suave); font-size: 1.05rem; }
+
+/* Portada */
+.portada { width: min(var(--ancho), calc(100% - 32px)); margin: 0 auto; display: grid; grid-template-columns: 1.05fr .95fr; gap: clamp(2rem, 5vw, 4.5rem); align-items: center; padding: clamp(2.5rem, 7vw, 6rem) 0 clamp(3rem, 6vw, 5rem); }
+.entradilla { color: var(--suave); font-size: 1.1rem; max-width: 560px; }
+.acciones { display: flex; flex-wrap: wrap; gap: .75rem; margin: 1.8rem 0 2.4rem; }
+.cifras { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin: 0; background: var(--linea); border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; max-width: 560px; }
+.cifras div { background: var(--fondo-2); padding: .9rem 1rem; }
+.cifras dt { font: .68rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--suave); }
+.cifras dd { margin: 0; font: 650 1.7rem/1.2 var(--serif); color: var(--laton); }
+.portada-arte { margin: 0; border-radius: calc(var(--radio) * 1.4); overflow: hidden; border: 1px solid var(--linea); box-shadow: var(--sombra); background: var(--panel); }
+/* Espacio vacío para insertar más adelante la captura real del juego al iniciar. */
+.portada-arte.captura-inicio-pendiente { width: 100%; aspect-ratio: 16 / 10; min-height: 240px; }
+.portada-arte img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.portada-arte figcaption { padding: .8rem 1.1rem; font: .78rem var(--mono); color: var(--suave); border-top: 1px solid var(--linea); }
+
+/* Crónica */
+.cronica { list-style: none; margin: 0; padding: 0; position: relative; display: grid; gap: 1.2rem; }
+.cronica::before { content: ""; position: absolute; left: 7px; top: .6rem; bottom: .6rem; width: 2px; background: linear-gradient(var(--laton), var(--cobre), var(--reso)); opacity: .6; }
+.cronica li { position: relative; padding: 1.2rem 1.4rem 1.1rem; margin-left: 2.2rem; background: var(--panel); border: 1px solid var(--linea); border-radius: var(--radio); }
+.cronica li::before { content: ""; position: absolute; left: calc(-2.2rem + 1px); top: 1.55rem; width: 14px; height: 14px; border-radius: 50%; background: var(--fondo); border: 2px solid var(--laton); }
+.cronica li p { color: var(--suave); margin: 0; }
+.cronica h3 { margin-bottom: .35rem; }
+.fecha { display: inline-block; font: 500 .75rem var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--laton); margin-bottom: .3rem; }
+.cronica .cronica-ahora { border-color: rgba(95, 211, 184, .45); background: linear-gradient(135deg, rgba(95, 211, 184, .1), var(--panel) 60%); }
+.cronica .cronica-ahora::before { border-color: var(--reso); background: var(--reso); }
+.cronica-ahora .fecha { color: var(--reso); }
+
+/* Ciudades */
+.ciudades { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+.ciudad { background: var(--panel); border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; display: flex; flex-direction: column; }
+.ciudad img { aspect-ratio: 16 / 10; object-fit: cover; width: 100%; }
+.ciudad-texto { padding: 1.4rem 1.5rem 1.6rem; }
+.ciudad-texto > p { color: var(--suave); }
+.ciudad ul { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; padding: 0; margin: 0; }
+.ciudad li { font: .78rem var(--mono); padding: .3rem .65rem; border-radius: 999px; border: 1px solid var(--linea); color: var(--suave); }
+.etiqueta { font: 500 .72rem var(--mono); letter-spacing: .12em; text-transform: uppercase; margin-bottom: .4rem; }
+.ciudad-aurelia .etiqueta, .ciudad-aurelia h3 { color: var(--aurelia); }
+.ciudad-nacar .etiqueta, .ciudad-nacar h3 { color: var(--nacar); }
+
+/* Banda Resonancia */
+.banda { background: linear-gradient(180deg, var(--fondo-2), #0f1715); border-block: 1px solid var(--linea); }
+.banda-dentro { display: grid; grid-template-columns: .9fr 1.1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.banda-dentro img { border-radius: var(--radio); border: 1px solid var(--linea); }
+.banda-dentro p { color: var(--suave); font-size: 1.05rem; }
+.banda-dentro strong { color: var(--texto); }
+
+/* Partes */
+.partes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.partes article { padding: 1.5rem; border-radius: var(--radio); border: 1px solid var(--linea); background: var(--panel); }
+.partes span { font: 500 .74rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--cobre); }
+.partes h3 { margin-top: .5rem; }
+.partes p { color: var(--suave); margin: 0; }
+
+/* Reparto */
+.fichas { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+.ficha { position: relative; padding: 1.3rem 1.3rem 1.2rem; background: var(--panel); border: 1px solid var(--linea); border-radius: var(--radio); border-top: 3px solid var(--laton); }
+.ficha-zaun { border-top-color: var(--reso); }
+.ficha-noxus { border-top-color: var(--peligro); }
+.ficha-noxus .ficha-ciudad { color: var(--peligro); }
+.ficha-num { position: absolute; right: 1.1rem; top: 1rem; font: .75rem var(--mono); color: var(--suave); }
+.ficha-ciudad { font: 500 .7rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--laton); margin-bottom: .3rem; }
+.ficha-zaun .ficha-ciudad { color: var(--reso); }
+.ficha h3 { margin-bottom: .1rem; }
+.ficha-alias { font-style: italic; color: var(--texto); opacity: .85; margin-bottom: .6rem; }
+.ficha p:not(.ficha-alias):not(.ficha-ciudad) { color: var(--suave); font-size: .93rem; }
+.ficha blockquote { margin: 0; padding-left: .8rem; border-left: 2px solid var(--linea); font: italic 500 .95rem/1.5 var(--serif); }
+
+/* Cómo se juega */
+.pasos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.pasos article { padding: 1.4rem; background: var(--panel); border: 1px solid var(--linea); border-radius: var(--radio); }
+.pasos p { color: var(--suave); margin: 0; font-size: .95rem; }
+.paso-num { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--laton); color: #1b1408; font: 650 1rem var(--serif); margin-bottom: .9rem; }
+
+/* Pie */
+.pie { display: grid; gap: 1rem; justify-items: start; padding: 2.5rem max(16px, calc((100% - var(--ancho)) / 2)); border-top: 1px solid var(--linea); color: var(--suave); font-size: .9rem; }
+.pie p { max-width: 560px; margin: 0; }
+.pie nav { display: flex; flex-wrap: wrap; gap: 1.2rem; }
+.pie nav a { text-decoration: none; }
+.pie nav a:hover { color: var(--texto); }
+
+/* Legal */
+.legal { width: min(780px, calc(100% - 32px)); margin: 0 auto; padding: 3rem 0 4rem; }
+.legal h2 { font-size: 1.4rem; margin-top: 2.2rem; }
+.legal p { color: var(--suave); }
+.legal a { color: var(--reso); overflow-wrap: anywhere; }
+.legal-fecha { font: .8rem var(--mono); }
+
+/* Tablet */
+@media (max-width: 960px) {
+  .portada, .banda-dentro { grid-template-columns: 1fr; }
+  .portada-arte { max-width: 620px; }
+  .pasos { grid-template-columns: 1fr 1fr; }
+  .partes { grid-template-columns: 1fr; }
+}
+
+/* Móvil */
+@media (max-width: 760px) {
+  .menu-boton { display: inline-flex; align-items: center; }
+  .menu { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; padding: .5rem 16px 1rem; background: var(--fondo); border-bottom: 1px solid var(--linea); }
+  .menu.abierto { display: flex; }
+  .menu a:not(.btn) { padding: .85rem 0; border-bottom: 1px solid var(--linea); font-size: 1rem; }
+  .menu .btn { margin-top: .8rem; }
+  .ciudades, .pasos { grid-template-columns: 1fr; }
+  .cifras { grid-template-columns: repeat(2, 1fr); }
+  .acciones .btn { flex: 1 1 100%; }
+}
+
+/* Arcane: portada partida Piltover / Zaun */
+.portada { position: relative; grid-template-columns: 1fr; min-height: min(86vh, 760px); isolation: isolate; }
+.portada-texto { max-width: 720px; }
+.portada-fondo { position: absolute; inset: 0 calc(50% - 50vw); z-index: -1; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+.portada-fondo span { position: relative; }
+.retrato-ciudad { position: absolute; z-index: 0; right: 3%; bottom: 0; width: min(62%, 470px); height: 82%; object-fit: contain; object-position: center bottom; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, .42)); opacity: .92; mask-image: linear-gradient(to bottom, #000 0%, #000 74%, transparent 100%); }
+.retrato-jinx { right: 0; width: min(70%, 520px); }
+@media (max-width: 760px) { .retrato-ciudad { right: -10%; width: 74%; height: 60%; opacity: .58; } .retrato-jinx { right: -16%; width: 84%; } }
+/* Fondos locales: concept art de Arcane documentado en arcaneData/arte/FUENTES.json. */
+.lado-piltover { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .7)), url("../arte-oficial/lugares/piltover-s1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #1c2033, #0b0d14); }
+.lado-zaun { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .72)), url("../arte-oficial/lugares/zaun-s1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #0e1a17, #0b0d14); }
+.portada-fondo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11, 13, 20, .92) 0%, rgba(11, 13, 20, .55) 55%, rgba(11, 13, 20, .2) 100%), repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .015) 3px 4px); }
+.portada-fondo .lado-zaun::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--laton), var(--reso)); box-shadow: 0 0 18px var(--reso); }
+
+/* Claves para quien no conoce Arcane */
+.claves { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.claves article { padding: 1.4rem; background: var(--panel); border: 1px solid var(--linea); border-radius: var(--radio); border-left: 3px solid var(--hextec); }
+.claves span { font: 700 .7rem var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--hextec); }
+.claves h3 { margin: .5rem 0 .4rem; }
+.claves p { color: var(--suave); margin: 0; font-size: .95rem; }
+
+/* Tarjetas de ciudad con concept art oficial local, con una capa de contraste para el texto. */
+.ciudad-arte { aspect-ratio: 16 / 7; }
+.ciudad-piltover .ciudad-arte { background: radial-gradient(circle at 75% 30%, rgba(227, 182, 91, .55), transparent 40%), radial-gradient(circle at 20% 80%, rgba(87, 199, 255, .35), transparent 45%), linear-gradient(160deg, #2a2f48, #121522); }
+.ciudad-zaun .ciudad-arte { background: radial-gradient(circle at 30% 70%, rgba(124, 240, 161, .5), transparent 42%), radial-gradient(circle at 80% 25%, rgba(255, 79, 163, .4), transparent 40%), linear-gradient(200deg, #12201c, #0b0d14); }
+.ciudad-piltover .etiqueta, .ciudad-piltover h3 { color: var(--laton); }
+.ciudad-zaun .etiqueta, .ciudad-zaun h3 { color: var(--reso); }
+.cabecera { border-bottom-color: rgba(227, 182, 91, .25); }
+.logo-sello { width: auto; padding: 0 .55rem; font-size: .85rem; border-radius: 4px; box-shadow: inset 0 0 12px rgba(227, 182, 91, .2); }
+
+@media (max-width: 960px) { .claves { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 760px) {
+  .claves { grid-template-columns: 1fr; }
+  .portada { min-height: 0; }
+  .portada-fondo { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .portada-fondo .lado-zaun::before { width: auto; height: 2px; right: 0; bottom: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+
+/* ---------- Direccion artistica: portadas ilustradas y seleccion con atmosfera ---------- */
+.portada { position: relative; min-height: min(790px, calc(100svh - 68px)); align-items: center; }
+.portada-fondo { opacity: .98; }
+.portada-fondo .lado-piltover,
+.portada-fondo .lado-zaun { background-size: cover; background-blend-mode: normal; }
+.portada-fondo .lado-piltover { background-position: center 42%; }
+.portada-fondo .lado-zaun { background-position: center 42%; }
+.portada-fondo::after {
+  background:
+    linear-gradient(90deg, rgba(7,9,16,.92) 0%, rgba(7,9,16,.67) 38%, rgba(7,9,16,.22) 70%, rgba(7,9,16,.15)),
+    linear-gradient(0deg, rgba(7,9,16,.78), transparent 42%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,.012) 3px 4px);
+}
+.portada-texto { position: relative; z-index: 2; text-shadow: 0 3px 18px rgba(0,0,0,.45); }
+.portada-texto h1 { max-width: 780px; text-wrap: balance; }
+.portada-texto .kicker { color: #e8cf8a; }
+.portada-texto .acciones .btn { min-height: 50px; box-shadow: 0 8px 28px rgba(0,0,0,.22); }
+.portada-arte { position: relative; z-index: 2; border-radius: 3px; border-color: rgba(232,207,138,.32); }
+.portada-arte::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1; border: 1px solid rgba(255,255,255,.07); }
+.portada-arte figcaption { background: rgba(5,8,15,.82); }
+.ciudad-arte { min-height: clamp(250px, 32vw, 410px); background-size: cover !important; background-position: center !important; position: relative; }
+.ciudad-arte::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,8,15,.75), transparent 72%), linear-gradient(90deg, rgba(5,8,15,.14), transparent); }
+.ciudad-piltover .ciudad-arte {
+  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("../arte-oficial/lugares/piltover-s1.webp") !important;
+}
+.ciudad-zaun .ciudad-arte {
+  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("../arte-oficial/lugares/zaun-s1.webp") !important;
+}
+.ciudad { border-radius: 3px; background: linear-gradient(160deg, rgba(20,25,37,.98), rgba(7,9,16,.98)); }
+.ficha { border-radius: 3px; background: linear-gradient(160deg, rgba(20,25,37,.94), rgba(7,9,16,.98)); }
+.ficha:hover { border-color: rgba(232,207,138,.42); }
+.seccion-cabeza h2 { text-wrap: balance; }
+@media (max-width: 760px) {
+  .portada { min-height: auto; grid-template-columns: 1fr; padding-block: 5rem 2rem; }
+  .portada-arte { max-width: 620px; }
+  .portada-fondo { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .retrato-ciudad { height: 55%; opacity: .5; }
+  .ciudades { gap: 1rem; }
+}
+
+
+/* Galería de concept art oficial y retratos: imágenes locales copiadas desde src/img/arte/. */
+.ficha-retrato { display: block; width: calc(100% + 2.6rem); max-width: none; height: 250px; object-fit: cover; object-position: center 24%; margin: -1.3rem -1.3rem 1rem; border-bottom: 1px solid var(--linea); background: #101522; }
+.ficha-con-retrato { overflow: hidden; }
+.arte-galeria { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.arte-card { min-width: 0; margin: 0; overflow: hidden; border: 1px solid var(--linea); border-radius: var(--radio); background: var(--panel); }
+.arte-card img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; transition: transform .45s, filter .45s; }
+.arte-card:hover img { transform: scale(1.035); filter: saturate(1.08); }
+.arte-card figcaption { display: grid; gap: .2rem; padding: .85rem 1rem 1rem; }
+.arte-card strong { font: 600 .95rem var(--serif); color: var(--texto); }
+.arte-card span, .nota-arte { color: var(--suave); font-size: .86rem; }
+.nota-arte { margin-top: 1rem; }
+.nota-arte code { color: var(--hextec); }
+@media (max-width: 960px) { .arte-galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .arte-galeria { grid-template-columns: 1fr; } .ficha-retrato { height: 290px; } }
+
+
+/* Portada inspirada en el menú cinematográfico de Arcane; arte local del proyecto. */
+.portada { isolation: isolate; }
+.portada-fondo { opacity: .72; }
+.portada-fondo .lado-piltover img,
+.portada-fondo .lado-zaun img { width: min(34vw, 470px); height: min(78vh, 700px); object-fit: contain; object-position: bottom; filter: drop-shadow(0 24px 42px #000b); }
+.portada-fondo .lado-piltover img { object-position: bottom right; }
+.portada-fondo .lado-zaun img { object-position: bottom left; }
+.portada-personajes { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: clamp(.35rem, 2vw, 1.5rem); position: relative; width: min(48vw, 620px); min-height: clamp(280px, 48vw, 580px); margin: 0; align-self: end; }
+.portada-personajes img { display:block; width:100%; max-height: min(65vh, 600px); object-fit:contain; object-position:bottom; filter: drop-shadow(0 18px 28px #000c); }
+.portada-personajes img:first-child { transform: translateY(1.2rem); }
+.portada-personajes img:last-of-type { transform: translateY(.5rem); }
+.portada-personajes figcaption { position:absolute; left:0; right:0; bottom:0; display:flex; justify-content:space-around; gap:1rem; color:#e9d6a3; font:700 .75rem/1.2 var(--mono, monospace); letter-spacing:.24em; text-shadow:0 2px 8px #000; }
+@media (max-width: 900px) {
+  .portada { min-height: auto; padding-top: clamp(5.5rem, 12vh, 8rem); }
+  .portada-fondo .lado-piltover img, .portada-fondo .lado-zaun img { width: 40vw; height: 48vh; opacity:.52; }
+  .portada-personajes { width:min(78vw, 560px); min-height:clamp(240px, 60vw, 420px); margin:1rem auto 0; }
+  .portada-personajes img { max-height:42vh; }
+}
+@media (max-width: 560px) {
+  .portada { padding:5.25rem 1rem 1.5rem; }
+  .portada-texto { width:100%; }
+  .portada h1 { font-size:clamp(2.15rem, 11vw, 3.4rem); line-height:1.02; }
+  .portada .entradilla { font-size:1rem; }
+  .portada .acciones { display:grid; grid-template-columns:1fr; }
+  .portada .acciones .btn { width:100%; justify-content:center; }
+  .cifras { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.75rem; }
+  .portada-personajes { width:100%; min-height:250px; }
+  .portada-personajes img { max-height:34vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .portada-personajes img { transform:none; }
+}
+
+
+/* Mapas de Piltover y Zaun: proporciones estables en escritorio, tablet y móvil. */
+.mapas-juego-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(1rem,2.5vw,1.6rem); }
+.mapa-juego { min-width:0; overflow:hidden; position:relative; border:1px solid var(--linea); border-radius:var(--radio); background:var(--panel); }
+.mapa-juego img { display:block; width:100%; aspect-ratio:16/9; height:auto; object-fit:cover; object-position:center; }
+.mapa-juego > div { padding:clamp(1rem,2.4vw,1.5rem); }
+.mapa-juego > div > span { display:block; margin-bottom:.4rem; color:var(--suave); font: .72rem var(--mono); letter-spacing:.1em; text-transform:uppercase; }
+.mapa-juego h3 { margin-bottom:.45rem; }
+.mapa-juego p { margin:0; color:var(--suave); }
+.mapa-juego-piltover h3 { color:var(--laton); }
+.mapa-juego-zaun h3 { color:var(--reso); }
+.mapas-juego .nota-arte { margin-top:1rem; color:var(--suave); font-size:.86rem; }
+@media (max-width:760px) {
+  .mapas-juego-grid { grid-template-columns:minmax(0,1fr); }
+  .mapa-juego img { aspect-ratio:4/3; }
+}
+@media (max-width:380px) {
+  .mapa-juego img { aspect-ratio:1/1; }
+  .mapa-juego > div { padding:1rem; }
+}
+
+/* Portada pública: lenguaje visual inspirado en Arcane, sin fondos ilustrados ajenos al juego. */
+:root {
+  --oro-nuevo: #d9b46c;
+  --azul-nuevo: #83c9df;
+  --verde-nuevo: #70d5a2;
+  --tinta-nueva: #080a10;
+}
+body { background: var(--tinta-nueva); }
+.cabecera { background: rgba(8,10,16,.93); border-bottom-color: rgba(217,180,108,.24); }
+.logo-sello { border-color: var(--oro-nuevo); color: var(--oro-nuevo); }
+.menu a:not(.btn):hover { color: var(--oro-nuevo); }
+.btn-primario { background: linear-gradient(120deg,#efd18b,var(--oro-nuevo) 55%,#b98943); }
+.kicker { color: var(--oro-nuevo); }
+
+/* Hero a pantalla amplia con las vistas de ciudad y retratos locales como único arte. */
+.portada-inicio {
+  width: min(100%, 1600px); min-height: min(820px, calc(100svh - 68px));
+  padding: clamp(3.5rem,9vw,8rem) max(24px,calc((100% - var(--ancho))/2)) 7rem;
+  display:flex; align-items:center; overflow:hidden; isolation:isolate;
+  background: #0c1018;
+}
+.portada-inicio .portada-fondo { inset:0; opacity:1; }
+.portada-inicio .lado-piltover,
+.portada-inicio .lado-zaun { background-size:cover; background-position:center; }
+.portada-inicio .lado-piltover {
+  background-image: linear-gradient(180deg,rgba(13,19,31,.12),rgba(7,10,16,.42)),url("../arte-oficial/lugares/piltover-s1.webp"),linear-gradient(135deg,#283447,#11151e);
+}
+.portada-inicio .lado-zaun {
+  background-image: linear-gradient(180deg,rgba(8,18,17,.15),rgba(6,12,13,.54)),url("../arte-oficial/lugares/zaun-s1.webp"),linear-gradient(135deg,#1b3431,#10141a);
+}
+.portada-inicio .portada-fondo::after {
+  background:linear-gradient(90deg,rgba(7,9,15,.95) 0%,rgba(7,9,15,.82) 34%,rgba(7,9,15,.4) 68%,rgba(7,9,15,.27)),linear-gradient(0deg,rgba(7,9,15,.8),transparent 48%),repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px);
+}
+.portada-inicio .portada-texto { position:relative; z-index:3; max-width:690px; padding-bottom:1rem; }
+.portada-inicio .portada-texto h1 { max-width:670px; font-size:clamp(3rem,7.4vw,6.4rem); letter-spacing:-.035em; text-shadow:0 5px 28px #000b; }
+.portada-inicio .portada-texto h1 em { color:#ecd18e; }
+.portada-inicio .entradilla { max-width:550px; color:#d0d0d0; font-size:clamp(1.05rem,1.6vw,1.2rem); }
+.portada-inicio .kicker { color:#ecd18e; }
+.portada-personajes {
+  position:absolute; z-index:2; right:max(2%,calc((100vw - 1430px)/2)); bottom:0;
+  width:min(48%,630px); min-height:0; height:88%; margin:0; align-self:auto;
+  display:grid; grid-template-columns:1fr 1fr; align-items:end; gap:0;
+  pointer-events:none;
+}
+.portada-personajes img {
+  width:100%; max-height:100%; height:min(640px,82vh); object-fit:cover; object-position:center top;
+  filter:drop-shadow(0 16px 28px #000c); mask-image:linear-gradient(#000 0%,#000 78%,transparent 100%);
+}
+.portada-personajes img:first-child { transform:translate(8%,0); }
+.portada-personajes img:last-of-type { transform:translate(-7%,0); }
+.portada-personajes figcaption { bottom:1.2rem; letter-spacing:.28em; color:#efdbab; }
+.portada-inicio .acciones { margin:1.7rem 0 1.6rem; }
+.portada-inicio .acciones .btn { min-height:50px; }
+.sellos-portada { list-style:none; display:flex; flex-wrap:wrap; gap:.55rem; padding:0; margin:0; }
+.sellos-portada li { border:1px solid rgba(255,255,255,.24); background:rgba(9,12,17,.55); padding:.38rem .72rem; color:#ddd; font: .7rem var(--mono); letter-spacing:.08em; text-transform:uppercase; }
+.indicador-scroll { position:absolute; z-index:4; bottom:1.35rem; left:max(24px,calc((100% - var(--ancho))/2)); display:flex; align-items:center; gap:.5rem; color:#ddd; text-decoration:none; font:.72rem var(--mono); letter-spacing:.12em; text-transform:uppercase; }
+.indicador-scroll span { color:var(--oro-nuevo); font-size:1.25rem; }
+
+/* Presentación editorial entre el hero y la guía de ciudades. */
+.umbral { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:clamp(1.5rem,5vw,4rem); border-bottom:1px solid var(--linea); }
+.umbral-marca { display:grid; justify-items:center; gap:.8rem; color:var(--oro-nuevo); font: .75rem var(--mono); }
+.umbral-marca i { display:block; width:1px; height:74px; background:linear-gradient(var(--oro-nuevo),transparent); }
+.umbral > div:nth-child(2) { max-width:690px; }
+.umbral h2 { max-width:630px; font-size:clamp(2.1rem,4.5vw,4rem); }
+.umbral > div:nth-child(2) > p:last-child { max-width:640px; color:var(--suave); font-size:1.08rem; }
+.umbral-cita { width:min(230px,22vw); margin:0; padding-left:1.1rem; border-left:1px solid var(--oro-nuevo); color:#d7c9ab; font:italic 1.05rem/1.6 var(--serif); }
+.seccion-cabeza { max-width:760px; }
+.seccion-cabeza h2 { font-size:clamp(2.2rem,5vw,4.5rem); }
+.seccion-cabeza h2 em { color:var(--oro-nuevo); }
+.seccion-cabeza > p:last-child { max-width:650px; }
+
+/* Tarjetas de ciudades y sus barrios. */
+.ciudades { gap:1.15rem; }
+.ciudad { border-radius:2px; background:linear-gradient(155deg,#171b25,#0d1017); }
+.ciudad-arte { min-height:clamp(250px,34vw,440px); aspect-ratio:16/9; position:relative; background-size:cover !important; background-position:center !important; }
+.ciudad-arte::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(6,9,14,.5),transparent 62%); }
+.ciudad-vista-piltover { background-image:linear-gradient(120deg,rgba(8,13,24,.08),rgba(8,13,24,.15)),url("../arte-oficial/lugares/piltover-s1.webp") !important; }
+.ciudad-vista-zaun { background-image:linear-gradient(120deg,rgba(8,13,24,.06),rgba(8,13,24,.18)),url("../arte-oficial/lugares/zaun-s1.webp") !important; }
+.ciudad-texto { padding:1.5rem 1.6rem 1.8rem; }
+.ciudad-texto h3 { font-size:2rem; }
+.ciudad-piltover .etiqueta,.ciudad-piltover h3 { color:#e1bd78; }
+.ciudad-zaun .etiqueta,.ciudad-zaun h3 { color:#80d3a2; }
+.ciudad li { border-radius:2px; background:rgba(255,255,255,.025); }
+.seccion-lugares { border-block:1px solid rgba(255,255,255,.055); }
+.lugares-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.8rem; }
+.lugar-card { position:relative; min-width:0; aspect-ratio:4/5; overflow:hidden; background:var(--panel); border:1px solid var(--linea); }
+.lugar-card img { width:100%; height:100%; position:absolute; inset:0; object-fit:cover; transition:transform .55s,filter .55s; }
+.lugar-card:hover img { transform:scale(1.045); filter:saturate(1.12); }
+.lugar-card::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(5,8,13,.94),transparent 64%); pointer-events:none; }
+.lugar-card > div { position:absolute; z-index:1; left:1rem; right:1rem; bottom:1rem; }
+.lugar-card > div span,.reparto-card > div span { display:block; color:#c8c1b2; font: .62rem/1.5 var(--mono); letter-spacing:.08em; }
+.lugar-card h3 { margin:.4rem 0 0; font-size:1.38rem; }
+.lugar-card-alto h3 { color:#e1bd78; }
+.lugar-card-bajo h3 { color:#80d3a2; }
+.nota-arte { font-size:.8rem; }
+
+/* Reparto en retratos; sin iconos o ilustraciones para elementos de interfaz. */
+.reparto-seccion { border-bottom:1px solid rgba(255,255,255,.055); }
+.reparto-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+.reparto-card { position:relative; min-width:0; min-height:300px; overflow:hidden; background:#11151c; border:1px solid var(--linea); }
+.reparto-card::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(5,8,13,.98) 0%,rgba(5,8,13,.73) 36%,transparent 80%); }
+.reparto-card img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 24%; filter:saturate(.82); transition:transform .55s,filter .55s; }
+.reparto-card:hover img { transform:scale(1.035); filter:saturate(1); }
+.reparto-card > div { position:absolute; z-index:1; left:1.15rem; right:1.15rem; bottom:1.15rem; }
+.reparto-card > div span { color:#d4bd83; }
+.reparto-zaun > div span { color:#8bd1aa; }
+.reparto-card h3 { margin:.2rem 0 .3rem; font-size:1.65rem; }
+.reparto-card p { max-width:310px; color:#c3c3c5; font-size:.88rem; margin:0; }
+
+/* Pasos sencillos y accesibles para explicar el formato de rol libre. */
+.seccion-juego { padding-bottom:clamp(3.5rem,7vw,6rem); }
+.pasos-juego { list-style:none; counter-reset:paso; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,1fr); border-block:1px solid var(--linea); }
+.pasos-juego li { display:grid; grid-template-columns:auto 1fr; gap:1rem; padding:1.5rem 1.3rem; border-right:1px solid var(--linea); }
+.pasos-juego li:last-child { border-right:0; }
+.pasos-juego li > span { color:var(--oro-nuevo); font: .75rem var(--mono); padding-top:.25rem; }
+.pasos-juego h3 { font-size:1.16rem; margin:0 0 .45rem; }
+.pasos-juego p { color:var(--suave); font-size:.9rem; margin:0; }
+.nota-ia { display:flex; align-items:center; gap:1rem; max-width:820px; margin:2rem auto 0; padding:1.1rem 1.3rem; background:rgba(131,201,223,.055); border:1px solid rgba(131,201,223,.18); }
+.nota-ia-sello { flex:none; color:var(--azul-nuevo); font-size:1.3rem; }
+.nota-ia p { color:var(--suave); margin:0; font-size:.92rem; }
+.nota-ia strong { color:var(--texto); }
+
+/* Cierre y pie con enlaces reales a las descargas y al aviso legal. */
+.cierre { display:grid; justify-items:center; text-align:center; padding:clamp(4rem,9vw,8rem) 16px; border-top:1px solid rgba(217,180,108,.2); background:radial-gradient(ellipse at 50% 100%,rgba(105,70,30,.17),transparent 68%); }
+.cierre .kicker { margin-bottom:1rem; }
+.cierre h2 { max-width:840px; font-size:clamp(2.5rem,6vw,5.2rem); }
+.cierre > p:not(.kicker) { max-width:560px; color:var(--suave); }
+.cierre .btn { margin-top:.7rem; }
+.pie-final { grid-template-columns:1fr auto; align-items:center; padding-top:2rem; padding-bottom:2rem; }
+.pie-final > nav { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:1.2rem; }
+.pie-final > p,.pie-final > small { grid-column:1/-1; max-width:780px; }
+.pie-final > p { color:#9396a0; }
+.pie-final > small { font: .7rem var(--mono); }
+
+/* Ajustes para tablets, pantallas estrechas y movimiento reducido. */
+@media (max-width:960px) {
+  .portada-inicio { min-height:760px; }
+  .portada-personajes { right:-4%; width:54%; opacity:.86; }
+  .portada-inicio .portada-texto { max-width:620px; }
+  .umbral { grid-template-columns:auto 1fr; }
+  .umbral-cita { grid-column:2; width:auto; max-width:500px; }
+  .lugares-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .lugar-card { aspect-ratio:16/10; }
+  .reparto-card { min-height:280px; }
+}
+@media (max-width:760px) {
+  .portada-inicio { min-height:730px; align-items:flex-start; padding:5rem 20px 13rem; }
+  .portada-inicio .portada-fondo { grid-template-columns:1fr 1fr; grid-template-rows:1fr; }
+  .portada-inicio .portada-fondo::after { background:linear-gradient(90deg,rgba(7,9,15,.83),rgba(7,9,15,.5)),linear-gradient(0deg,rgba(7,9,15,.84),transparent 55%); }
+  .portada-inicio .portada-texto { max-width:620px; }
+  .portada-inicio .portada-texto h1 { font-size:clamp(3rem,10vw,5.3rem); }
+  .portada-personajes { height:50%; width:min(70%,480px); right:-2%; opacity:.82; }
+  .portada-personajes img { height:100%; }
+  .indicador-scroll { left:20px; }
+  .umbral { gap:1.2rem; }
+  .umbral-cita { grid-column:2; }
+  .reparto-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .pasos-juego { grid-template-columns:1fr; }
+  .pasos-juego li { border-right:0; border-bottom:1px solid var(--linea); }
+  .pasos-juego li:last-child { border-bottom:0; }
+  .pie-final { grid-template-columns:1fr; }
+  .pie-final > nav { justify-content:flex-start; }
+  .pie-final > p,.pie-final > small { grid-column:auto; }
+}
+@media (max-width:480px) {
+  .portada-inicio { min-height:690px; padding:4rem 16px 12rem; }
+  .portada-inicio .portada-texto h1 { font-size:clamp(2.8rem,13vw,4rem); }
+  .portada-inicio .entradilla { max-width:400px; font-size:1rem; }
+  .portada-personajes { right:-10%; width:88%; height:40%; opacity:.7; }
+  .portada-personajes img { max-height:100%; }
+  .portada-inicio .acciones { display:flex; }
+  .portada-inicio .acciones .btn { flex:1 1 100%; }
+  .sellos-portada li { font-size:.62rem; }
+  .indicador-scroll { bottom:1rem; }
+  .umbral { grid-template-columns:1fr; gap:.6rem; }
+  .umbral-marca { display:flex; justify-content:flex-start; gap:.7rem; }
+  .umbral-marca i { width:40px; height:1px; background:linear-gradient(90deg,var(--oro-nuevo),transparent); }
+  .umbral-cita { grid-column:auto; width:auto; margin-top:.5rem; }
+  .ciudad-arte { min-height:240px; }
+  .lugares-grid { grid-template-columns:1fr 1fr; gap:.55rem; }
+  .lugar-card { aspect-ratio:3/4; }
+  .lugar-card > div { left:.7rem; right:.7rem; bottom:.7rem; }
+  .lugar-card > div span { font-size:.53rem; }
+  .lugar-card h3 { font-size:1.1rem; }
+  .reparto-grid { gap:.55rem; }
+  .reparto-card { min-height:250px; }
+  .reparto-card > div { left:.7rem; right:.7rem; bottom:.7rem; }
+  .reparto-card > div span { font-size:.53rem; }
+  .reparto-card h3 { font-size:1.35rem; }
+  .reparto-card p { font-size:.78rem; }
+  .nota-ia { align-items:flex-start; }
+  .pie-final > nav { gap:.7rem 1rem; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .lugar-card img,.reparto-card img { transition:none; }
+}
+
+/* ---------- Web completa: sistemas del juego, ciudades, mapa y reparto total ---------- */
+/* Tarjetas de características: los seis pilares del juego. */
+.caracteristicas { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
+.caracteristica { padding:1.5rem 1.4rem; background:linear-gradient(160deg,#151a24,#0c0f16); border:1px solid var(--linea); }
+.caracteristica > span { display:block; color:var(--oro-nuevo); font:.72rem var(--mono); letter-spacing:.14em; margin-bottom:.9rem; }
+.caracteristica h3 { font-size:1.22rem; margin:0 0 .5rem; }
+.caracteristica p { color:var(--suave); font-size:.93rem; margin:0; }
+.nota-plataformas { margin-top:1.6rem; }
+
+/* Vista panorámica de cada ciudad. */
+.ciudad-vista { margin:0 0 2.4rem; border:1px solid var(--linea); background:var(--panel); }
+.ciudad-vista img { width:100%; aspect-ratio:21/9; object-fit:cover; display:block; }
+.ciudad-vista figcaption { padding:.7rem 1rem; color:var(--suave); font:.72rem var(--mono); border-top:1px solid var(--linea); }
+.subtitulo-zona { margin:2.2rem 0 1rem; font-size:1.5rem; }
+.seccion-zaun .subtitulo-zona { color:#8bd1aa; }
+.seccion-ciudad:not(.seccion-zaun) .subtitulo-zona { color:#e1bd78; }
+
+/* Barrios jugables de cada ciudad. */
+.barrios { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.8rem; }
+.barrio { padding:1.1rem 1.05rem; background:var(--panel); border:1px solid var(--linea); border-top:2px solid var(--oro-nuevo); }
+.barrio-bajo { border-top-color:var(--verde-nuevo); }
+.barrio h4 { margin:0 0 .45rem; font:600 1.02rem/1.25 var(--serif); text-transform:uppercase; letter-spacing:.01em; }
+.barrio p { margin:0; color:var(--suave); font-size:.85rem; }
+
+/* Versiones anchas de las tarjetas de lugares (los concept art son panorámicos). */
+.lugares-grid-ancha { grid-template-columns:repeat(3,minmax(0,1fr)); }
+.lugares-grid-ancha .lugar-card { aspect-ratio:16/10; }
+
+/* Mapa ilustrado del Códice y cifras del juego. */
+.mapa-codice { margin:0; border:1px solid var(--linea); background:var(--panel); }
+.mapa-codice img { width:100%; display:block; }
+.mapa-codice figcaption { padding:.75rem 1rem; color:var(--suave); font:.74rem/1.5 var(--mono); border-top:1px solid var(--linea); }
+.mapa-datos { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1px; margin-top:1rem; background:var(--linea); border:1px solid var(--linea); }
+.mapa-datos > div { background:var(--fondo-2); padding:1rem 1.1rem; display:grid; gap:.15rem; }
+.mapa-datos strong { font:650 1.6rem/1.2 var(--serif); color:var(--oro-nuevo); }
+.mapa-datos span { color:var(--suave); font:.68rem var(--mono); letter-spacing:.1em; text-transform:uppercase; }
+
+/* Reparto completo: 16 personajes en columnas flexibles. */
+.reparto-grid-completo { grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); }
+.reparto-noxus > div span { color:#e08a8a; }
+.reparto-noxus::after { background:linear-gradient(0deg,rgba(5,8,13,.98) 0%,rgba(5,8,13,.73) 36%,transparent 80%),linear-gradient(0deg,rgba(120,30,30,.12),transparent 60%); }
+
+/* Nota de fuentes de lore. */
+.fuentes-nota { color:var(--suave); font:.8rem var(--mono); }
+.fuentes-nota a { color:var(--azul-nuevo); text-decoration:none; }
+.fuentes-nota a:hover { text-decoration:underline; }
+.acciones-centradas { justify-content:center; margin:1.2rem 0 0; }
+
+/* Adaptaciones por tamaño. */
+@media (max-width:960px) {
+  .caracteristicas { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .barrios { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .lugares-grid-ancha { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .mapa-datos { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .ciudad-vista img { aspect-ratio:16/9; }
+}
+@media (max-width:560px) {
+  .caracteristicas { grid-template-columns:1fr; }
+  .barrios { grid-template-columns:1fr; }
+  .lugares-grid-ancha { grid-template-columns:1fr; }
+  .ciudad-vista img { aspect-ratio:4/3; }
+  .mapa-datos { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .acciones-centradas .btn { flex:1 1 100%; }
+}
+
+/* ---------- Historia en dos partes, misiones y sistema de relaciones ---------- */
+/* El menú crece con las secciones nuevas: se comprime para caber en la cabecera. */
+.cabecera .menu { gap:1.05rem; font-size:.88rem; }
+
+/* Dos paneles: Parte I y Parte II, cada uno con sus tres actos. */
+.partes-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
+.parte-panel { position:relative; overflow:hidden; padding:clamp(1.4rem,3vw,2.2rem); background:linear-gradient(160deg,#151a24,#0b0e15); border:1px solid var(--linea); }
+.parte-panel::before { content:""; position:absolute; inset:0 auto 0 0; width:3px; background:linear-gradient(180deg,var(--oro-nuevo),transparent); }
+.parte-ii::before { background:linear-gradient(180deg,var(--verde-nuevo),transparent); }
+.parte-kicker { margin:0 0 .6rem; color:var(--oro-nuevo); font:.7rem var(--mono); letter-spacing:.14em; text-transform:uppercase; }
+.parte-ii .parte-kicker { color:var(--verde-nuevo); }
+.parte-panel h3 { margin:0 0 .55rem; font-size:1.5rem; }
+.parte-texto { margin:0; color:var(--suave); font-size:.95rem; }
+.parte-texto strong { color:var(--texto); }
+.actos { display:grid; gap:.5rem; margin:1.1rem 0; }
+.acto { display:grid; grid-template-columns:auto 1fr auto; gap:.8rem; align-items:baseline; padding:.7rem .85rem; background:rgba(255,255,255,.03); border:1px solid var(--linea); }
+.acto span { color:var(--suave); font:.66rem var(--mono); letter-spacing:.1em; text-transform:uppercase; }
+.acto strong { font:600 .98rem var(--serif); letter-spacing:.02em; text-transform:uppercase; }
+.acto small { color:var(--suave); font:.68rem var(--mono); white-space:nowrap; }
+.ruta-lista { display:grid; gap:.45rem; margin:0; padding:0; list-style:none; color:var(--suave); font-size:.88rem; }
+.ruta-lista b { color:var(--texto); font-weight:600; }
+
+/* Misiones: cifras reales del juego y ejemplos de secundarias. */
+.misiones-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.9rem; }
+.mision-card { padding:1.25rem 1.15rem; background:var(--panel); border:1px solid var(--linea); border-top:2px solid var(--oro-nuevo); }
+.mision-card .mision-cifra { display:block; margin-bottom:.5rem; color:var(--oro-nuevo); font:650 1.9rem/1 var(--serif); }
+.mision-card h3 { margin:0 0 .4rem; font-size:1.05rem; }
+.mision-card p { margin:0; color:var(--suave); font-size:.86rem; }
+.ejemplos-misiones { display:flex; flex-wrap:wrap; gap:.5rem; margin:0; padding:0; list-style:none; }
+.ejemplos-misiones li { padding:.35rem .7rem; color:var(--suave); font:.72rem var(--mono); border:1px solid var(--linea); background:rgba(255,255,255,.02); }
+
+/* Escalera de afinidad/confianza con los requisitos reales (NEEDS). */
+.escalera { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.7rem; }
+.escalera-paso { padding:1.15rem 1.05rem; background:linear-gradient(165deg,#171b26,#0c0f16); border:1px solid var(--linea); }
+.rel-icono { display:block; margin-bottom:.55rem; color:var(--oro-nuevo); font-size:1.15rem; line-height:1; }
+.escalera-paso h3 { margin:0 0 .35rem; font-size:1.02rem; }
+.escalera-requisitos { display:block; margin:0 0 .5rem; color:var(--oro-nuevo); font:.66rem var(--mono); letter-spacing:.06em; text-transform:uppercase; }
+.escalera-paso p:last-child { margin:0; color:var(--suave); font-size:.83rem; }
+.rel-romantica { border-color:rgba(224,69,123,.4); }
+.rel-romantica .rel-icono,.rel-romantica .escalera-requisitos { color:#e0457b; }
+.reglas-rel { display:grid; gap:.7rem; margin-top:1.4rem; }
+.reglas-rel p { margin:0; padding:.9rem 1.05rem; color:var(--suave); font-size:.9rem; background:rgba(255,255,255,.02); border-left:2px solid var(--oro-nuevo); }
+.reglas-rel strong { color:var(--texto); }
+
+@media (max-width:1100px) {
+  .escalera { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .misiones-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media (max-width:960px) {
+  .partes-grid { grid-template-columns:1fr; }
+  .cabecera .menu { gap:1.2rem; font-size:.92rem; }
+}
+@media (max-width:560px) {
+  .misiones-grid { grid-template-columns:1fr; }
+  .escalera { grid-template-columns:1fr; }
+  .acto { grid-template-columns:auto 1fr; }
+  .acto small { grid-column:1 / -1; }
+}
+
+/* Sección de capturas del juego: queda vacía hasta que se añadan imágenes en
+   web/capturas/ (o en capturasjuego/), que el compilador copia y coloca solas. */
+.galeria-capturas { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:.9rem; }
+.captura { margin:0; min-width:0; background:var(--panel); border:1px solid var(--linea); }
+.captura img { display:block; width:100%; aspect-ratio:16/9; object-fit:cover; }
+.captura figcaption { padding:.65rem .95rem; color:var(--suave); font:.72rem var(--mono); letter-spacing:.06em; text-transform:uppercase; border-top:1px solid var(--linea); }
+.galeria-vacia { margin:0; padding:1.6rem 1.4rem; color:var(--suave); font:.8rem/1.6 var(--mono); border:1px dashed var(--linea); background:rgba(255,255,255,.015); }
+@media (max-width:560px) { .galeria-capturas { grid-template-columns:1fr; } }
