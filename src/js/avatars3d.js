@@ -11,10 +11,10 @@
 (function () {
   if (!window.THREE) return;
   const T = window.THREE;
-  // Altura objetivo de una persona en unidades del mapa. Las calles miden unos 74 de ancho;
-  // mantener el avatar en 14 unidades deja más espacio visual para fachadas, puertas y HUD.
-  // Los modelos externos se normalizan a esta altura y los muñecos procedurales usan la misma.
-  const H = 14;
+  // Altura objetivo de una persona en unidades del mundo (calles de 60–96 y edificios de 60–400).
+  // 22 unidades permiten reconocer siluetas al acercar la cámara sin convertir a nadie en gigante.
+  // Los GLB se normalizan aquí: nunca se modifica el archivo original.
+  const H = 22;
   const DOLL = H / 44; // el muñeco se modela con 44 unidades de alto
   const WALK = 230; // velocidad de andar del jugador (world.js)
 
@@ -810,7 +810,15 @@
   async function buildGLB(names, scale, spec) {
     let gltf = null;
     for (const n of names) { gltf = await loadGLB(n); if (gltf) break; }
-    if (!gltf) return null;
+    if (!gltf?.scene) return null;
+    // Algunos archivos pequeños son placeholders sin mallas. Conserva el avatar pintado en vez
+    // de quitarlo y dejar un personaje invisible.
+    let meshCount = 0;
+    gltf.scene.traverse((o) => { if (o.isMesh && o.geometry?.attributes?.position?.count) meshCount++; });
+    if (!meshCount) {
+      console.warn(`Modelo ${names.join('/')} no contiene mallas renderizables; se mantiene el avatar de respaldo.`);
+      return null;
+    }
     // Los materiales se corrigen una sola vez sobre el modelo leído; los clones los comparten.
     if (!gltf.fixed) { fixMaterials(gltf.scene, gltf.urls, spec); gltf.fixed = true; }
     const model = window.THREE_GLTF.SkeletonUtils.clone(gltf.scene);
@@ -844,12 +852,16 @@
     }
     const box = gltf.measure.box;
     const size = box.getSize(new T.Vector3());
-    // Un busto (solo cabeza y torso, más ancho que alto en proporción) no se estira hasta la
-    // altura de una persona: se coloca sobre un pedestal, como una escultura del personaje.
+    // Detectar bustos con el cuerpo (sin pedestal, peana ni piezas planas), no con toda la escena.
+    // En personajes completos la altura del cuerpo manda: una aerotabla o un arma no deben
+    // reducir o disparar la escala del personaje.
     const body = gltf.measure.body;
-    const bust = body.y > 0 && body.y / Math.max(body.x, body.z, 1e-6) < 1.3;
+    const bodyMax = Math.max(body.x, body.z, 1e-6);
+    const bust = body.y > 0 && body.y / bodyMax < 1.3;
+    const targetHeight = H * scale * (bust ? 0.45 : 1);
+    const measuredHeight = bust ? size.y : (body.y > 0 ? body.y : size.y);
     const plinth = bust ? H * scale * 0.55 : 0;
-    const k = size.y > 0 ? (H * scale * (bust ? 0.45 : 1)) / size.y : 1;
+    const k = measuredHeight > 1e-5 ? targetHeight / measuredHeight : 1;
     model.scale.multiplyScalar(k);
     model.position.y += plinth - box.min.y * k;
     // Se centra en horizontal para que gire sobre sí mismo al mirar al jugador.
