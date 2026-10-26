@@ -6,10 +6,10 @@ const vm = require('vm');
 
 const ctx = { window: {} };
 vm.createContext(ctx);
-for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'relations.js', 'missions.js', 'world.js', 'atlas.js']) {
+for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'relations.js', 'missions.js', 'side-quests.js', 'world.js', 'atlas.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', f), 'utf8'), ctx, { filename: f });
 }
-const { WIKI, STORY, CHAT, CREATION, WORLD, ATLAS, RELATIONS, MISSIONS } = ctx.window;
+const { WIKI, STORY, CHAT, CREATION, WORLD, ATLAS, RELATIONS, MISSIONS, SIDE_QUESTS } = ctx.window;
 const errors = [];
 const chars = new Set(WIKI.personajes.map((p) => p.id));
 const allIds = new Set(WIKI.categories.flatMap((c) => WIKI[c.id].map((e) => e.id)));
@@ -39,6 +39,60 @@ for (const m of MISSIONS || []) {
   for (const city of Object.keys(m.reward?.rep || {})) if (!['piltover', 'zaun'].includes(city)) errors.push(`${where}: recompensa de reputación para ciudad "${city}" desconocida`);
   if (m.affinity !== undefined && (!Number.isFinite(m.affinity) || m.affinity < -10 || m.affinity > 10)) errors.push(`${where}: afinidad requerida fuera del rango -10..10`);
   if (m.trust !== undefined && (!Number.isInteger(m.trust) || m.trust < 0)) errors.push(`${where}: confianza requerida no válida`);
+}
+
+// Historias secundarias ramificadas: validar pasos, destinos, hablantes y efectos.
+const sideQuestIds = new Set();
+for (const q of SIDE_QUESTS || []) {
+  const where = `historia secundaria ${q.id || '(sin id)'}`;
+  if (!q.id || sideQuestIds.has(q.id)) errors.push(`${where}: id ausente o duplicado`);
+  sideQuestIds.add(q.id);
+  if (!['piltover', 'zaun', 'ambas'].includes(q.city)) errors.push(`${where}: ciudad "${q.city}" desconocida`);
+  if (![1, 2].includes(q.seasonMin || 1)) errors.push(`${where}: seasonMin debe ser 1 o 2`);
+  for (const id of q.requiresMet || []) if (!cast.has(id)) errors.push(`${where}: requisito "${id}" no pertenece al reparto`);
+  if (!q.steps?.[q.start]) errors.push(`${where}: el paso inicial "${q.start}" no existe`);
+  if (!q.completionFlag) errors.push(`${where}: falta completionFlag`);
+  for (const [stepId, step] of Object.entries(q.steps || {})) {
+    const sw = `${where}.${stepId}`;
+    if (!Array.isArray(step.lines) || !step.lines.length) errors.push(`${sw}: falta texto narrativo`);
+    for (const line of step.lines || []) if (!speakers.has(line.s)) errors.push(`${sw}: hablante "${line.s}" desconocido`);
+    if (!Array.isArray(step.choices) || !step.choices.length) errors.push(`${sw}: falta al menos una decisión`);
+    for (const ch of step.choices || []) {
+      if (!ch.id || !ch.label) errors.push(`${sw}: decisión sin id o etiqueta`);
+      if (ch.complete && ch.next) errors.push(`${sw}: una decisión final no puede tener next`);
+      if (!ch.complete && (!ch.next || !q.steps[ch.next])) errors.push(`${sw}: decisión "${ch.id}" apunta a un paso inexistente`);
+      for (const [id, n] of Object.entries(ch.fx?.aff || {})) {
+        if (!chars.has(id)) errors.push(`${sw}: afinidad para personaje "${id}" desconocido`);
+        if (!Number.isFinite(n)) errors.push(`${sw}: afinidad de "${id}" no es numérica`);
+      }
+      for (const [city, n] of Object.entries(ch.fx?.rep || {})) {
+        if (!['piltover', 'zaun'].includes(city)) errors.push(`${sw}: reputación para ciudad "${city}" desconocida`);
+        if (!Number.isFinite(n)) errors.push(`${sw}: reputación de "${city}" no es numérica`);
+      }
+      for (const stat of Object.keys(ch.fx?.stats || {})) if (!STORY.stats[stat]) errors.push(`${sw}: estadística "${stat}" desconocida`);
+      (ch.fx?.flags || []).forEach((flag) => FLAG_SET.add(flag));
+    }
+  }
+  for (const [id, n] of Object.entries(q.reward?.aff || {})) if (!chars.has(id)) errors.push(`${where}: recompensa de afinidad para "${id}" desconocido`);
+  for (const city of Object.keys(q.reward?.rep || {})) if (!['piltover', 'zaun'].includes(city)) errors.push(`${where}: recompensa de reputación para ciudad "${city}" desconocida`);
+  for (const stat of Object.keys(q.reward?.stats || {})) if (!STORY.stats[stat]) errors.push(`${where}: recompensa de estadística "${stat}" desconocida`);
+  (q.reward?.flags || []).forEach((flag) => FLAG_SET.add(flag));
+  FLAG_SET.add(q.completionFlag);
+  // Todos los pasos deben poder alcanzarse y al menos un camino debe concluir la misión.
+  const reached = new Set();
+  const pending = [q.start];
+  let hasEnding = false;
+  while (pending.length) {
+    const sid = pending.pop();
+    if (reached.has(sid) || !q.steps[sid]) continue;
+    reached.add(sid);
+    for (const ch of q.steps[sid].choices || []) {
+      if (ch.complete) hasEnding = true;
+      else if (ch.next) pending.push(ch.next);
+    }
+  }
+  for (const sid of Object.keys(q.steps || {})) if (!reached.has(sid)) errors.push(`${where}: paso "${sid}" inalcanzable desde "${q.start}"`);
+  if (!hasEnding) errors.push(`${where}: no existe una decisión final`);
 }
 
 for (const ch of STORY.chapters) {
