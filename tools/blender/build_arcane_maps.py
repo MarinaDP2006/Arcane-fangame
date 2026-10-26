@@ -656,18 +656,18 @@ def build_city(city):
 
     # Foundation / terrain is an authored urban platform, not a runtime Three.js plane.
     if city=='piltover':
-        f.box(MAP_W/2,MAP_D/2,-34,MAP_W,MAP_D,68,'stone',top='stone_light')
-        f.box(MAP_W/2,MAP_D/2,-62,MAP_W+26,MAP_D+26,30,'stone_cool')
+        f.box(MAP_W/2,MAP_D/2,-68,MAP_W,MAP_D,68,'stone',top='stone_light')
+        f.box(MAP_W/2,MAP_D/2,-95,MAP_W+26,MAP_D+26,30,'stone_cool')
         # Banded retaining walls and the underside of a city plateau above clouds.
         for dd in (0,MAP_D):
-            f.box(MAP_W/2,dd,-160,MAP_W+30,28,210,'stone',top='stone_cool')
+            f.box(MAP_W/2,dd,-260,MAP_W+30,28,210,'stone',top='stone_cool')
             for xx in range(90, int(MAP_W), 150):
-                f.box(xx,dd,-150,8,33,185,'stone_light')
+                f.box(xx,dd,-245,8,33,185,'stone_light')
                 f.box(xx,dd,-63,23,35,5,'gold')
         for xx in (0,MAP_W):
-            f.box(xx,MAP_D/2,-158,28,MAP_D,205,'stone',top='stone_cool')
+            f.box(xx,MAP_D/2,-260,28,MAP_D,210,'stone',top='stone_cool')
             for dd in range(100,int(MAP_D),145):
-                f.box(xx,dd,-150,33,7,177,'stone_light')
+                f.box(xx,dd,-245,33,7,185,'stone_light')
                 f.box(xx,dd,-63,36,18,5,'gold')
         # Stylized cloud ocean below the cliff line, with broad overlapping forms.
         for i in range(130):
@@ -701,7 +701,7 @@ def build_city(city):
                     f.sphere(x+side*75,d+fore*58,4,8,8,7,'greenery',8,5)
     else:
         # Layered dark undercity foundations with a worn toxic canal.
-        f.box(MAP_W/2,MAP_D/2,-21,MAP_W,MAP_D,42,'stone',top='road')
+        f.box(MAP_W/2,MAP_D/2,-42,MAP_W,MAP_D,42,'stone',top='road')
         f.box(1150,1660,1,310,1000,2,'water',top='water')
         # The canal is broken by crossing plates; heavy embankment lips hold the edges.
         for x in (990,1320):
