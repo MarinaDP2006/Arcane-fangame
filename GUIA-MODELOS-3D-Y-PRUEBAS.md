@@ -111,3 +111,12 @@ Esta guía trata principalmente de importar personajes 3D convencionales. Para l
 En main ya existen los escenarios de ciudad piltover.blend, zaun.blend, piltover.glb y zaun.glb. La tarea no es asumir que faltan ni volver a generarlos sin inspección: es comprobar sus mallas, materiales, escala, puntos de interés, colisiones, rendimiento y aspecto dentro del juego.
 
 Para crear o revisar el mundo completo, compara Marble (https://marble.worldlabs.ai/) y SpAItial (https://spaitial.ai/) con referencias separadas de Piltover y Zaun; luego corrige y exporta la mejor malla desde Blender. No confundir Gaussian Splats con GLB convencional. Los personajes dinámicos deben mantenerse separados de la geometría estática del mapa para que puedan caminar, animarse e interactuar.
+
+
+## Inspección visual de modelos antes de importarlos
+
+Si ya tienes Open3D Viewer, úsalo como primer control de calidad para archivos GLB/GLTF/FBX. Abre un modelo, revisa la vista frontal, lateral y tres cuartos, prueba el zoom, comprueba los materiales y reproduce solo las animaciones que el archivo realmente contenga. Guarda capturas y anota defectos. El visor no certifica el rig ni las colisiones del juego; la prueba final debe hacerse en la aplicación.
+
+Para generar referencias coherentes de vestuario, colores, iluminación y retratos, utiliza ComfyUI con un workflow de imágenes; no lo confundas con un editor de mallas. Marble y SpAItial son opciones para los escenarios completos, no sustitutos de los modelos de personajes existentes. La limpieza y exportación final se hacen en Blender.
+
+Documentación: [ComfyUI](https://docs.comfy.org/), [Open3D Viewer](https://open3d.app/glb-viewer), [Marble](https://marble.worldlabs.ai/), [SpAItial](https://spaitial.ai/). Para los detalles del mapa y la dirección artística, consultar PENDIENTES.md, PILTOVER-3D.md, ZAUN-3D.md y src/models/maps/README.md.
