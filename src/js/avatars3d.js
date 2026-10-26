@@ -11,9 +11,10 @@
 (function () {
   if (!window.THREE) return;
   const T = window.THREE;
-  // Altura de una persona adulta en unidades del mapa. Cerca de la escala de las calles (74 de
-  // ancho) y de la esfera del jugador para que los personajes no parezcan gigantes en el mapa.
-  const H = 20;
+  // Altura objetivo de una persona en unidades del mapa. Las calles miden unos 74 de ancho;
+  // mantener el avatar en 14 unidades deja más espacio visual para fachadas, puertas y HUD.
+  // Los modelos externos se normalizan a esta altura y los muñecos procedurales usan la misma.
+  const H = 14;
   const DOLL = H / 44; // el muñeco se modela con 44 unidades de alto
   const WALK = 230; // velocidad de andar del jugador (world.js)
 
