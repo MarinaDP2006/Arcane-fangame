@@ -54,11 +54,14 @@ ensure(
   'World3D debe cargar una escena GLB completa desde models/maps'
 );
 ensure(
-  !/function\\s+(buildings|landmarks|ground|piltoverWorld|zaunWorld|water)\\s*\\(/.test(world3dSource),
+  !['function buildings(', 'function landmarks(', 'function ground(', 'function piltoverWorld(', 'function zaunWorld(', 'function water(']
+    .some((signature) => world3dSource.includes(signature)),
   'World3D no debe recrear la arquitectura del mapa mediante generadores geométricos'
 );
 ensure(
-  /if \\(!loaded\\)[\\s\\S]*?use3d\\(false\\)/.test(worldSource),
+  worldSource.includes('if (!loaded)') &&
+  worldSource.includes('use3d(false)') &&
+  worldSource.includes('Se mantiene el mapa ilustrado 2D'),
   'Si falta el GLB de la ciudad, el mapa debe volver a 2D'
 );
 ensure(
