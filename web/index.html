@@ -6,18 +6,13 @@
        ----------------------------------------------------------
        Estructura del archivo:
        1. Cabecera y navegación
-       2. Portada cinematográfica (Piltover / Zaun)
+       2. Portada cinematográfica
        3. Todo el juego: en qué consiste y sus sistemas
        4. Las dos ciudades: lore, barrios y lugares
        5. El mapa del Códice
        6. Los 16 personajes
        7. Cómo se juega
        8. Pie y aviso legal
-
-       Las imágenes provienen SOLO de src/img/arte/ (caras de
-       personajes, lugares/ciudades y el mapa del Códice). El
-       compilador (scripts/build-web.js) las copia a
-       web-dist/arte-oficial/{personajes,lugares,mapa}/.
        ========================================================== -->
 
   <!-- Metadatos para navegadores, móviles y buscadores. -->
@@ -57,12 +52,8 @@
 
   <main id="contenido">
     <!-- ======================= 2. PORTADA ======================= -->
-    <!-- La portada usa los fondos de las dos ciudades (arte de lugares)
-         y los retratos de Vi y Jinx; el resto es CSS puro. -->
     <section class="portada portada-inicio" id="inicio" aria-labelledby="titulo-principal">
       <div class="portada-fondo" aria-hidden="true">
-        <span class="lado-piltover"></span>
-        <span class="lado-zaun"></span>
       </div>
       <div class="portada-texto">
         <p class="kicker"><span class="latido" aria-hidden="true"></span>Aventura narrativa entre las Dos Ciudades</p>
