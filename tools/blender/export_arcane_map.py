@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 import bpy
+from mathutils import Vector
 
 CITY_POIS = {
     "piltover": {
@@ -68,7 +69,7 @@ def main():
     for poi_id, (x, map_y) in CITY_POIS[args.city].items():
         name = f"POI__{poi_id}"
         obj = bpy.data.objects.get(name)
-        if obj is None or obj.name not in collection.all_objects:
+        if obj is None or obj not in objects:
             errors.append(f"falta el empty {name}")
             continue
         p = obj.matrix_world.translation
@@ -92,7 +93,7 @@ def main():
     for obj in meshes:
         evaluated = obj.evaluated_get(depsgraph)
         for corner in evaluated.bound_box:
-            corners.append(evaluated.matrix_world @ bpy.mathutils.Vector(corner) if hasattr(bpy, "mathutils") else obj.matrix_world @ bpy.context.scene.cursor.location)
+            corners.append(evaluated.matrix_world @ Vector(corner))
     if corners:
         min_x = min(p.x for p in corners)
         max_x = max(p.x for p in corners)
