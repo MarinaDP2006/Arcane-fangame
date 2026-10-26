@@ -161,6 +161,7 @@
         window.removeEventListener('keydown', onKey, true);
         window.removeEventListener('keyup', onKeyUp, true);
         window.removeEventListener('blur', onBlur);
+        window.removeEventListener('resize', resize);
         if (renderer) {
           renderer.dispose();
           renderer.forceContextLoss?.();
@@ -295,7 +296,7 @@
               : [['ArrowLeft', 'ESQUIVAR ←'], ['Space', 'CUBRIR'], ['ArrowRight', 'ESQUIVAR →']];
           for (const [key, label] of keys) {
             const b = document.createElement('button'); b.type = 'button'; b.className = 'mg3d-control'; b.textContent = label;
-            const down = (e) => { e.preventDefault(); keys.has(key.toLowerCase()); pressAction(key); b.classList.add('is-on'); };
+            const down = (e) => { e.preventDefault(); pressAction(key); b.classList.add('is-on'); };
             const up = () => b.classList.remove('is-on');
             b.addEventListener('pointerdown', down); b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('pointerleave', up);
             controls.append(b);
@@ -480,7 +481,7 @@
           const k = e.key.toLowerCase();
           if (k === 'escape') { e.preventDefault(); showResult(false); return; }
           if (['arrowleft', 'arrowright', 'arrowup', ' ', 'a', 'd', 'w'].includes(k)) e.preventDefault();
-          if (!keys.has(k)) pressAction(k === 'a' ? 'ArrowLeft' : k === 'd' ? 'ArrowRight' : k === 'w' ? 'ArrowUp' : e.key);
+          if (!keys.has(k)) pressAction(k === 'a' ? 'ArrowLeft' : k === 'd' ? 'ArrowRight' : k === 'w' ? 'ArrowUp' : k === ' ' ? 'Space' : e.key);
           keys.add(k);
         }
       }
@@ -516,7 +517,7 @@
         for (const p of projectiles) {
           const f = p.userData.flight; f.t += dt * 2.5; p.position.lerp(f.to, Math.min(1, f.t)); p.position.y += Math.sin(f.t * Math.PI) * .6;
         }
-        projectiles.filter(p => p.userData.flight.t >= 1).forEach(p => { p.parent?.remove(p); p.geometry?.dispose(); p.material?.dispose(); });
+        for (let i = projectiles.length - 1; i >= 0; i--) if (projectiles[i].userData.flight.t >= 1) { const p = projectiles.splice(i, 1)[0]; p.parent?.remove(p); p.geometry?.dispose(); p.material?.dispose(); }
         player?.position && (player.position.x += (runnerLane * 2.5 - player.position.x) * Math.min(1, dt * 7));
         if (player && def.mode === 'runner') {
           jump = Math.max(0, jump - dt * 1.7);
@@ -577,11 +578,6 @@
           resolve(false);
         }
       }
-      const originalDispose = disposeScene;
-      disposeScene = () => {
-        originalDispose();
-        window.removeEventListener('resize', resize);
-      };
       // Acepta origen/teclado y mantiene el foco dentro de la partida.
       start();
     });
