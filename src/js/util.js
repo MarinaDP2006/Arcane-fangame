@@ -215,6 +215,7 @@
       callejones: 'zaun-fisuras-superiores',
       'escondite-jinx': 'zaun-escondite-jinx',
       fabrica: 'zaun-singed-laboratorio',
+      invernadero: 'zaun-comuna-viktor',
     },
   };
 
