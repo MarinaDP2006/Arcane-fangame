@@ -385,7 +385,7 @@
       arte: () => [artSettings(root, onBack)],
       acerca: () => [
         el('h3', {}, 'Acerca de'),
-        el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. Todas las imágenes y datos vienen dentro del juego y la música se sintetiza en tiempo real: no necesita internet (solo el chat libre con IA, si lo activas con un servicio en línea).'),
+        el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. Todas las imágenes y datos vienen dentro del juego y la música se sintetiza en tiempo real: no necesita internet. La integración de IA está aplazada.'),
         el('p', { class: 'muted small' }, 'Este juego se creó según la política «Legal Jibber Jabber» de Riot Games usando recursos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto. Arcane y League of Legends son marcas de Riot Games, Inc.'),
         el('p', { class: 'muted small' }, 'Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo.'),
       ],
