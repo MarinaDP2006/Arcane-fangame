@@ -262,19 +262,24 @@
   /** Habitantes con rutas seguras y diálogos escritos, separados del reparto canon. */
   function ambientNpcs() {
     const routes = ambientRoutes();
-    if (!routes.length) return [];
-    const count = Math.min(12, Math.max(8, Math.round(routes.length / 5)));
+    const residents = CITY_RESIDENTS[mapId] || [];
+    if (!routes.length || !residents.length) return [];
+    // Los habitantes tienen nombre, oficio y líneas propias. Recorren rutas seguras
+    // ya calculadas por el mapa, y no se convierten en contactos del comunicador.
+    const count = Math.min(residents.length, routes.length);
     const out = [];
     for (let i = 0; i < count; i++) {
+      const resident = residents[i];
       const route = routes[(i * 13 + Math.floor(i / 2) * 7) % routes.length];
-      const speed = 34 + (i % 4) * 7;
+      const speed = 28 + (i % 4) * 6;
       const travel = (ambientTime * speed + i * 41) % (route.len * 2);
       const reverse = travel > route.len;
       const u = reverse ? 2 - travel / route.len : travel / route.len;
       const x = route.x1 + (route.x2 - route.x1) * u;
       const y = route.y1 + (route.y2 - route.y1) * u;
       out.push({
-        id: `habitante-${mapId}-${i + 1}`, x, y, ambient: true, moving: true, speed,
+        kind: 'resident', id: resident.id, name: resident.name, role: resident.role, lines: resident.lines,
+        x, y, ambient: true, moving: true, speed,
         home: reverse ? Math.atan2(route.x1 - route.x2, route.y1 - route.y2) : Math.atan2(route.x2 - route.x1, route.y2 - route.y1),
       });
     }
