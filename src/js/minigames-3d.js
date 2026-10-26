@@ -123,7 +123,7 @@
       footer.innerHTML = `<span>${def.city === 'piltover' ? 'Ciudad alta · Tecnología hextech' : 'Ciudad subterránea · Tecnología improvisada'}</span><span>ESC · Pausa y salida</span>`;
       box.append(head, stage, controls, footer);
       document.body.append(box);
-      let renderer, scene, camera, raf = 0, running = true, done = false, resultShown = false, elapsed = 0, last = 0, spawnT = 0;
+      let renderer, scene, camera, raf = 0, running = true, done = false, disposed = false, resultShown = false, elapsed = 0, last = 0, spawnT = 0;
       let score = 0, mistakes = 0, rounds = 0, seqIndex = 0;
       let objectCount = 0, worldSpeed = 0, currentRound = 0, actionUsed = false;
       let attack = 'izquierda', attackWait = 2.2, runnerLane = 0, jump = 0, jumpV = 0, progress = 0;
@@ -156,6 +156,7 @@
         progressEl.innerHTML = `<small>ESTADO</small><strong>${def.mode === 'bargain' ? `${bargainDeals}/3 tratos` : def.mode === 'arena' ? `${rounds}/4 asaltos` : def.mode === 'runner' ? `${Math.floor(progress)}% de ruta` : def.mode === 'runes' ? `${Math.min(score, scoreMax)}/${scoreMax} símbolos` : `${Math.min(score, scoreMax)}/${scoreMax} objetivos`}</strong>`;
       };
       const disposeScene = () => {
+        disposed = true;
         if (raf) cancelAnimationFrame(raf);
         running = false;
         window.removeEventListener('keydown', onKey, true);
@@ -246,7 +247,7 @@
           || window.ART_BUNDLED?.['lugares/s1']?.[zaun ? 'zaun' : 'piltover'];
         if (artUrl && THREE.TextureLoader) {
           new THREE.TextureLoader().load(artUrl, (texture) => {
-            if (done || !scene) { texture.dispose?.(); return; }
+            if (done || disposed || !scene) { texture.dispose?.(); return; }
             if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
             const backdrop = new THREE.Mesh(
               new THREE.PlaneGeometry(64, 38),
