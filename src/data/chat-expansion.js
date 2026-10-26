@@ -57,6 +57,36 @@
     req: { flag: 'voz_zaun' }, once: true, fx: { aff: 2 },
     say: ['No necesito que me inviten a una mesa porque quedan sillas libres.',
       'Necesito saber que la próxima vez que nos quiten algo, no bastará con pedirnos paciencia. ¿Tú lo entiendes, verdad?'] });
+  // Conversaciones posteriores a las decisiones del tercer acto de la temporada 2.
+  // Todas se desbloquean por una bandera narrativa: no adelantan información al jugador.
+  topic('sevika', { t: '¿Y si esta tregua no dura?', tone: 'serio',
+    req: { flag: 'tregua_tactica' }, once: true, fx: { aff: 1 },
+    say: ['Una tregua no es confianza. Es una lista de cosas que ambos lados perderían si vuelven a disparar.',
+      'Si quieres que dure, consigue que la gente de Zaun vea resultados en las calles, no firmas en un despacho.'] });
+  topic('ekko', { t: '¿Cómo protegemos a quienes no pueden luchar?', tone: 'serio',
+    req: { flag: 'evacuacion_civiles' }, once: true, fx: { aff: 2 },
+    say: ['Primero rutas seguras, luego comida, agua y alguien que se quede a escuchar. La gente no deja de tener miedo porque la saques del peligro.',
+      'No podemos salvar a todo el mundo en una noche. Pero sí podemos dejar de tratar a los civiles como daños inevitables.'] });
+  topic('jinx', { t: 'No tenías que ayudar con la evacuación.', tone: 'amable',
+    req: { flag: 'jinx_ayuda_evacuacion' }, once: true, fx: { aff: 2 },
+    say: ['Ya, bueno. No te acostumbres a verme haciendo cosas sensatas.',
+      '(Hace girar una pieza entre los dedos.) Había niños en el pasillo. No iba a dejar que se quedaran allí. No conviertas esto en una gran conversación.'] });
+  topic('jayce', { t: '¿Qué viste realmente en el núcleo?', tone: 'serio',
+    req: { flag: 'confia_jayce' }, once: true, fx: { aff: 1 },
+    say: ['Vi una posibilidad, no una profecía. El error fue creer que comprender el mecanismo significaba comprender a las personas.',
+      'Si volvemos a tocar el Hexgate, nadie debería poder hacerlo sin explicar qué arriesga la ciudad entera.'] });
+  topic('viktor', { t: 'No quiero que el sufrimiento decida por todos.', tone: 'serio',
+    req: { flag: 'apela_viktor' }, once: true, fx: { aff: 1 },
+    say: ['Yo también quise acabar con el dolor. Llegué a confundir la ausencia de dolor con la ausencia de libertad.',
+      'Si alguna vez vuelvo a ofrecer una solución perfecta, pregúntame qué parte de la humanidad exige a cambio.'] });
+  topic('caitlyn', { t: '¿Qué pasó con el paso seguro?', tone: 'pregunta',
+    req: { flag: 'puente_abierto' }, once: true, fx: { aff: 1 },
+    say: ['Se mantuvo abierto mientras pudimos sostenerlo. No todos cruzaron a tiempo y no voy a fingir que eso no importa.',
+      'Mañana tendremos que revisar cada nombre y cada desaparición. Un corredor humanitario no sirve si nadie responde por quienes faltan.'] });
+  topic('mel', { t: '¿Te arrepientes de haber pedido apoyo?', tone: 'serio',
+    req: { flag: 'apoya_mel' }, once: true, fx: { aff: 1 },
+    say: ['Me arrepiento de haber pensado que podía controlar el coste de cada alianza.',
+      'Pedir apoyo no me exime de responsabilidad. Solo significa que ya no puedo fingir que las consecuencias son únicamente mías.'] });
   // No enumerar esta marca: el validador recorre Object.values(CHAT) como personajes.
   Object.defineProperty(CHAT, 'expansionV2', { value: true, enumerable: false });
 })();
