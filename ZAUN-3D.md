@@ -66,3 +66,26 @@ Shimmer/Brillo debe mostrarse como una sustancia peligrosa ligada a laboratorios
 La ciudad necesita conexiones jugables con Piltover: puentes, descensores/ascensores, escaleras, túneles, pasarelas y estaciones. El Puente del Progreso es un hito con significado político diferente para cada ciudad. Los POI y accesos deben coincidir con el mapa 2D y los IDs de src/data/world.js.
 
 Para el mapa completo, no pedir a Freebuff que sustituya el escenario por edificios procedurales. Generar y comparar mundos independientes con Marble (https://marble.worldlabs.ai/) y SpAItial (https://spaitial.ai/), corregir la mejor base en Blender y exportar GLB convencional. Comprobar los formatos: un Gaussian Splat no es automáticamente una malla GLB con colisiones. El estado real está en PENDIENTES.md y src/models/maps/README.md.
+
+
+## Dirección artística ampliada para IA y Freebuff
+
+### Identidad visual, cultura y shimmer
+Zaun es la **Ciudad de Hierro y Cristal**, una ciudad subterránea que se extiende por cañones, fisuras y niveles bajo Piltover. No es simplemente Piltover recoloreada de verde: tiene arquitectura remendada, densidad, verticalidad, comercio callejero, talleres, mercados negros, laboratorios, rivalidad entre barones químicos y una comunidad orgullosa, inventiva y resistente. Combina hierro en celosía, remaches, metal oxidado, tuberías, madera reutilizada, vidrio de colores, luces químicas, humo, pasarelas y edificios construidos unos sobre otros. Debe haber zonas habitadas y vibrantes además de lugares tóxicos y peligrosos.
+
+El **shimmer** es una sustancia quimtec peligrosa y potente con efectos físicos y sociales; debe aparecer como producto clandestino, rastro químico, luz magenta/violeta o verde según la escena, laboratorios y conflictos de poder. No llenar toda Zaun de líquido fluorescente: su presencia debe tener una función narrativa y concentrarse en lugares concretos. La quimtec es práctica, improvisada y arriesgada, en contraste con la hextech más regulada y prestigiosa de Piltover.
+
+### Niveles y accesos
+Representar niveles de altura claramente conectados: zonas altas y comerciales próximas a Piltover; niveles intermedios con mercados, talleres, tabernas y pasarelas; niveles inferiores con niebla industrial, canales de residuos, tuberías, maquinaria y calles más estrechas. Incorporar escaleras, ascensores/plataformas industriales, descensores, puentes y puntos de control donde tenga sentido. El Puente del Progreso y los pasos entre ciudades deben ser reconocibles y coherentes con el mapa 2D. La luz superior llega filtrada por humo y estructuras; las profundidades se iluminan con cristales, lámparas, vitrales y neones.
+
+### Prompt visual específico
+> Escenario 3D completo, navegable y coherente de Zaun para un RPG narrativo de fantasía industrial pictórica. Ciudad subterránea vertical en profundos cañones bajo Piltover, formada por niveles superpuestos de barrios, mercados, fábricas, laboratorios, talleres, tabernas, pasarelas y calles estrechas. Arquitectura de hierro remachado y celosía, acero y cobre corroídos, vidrio de colores, madera reutilizada, fachadas reparadas, escaleras, tuberías que conectan edificios, chimeneas, ascensores industriales, puentes, canales y rejillas que expulsan vapor. Luz crepuscular filtrada por humo, luces químicas verdes, cian y magenta usadas con intención, reflejos en suelo húmedo, zonas con niebla densa y zonas comerciales cálidas. Incluir mercados negros, puestos excéntricos, señales hechas a mano y barrios vivos; sugerir el tráfico de shimmer y la quimtec sin cubrir todo de neón. Diferenciar zonas superiores, intermedias y profundas, con rutas transitables a escala humana. No convertir la ciudad en ruinas vacías ni en una copia oscura de Piltover. Sin HUD, texto ilegible ni personajes incrustados en el escenario. Entregar una malla 3D convencional editable/exportable, no solo una panorámica o Gaussian Splat.
+
+### Referencias para investigar
+- [Universo oficial de Zaun](https://universe.leagueoflegends.com/en_US/region/zaun/)
+- [Galería oficial de Zaun](https://universe.leagueoflegends.com/en_US/region/zaun/?mv=image-gallery)
+- [Wiki Fandom en español: Zaun](https://leagueoflegends.fandom.com/es/wiki/Zaun)
+- [Galería oficial: Zaun's Underbelly](https://cmsassets.rgpub.io/sanity/images/dsfx7636/universe/d7858e6a65fed5e14321604dbde4f144640bd795-1920x1067.jpg)
+- [Arte conceptual de una calle de Zaun](https://www.djahalland.com/arcane)
+
+Las referencias describen el mundo; no sustituyen una auditoría del GLB final. Revisar derechos de las imágenes antes de incluirlas como assets redistribuidos.
