@@ -124,7 +124,7 @@
       footer.innerHTML = `<span>${def.city === 'piltover' ? 'Ciudad alta · Tecnología hextech' : 'Ciudad subterránea · Tecnología improvisada'}</span><span>ESC · Pausa y salida</span>`;
       box.append(head, stage, controls, footer);
       document.body.append(box);
-      let renderer, scene, camera, raf = 0, running = true, done = false, elapsed = 0, last = 0, spawnT = 0;
+      let renderer, scene, camera, raf = 0, running = true, done = false, resultShown = false, elapsed = 0, last = 0, spawnT = 0;
       let score = 0, mistakes = 0, rounds = 0, seqIndex = 0;
       let objectCount = 0, worldSpeed = 0, currentRound = 0, actionUsed = false;
       let attack = 'izquierda', attackWait = 2.2, runnerLane = 0, jump = 0, jumpV = 0, progress = 0;
@@ -187,6 +187,8 @@
         resolve(Boolean(win));
       };
       const showResult = (win) => {
+        if (resultShown || done) return;
+        resultShown = true;
         running = false;
         if (raf) cancelAnimationFrame(raf);
         controls.innerHTML = '';
@@ -250,14 +252,14 @@
         }
         for (let i = 0; i < 45; i++) {
           const p = sphere(rand(.025, .09), zaun ? '#60eac5' : '#e8c56f', [rand(-12, 12), rand(.4, 6), rand(-30, 7)], zaun ? '#30ddad' : '#ffcc65');
-          p.userData.floating = true; p.userData.phase = rand(0, Math.PI * 2);
+          p.userData.floating = true; p.userData.phase = rand(0, Math.PI * 2); p.userData.baseY = p.position.y;
         }
         torus(2.3, .08, zaun ? '#2bd4ab' : '#e5c06d', [0, .02, -2], 0);
       }
 
       function playerMesh() {
         const group = new THREE.Group(); scene.add(group); group.position.set(0, .7, 4);
-        const body = new THREE.Mesh(new THREE.CapsuleGeometry(.35, .7, 4, 8), material(def.city === 'zaun' ? '#42d6b5' : '#e8c56f', def.city === 'zaun' ? '#2dd7ab' : '#b99242'));
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(.3, .38, .82, 12, 1), material(def.city === 'zaun' ? '#42d6b5' : '#e8c56f', def.city === 'zaun' ? '#2dd7ab' : '#b99242'));
         body.position.y = .5; body.castShadow = true; group.add(body);
         const head = new THREE.Mesh(new THREE.SphereGeometry(.25, 16, 12), material('#d6b7a0', '#58443b'));
         head.position.y = 1.15; group.add(head);
@@ -353,15 +355,26 @@
             addInteractive(node.children[1], { kind: mode === 'runes' ? 'rune' : mode === 'assembly' ? 'part' : 'node', parent: node, index: i });
             if (mode === 'assembly') node.userData.index = [2, 0, 1, 3, 4][i];
           }
-          if (mode === 'runes') labelMessage('Secuencia: ◆ → ● → ⬡. Selecciona los símbolos en el orden mostrado.', 'hint');
-          else if (mode === 'assembly') labelMessage('Monta el núcleo en orden: bobina → engranaje → gema.');
+          if (mode === 'runes') labelMessage('Memoriza la secuencia de colores: rosa → azul → oro.', 'hint');
+          else if (mode === 'assembly') labelMessage('Monta el núcleo en orden: rosa → azul → oro.');
           else labelMessage(`Ruta de energía: activa los nodos del 1 al ${count}.`);
         } else if (mode === 'bargain') {
           bargainRounds = 0; bargainDeals = 0; currentNeed = Math.floor(rand(38, 58));
+          cube(5.5, .8, 1.2, '#6b583b', [0, .45, -3.6], '#a88a50');
+          for (let i = 0; i < 5; i++) {
+            const coin = mesh(new THREE.CylinderGeometry(.24, .24, .05, 24), material('#e6c46e', '#e6c46e'), [-1.8 + i * .9, .95, -3.5]);
+            coin.rotation.x = Math.PI / 2; coin.rotation.z = rand(-.3,.3);
+          }
           showBargainOptions();
         } else if (mode === 'arena') {
           player = playerMesh();
-          const foe = cube(1.2, 2.1, .75, '#ba354c', [0, 1.05, -4], '#f04d68');
+          const foe = new THREE.Group(); scene.add(foe); foe.position.set(0,0,-4);
+          const body = new THREE.Mesh(new THREE.CylinderGeometry(.36,.48,1.45,12), material('#9d354d','#e74663'));
+          body.position.y = .95; foe.add(body);
+          const head = new THREE.Mesh(new THREE.SphereGeometry(.32,16,12), material('#dbb59c','#66433d'));
+          head.position.y = 1.9; foe.add(head);
+          const fist = new THREE.Mesh(new THREE.BoxGeometry(.32,.3,.45), material('#d4b17b','#d4b17b'));
+          fist.position.set(.7,1.2,.1); foe.add(fist);
           foe.userData.enemy = true;
           labelMessage('¡Golpe por la izquierda! Esquiva hacia la derecha o cúbrete.', 'hint');
           addActionButtons([
@@ -448,7 +461,8 @@
           root.children[0].material.color.set(def.city === 'zaun' ? '#f06498' : '#70d8ff');
           if (score >= def.quota) finish(true);
         } else if (data.kind === 'node' || data.kind === 'rune' || data.kind === 'part') {
-          const correct = data.kind === 'part' ? [2, 0, 1, 3, 4][seqIndex] === data.index : data.index === seqIndex % def.quota;
+          const expectedIndex = data.kind === 'part' ? [2, 0, 1, 3, 4][seqIndex] : def.mode === 'runes' ? [2, 0, 1][seqIndex] : seqIndex % def.quota;
+          const correct = data.index === expectedIndex;
           if (correct) {
             score++; seqIndex++;
             const parent = data.parent; parent.userData.completed = true;
@@ -496,7 +510,7 @@
       }
       function animate(dt) {
         scene.traverse((o) => {
-          if (o.userData?.floating) { o.position.y += Math.sin(elapsed * 1.4 + o.userData.phase) * dt * .16; o.rotation.y += dt * .4; }
+          if (o.userData?.floating) { o.position.y = o.userData.baseY + Math.sin(elapsed * 1.4 + o.userData.phase) * .15; o.rotation.y += dt * .4; }
         });
         for (const o of moving) {
           if (o.userData?.phase != null) o.rotation.y += dt * 1.25;
@@ -520,11 +534,12 @@
         for (let i = projectiles.length - 1; i >= 0; i--) if (projectiles[i].userData.flight.t >= 1) { const p = projectiles.splice(i, 1)[0]; p.parent?.remove(p); p.geometry?.dispose(); p.material?.dispose(); }
         player?.position && (player.position.x += (runnerLane * 2.5 - player.position.x) * Math.min(1, dt * 7));
         if (player && def.mode === 'runner') {
-          jump = Math.max(0, jump - dt * 1.7);
-          jumpV -= 12 * dt; player.position.y = .7 + jump;
-          if (player.position.y <= .7) { player.position.y = .7; jumpV = 0; jump = 0; }
-          else jump += jumpV * dt;
-          if (jumpV > 0) jump = Math.max(jump, .2);
+          if (jumpV > 0 || jump > 0) {
+            jumpV -= 12 * dt;
+            jump = Math.max(0, jump + jumpV * dt);
+            if (jump === 0) jumpV = 0;
+          }
+          player.position.y = .7 + jump;
           progress += dt * (def.variant === 'chase' ? 4 : 3.1);
           spawnT += dt;
           if (spawnT > (def.variant === 'chase' ? .95 : 1.3)) { spawnT = 0; spawnObstacle(); }
@@ -534,7 +549,7 @@
           attackWait -= dt;
           if (attackWait <= .7 && !actionUsed) labelMessage(`¡Golpe por la ${attack}! Esquiva al lado contrario o cúbrete.`, 'hint');
           if (attackWait <= 0) {
-            if (!actionUsed) { mistakes++; labelMessage('No has reaccionado a tiempo.', 'bad'); }
+            if (!actionUsed) { mistakes++; rounds++; labelMessage('No has reaccionado a tiempo.', 'bad'); }
             actionUsed = false;
             if (mistakes >= 2) finish(false);
             attack = choose(['izquierda', 'derecha']); attackWait = 2.0;
@@ -551,6 +566,7 @@
       function loop(now) {
         if (!running || done || !renderer) return;
         const dt = Math.min(.04, Math.max(0, (now - (last || now)) / 1000)); last = now; elapsed += dt;
+        if (def.mode === 'runes' && elapsed > 2.8 && seqIndex === 0 && message.textContent.includes('Memoriza')) labelMessage('La secuencia se ha ocultado. Repítela con los nodos luminosos.', 'hint');
         if (def.mode === 'shoot' || def.mode === 'precision' || def.mode === 'throw') {
           moving.forEach((o) => { o.position.x += Math.sin(elapsed * 1.4 + o.userData.phase) * dt * (def.mode === 'precision' ? 1.25 : .45); o.position.y += Math.cos(elapsed * 1.7 + o.userData.phase) * dt * .35; });
         }
