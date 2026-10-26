@@ -48,6 +48,8 @@ jobs:
         run: node scripts/art-manifest.js
       - name: Comprobar datos del juego
         run: npm run check
+      - name: Construir y validar la web pública para Render
+        run: npm run check:web
       - name: Verificar sintaxis de todos los scripts del repositorio
         run: |
           fallos=0

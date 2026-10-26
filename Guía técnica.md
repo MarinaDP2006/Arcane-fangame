@@ -78,7 +78,7 @@ Esta lista no sustituye a la documentación específica de cada carpeta:
 - `ollama/`: archivos auxiliares para preparar el perfil/modelo local de Ollama.
 - `scripts/`: comprobaciones y tareas de construcción para web, móvil y mantenimiento.
 - `server/`: servidor del modo web y sus rutas API. La configuración de `.env.example` corresponde a este lado del proyecto.
-- `web/`: archivos fuente de la web y demo de desarrollo. La salida de distribución se genera en `web-dist/`.
+- `web/`: archivos fuente de la página pública. La salida de distribución se genera en `web-dist/`.
 - `android/`: proyecto nativo Android que usa Capacitor.
 - `build/`: recursos de compilación, como el icono de la aplicación.
 - `docs/`: documentación ampliada, tareas pendientes, notas de compilación y otras guías.

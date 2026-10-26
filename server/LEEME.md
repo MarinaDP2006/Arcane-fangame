@@ -6,7 +6,7 @@
 Ya no hace de puente con ninguna IA y no necesita claves.
 
 La única IA del juego es **KoboldCpp**, que corre en el ordenador de cada jugador
-(`http://localhost:5001`). El juego y la demo le hablan directamente: ver [`GUIA-KOBOLDCPP.md`](../GUIA-KOBOLDCPP.md).
+(`http://localhost:5001`). La aplicación de escritorio se conecta directamente: ver [`GUIA-KOBOLDCPP.md`](../GUIA-KOBOLDCPP.md).
 
 ## Ponerlo en marcha
 
