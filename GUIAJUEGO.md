@@ -93,26 +93,25 @@ La importancia de cada habilidad o aptitud depende de las reglas de la versión 
 El juego dispone de datos para una guía rápida sin spoilers. El contenido cambia según el origen: quien empieza en Zaun conoce primero a las personas de esa ciudad; quien empieza en Piltover recibe contexto sobre sus inventores y autoridades. En una fase posterior puede aparecer un repaso con personajes nuevos. Si conoces poco el universo, lee esas fichas sin prisa. Si ya conoces la serie, puedes usarlas como referencia rápida.
 
 ### Paso 5. Lee y decide
-La historia se presenta en escenas y conversaciones. Lee el texto, revisa las opciones y selecciona la respuesta que mejor encaje con tu protagonista. Las decisiones pueden influir en relaciones o eventos posteriores. No todas las elecciones tienen un efecto visible inmediato. Si una respuesta no ofrece una explicación completa, sigue jugando antes de concluir que se ha roto la historia.
+La historia se presenta en escenas y conversaciones. En esta fase se priorizan los diálogos escritos y el mapa 2D ilustrado. Lee el texto, revisa las opciones disponibles y selecciona la respuesta que mejor encaje con tu protagonista. Las decisiones pueden influir en relaciones o eventos posteriores.
 
 ### Paso 6. Explora el mapa
-![Mapa 3D de Zaun](capturasjuego/07-version-actual-mapa-3d-de-zaun.webp)
+![Mapa de Zaun](capturasjuego/07-version-actual-mapa-3d-de-zaun.webp)
+
+> Esta captura es histórica: la versión de trabajo de esta rama prioriza el mapa 2D. No la uses como prueba de que el modo 3D sigue activo.
 
 El mapa permite recorrer visualmente una ciudad y localizar puntos de interés. En función del dispositivo:
 - En ordenador puedes utilizar ratón y teclado.
 - En pantalla táctil puedes arrastrar, tocar los puntos de interés y utilizar gestos de zoom cuando estén disponibles.
-- Puedes cambiar entre la vista 3D y la alternativa 2D si la versión o los ajustes lo permiten.
+- Esta rama prioriza la vista 2D ilustrada; los controles o capturas antiguos de la vista 3D pueden no corresponder a la versión actual.
 
 **Importante:** tocar un lugar del mapa puede abrir primero un menú contextual con acciones como historia, conversación, explorar, minijuego o viajar. No presupongas que un toque siempre lleva directamente a otra pantalla. Lee las opciones del lugar.
 
 ### Paso 7. Conversa con los personajes
-El juego tiene conversaciones con opciones escritas y una opción de chat libre con IA cuando está configurada.
+En esta fase, utiliza las conversaciones y los diálogos escritos. La integración de IA está aplazada y no forma parte del flujo de prueba.
 
 - **Diálogo escrito:** selecciona respuestas preparadas por la historia. No requiere instalar un modelo.
-- **Chat libre con IA:** permite escribir texto propio, pero depende de que haya proveedor, servidor y modelo disponibles. Puede responder lento o inventarse detalles; la calidad no está garantizada.
-- Si la IA no está configurada, utiliza los diálogos escritos. No necesitas resolver la IA para completar una prueba básica de interfaz e historia.
-
-El proveedor del chat libre de escritorio actualmente es KoboldCpp, ejecutado por separado. Ollama está preparado como perfil experimental, pero no está integrado en la aplicación. Si permites conexiones desde otro dispositivo, revisa la dirección, el puerto y las reglas del cortafuegos; no expongas un servicio local a Internet.
+- No instales ni configures modelos para probar esta rama. La prioridad es comprobar el flujo narrativo sin conexión a un proveedor de IA.
 
 ### Paso 8. Prueba el Salón de minijuegos
 
