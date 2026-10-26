@@ -164,8 +164,5 @@ window.ART_BUNDLED = {
     "stillwater": "img/arte/lugares/s2/stillwater.webp",
     "taller-jayce": "img/arte/lugares/s2/taller-jayce.webp",
     "tejados": "img/arte/lugares/s2/tejados.webp"
-  },
-,
-,
-
+  }
 };
