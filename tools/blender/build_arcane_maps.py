@@ -315,7 +315,6 @@ def add_building(f, rng, city, x, d, width, depth, height, style=0, detailed=Tru
     # Roof line: ornate pointed roofs vs. patched industrial sheds.
     if not zaun:
         roof_h = min(48, width*.38)
-        f.prism([(x-width*.45, current_z, ),], d, 1, roof) if False else None
         # Four-sided mansard/pyramid in cross-sections, green copper gutters and a needle.
         f.cyl(x,d,current_z,width*.31,roof_h*.45,roof,16,r2=width*.16,top=trim)
         f.cyl(x,d,current_z+roof_h*.45,width*.16,roof_h*.22,trim,12,r2=width*.08,top=roof)
@@ -542,15 +541,17 @@ def add_zaun_landmark(f,rng,pid,x,d):
         f.tube([(cx-75,cd-68,12),(cx-75,cd-68,40),(cx-20,cd-68,50)],1.8,'iron_light',6)
 
 
-def add_human_proxy(f,x,d,base_z,mat_body,mat_limb,tag):
-    """Render-only 1.75 m / 22-world-unit human proxy for scale QA; never exported to the game."""
-    h=PERSON_HEIGHT
-    f.cyl(x,d,base_z,3.2,h*.48,mat_body,8,r2=2.5)
-    f.sphere(x,d,base_z+h*.68,3.4,3.4,4.2,mat_body,10,6)
+def add_human_proxy(f,x,d,base_z,mat_body,mat_limb,tag,height=PERSON_HEIGHT):
+    """Render-only scale proxy with a measured total height; never exported to the game GLB."""
+    h=height
+    # Boots/legs, torso, arms and head. Head top is base_z + h exactly.
     for side in (-1,1):
-        f.cyl(x+side*2.1,d,base_z,1.15,h*.30,mat_limb,7,r2=.85)
-        f.tube([(x+side*2,d,base_z+h*.52),(x+side*5,d,base_z+h*.35),(x+side*4.6,d,base_z+h*.16)],.9,mat_limb,6)
-
+        f.cyl(x+side*1.9,d,base_z,1.25,h*.38,mat_limb,8,r2=.85)
+    f.cyl(x,d,base_z+h*.34,3.3,h*.47,mat_body,10,r2=2.8)
+    for side in (-1,1):
+        f.tube([(x+side*2.5,d,base_z+h*.74),(x+side*5.0,d,base_z+h*.53),
+                (x+side*4.7,d,base_z+h*.36)],1.05,mat_limb,6)
+    f.sphere(x,d,base_z+h*.88,2.8,2.8,h*.12,mat_body,12,8)
 
 def setup_render(city, city_objects, review_collection, f):
     scene=bpy.context.scene
@@ -850,36 +851,20 @@ def build_city(city):
         empty.empty_display_size=7
         empty.location=p3(x,d,0)
 
-    # Render-only 22-unit human and 25-unit guard proxies beside real architecture to verify scale.
+    # Finalise city meshes first. Character/guard scale proxies live only in the separate
+    # review collection: they appear in camera renders, but are never selected for the GLB.
+    f.flush(city)
+    body_key='blue_glow' if city=='piltover' else 'neon_teal'
+    limb_key='stone_cool' if city=='piltover' else 'iron_light'
+    guard_key='gold' if city=='piltover' else 'rust'
+    review_mats={'person_body':materials[body_key],'person_limb':materials[limb_key],
+                 'guard_body':materials[guard_key],'guard_limb':materials[limb_key]}
+    review_forge=MeshForge(review,review_mats)
     for i,(x,d) in enumerate(CITY_POIS[city].values()):
         if i % 3 != 0: continue
-        base_x=x-42
-        base_d=d-30
-        bodymat='blue_glow' if city=='piltover' else 'neon_teal'
-        limb='stone_cool' if city=='piltover' else 'iron_light'
-        add_human_proxy(f,base_x,base_d,2,bodymat,limb,'person')
-        add_human_proxy(f,base_x+17,base_d-10,2,bodymat,limb,'guard')
-
-    # Review actors use their own materials/meshes after the city has been assembled.
-    # Temporarily remove the QA humans from exportable CITY_WORLD into a separate collection.
-    f.flush(city)
-    # Make simple 22/25-unit scale dummies as independent objects in a non-export collection.
-    # (The batch meshes above are city art; QA scale markers are deliberately separate below.)
-    # Place some scale markers at the same world coordinates as the actors.
-    proxy_mat=materials.get('blue_glow') if city=='piltover' else materials.get('neon_teal')
-    guard_mat=materials.get('gold') if city=='piltover' else materials.get('rust')
-    for i,(x,d) in enumerate(CITY_POIS[city].values()):
-        if i%3: continue
-        for j,(xx,dd,h,mm) in enumerate(((x-42,d-30,PERSON_HEIGHT,proxy_mat),(x-22,d-35,PERSON_HEIGHT*1.12,guard_mat))):
-            # A stylised review silhouette only; excluded from CITY_WORLD and GLB export.
-            body=bpy.data.meshes.new(f'QA_HUMAN_{i}_{j}')
-            vv=[p3(xx,dd,2),p3(xx,dd,2+h*.47),p3(xx+3,dd,2+h*.47),p3(xx+3,dd,2)]
-            body.from_pydata(vv,[],[(0,1,2,3)])
-            body.materials.append(mm)
-            ob=bpy.data.objects.new(f'QA_SCALE__{"GUARD" if j else "PERSON"}_{i}',body)
-            review.objects.link(ob)
-            ob.hide_viewport=False
-            ob.hide_render=True  # actual actor render pass uses the round close-up to verify the street proportions by measurements
+        add_human_proxy(review_forge,x-42,d-30,2,'person_body','person_limb','person',PERSON_HEIGHT)
+        add_human_proxy(review_forge,x-22,d-35,2,'guard_body','guard_limb','guard',PERSON_HEIGHT*1.12)
+    review_forge.flush(city+'_QA_SCALE')
     # Lock the city asset to its own collection so exports contain no cameras or QA markers.
     for ob in list(city_col.objects):
         ob.select_set(True)
@@ -888,7 +873,6 @@ def build_city(city):
     PREVIEW.mkdir(parents=True,exist_ok=True)
     blend_path=OUT/f'{city}.blend'
     glb_path=OUT/f'{city}.glb'
-    bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
     # Blender 4.x ships the glTF I/O add-on in the package; explicitly enable if available.
     try:
         import addon_utils
@@ -910,6 +894,8 @@ def build_city(city):
         raise RuntimeError(f'El escenario {city} se exportó vacío o con tamaño sospechoso.')
     # Preview cameras and scale QA markers are only present in .blend; never in the game GLB.
     setup_render(city,city_col.objects,review,f)
+    # Include camera rigs and review figures in the editable Blender scene.
+    bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
     print(f'CITY_OK {city}: blend={blend_path.stat().st_size} glb={glb_path.stat().st_size}')
     return blend_path,glb_path
 
