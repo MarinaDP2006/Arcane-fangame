@@ -11,9 +11,10 @@
 (function () {
   if (!window.THREE) return;
   const T = window.THREE;
-  // Altura de una persona adulta en unidades del mapa. Cerca de la escala de las calles (74 de
-  // ancho) y de la esfera del jugador para que los personajes no parezcan gigantes en el mapa.
-  const H = 20;
+  // Altura objetivo de una persona en unidades del mapa. Las calles miden unos 74 de ancho;
+  // mantener el avatar en 14 unidades deja más espacio visual para fachadas, puertas y HUD.
+  // Los modelos externos se normalizan a esta altura y los muñecos procedurales usan la misma.
+  const H = 14;
   const DOLL = H / 44; // el muñeco se modela con 44 unidades de alto
   const WALK = 230; // velocidad de andar del jugador (world.js)
 
@@ -933,7 +934,9 @@
       spec = { ...spec, id: null, top: tops[seed % tops.length], bottom: tops[(seed >>> 3) % tops.length], hair: hairs[(seed >>> 5) % hairs.length], skin: skins[(seed >>> 7) % skins.length], style: ['short', 'long', 'bald'][(seed >>> 9) % 3], build: {} };
     }
     const holder = new T.Group();
-    const av = { holder, yaw: 0, ...(player || ambient ? buildDoll(spec) : {}) };
+    // Mantener un avatar visible mientras carga el modelo externo o si falta el archivo.
+    // buildDoll usa la ficha real del personaje (paleta, pelo, piel y ropa), no un icono genérico.
+    const av = { holder, yaw: 0, ...buildDoll(spec) };
     if (av.root) holder.add(av.root);
     // Los peatones ambientales usan el muñeco procedural y no intentan cargar un GLB inexistente.
     if (ambient) return av;
