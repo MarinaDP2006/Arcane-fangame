@@ -244,7 +244,6 @@
         const season = window.CustomArt?.season?.() || 's1';
         const artUrl = window.CustomArt?.image?.('lugares', def.scene)
           || window.ART_BUNDLED?.[`lugares/${season}`]?.[def.scene]
-          || window.ART_BUNDLED?.[`lugares/${zaun ? 'zaun' : 'piltover'}`]?.[zaun ? 'zaun' : 'piltover']
           || window.ART_BUNDLED?.['lugares/s1']?.[zaun ? 'zaun' : 'piltover'];
         if (artUrl && THREE.TextureLoader) {
           new THREE.TextureLoader().load(artUrl, (texture) => {
