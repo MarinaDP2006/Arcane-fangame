@@ -6,10 +6,10 @@ const vm = require('vm');
 
 const ctx = { window: {} };
 vm.createContext(ctx);
-for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'relations.js', 'world.js', 'atlas.js']) {
+for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'relations.js', 'missions.js', 'world.js', 'atlas.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', f), 'utf8'), ctx, { filename: f });
 }
-const { WIKI, STORY, CHAT, CREATION, WORLD, ATLAS, RELATIONS } = ctx.window;
+const { WIKI, STORY, CHAT, CREATION, WORLD, ATLAS, RELATIONS, MISSIONS } = ctx.window;
 const errors = [];
 const chars = new Set(WIKI.personajes.map((p) => p.id));
 const allIds = new Set(WIKI.categories.flatMap((c) => WIKI[c.id].map((e) => e.id)));
@@ -18,6 +18,28 @@ const speakers = new Set([...cast, 'narrador', 'yo', 'sistema']);
 cast.forEach((id) => { if (!chars.has(id)) errors.push(`reparto: "${id}" no está en la wiki`); });
 const FLAG_SET = new Set(['familia_famosa']);
 const GAME_IDS = ['foso', 'tejados', 'aerotabla', 'tiro', 'circuito', 'runas', 'regateo', 'persecucion', 'francotiradora', 'chompers', 'chatarra'];
+
+// Misiones secundarias: objetivos, personajes, temporadas y recompensas deben ser válidos.
+const missionIds = new Set();
+for (const m of MISSIONS || []) {
+  const where = `misión ${m.id || '(sin id)'}`;
+  if (!m.id || missionIds.has(m.id)) errors.push(`${where}: id ausente o duplicado`);
+  missionIds.add(m.id);
+  if (!['piltover', 'zaun', 'ambas'].includes(m.city)) errors.push(`${where}: ciudad "${m.city}" desconocida`);
+  if (!['atlas', 'bond', 'relation', 'family', 'specific-family'].includes(m.type)) errors.push(`${where}: tipo "${m.type}" desconocido`);
+  if (m.type === 'atlas' && !ATLAS.places.some((p) => p.id === m.target)) errors.push(`${where}: lugar Atlas "${m.target}" no existe`);
+  if (['bond', 'relation', 'specific-family'].includes(m.type) && !chars.has(m.target)) errors.push(`${where}: personaje "${m.target}" no existe`);
+  if (m.type === 'relation' && !RELATIONS.kinds[m.relation]) errors.push(`${where}: vínculo "${m.relation}" desconocido`);
+  if (m.seasonMin && ![1, 2].includes(m.seasonMin)) errors.push(`${where}: seasonMin debe ser 1 o 2`);
+  if (m.seasonMax && ![1, 2].includes(m.seasonMax)) errors.push(`${where}: seasonMax debe ser 1 o 2`);
+  for (const id of m.requiresMet || []) if (!cast.has(id)) errors.push(`${where}: requiere conocer a "${id}", que no está en el reparto`);
+  if (!m.reward?.flag) errors.push(`${where}: falta la flag de recompensa`);
+  else FLAG_SET.add(m.reward.flag);
+  for (const id of Object.keys(m.reward?.aff || {})) if (!chars.has(id)) errors.push(`${where}: recompensa de afinidad para "${id}" desconocido`);
+  for (const city of Object.keys(m.reward?.rep || {})) if (!['piltover', 'zaun'].includes(city)) errors.push(`${where}: recompensa de reputación para ciudad "${city}" desconocida`);
+  if (m.affinity !== undefined && (!Number.isFinite(m.affinity) || m.affinity < -10 || m.affinity > 10)) errors.push(`${where}: afinidad requerida fuera del rango -10..10`);
+  if (m.trust !== undefined && (!Number.isInteger(m.trust) || m.trust < 0)) errors.push(`${where}: confianza requerida no válida`);
+}
 
 for (const ch of STORY.chapters) {
   for (const n of Object.values(ch.nodes)) for (const c of n.choices || []) [...(c.fx?.flags || []), ...(c.game?.winFx?.flags || [])].forEach((f) => FLAG_SET.add(f));
