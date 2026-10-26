@@ -1085,7 +1085,7 @@
     let lines = node.lines.filter(lineVisible);
     // Historia libre: el guion no habla por el jugador y, tras un turno libre, se adapta a lo
     // que ha escrito (si la IA falla, sale el guion original).
-    const adapting = freeStory() && G.progress.adaptNext;
+    const adapting = false;
     if (freeStory()) {
       const cast = sceneCast(node);
       lines = lines.filter((l) => l.s !== 'yo');
@@ -1093,8 +1093,7 @@
         const typing = tab === 'historia' ? typingIndicator(cast[0] || 'narrador') : null;
         try {
           const ch2 = chapterById(G.progress.chapterId);
-          const adapted = await window.AI.adapt(G, { chapter: ch2.title, cast, beat: lines.map((l) => `${l.s}: ${tpl(l.t, G.player)}`) });
-          if (adapted.length) lines = adapted;
+          // La adaptación con IA está aplazada; se conservan los diálogos escritos.
         } catch { /* se queda el guion escrito */ }
         typing?.remove();
       }
@@ -1221,7 +1220,7 @@
   const FORCE_MOVE = 6; // red de seguridad si la IA no elige camino
 
   function freeStory() {
-    return window.App.settings.storyMode !== 'opciones' && window.AI.ready() && aiFailedNode !== `${G.progress.chapterId}.${G.progress.node}`;
+    return false; // La historia libre con IA queda aplazada; se usan siempre las opciones escritas.
   }
 
   /** Personajes del reparto presentes en la escena actual. */
@@ -1245,7 +1244,6 @@
     box.append(
       el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', title: 'Enviar', 'aria-label': 'Enviar', onclick: send }, '➤')),
       el('small', { class: 'muted ai-note' }, `Habla o actúa como ${G.player.name}: no hay opciones, la escena reacciona a lo que escribas.`));
-    window.AI.warm();
     if (!U.touch) setTimeout(() => input.focus(), 0);
   }
 
@@ -1731,6 +1729,9 @@
 
   /** Muestra la entrada de texto del chat libre con IA. */
   function showAIBox(id, box) {
+    setChatMode(id);
+    box.classList.remove('ai-box');
+    return;
     box.classList.add('ai-box');
     if (!window.AI.ready()) {
       box.append(el('div', { class: 'ai-off' },
