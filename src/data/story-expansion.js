@@ -12,8 +12,12 @@
     const list = S.routes[route];
     const pos = list.indexOf(last);
     if (pos < 0) throw new Error('La ruta no contiene su capítulo final: ' + route);
-    S.chapters.push(...chapters);
-    list.splice(pos, 0, ...chapters.map((chapter) => chapter.id));
+    // Si un episodio ya existe en story.js, conserva esa versión y evita IDs duplicados.
+    const existing = new Set(S.chapters.map((chapter) => chapter.id));
+    const missing = chapters.filter((chapter) => !existing.has(chapter.id));
+    const routeMissing = missing.filter((chapter) => !list.includes(chapter.id));
+    S.chapters.push(...missing);
+    list.splice(pos, 0, ...routeMissing.map((chapter) => chapter.id));
   }
 
   const zaun = [
