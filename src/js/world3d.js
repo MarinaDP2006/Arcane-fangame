@@ -753,7 +753,7 @@
       // marcador para no duplicarlo. Los personajes caídos/ausentes también se ocultan.
       const featuredIds = map.id === 'zaun'
         ? ['jinx', 'vi', 'ekko', 'sevika', 'silco', 'vander', 'isha']
-        : ['caitlyn', 'jayce', 'viktor', 'heimerdinger', 'mel', 'cassandra'];
+        : ['caitlyn', 'jayce', 'viktor', 'heimerdinger', 'mel', 'cassandra', 'ambessa', 'maddie', 'kino'];
       const homes = window.WORLD?.homes || {};
       const perHome = new Map();
       for (const id of featuredIds) {
@@ -808,7 +808,7 @@
         }
         orb.root.position.set(p.x, 0, p.y);
         // El avatar 3D sigue al marcador en el mismo fotograma, sin desfase ni tamaño excesivo.
-        // La escala base de Avatars3D es de 20 unidades frente a calles de 60–96 unidades.
+        // La altura objetivo de Avatars3D es de 22 unidades frente a calles de 60–96 unidades.
         const av = actors.playerAvatar;
         if (av) {
           av.holder.position.set(p.x, 0, p.y);
