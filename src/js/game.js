@@ -992,7 +992,7 @@
             complete
               ? el('button', { class: 'btn primary', onclick: () => openOverlay('misiones') }, 'Volver a las misiones')
               : el('button', { class: 'btn ghost', onclick: () => { persist(); openOverlay('misiones'); } }, 'Guardar y salir'),
-            complete ? el('button', { class: 'btn ghost', onclick: closeOverlay }, 'Volver al mapa') : null))));
+            complete ? el('button', { class: 'btn ghost', onclick: closeOverlay }, 'Volver al mapa') : null)))));
   }
 
   function chooseSideQuest(quest, choice) {
