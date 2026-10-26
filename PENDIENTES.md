@@ -170,7 +170,7 @@ Usar **dos generaciones y dos proyectos independientes**, no una imagen fusionad
 - [ ] Paso 4: antecedentes — familia, tutor, mentor, pérdida, deuda, afiliación, formación académica/técnica, vínculo con quimtec/hextec y secreto opcional.
 - [ ] Paso 5: personalidad y atributos iniciales — por ejemplo, ingenio, valor, sigilo y carisma; asignación clara y sin opciones que no produzcan ningún efecto.
 - [ ] Paso 6: resumen revisable de todas las elecciones, aviso de consecuencias principales sin spoilers graves y botón confirmar.
-- [ ] [ ] No permitir combinaciones contradictorias sin explicarlas; ofrecer reglas de validación y alternativas narrativas en vez de bloquear al usuario arbitrariamente.
+- [ ] No permitir combinaciones contradictorias sin explicarlas; ofrecer reglas de validación y alternativas narrativas en vez de bloquear al usuario arbitrariamente.
 - [ ] Guardar el OC en la partida y permitir edición limitada posterior si no rompe la continuidad.
 
 #### E. Prólogo y contextualización del OC en el canon
