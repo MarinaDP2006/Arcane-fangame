@@ -27,9 +27,10 @@
   function newState(player, stats) {
     const route = S().routes[player.origin];
     const st = {
-      version: 1, player, stats, playTimeSeconds: 0,
+      version: 2, player, stats, playTimeSeconds: 0,
       aff: {}, rep: { zaun: player.origin === 'zaun' ? 1 : 0, piltover: player.origin === 'piltover' ? 1 : 0 },
       flags: {}, unlocked: [], chats: {}, log: [], endings: [], met: [], fallen: [],
+      rel: {}, relDone: {}, together: {}, sideQuests: {}, atlas: [],
       world: { map: null, x: 0, y: 0 }, codex: [], visited: [], acts: {},
       progress: { route: player.origin, chapterIdx: 0, chapterId: route[0], node: null, chapterTitle: chapterById(route[0]).title, finished: false, started: false },
     };
@@ -177,6 +178,25 @@
     slot = s;
     G = data;
     lastPlayTick = Date.now();
+    // Normalización de partidas antiguas/importadas: se conservan las decisiones conocidas
+    // y se inicializan solo los sistemas que todavía no existían en esa versión.
+    G.version = Math.max(2, Number(G.version) || 1);
+    G.progress = G.progress || { route: G.player?.origin || 'zaun', season: 1, chapterIdx: 0, chapterId: S().routes[G.player?.origin || 'zaun']?.[0], node: null, finished: false, started: false };
+    G.flags = G.flags || {};
+    G.stats = G.stats || {};
+    G.aff = G.aff || {};
+    G.rep = G.rep || { zaun: 0, piltover: 0 };
+    G.unlocked = G.unlocked || [];
+    G.chats = G.chats || {};
+    G.log = G.log || [];
+    G.endings = G.endings || [];
+    G.met = G.met || [];
+    G.fallen = G.fallen || [];
+    G.rel = G.rel || {};
+    G.relDone = G.relDone || {};
+    G.together = G.together || {};
+    G.sideQuests = G.sideQuests || {};
+    G.atlas = G.atlas || [];
     // Partidas antiguas sin mundo abierto.
     G.world = G.world || { map: null, x: 0, y: 0 };
     G.codex = G.codex || [];
@@ -534,6 +554,10 @@
       renderMissions(box);
       return;
     }
+    if (kind === 'sidequest') {
+      renderSideQuest(box, who);
+      return;
+    }
     if (kind === 'menu') {
       box.append(el('div', { class: 'panel action-menu' },
         el('h2', {}, 'Pausa'),
@@ -567,14 +591,30 @@
   // Practicar cualquier minijuego sin recompensa.
   function openArcade() {
     const box = $('#overlay');
+    const city = G.world?.map || G.player.origin;
+    const cityLabel = city === 'piltover' ? 'Piltover' : 'Zaun';
+    const available = Minigames.forCity(city);
     box.innerHTML = '';
-    box.className = 'overlay show';
-    box.append(el('div', { class: 'panel action-menu arcade' },
-      el('h2', {}, 'Salón de minijuegos'),
-      el('p', { class: 'muted' }, 'Practica sin límite. Las recompensas de estadísticas se ganan en los lugares del mapa.'),
-      el('div', { class: 'arcade-grid' }, Object.entries(Minigames.GAMES).map(([id, g]) =>
-        el('button', { class: 'arcade-card', onclick: async () => { box.style.visibility = 'hidden'; await Minigames.play(id, { bonus: mgBonus(id) }); box.style.visibility = ''; } },
-          el('span', { class: 'arcade-icon', html: Minigames.emblem(id) }), el('strong', {}, g.title), el('small', { class: 'muted' }, g.goal)))),
+    box.className = 'overlay show arcade-overlay';
+    box.append(el('div', { class: `panel action-menu arcade arcade-3d arcade-${city}` },
+      el('header', { class: 'arcade-header' },
+        el('div', {}, el('span', { class: 'eyebrow' }, `SALÓN HEXTECH · ${cityLabel.toUpperCase()}`),
+          el('h2', {}, 'Desafíos 3D'),
+          el('p', { class: 'muted' }, `Solo aparecen los minijuegos disponibles en ${cityLabel}. Viaja a la otra ciudad para desbloquear sus desafíos.`)),
+        el('span', { class: 'arcade-count' }, `${available.length}/15`)),
+      el('div', { class: 'arcade-grid arcade-grid-3d' }, available.map((game) => {
+        const def = Minigames.GAMES[game.id];
+        return el('button', { class: 'arcade-card arcade-card-3d', onclick: async () => {
+          box.style.visibility = 'hidden';
+          try { await Minigames.play(game.id, { bonus: mgBonus(game.id), city }); }
+          finally { box.style.visibility = ''; }
+        } },
+        el('span', { class: 'arcade-icon', html: game.emblem }),
+        el('small', { class: 'arcade-card-kicker' }, cityLabel.toUpperCase() + ' · 3D'),
+        el('strong', {}, game.title),
+        el('small', { class: 'muted' }, game.goal),
+        el('span', { class: 'arcade-open' }, 'Iniciar desafío ↗'));
+      })),
       el('button', { class: 'btn ghost', onclick: () => openOverlay('menu') }, '← Volver')));
   }
 
@@ -845,7 +885,163 @@
             el('h3', {}, 'Misiones secundarias'),
             el('span', {}, `${allMissions.filter((m) => G.flags?.[m.reward.flag]).length}/${allMissions.length}`)),
           el('p', { class: 'muted' }, 'Las misiones se desbloquean al conocer personajes y avanzar de parte. La afinidad, el tiempo compartido y las decisiones abren nuevos vínculos y recompensas.'),
-          ...side))));
+          ...side),
+        sideQuestSection())));
+  }
+
+  // ---------------- Historias secundarias jugables ----------------
+  function sideQuestAvailable(quest) {
+    const season = Number(G.progress.season || 1);
+    if (quest.seasonMin && season < quest.seasonMin) return false;
+    if (quest.seasonMax && season > quest.seasonMax) return false;
+    return (quest.requiresMet || []).every((id) => G.met.includes(id) || G.unlocked.includes(id));
+  }
+
+  function sideQuestLockReason(quest) {
+    const season = Number(G.progress.season || 1);
+    if (quest.seasonMin && season < quest.seasonMin) return `Se desbloquea en la Parte ${quest.seasonMin}`;
+    if (quest.seasonMax && season > quest.seasonMax) return 'Esta historia pertenece a una parte anterior';
+    const missing = (quest.requiresMet || []).find((id) => !G.met.includes(id) && !G.unlocked.includes(id));
+    if (missing) return `Conoce a ${charName(missing)} en la historia principal`;
+    return 'Disponible';
+  }
+
+  function sideQuestSection() {
+    const quests = window.SIDE_QUESTS || [];
+    const completed = quests.filter((q) => G.sideQuests?.[q.id]?.status === 'completed').length;
+    const cards = quests.map((quest) => {
+      const state = G.sideQuests?.[quest.id];
+      const done = state?.status === 'completed';
+      const active = state?.status === 'active';
+      const available = sideQuestAvailable(quest) || active || done;
+      const lock = sideQuestLockReason(quest);
+      const status = done ? 'COMPLETADA' : active ? 'EN CURSO' : available ? 'DISPONIBLE' : 'BLOQUEADA';
+      return el('article', { class: `mission-card side-quest-card ${done ? 'is-done' : active ? 'is-ready' : !available ? 'is-locked' : ''}` },
+        el('div', { class: 'mission-card-top' },
+          el('span', { class: 'mission-kicker' }, `${quest.city === 'ambas' ? 'PILTOVER + ZAUN' : quest.city.toUpperCase()} · ${quest.seasonMin === 2 ? 'PARTE II' : 'PARTE I'}`),
+          el('span', { class: 'mission-status' }, status)),
+        el('h3', {}, quest.title),
+        el('p', {}, quest.intro),
+        el('div', { class: 'mission-progress' }, done
+          ? `Final: ${state.outcome || 'Tu decisión ha quedado registrada.'}`
+          : active ? `Escena ${(state.history || []).length + 1} · Progreso guardado` : available ? `Lugar relacionado: ${quest.location || 'las dos ciudades'}` : lock),
+        el('div', { class: 'row gap wrap mission-actions' },
+          available
+            ? el('button', { class: `btn ${done ? 'ghost' : 'primary'} small`, onclick: () => openOverlay('sidequest', quest.id) },
+              done ? 'Revisar desenlace' : active ? 'Continuar historia' : 'Comenzar historia')
+            : el('span', { class: 'mission-reward' }, lock)));
+    });
+    return el('section', { class: 'mission-section' },
+      el('div', { class: 'mission-section-head' },
+        el('h3', {}, 'Historias secundarias jugables'),
+        el('span', {}, `${completed}/${quests.length} completadas`)),
+      el('p', { class: 'muted' }, 'Tramas originales con escenas, elecciones y consecuencias guardadas. Las historias se desbloquean al conocer a sus personajes y al llegar a la parte correspondiente.'),
+      ...cards);
+  }
+
+  function openSideQuest(id) {
+    const quest = (window.SIDE_QUESTS || []).find((q) => q.id === id);
+    if (!quest) return toast('No se ha encontrado esta historia secundaria.', 'warn');
+    const state = G.sideQuests?.[id];
+    if (!state && !sideQuestAvailable(quest)) return toast(sideQuestLockReason(quest), 'warn');
+    openOverlay('sidequest', id);
+  }
+
+  function renderSideQuest(box, id) {
+    const quest = (window.SIDE_QUESTS || []).find((q) => q.id === id);
+    if (!quest) return openOverlay('misiones');
+    G.sideQuests = G.sideQuests || {};
+    if (!G.sideQuests[id]) {
+      if (!sideQuestAvailable(quest)) {
+        toast(sideQuestLockReason(quest), 'warn');
+        return openOverlay('misiones');
+      }
+      G.sideQuests[id] = { status: 'active', step: quest.start, history: [], startedAt: new Date().toISOString() };
+      G.log = G.log || [];
+      G.log.push({ s: 'sistema', t: `Has comenzado la historia secundaria «${quest.title}».`, at: new Date().toISOString() });
+      persist();
+    }
+    const state = G.sideQuests[id];
+    const step = quest.steps[state.step];
+    if (!step) {
+      state.step = quest.start;
+      state.status = 'active';
+      return renderSideQuest(box, id);
+    }
+    box.className = 'overlay show sidequest-overlay';
+    box.innerHTML = '';
+    const backButton = el('button', { class: 'btn ghost small', onclick: () => openOverlay('misiones') }, '← Volver al diario');
+    const transcript = (step.lines || []).map((line) => {
+      const speaker = line.s === 'narrador' ? 'NARRACIÓN' : charName(line.s).toUpperCase();
+      return el('article', { class: `side-quest-line ${line.s === 'narrador' ? 'is-narrator' : ''}` },
+        el('small', {}, speaker),
+        el('p', {}, tpl(line.t, G.player)));
+    });
+    const history = (state.history || []).slice(-8).map((item) =>
+      el('p', { class: 'side-quest-history' }, `Tu decisión: ${item.label}`));
+    const choices = state.status === 'completed' ? [] : (step.choices || []).map((choice) =>
+      el('button', { class: 'side-quest-choice', onclick: () => chooseSideQuest(quest, choice) },
+        el('strong', {}, choice.label),
+        el('span', {}, choice.response || 'Elegir esta respuesta.')));
+    const complete = state.status === 'completed';
+    const title = complete ? 'Historia completada' : step.heading || quest.title;
+    box.append(el('div', { class: 'panel side-quest-panel' },
+      el('header', { class: 'overlay-head' },
+        el('div', {},
+          el('span', { class: 'eyebrow' }, `${quest.city === 'ambas' ? 'PILTOVER + ZAUN' : quest.city.toUpperCase()} · PARTE ${quest.seasonMin || 1}`),
+          el('h2', {}, quest.title)),
+        backButton),
+      el('div', { class: 'side-quest-scroll' },
+        el('div', { class: 'side-quest-step' },
+          el('span', { class: 'mission-kicker' }, complete ? 'DESENLACE GUARDADO' : `ESCENA ${(state.history || []).length + 1}`),
+          el('h3', {}, title),
+          ...transcript,
+          complete ? el('div', { class: 'side-quest-outcome' },
+            el('strong', {}, `Tu decisión: ${state.outcome || 'La historia llega a su fin.'}`),
+            el('p', {}, 'Las consecuencias y recompensas se han guardado en esta partida.'),
+            el('p', {}, rewardLabel(quest.reward))) : null,
+          history.length && !complete ? el('details', { class: 'side-quest-history-box' },
+            el('summary', {}, 'Decisiones anteriores'),
+            ...history) : null,
+          !complete ? el('div', { class: 'side-quest-choices' }, ...choices) : null,
+          el('div', { class: 'row gap wrap side-quest-footer' },
+            complete
+              ? el('button', { class: 'btn primary', onclick: () => openOverlay('misiones') }, 'Volver a las misiones')
+              : el('button', { class: 'btn ghost', onclick: () => { persist(); openOverlay('misiones'); } }, 'Guardar y salir'),
+            complete ? el('button', { class: 'btn ghost', onclick: closeOverlay }, 'Volver al mapa') : null)))));
+  }
+
+  function chooseSideQuest(quest, choice) {
+    const state = G.sideQuests?.[quest.id];
+    const step = quest.steps[state?.step];
+    if (!state || state.status !== 'active' || !step?.choices?.some((c) => c.id === choice.id)) return;
+    const fromStep = state.step;
+    applyFx(choice.fx || {});
+    state.history = state.history || [];
+    state.history.push({ step: fromStep, choice: choice.id, label: choice.label, at: new Date().toISOString() });
+    state.updatedAt = new Date().toISOString();
+    state.outcome = choice.label;
+    if (choice.complete) {
+      applyFx(quest.reward || {});
+      G.flags = G.flags || {};
+      G.flags[quest.completionFlag] = true;
+      state.status = 'completed';
+      state.completedAt = state.updatedAt;
+      state.outcome = choice.label;
+      Audio2.sfx.unlock();
+      toast(`Historia completada: ${quest.title}`, 'good');
+      G.log = G.log || [];
+      G.log.push({ s: 'sistema', t: `Historia secundaria completada: «${quest.title}». Decisión final: ${choice.label}.`, at: state.updatedAt });
+    } else {
+      state.step = choice.next;
+      if (!quest.steps[state.step]) {
+        state.step = fromStep;
+        toast('La historia no puede avanzar: falta una escena. El progreso se ha conservado.', 'warn');
+        return;
+      }
+    }
+    renderContacts();
+    persist().then(() => renderSideQuest($('#overlay'), quest.id));
   }
 
   function rewardLabel(reward) {
@@ -886,29 +1082,28 @@
   function showHelp() {
     if (U.touch) {
       showNotice('Controles', [
-        'Mapa: arrastra con un dedo para moverte y pellizca para acercar o alejar. Los botones de la derecha acercan, alejan, enseñan la ciudad entera, te llevan al objetivo y cambian de ciudad.',
+        'Mapa 2D: arrastra con un dedo para desplazarte y pellizca para acercar o alejar. Usa los controles de la pantalla para centrar el objetivo o cambiar de ciudad.',
         'Toca un lugar para ver qué puedes hacer allí: seguir la historia, hablar con quien esté, jugar su minijuego, explorarlo o viajar. Toca una cara para hablar con ese personaje.',
         'La línea dorada discontinua marca el camino hasta el objetivo de la historia.',
-        'En 3D gira la ciudad con dos dedos (o los botones de giro); el botón 2D/3D cambia de vista.',
-        'Los botones de abajo abren la historia, el comunicador, la ficha, el Códice, el Atlas y la pausa. El botón «atrás» del móvil cierra ventanas y pausa.',
+        'El mundo se recorre con mapas 2D ilustrados. Sigue la línea dorada hasta el siguiente objetivo y toca los lugares para ver sus acciones.',
+        'Los botones inferiores abren la historia, el comunicador, la ficha, el Códice, el Atlas, las misiones y la pausa. El botón «atrás» cierra ventanas.',
         'Recoge los hexágonos azules del mapa para completar el Códice. Las actividades de cada lugar suben tus estadísticas, que desbloquean opciones en la historia.',
       ].join('\n'));
       return;
     }
     showNotice('Controles', [
-      'Mapa: arrastra para moverte (o flechas / WASD), rueda o + y - para acercar y alejar, 0 para ver la ciudad entera. Doble clic acerca.',
+      'Mapa 2D: arrastra para moverte (o flechas / WASD), usa la rueda o + y - para acercar y alejar, y 0 para ver la ciudad entera. Doble clic acerca.',
       'Haz clic en un lugar (o E) para ver qué puedes hacer allí: seguir la historia, hablar con quien esté, jugar su minijuego, explorarlo o viajar. Clic en una cara para hablar con ese personaje.',
       'La línea dorada discontinua marca el camino hasta el objetivo. Los números 1-9 eligen una opción del menú del lugar.',
-      'En 3D: botón derecho (o Mayús) arrastrando gira e inclina la cámara; Q y R giran, Re Pág y Av Pág inclinan. El botón 2D/3D cambia de vista.',
-      'H: historia · C: comunicador · F: ficha · K: Códice · M: Atlas de las Dos Ciudades · Esc: pausa.',
+      'El mapa permanece en 2D; utiliza los controles de desplazamiento para explorar los barrios y las rutas entre ciudades.',
+      'H: historia · C: comunicador · F: ficha · K: Códice · M: Atlas · Q: misiones · Esc: pausa.',
       'Recoge los hexágonos azules del mapa para completar el Códice. Las actividades de cada lugar suben tus estadísticas, que desbloquean opciones en la historia.',
     ].join('\n'));
   }
 
   /** Abre la interfaz narrativa del capítulo. */
   function openStory() {
-    // Evita iniciar o continuar capítulos de un edificio desde el botón H del mapa
-    // sin haber investigado antes su espacio 3D, también en partidas nuevas.
+    // La historia puede iniciarse desde el objetivo del mapa sin depender de una visita interior ni de un motor 3D.
     const required = objectiveId();
     const isExplorable = false; // No se requiere un recorrido 3D para avanzar.
     if (!G.progress.finished && isExplorable && !G.acts[`interior:${G.progress.chapterId}`]) {
@@ -1500,6 +1695,15 @@
   // silent: en la historia libre el jugador ya ha escrito su propia frase.
   async function choose(c, silent = false) {
     if (busy) return;
+    // Los retos de la historia respetan la ciudad donde está el jugador. No consumimos
+    // la elección ni aplicamos sus recompensas si debe viajar para participar.
+    if (c.game && Minigames.isAvailable && !Minigames.isAvailable(c.game.id, G.world?.map || G.player.origin)) {
+      const requiredCity = Minigames.GAMES[c.game.id]?.city;
+      toast(requiredCity
+        ? `Este desafío está en ${requiredCity === 'piltover' ? 'Piltover' : 'Zaun'}. Viaja allí y vuelve a elegirlo.`
+        : 'Este desafío no forma parte del catálogo disponible.', 'warn');
+      return;
+    }
     if (!silent) Audio2.sfx.choice();
     if (c.__next) return nextChapter();
     if (!silent) {

@@ -6,10 +6,10 @@ const vm = require('vm');
 
 const ctx = { window: {} };
 vm.createContext(ctx);
-for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'relations.js', 'missions.js', 'world.js', 'atlas.js']) {
+for (const f of ['wiki.js', 'creation.js', 'story.js', 'story-expansion.js', 'alternate-fates.js', 'chat.js', 'chat-expansion.js', 'chat-deep.js', 'relations.js', 'missions.js', 'side-quests.js', 'world.js', 'atlas.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', 'data', f), 'utf8'), ctx, { filename: f });
 }
-const { WIKI, STORY, CHAT, CREATION, WORLD, ATLAS, RELATIONS, MISSIONS } = ctx.window;
+const { WIKI, STORY, CHAT, CREATION, WORLD, ATLAS, RELATIONS, MISSIONS, SIDE_QUESTS } = ctx.window;
 const errors = [];
 const chars = new Set(WIKI.personajes.map((p) => p.id));
 const allIds = new Set(WIKI.categories.flatMap((c) => WIKI[c.id].map((e) => e.id)));
@@ -17,7 +17,33 @@ const cast = new Set(STORY.cast || []);
 const speakers = new Set([...cast, 'narrador', 'yo', 'sistema']);
 cast.forEach((id) => { if (!chars.has(id)) errors.push(`reparto: "${id}" no está en la wiki`); });
 const FLAG_SET = new Set(['familia_famosa']);
-const GAME_IDS = ['foso', 'tejados', 'aerotabla', 'tiro', 'circuito', 'runas', 'regateo', 'persecucion', 'francotiradora', 'chompers', 'chatarra'];
+// Registra el catálogo de desafíos 3D sin inicializar WebGL: sus funciones de juego se ejecutan solo al abrir un reto.
+ctx.window.Minigames = { GAMES: {} };
+vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'src', 'js', 'minigames-3d.js'), 'utf8'), ctx, { filename: 'minigames-3d.js' });
+const MINIGAMES = ctx.window.Minigames;
+const GAME_IDS = Object.keys(MINIGAMES.CATALOG || {});
+if (GAME_IDS.length > 15) errors.push(`minijuegos 3D: el catálogo supera el máximo de 15 (${GAME_IDS.length})`);
+if (GAME_IDS.length !== 15) errors.push(`minijuegos 3D: se esperan 15 desafíos, se encontraron ${GAME_IDS.length}`);
+const uniqueCityGames = new Set();
+for (const [city, ids] of Object.entries(MINIGAMES.CITY_GAMES || {})) {
+  if (!['piltover', 'zaun'].includes(city)) errors.push(`minijuegos 3D: ciudad "${city}" desconocida`);
+  for (const id of ids) {
+    if (!MINIGAMES.CATALOG[id]) errors.push(`minijuegos 3D: "${id}" está en ${city}, pero no existe en el catálogo`);
+    else if (MINIGAMES.CATALOG[id].city !== city) errors.push(`minijuegos 3D: "${id}" aparece en ${city}, pero pertenece a ${MINIGAMES.CATALOG[id].city}`);
+    if (uniqueCityGames.has(id)) errors.push(`minijuegos 3D: "${id}" está duplicado entre ciudades`);
+    uniqueCityGames.add(id);
+  }
+}
+for (const id of GAME_IDS) {
+  const def = MINIGAMES.CATALOG[id];
+  if (!MINIGAMES.GAMES[id] || MINIGAMES.GAMES[id].mode3d !== true) errors.push(`minijuego 3D "${id}": falta registro compatible en Minigames.GAMES`);
+  if (!['piltover', 'zaun'].includes(def.city)) errors.push(`minijuego 3D "${id}": ciudad no válida`);
+  if (!def.title || !def.goal || !def.mode || !def.scene) errors.push(`minijuego 3D "${id}": faltan título, objetivo, modo o escenario`);
+  const locations = Object.values(WORLD.maps).flatMap((m) => m.locations || []);
+  if (!locations.some((loc) => loc.id === def.scene)) errors.push(`minijuego 3D "${id}": escenario "${def.scene}" no es una ubicación del mundo`);
+}
+for (const id of uniqueCityGames) if (!MINIGAMES.CATALOG[id]) errors.push(`minijuegos 3D: "${id}" no está disponible`);
+
 
 // Misiones secundarias: objetivos, personajes, temporadas y recompensas deben ser válidos.
 const missionIds = new Set();
@@ -39,6 +65,60 @@ for (const m of MISSIONS || []) {
   for (const city of Object.keys(m.reward?.rep || {})) if (!['piltover', 'zaun'].includes(city)) errors.push(`${where}: recompensa de reputación para ciudad "${city}" desconocida`);
   if (m.affinity !== undefined && (!Number.isFinite(m.affinity) || m.affinity < -10 || m.affinity > 10)) errors.push(`${where}: afinidad requerida fuera del rango -10..10`);
   if (m.trust !== undefined && (!Number.isInteger(m.trust) || m.trust < 0)) errors.push(`${where}: confianza requerida no válida`);
+}
+
+// Historias secundarias ramificadas: validar pasos, destinos, hablantes y efectos.
+const sideQuestIds = new Set();
+for (const q of SIDE_QUESTS || []) {
+  const where = `historia secundaria ${q.id || '(sin id)'}`;
+  if (!q.id || sideQuestIds.has(q.id)) errors.push(`${where}: id ausente o duplicado`);
+  sideQuestIds.add(q.id);
+  if (!['piltover', 'zaun', 'ambas'].includes(q.city)) errors.push(`${where}: ciudad "${q.city}" desconocida`);
+  if (![1, 2].includes(q.seasonMin || 1)) errors.push(`${where}: seasonMin debe ser 1 o 2`);
+  for (const id of q.requiresMet || []) if (!cast.has(id)) errors.push(`${where}: requisito "${id}" no pertenece al reparto`);
+  if (!q.steps?.[q.start]) errors.push(`${where}: el paso inicial "${q.start}" no existe`);
+  if (!q.completionFlag) errors.push(`${where}: falta completionFlag`);
+  for (const [stepId, step] of Object.entries(q.steps || {})) {
+    const sw = `${where}.${stepId}`;
+    if (!Array.isArray(step.lines) || !step.lines.length) errors.push(`${sw}: falta texto narrativo`);
+    for (const line of step.lines || []) if (!speakers.has(line.s)) errors.push(`${sw}: hablante "${line.s}" desconocido`);
+    if (!Array.isArray(step.choices) || !step.choices.length) errors.push(`${sw}: falta al menos una decisión`);
+    for (const ch of step.choices || []) {
+      if (!ch.id || !ch.label) errors.push(`${sw}: decisión sin id o etiqueta`);
+      if (ch.complete && ch.next) errors.push(`${sw}: una decisión final no puede tener next`);
+      if (!ch.complete && (!ch.next || !q.steps[ch.next])) errors.push(`${sw}: decisión "${ch.id}" apunta a un paso inexistente`);
+      for (const [id, n] of Object.entries(ch.fx?.aff || {})) {
+        if (!chars.has(id)) errors.push(`${sw}: afinidad para personaje "${id}" desconocido`);
+        if (!Number.isFinite(n)) errors.push(`${sw}: afinidad de "${id}" no es numérica`);
+      }
+      for (const [city, n] of Object.entries(ch.fx?.rep || {})) {
+        if (!['piltover', 'zaun'].includes(city)) errors.push(`${sw}: reputación para ciudad "${city}" desconocida`);
+        if (!Number.isFinite(n)) errors.push(`${sw}: reputación de "${city}" no es numérica`);
+      }
+      for (const stat of Object.keys(ch.fx?.stats || {})) if (!STORY.stats[stat]) errors.push(`${sw}: estadística "${stat}" desconocida`);
+      (ch.fx?.flags || []).forEach((flag) => FLAG_SET.add(flag));
+    }
+  }
+  for (const [id, n] of Object.entries(q.reward?.aff || {})) if (!chars.has(id)) errors.push(`${where}: recompensa de afinidad para "${id}" desconocido`);
+  for (const city of Object.keys(q.reward?.rep || {})) if (!['piltover', 'zaun'].includes(city)) errors.push(`${where}: recompensa de reputación para ciudad "${city}" desconocida`);
+  for (const stat of Object.keys(q.reward?.stats || {})) if (!STORY.stats[stat]) errors.push(`${where}: recompensa de estadística "${stat}" desconocida`);
+  (q.reward?.flags || []).forEach((flag) => FLAG_SET.add(flag));
+  FLAG_SET.add(q.completionFlag);
+  // Todos los pasos deben poder alcanzarse y al menos un camino debe concluir la misión.
+  const reached = new Set();
+  const pending = [q.start];
+  let hasEnding = false;
+  while (pending.length) {
+    const sid = pending.pop();
+    if (reached.has(sid) || !q.steps[sid]) continue;
+    reached.add(sid);
+    for (const ch of q.steps[sid].choices || []) {
+      if (ch.complete) hasEnding = true;
+      else if (ch.next) pending.push(ch.next);
+    }
+  }
+  for (const sid of Object.keys(q.steps || {})) if (!reached.has(sid)) errors.push(`${where}: paso "${sid}" inalcanzable desde "${q.start}"`);
+  if (!hasEnding) errors.push(`${where}: no existe una decisión final`);
 }
 
 for (const ch of STORY.chapters) {
