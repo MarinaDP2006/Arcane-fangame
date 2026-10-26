@@ -153,7 +153,7 @@
       const updateHud = () => {
         scoreEl.innerHTML = `<small>MARCADOR</small><strong>${score}<i> / ${scoreMax}</i></strong>`;
         timeEl.innerHTML = `<small>TIEMPO</small><strong>${Math.max(0, Math.ceil(def.secs - elapsed))}<i>s</i></strong>`;
-        progressEl.innerHTML = `<small>ESTADO</small><strong>${def.mode === 'bargain' ? `${bargainDeals}/3 tratos` : def.mode === 'arena' ? `${rounds}/4 asaltos` : def.mode === 'runner' ? `${Math.floor(progress)}% de ruta` : def.mode === 'runes' ? `Secuencia ${Math.min(3, Math.floor(seqIndex / 4) + 1)}/3` : `${Math.min(score, scoreMax)}/${scoreMax} objetivos`}</strong>`;
+        progressEl.innerHTML = `<small>ESTADO</small><strong>${def.mode === 'bargain' ? `${bargainDeals}/3 tratos` : def.mode === 'arena' ? `${rounds}/4 asaltos` : def.mode === 'runner' ? `${Math.floor(progress)}% de ruta` : def.mode === 'runes' ? `${Math.min(score, scoreMax)}/${scoreMax} símbolos` : `${Math.min(score, scoreMax)}/${scoreMax} objetivos`}</strong>`;
       };
       const disposeScene = () => {
         if (raf) cancelAnimationFrame(raf);
@@ -402,12 +402,13 @@
           }
           labelMessage('Recoge seis piezas verdes, doradas o azules; las piezas rojas están contaminadas.');
         } else if (mode === 'contain') {
-          for (let i = 0; i < 8; i++) {
+          // Cinco fugas rojas reales, intercaladas con cinco reguladores verdes seguros.
+          for (let i = 0; i < 10; i++) {
             const leak = i % 2 === 0;
-            const node = makeNode(i, (i % 4 - 1.5) * 2.35, -3 - Math.floor(i / 4) * 1.8, leak ? '#f05d77' : '#4fcfb7');
+            const node = makeNode(i, (i % 5 - 2) * 1.85, -3 - Math.floor(i / 5) * 2.2, leak ? '#f05d77' : '#4fcfb7');
             addInteractive(node.children[1], { kind: leak ? 'leak' : 'safe', parent: node, index: i });
           }
-          labelMessage('Cierra las fugas rojas. No toques los reguladores verdes estables.');
+          labelMessage('Cierra las cinco fugas rojas. No toques los reguladores verdes estables.');
         }
         addMobileControls();
       }
