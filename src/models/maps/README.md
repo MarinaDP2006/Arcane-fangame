@@ -25,6 +25,25 @@ Un GLB debe ser un entorno completo creado en un programa 3D (recomendación: Bl
 4. Crea y coloca un empty `POI__<id>` por cada lugar, usa la tabla de coordenadas de `tools/blender/export_arcane_map.py` y ejecuta la exportación de validación.
 5. Revisa a vista cenital, altura de calle y zoom cercano. Confirma que personajes y guardias se distingan frente a fachadas, que no haya fachadas gigantes en proporción y que los puntos sean accesibles.
 
+
+## Prompts base para generar piezas 3D
+
+Usa el generador de mallas para **un activo por generación**, no para pedirle toda la ciudad. Estos textos sirven de punto de partida; el resultado debe corregirse y montarse en Blender antes de exportar.
+
+**Piltover — edificio cívico/academia**
+> High-detail stylized fantasy architecture asset for a real-time 3D game: elegant ivory limestone, brass and aged gold trims, art-nouveau curves, tall arched windows, green patinated copper roof, layered balconies and delicate vertical spires, hextech-era prosperous city, Arcane-inspired painterly material treatment, physically based materials, clean topology, coherent real-world proportions, standalone building, no ground plane, no people, no logos, no readable text.
+
+**Piltover — puente monumental y Hexpuertas**
+> Modular monumental fantasy city bridge, pale carved stone pylons, ornate brass fittings, turquoise patinated copper details, graceful suspended spans and large circular arcane transit ring, elevated above a sea of clouds, handcrafted industrial art-nouveau, game-ready PBR asset, modular clean ends, no people, no logos, no text.
+
+**Zaun — bloque de viviendas/taller**
+> Dense undercity industrial architecture asset, stacked crooked tenements, dark riveted iron plates, weathered copper and rust, repaired wooden platforms, exposed pipes, suspended catwalks, mismatched windows with toxic green and magenta practical lights, damp stone and oily wear, Arcane-inspired painterly realism, believable human scale, modular street-facing facade, game-ready PBR, no people, no logos, no readable text.
+
+**Zaun — fábrica/tuberías**
+> Industrial undercity factory prop set, thick worn metal pipes with valves, pressure gauges, rivets, exhaust ducts, hanging cables, chemical glass tanks, soot, rust and green chemical glow, dense layered silhouette, physically plausible connections, modular pieces that can join seamlessly, PBR materials, optimized for real-time game use, no people, no logos, no text.
+
+La fidelidad nace sobre todo de la **composición y los materiales del escenario completo en Blender**: los activos generados no conocen la distribución de los barrios ni las ubicaciones de la historia. No uses una generación 3D como ciudad final sin rehacer la escala, los empalmes, las calles transitables, la iluminación y los detalles característicos.
+
 ## Exportar y validar
 
 Con Blender instalado, abre el .blend de la ciudad y ejecuta desde la raíz del repositorio:
