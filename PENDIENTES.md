@@ -349,3 +349,72 @@ Reglas para todos los agentes:
 7. **Crear PR manuales pequeños**, una por tema, con capturas, resultados de `npm run check` y lista exacta de riesgos conocidos.
 
 No cerrar el proyecto hasta que una partida real permita crear el OC, elegir ciudad, explorar un mapa 3D, ver y hablar con personajes, recibir objetivos actualizados, completar actividades y conservar las consecuencias al guardar/cargar.
+
+
+---
+
+## 9. Dirección artística unificada: lore, mapa 2D y escenarios 3D con Marble + SpAItial
+
+### Fuentes visuales y de lore
+- Zaun oficial: https://universe.leagueoflegends.com/en_US/region/zaun/
+- Piltover oficial: https://universe.leagueoflegends.com/en_US/region/piltover/
+- Zaun en español: https://leagueoflegends.fandom.com/es/wiki/Zaun
+- Piltóver en español: https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver
+- Tablero de referencia de la autora: https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298
+- Diseño de ambas ciudades: https://80.lv/articles/riot-games-on-designing-arcane-s-piltover-zaun
+
+Las wikis pueden mezclar continuidades distintas de Runeterra; usar el arte de Arcane y las fuentes oficiales como referencia visual primaria. Registrar contradicciones en vez de mezclarlas sin criterio. La página de Neta no pudo verificarse desde el lector web de esta sesión: Freebuff debe abrirla en su navegador y pedir una captura si no carga. No fingir que ha visto la imagen.
+
+### Requisitos de lore y arquitectura
+
+**Piltover**
+- [ ] Metrópolis costera elevada sobre acantilados, comercio marítimo, puertas marítimas, avenidas y plazas transitables.
+- [ ] Piedra marfil, latón/oro envejecido, cobre patinado, arcos, balcones, cúpulas, agujas y ornamentación art nouveau.
+- [ ] Academia, Consejo, talleres, casas de comerciantes, Hexpuertas y presencia de los Ejecutores como hitos reconocibles.
+- [ ] Cultura de comercio, prestigio, educación, invención y fe en el progreso; representar también desigualdad y control institucional.
+- [ ] Hextech refinada: cristales/energía mágica y aparatos precisos; no añadir runas aleatorias sin función.
+
+**Zaun**
+- [ ] Ciudad subterránea en fisuras y cañones, niveles verticales, pasarelas, escaleras, ascensores, puentes y calles conectadas.
+- [ ] Hierro remachado, tuberías corroídas, vidrio coloreado, metal recuperado, talleres, mercados, bares, canales y humo por capas.
+- [ ] Smog/Zaun Gris visible en profundidad, sin tapar navegación, personajes ni señalización.
+- [ ] Cultura vibrante e inventiva: vendedores, música, comunidad, santuarios, redes informales, mercados negros y rivalidad industrial; no representar solo pobreza y fábricas.
+- [ ] Barones químicos, laboratorios y comercio ilícito deben tener espacios coherentes con su poder.
+- [ ] Shimmer/Brillo debe tener producción/distribución y consecuencias visibles (laboratorios, recipientes, señales de riesgo y control territorial cuando la misión lo justifique), no ser decoración omnipresente.
+- [ ] Distinguir quimtec industrial, experimental y corrosiva de Hextech refinada basada en cristales y energía mágica.
+
+**Conexión**
+- [ ] Mostrar Piltover arriba y Zaun en niveles inferiores; diseñar puentes, rampas, escaleras, ascensores/descensores, pasarelas, túneles y estaciones.
+- [ ] El Puente del Progreso debe ser reconocible y políticamente cargado.
+- [ ] Cada acceso tiene origen, destino y condición narrativa clara.
+- [ ] Los lugares del mapa 2D deben coincidir con los POI del GLB y los IDs de src/data/world.js; misiones y guardados comparten esos IDs.
+
+### Protocolo obligatorio de mapas IA
+
+1. Buscar imágenes por ciudad y tipo de espacio: panorámica, nivel de calle, fachadas, accesos verticales, mercados, talleres, tecnología y barrios residenciales. Registrar URL, descripción y ciudad.
+2. Generar dos mundos independientes con Marble (https://marble.worldlabs.ai/) y repetir el proceso con SpAItial (https://spaitial.ai/) para comparar continuidad, legibilidad y exportación. No aceptar el primer resultado automáticamente.
+3. Priorizar malla 3D convencional con materiales editables. Verificar plan, formato, licencia y derechos de exportación. Gaussian Splat/SPZ/PLY no es automáticamente GLB ni incluye necesariamente colisiones.
+4. Importar a Blender; limpiar mallas, materiales y escala; corregir calles y accesos; mantener estética pictórica artesanal de Arcane.
+5. Alinear POI y coordenadas con los datos actuales; crear empties POI__<id>, resolver colisiones y probar rutas caminables.
+6. Exportar los fuentes .blend y los GLB finales a src/models/maps/piltover.blend, zaun.blend, piltover.glb y zaun.glb. Embebe texturas y evita rutas absolutas.
+7. Probar en el juego real con avatar, guardias, NPC, POI, misiones, colisiones, zoom general/medio/calle, cambio de ciudad y fallback 2D. Adjuntar capturas y resultados.
+
+### Prompt actualizado para Freebuff — mapas 2D y 3D con Marble y SpAItial
+
+> Trabaja en MarinaDP2006/Arcane-fangame. Antes de editar, lee PENDIENTES.md, src/models/maps/README.md, PILTOVER-3D.md, src/js/world3d.js y src/data/world.js. Comprueba rama y estado Git. No abras ni fusiones PR y no escribas en main.
+>
+> Investiga las fuentes oficiales y las wikis enlazadas para arquitectura, cultura, acceso entre ciudades, Hextech, quimtec, Shimmer/Brillo, comercio y desigualdad. Busca imágenes de referencia reales de ambas ciudades: panorámicas, nivel de calle, puentes/descensores, mercados, talleres, Academia/Consejo, fábricas, espacios de Shimmer y barrios residenciales. Registra URLs, ciudad y motivo de uso; no incorpores imágenes de terceros al juego sin autorización.
+>
+> Abre el tablero Neta https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298. Si no abre, pide una captura a la autora. No inventes su contenido.
+>
+> El mapa 2D debe seguir siendo legible y jugable con distritos, POI, rutas y accesos claros. La versión 3D debe traducir esa misma geografía a volumen real. src/data/world.js es la fuente de verdad de IDs y coordenadas; no inventes posiciones desconectadas.
+>
+> Usa tanto Marble como SpAItial para generar/comparar dos mundos independientes: uno de Piltover y otro de Zaun. Si necesitas login o no puedes operar los servicios externos, entrega los prompts y pasos exactos para que la autora genere las escenas; no afirmes que ya las generaste. Prueba exportación de malla convencional. No renombres Gaussian Splat/SPZ/PLY a GLB.
+>
+> Piltover: metrópolis costera sobre acantilados, piedra marfil, oro/latón, cobre patinado, plazas, torres, Academia, Consejo, Hexpuertas, comercio marítimo y Hextech refinada basada en cristales.
+>
+> Zaun: ciudad subterránea vertical, hierro remachado, vidrio coloreado, tuberías corroídas, pasarelas, escaleras, ascensores, mercados, talleres, bares, canales, humo y luces químicas. Mostrar cultura y comunidad además de peligro. Shimmer/Brillo debe tener espacios de producción y distribución con consecuencias narrativas; quimtec debe parecer experimental e industrial, no igual a Hextech.
+>
+> Después de comparar resultados, importa la mejor base a Blender, limpia geometría/materiales, corrige escala y accesos, alinea POI, crea colisiones/zonas transitables y exporta GLB con texturas embebidas. Mantén fuentes y no sustituyas el entorno por edificios procedurales.
+>
+> Primera entrega sin modificar archivos: referencias visuales encontradas, comparación Marble/SpAItial (formatos y límites), plano 2D alineado con POI, plan Blender y lista de archivos a cambiar. Espera aprobación; luego trabaja en una rama aislada y prueba en juego real. Entrega capturas, comandos y resultados; no marques como validado lo que no hayas ejecutado.
