@@ -27,9 +27,10 @@
   function newState(player, stats) {
     const route = S().routes[player.origin];
     const st = {
-      version: 1, player, stats, playTimeSeconds: 0,
+      version: 2, player, stats, playTimeSeconds: 0,
       aff: {}, rep: { zaun: player.origin === 'zaun' ? 1 : 0, piltover: player.origin === 'piltover' ? 1 : 0 },
       flags: {}, unlocked: [], chats: {}, log: [], endings: [], met: [], fallen: [],
+      rel: {}, relDone: {}, together: {}, sideQuests: {}, atlas: [],
       world: { map: null, x: 0, y: 0 }, codex: [], visited: [], acts: {},
       progress: { route: player.origin, chapterIdx: 0, chapterId: route[0], node: null, chapterTitle: chapterById(route[0]).title, finished: false, started: false },
     };
@@ -177,6 +178,25 @@
     slot = s;
     G = data;
     lastPlayTick = Date.now();
+    // Normalización de partidas antiguas/importadas: se conservan las decisiones conocidas
+    // y se inicializan solo los sistemas que todavía no existían en esa versión.
+    G.version = Math.max(2, Number(G.version) || 1);
+    G.progress = G.progress || { route: G.player?.origin || 'zaun', season: 1, chapterIdx: 0, chapterId: S().routes[G.player?.origin || 'zaun']?.[0], node: null, finished: false, started: false };
+    G.flags = G.flags || {};
+    G.stats = G.stats || {};
+    G.aff = G.aff || {};
+    G.rep = G.rep || { zaun: 0, piltover: 0 };
+    G.unlocked = G.unlocked || [];
+    G.chats = G.chats || {};
+    G.log = G.log || [];
+    G.endings = G.endings || [];
+    G.met = G.met || [];
+    G.fallen = G.fallen || [];
+    G.rel = G.rel || {};
+    G.relDone = G.relDone || {};
+    G.together = G.together || {};
+    G.sideQuests = G.sideQuests || {};
+    G.atlas = G.atlas || [];
     // Partidas antiguas sin mundo abierto.
     G.world = G.world || { map: null, x: 0, y: 0 };
     G.codex = G.codex || [];
@@ -534,6 +554,10 @@
       renderMissions(box);
       return;
     }
+    if (kind === 'sidequest') {
+      renderSideQuest(box, who);
+      return;
+    }
     if (kind === 'menu') {
       box.append(el('div', { class: 'panel action-menu' },
         el('h2', {}, 'Pausa'),
@@ -845,7 +869,163 @@
             el('h3', {}, 'Misiones secundarias'),
             el('span', {}, `${allMissions.filter((m) => G.flags?.[m.reward.flag]).length}/${allMissions.length}`)),
           el('p', { class: 'muted' }, 'Las misiones se desbloquean al conocer personajes y avanzar de parte. La afinidad, el tiempo compartido y las decisiones abren nuevos vínculos y recompensas.'),
-          ...side))));
+          ...side),
+        renderSideQuestSection()))));
+  }
+
+  // ---------------- Historias secundarias jugables ----------------
+  function sideQuestAvailable(quest) {
+    const season = Number(G.progress.season || 1);
+    if (quest.seasonMin && season < quest.seasonMin) return false;
+    if (quest.seasonMax && season > quest.seasonMax) return false;
+    return (quest.requiresMet || []).every((id) => G.met.includes(id) || G.unlocked.includes(id));
+  }
+
+  function sideQuestLockReason(quest) {
+    const season = Number(G.progress.season || 1);
+    if (quest.seasonMin && season < quest.seasonMin) return `Se desbloquea en la Parte ${quest.seasonMin}`;
+    if (quest.seasonMax && season > quest.seasonMax) return 'Esta historia pertenece a una parte anterior';
+    const missing = (quest.requiresMet || []).find((id) => !G.met.includes(id) && !G.unlocked.includes(id));
+    if (missing) return `Conoce a ${charName(missing)} en la historia principal`;
+    return 'Disponible';
+  }
+
+  function sideQuestSection() {
+    const quests = window.SIDE_QUESTS || [];
+    const completed = quests.filter((q) => G.sideQuests?.[q.id]?.status === 'completed').length;
+    const cards = quests.map((quest) => {
+      const state = G.sideQuests?.[quest.id];
+      const done = state?.status === 'completed';
+      const active = state?.status === 'active';
+      const available = sideQuestAvailable(quest) || active || done;
+      const lock = sideQuestLockReason(quest);
+      const status = done ? 'COMPLETADA' : active ? 'EN CURSO' : available ? 'DISPONIBLE' : 'BLOQUEADA';
+      return el('article', { class: `mission-card side-quest-card ${done ? 'is-done' : active ? 'is-ready' : !available ? 'is-locked' : ''}` },
+        el('div', { class: 'mission-card-top' },
+          el('span', { class: 'mission-kicker' }, `${quest.city === 'ambas' ? 'PILTOVER + ZAUN' : quest.city.toUpperCase()} · ${quest.seasonMin === 2 ? 'PARTE II' : 'PARTE I'}`),
+          el('span', { class: 'mission-status' }, status)),
+        el('h3', {}, quest.title),
+        el('p', {}, quest.intro),
+        el('div', { class: 'mission-progress' }, done
+          ? `Final: ${state.outcome || 'Tu decisión ha quedado registrada.'}`
+          : active ? `Escena ${(state.history || []).length + 1} · Progreso guardado` : available ? `Lugar relacionado: ${quest.location || 'las dos ciudades'}` : lock),
+        el('div', { class: 'row gap wrap mission-actions' },
+          available
+            ? el('button', { class: `btn ${done ? 'ghost' : 'primary'} small`, onclick: () => openOverlay('sidequest', quest.id) },
+              done ? 'Revisar desenlace' : active ? 'Continuar historia' : 'Comenzar historia')
+            : el('span', { class: 'mission-reward' }, lock)));
+    });
+    return el('section', { class: 'mission-section' },
+      el('div', { class: 'mission-section-head' },
+        el('h3', {}, 'Historias secundarias jugables'),
+        el('span', {}, `${completed}/${quests.length} completadas`)),
+      el('p', { class: 'muted' }, 'Tramas originales con escenas, elecciones y consecuencias guardadas. Las historias se desbloquean al conocer a sus personajes y al llegar a la parte correspondiente.'),
+      ...cards);
+  }
+
+  function openSideQuest(id) {
+    const quest = (window.SIDE_QUESTS || []).find((q) => q.id === id);
+    if (!quest) return toast('No se ha encontrado esta historia secundaria.', 'warn');
+    const state = G.sideQuests?.[id];
+    if (!state && !sideQuestAvailable(quest)) return toast(sideQuestLockReason(quest), 'warn');
+    openOverlay('sidequest', id);
+  }
+
+  function renderSideQuest(box, id) {
+    const quest = (window.SIDE_QUESTS || []).find((q) => q.id === id);
+    if (!quest) return openOverlay('misiones');
+    G.sideQuests = G.sideQuests || {};
+    if (!G.sideQuests[id]) {
+      if (!sideQuestAvailable(quest)) {
+        toast(sideQuestLockReason(quest), 'warn');
+        return openOverlay('misiones');
+      }
+      G.sideQuests[id] = { status: 'active', step: quest.start, history: [], startedAt: new Date().toISOString() };
+      G.log = G.log || [];
+      G.log.push({ s: 'sistema', t: `Has comenzado la historia secundaria «${quest.title}».`, at: new Date().toISOString() });
+      persist();
+    }
+    const state = G.sideQuests[id];
+    const step = quest.steps[state.step];
+    if (!step) {
+      state.step = quest.start;
+      state.status = 'active';
+      return renderSideQuest(box, id);
+    }
+    box.className = 'overlay show sidequest-overlay';
+    box.innerHTML = '';
+    const backButton = el('button', { class: 'btn ghost small', onclick: () => openOverlay('misiones') }, '← Volver al diario');
+    const transcript = (step.lines || []).map((line) => {
+      const speaker = line.s === 'narrador' ? 'NARRACIÓN' : charName(line.s).toUpperCase();
+      return el('article', { class: `side-quest-line ${line.s === 'narrador' ? 'is-narrator' : ''}` },
+        el('small', {}, speaker),
+        el('p', {}, tpl(line.t, G.player)));
+    });
+    const history = (state.history || []).slice(-8).map((item) =>
+      el('p', { class: 'side-quest-history' }, `Tu decisión: ${item.label}`));
+    const choices = state.status === 'completed' ? [] : (step.choices || []).map((choice) =>
+      el('button', { class: 'side-quest-choice', onclick: () => chooseSideQuest(quest, choice) },
+        el('strong', {}, choice.label),
+        el('span', {}, choice.response || 'Elegir esta respuesta.')));
+    const complete = state.status === 'completed';
+    const title = complete ? 'Historia completada' : step.heading || quest.title;
+    box.append(el('div', { class: 'panel side-quest-panel' },
+      el('header', { class: 'overlay-head' },
+        el('div', {},
+          el('span', { class: 'eyebrow' }, `${quest.city === 'ambas' ? 'PILTOVER + ZAUN' : quest.city.toUpperCase()} · PARTE ${quest.seasonMin || 1}`),
+          el('h2', {}, quest.title)),
+        backButton),
+      el('div', { class: 'side-quest-scroll' },
+        el('div', { class: 'side-quest-step' },
+          el('span', { class: 'mission-kicker' }, complete ? 'DESENLACE GUARDADO' : `ESCENA ${(state.history || []).length + 1}`),
+          el('h3', {}, title),
+          ...transcript,
+          complete ? el('div', { class: 'side-quest-outcome' },
+            el('strong', {}, `Tu decisión: ${state.outcome || 'La historia llega a su fin.'}`),
+            el('p', {}, 'Las consecuencias y recompensas se han guardado en esta partida.'),
+            el('p', {}, rewardLabel(quest.reward))) : null,
+          history.length && !complete ? el('details', { class: 'side-quest-history-box' },
+            el('summary', {}, 'Decisiones anteriores'),
+            ...history) : null,
+          !complete ? el('div', { class: 'side-quest-choices' }, ...choices) : null,
+          el('div', { class: 'row gap wrap side-quest-footer' },
+            complete
+              ? el('button', { class: 'btn primary', onclick: () => openOverlay('misiones') }, 'Volver a las misiones')
+              : el('button', { class: 'btn ghost', onclick: () => { persist(); openOverlay('misiones'); } }, 'Guardar y salir'),
+            complete ? el('button', { class: 'btn ghost', onclick: closeOverlay }, 'Volver al mapa') : null))));
+  }
+
+  function chooseSideQuest(quest, choice) {
+    const state = G.sideQuests?.[quest.id];
+    const step = quest.steps[state?.step];
+    if (!state || state.status !== 'active' || !step?.choices?.some((c) => c.id === choice.id)) return;
+    const fromStep = state.step;
+    applyFx(choice.fx || {});
+    state.history = state.history || [];
+    state.history.push({ step: fromStep, choice: choice.id, label: choice.label, at: new Date().toISOString() });
+    state.updatedAt = new Date().toISOString();
+    state.outcome = choice.label;
+    if (choice.complete) {
+      applyFx(quest.reward || {});
+      G.flags = G.flags || {};
+      G.flags[quest.completionFlag] = true;
+      state.status = 'completed';
+      state.completedAt = state.updatedAt;
+      state.outcome = choice.label;
+      Audio2.sfx.unlock();
+      toast(`Historia completada: ${quest.title}`, 'good');
+      G.log = G.log || [];
+      G.log.push({ s: 'sistema', t: `Historia secundaria completada: «${quest.title}». Decisión final: ${choice.label}.`, at: state.updatedAt });
+    } else {
+      state.step = choice.next;
+      if (!quest.steps[state.step]) {
+        state.step = fromStep;
+        toast('La historia no puede avanzar: falta una escena. El progreso se ha conservado.', 'warn');
+        return;
+      }
+    }
+    renderContacts();
+    persist().then(() => renderSideQuest($('#overlay'), quest.id));
   }
 
   function rewardLabel(reward) {
