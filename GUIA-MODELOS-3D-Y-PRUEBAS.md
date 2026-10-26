@@ -102,3 +102,12 @@ Los avatares del mapa se normalizan a una altura objetivo de **22 unidades del m
 El juego mide cada modelo **tal como se dibuja**, con los huesos aplicados, y no la malla en reposo. Antes se medía la malla en reposo, y en los modelos con esqueleto eso fallaba: Jinx venía tumbada y se tomaba por un busto (salía con unas 135 unidades de alto), el guardia de Piltover venía a otra escala (más de 6000) y Ekko quedaba diminuto. Los archivos `.glb` no se modifican; solo cambia cómo los mide el juego.
 
 Para comprobarlo: entra en Piltover (Jefatura de los Ejecutores y Consejo) y Zaun (Los Callejones, el Escondite de Jinx y el Árbol de las Luciérnagas). Comprueba postura, pies en suelo, materiales y escala a vista general y con zoom cercano. El código de mapa ya no dibuja arquitectura urbana mediante geometría procedural. Para activar la exploración 3D se necesitan los escenarios completos `src/models/maps/piltover.glb` y `src/models/maps/zaun.glb`, exportados desde Blender con todos los edificios, calles y materiales. Hasta que se añadan, debe funcionar la carta 2D. Si WebGL falla o pierde el contexto, debe aparecer un aviso y recuperarse la carta 2D; no des por certificado el resultado visual hasta probar los GLB en la compilación de Windows.
+
+
+## Diferencia entre modelos de personajes y mapas urbanos
+
+Esta guía trata principalmente de importar personajes 3D convencionales. Para los escenarios urbanos completos, consulta PENDIENTES.md y src/models/maps/README.md.
+
+En main ya existen los escenarios de ciudad piltover.blend, zaun.blend, piltover.glb y zaun.glb. La tarea no es asumir que faltan ni volver a generarlos sin inspección: es comprobar sus mallas, materiales, escala, puntos de interés, colisiones, rendimiento y aspecto dentro del juego.
+
+Para crear o revisar el mundo completo, compara Marble (https://marble.worldlabs.ai/) y SpAItial (https://spaitial.ai/) con referencias separadas de Piltover y Zaun; luego corrige y exporta la mejor malla desde Blender. No confundir Gaussian Splats con GLB convencional. Los personajes dinámicos deben mantenerse separados de la geometría estática del mapa para que puedan caminar, animarse e interactuar.
