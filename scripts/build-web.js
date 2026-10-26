@@ -105,6 +105,18 @@ function copyOfficialArt() {
     ['s2/invernadero.webp', 'invernadero-zaun-s2.webp'],
     ['s2/escondite-jinx.webp', 'escondite-jinx-s2.webp'],
     ['s1/puente-zaun.webp', 'puente-zaun-s1.webp'],
+    // Referencias de Zaun aportadas en ZAUN.zip, sincronizadas desde el arte canónico.
+    ['s1/zaun-arbol-fireflight.jpg', 'firelights-zaun-reference.jpg'],
+    ['s1/zaun-centro.jpg', 'zaun-centro-reference.jpg'],
+    ['s1/zaun-ciudad-subterranea.jpg', 'zaun-subterranean-reference.jpg'],
+    ['s1/zaun-mercado-reference.png', 'mercado-zaun-reference.png'],
+    ['s1/zaun-muelles.jpg', 'muelles-zaun-reference.jpg'],
+    ['s1/zaun-punto-seguridad.jpg', 'sumidero-zaun-reference.jpg'],
+    ['s1/zaun-ultima-gota-bar.jpg', 'ultima-gota-zaun-reference.jpg'],
+    ['s2/zaun-comuna-viktor.jpg', 'comuna-viktor-reference.jpg'],
+    ['s2/zaun-escondite-jinx.jpg', 'escondite-jinx-reference.jpg'],
+    ['s2/zaun-fisuras-superiores.jpg', 'callejones-zaun-reference.jpg'],
+    ['s2/zaun-singed-laboratorio.png', 'fabrica-singed-reference.png'],
   ];
   const placesDir = path.join(root, 'src', 'img', 'arte', 'lugares');
   for (const [src, dest] of places) {
