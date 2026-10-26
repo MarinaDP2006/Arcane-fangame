@@ -19,11 +19,13 @@ Un GLB debe ser un entorno completo creado en un programa 3D (recomendación: Bl
 
 ## Flujo recomendado
 
-1. Compón los barrios en Blender a partir de activos 3D detallados (fachadas, torres, tejados, puentes, escaleras, tuberías, maquinaria y atrezo) y texturas PBR. Puedes usar Meshy o Tripo para generar piezas a partir de texto, pero corrige su malla, escala, orientación y materiales en Blender.
-2. No intentes crear toda la ciudad con una sola generación de texto a 3D. Trabaja por conjuntos arquitectónicos y compón una escena continua en Blender: las calles deben conectar, los edificios tener escala consistente y los puntos de aparición quedar transitables.
-3. Para Piltover, prioriza arquitectura art nouveau dorada, piedra clara, balcones, cúpulas, agujas, puentes monumentales y grandes desniveles sobre nubes. Para Zaun, crea una ciudad vertical de hierro oxidado, pasarelas, chabolas, tuberías industriales, neones, humo ambiental y callejones estrechos bajo una bóveda rocosa.
-4. Crea y coloca un empty `POI__<id>` por cada lugar, usa la tabla de coordenadas de `tools/blender/export_arcane_map.py` y ejecuta la exportación de validación.
-5. Revisa a vista cenital, altura de calle y zoom cercano. Confirma que personajes y guardias se distingan frente a fachadas, que no haya fachadas gigantes en proporción y que los puntos sean accesibles.
+1. Genera dos mundos independientes con Marble y SpAItial, usando referencias separadas para Piltover y Zaun; no mezcles ambas ciudades en una sola generación.
+2. Prioriza exportar una malla 3D convencional y materiales editables. Comprueba el formato real: Gaussian Splat/SPZ/PLY no equivale automáticamente a GLB con geometría y colisiones.
+3. Importa el resultado en Blender y corrige arquitectura deformada, calles desconectadas, geometría flotante, escala, normales, materiales y zonas intransitables.
+4. Genera activos sueltos con otras herramientas solo cuando falten detalles concretos; intégralos manualmente en Blender, no como edificios aleatorios generados por el runtime.
+5. Para Piltover, prioriza piedra marfil, latón/oro envejecido, cobre patinado, arcos, balcones, cúpulas, agujas, plazas, puentes, mar y puertas marítimas. Para Zaun, crea ciudad subterránea vertical de hierro remachado, cristal coloreado, tuberías corroídas, pasarelas, mercados, talleres, canales tóxicos, humo y luces químicas.
+6. Coloca los empties `POI__<id>` según `tools/blender/export_arcane_map.py` y valida que coincidan con los lugares del juego.
+7. Revisa la escena en vista cenital, panorámica y nivel de calle; no declares navegabilidad hasta probarla dentro del juego.
 
 
 ## Prompts base para generar piezas 3D
@@ -63,7 +65,7 @@ Para **piezas sueltas**, no ciudades enteras:
 4. Abre la salida en Blender. Corrige escala, normales, materiales, piezas flotantes, intersecciones, calles, colisiones y huecos; elimina ruido y reconstruye zonas que la IA haya deformado. Conserva una silueta arquitectónica reconocible de cada ciudad.
 5. Crea/coloca los empties `POI__<id>` de este README y alinea los puntos con `src/data/world.js`. La IA no debe mover silenciosamente lugares que usa la historia.
 6. Exporta a `piltover.glb` o `zaun.glb` con texturas embebidas. Optimiza la malla y las texturas para el rendimiento en Windows y dispositivos modestos.
-7. Valida la escala con una figura humana de referencia de 1,7 unidades de altura (aproximación de producción): cámara cenital, media altura y nivel de calle; comprueba también los niveles de zoom mínimo/máximo. La escala final del avatar del juego debe ajustarse a los datos reales de los modelos, no solo al tamaño nominal de la malla.
+7. Valida la escala con la geometría real de los avatares. El código de avatars3d.js usa actualmente una altura objetivo de 22 unidades de mundo, pero debe contrastarse con los GLB antes de fijar la escala definitiva: cámara cenital, media altura y nivel de calle; comprueba también los niveles de zoom mínimo/máximo. La escala final del avatar del juego debe ajustarse a los datos reales de los modelos, no solo al tamaño nominal de la malla.
 8. Coloca después NPC y guardias como entidades dinámicas del juego, no como parte fija de la malla estática. Distribuye residentes de forma determinista por zonas transitables, excluye agua/tejados y evita puntos de historia, entradas y bloqueos.
 9. Prueba ambas ciudades dentro del juego. Solo entonces considera listo el mapa; una previsualización bonita de la IA no demuestra que el GLB sea funcional, ligero ni jugable.
 
@@ -89,3 +91,35 @@ El script **no crea edificios, materiales ni mallas**. Solo valida una escena mo
 ### Nota sobre el estado del repositorio
 
 Este cambio hace que el runtime acepte únicamente escenarios GLB completos y apague la generación arquitectónica procedural. Los dos archivos de ciudad todavía deben crearse y añadirse al repositorio con Blender; hasta entonces el juego usa el mapa 2D existente en vez de volver a dibujar ciudades con formas geométricas.
+
+
+## Referencias de lore, imágenes y diseño del mapa
+
+No uses una única imagen como textura del mapa ni copies una captura como si fuese una malla. Reúne referencias separadas por ciudad y por tipo de espacio: panorámica, nivel de calle, fachadas, interiores, conexiones verticales, cultura y tecnología.
+
+### Piltover
+- Universo oficial: https://universe.leagueoflegends.com/en_US/region/piltover/
+- Wiki en español: https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver
+- Visual: metrópolis costera sobre acantilados, puertas marítimas y comercio, avenidas/plazas, piedra clara, oro/latón, cobre patinado, tejados ornamentados, torres, balcones, cúpulas, Academia, Consejo, talleres e instalaciones Hextech.
+- Cultura: comercio, estatus, academias, innovación, clanes influyentes y fe en el progreso; también debe notarse la desigualdad respecto a Zaun.
+- Hextech: cristales/energía mágica integrados en dispositivos refinados y precisos, no runas decorativas aleatorias.
+
+### Zaun
+- Universo oficial: https://universe.leagueoflegends.com/en_US/region/zaun/
+- Wiki en español: https://leagueoflegends.fandom.com/es/wiki/Zaun
+- Visual: cañones y fisuras inferiores, niveles verticales, pasarelas, ascensores, escaleras y puentes, hierro remachado, vidrio coloreado, tuberías corroídas, mercados, talleres, bares, canales y humo industrial. Luces verdes, cian y magenta como acentos, no una capa de neón que lo cubra todo.
+- Cultura: inventiva, comunidad, expresión personal, mercados, música, santuarios, redes informales, rivalidad industrial y barones químicos. No representar solo pobreza, violencia y fábricas.
+- Shimmer/Brillo: sustancia peligrosa asociada a producción, contrabando, poder, dependencia y efectos físicos. Mostrar laboratorios, recipientes, depósitos, señales de riesgo y control territorial cuando la historia lo justifique; no convertirlo en decoración omnipresente.
+- Diferenciar quimtec (industrial, experimental, corrosiva y a menudo improvisada) de Hextech (cristales/energía mágica, ingeniería más refinada).
+
+### Acceso y geografía común
+- Piltover está arriba; Zaun se extiende por fisuras y niveles inferiores. Mostrar conexiones verticales y horizontales: puentes, rampas, escaleras, ascensores/descensores, pasarelas, túneles y estaciones.
+- El Puente del Progreso debe ser un hito reconocible y políticamente cargado, no un decorado genérico.
+- Cada acceso tiene origen, destino y condición narrativa. Evitar puertas que den a paredes o viajes sin transición.
+- La estética de Arcane es la referencia primaria. Las wikis pueden mezclar continuidades de Runeterra; registrar contradicciones en lugar de fusionarlas sin criterio.
+
+### Mapa 2D y versión 3D
+- Referencia visual aportada por la autora: https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298
+- El agente debe abrir la referencia en su navegador. Si no carga, pedir a la autora una captura; no inventar lo que muestra.
+- El mapa 2D debe seguir siendo legible y jugable: distritos, etiquetas, accesos, POI y rutas claras. El 3D debe representar la misma geografía en volumen real, alineado con IDs y coordenadas de src/data/world.js.
+- El mapa 2D y el 3D deben compartir una sola fuente de verdad para lugares, misiones, accesos y estado desbloqueado.
