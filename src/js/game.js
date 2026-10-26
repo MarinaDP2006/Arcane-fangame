@@ -591,14 +591,30 @@
   // Practicar cualquier minijuego sin recompensa.
   function openArcade() {
     const box = $('#overlay');
+    const city = G.world?.map || G.player.origin;
+    const cityLabel = city === 'piltover' ? 'Piltover' : 'Zaun';
+    const available = Minigames.forCity(city);
     box.innerHTML = '';
-    box.className = 'overlay show';
-    box.append(el('div', { class: 'panel action-menu arcade' },
-      el('h2', {}, 'Salón de minijuegos'),
-      el('p', { class: 'muted' }, 'Practica sin límite. Las recompensas de estadísticas se ganan en los lugares del mapa.'),
-      el('div', { class: 'arcade-grid' }, Object.entries(Minigames.GAMES).map(([id, g]) =>
-        el('button', { class: 'arcade-card', onclick: async () => { box.style.visibility = 'hidden'; await Minigames.play(id, { bonus: mgBonus(id) }); box.style.visibility = ''; } },
-          el('span', { class: 'arcade-icon', html: Minigames.emblem(id) }), el('strong', {}, g.title), el('small', { class: 'muted' }, g.goal)))),
+    box.className = 'overlay show arcade-overlay';
+    box.append(el('div', { class: `panel action-menu arcade arcade-3d arcade-${city}` },
+      el('header', { class: 'arcade-header' },
+        el('div', {}, el('span', { class: 'eyebrow' }, `SALÓN HEXTECH · ${cityLabel.toUpperCase()}`),
+          el('h2', {}, 'Desafíos 3D'),
+          el('p', { class: 'muted' }, `Solo aparecen los minijuegos disponibles en ${cityLabel}. Viaja a la otra ciudad para desbloquear sus desafíos.`)),
+        el('span', { class: 'arcade-count' }, `${available.length}/15`)),
+      el('div', { class: 'arcade-grid arcade-grid-3d' }, available.map((game) => {
+        const def = Minigames.GAMES[game.id];
+        return el('button', { class: 'arcade-card arcade-card-3d', onclick: async () => {
+          box.style.visibility = 'hidden';
+          try { await Minigames.play(game.id, { bonus: mgBonus(game.id), city }); }
+          finally { box.style.visibility = ''; }
+        } },
+        el('span', { class: 'arcade-icon', html: game.emblem }),
+        el('small', { class: 'arcade-card-kicker' }, cityLabel.toUpperCase() + ' · 3D'),
+        el('strong', {}, game.title),
+        el('small', { class: 'muted' }, game.goal),
+        el('span', { class: 'arcade-open' }, 'Iniciar desafío ↗'));
+      })),
       el('button', { class: 'btn ghost', onclick: () => openOverlay('menu') }, '← Volver')));
   }
 
@@ -1679,6 +1695,15 @@
   // silent: en la historia libre el jugador ya ha escrito su propia frase.
   async function choose(c, silent = false) {
     if (busy) return;
+    // Los retos de la historia respetan la ciudad donde está el jugador. No consumimos
+    // la elección ni aplicamos sus recompensas si debe viajar para participar.
+    if (c.game && Minigames.isAvailable && !Minigames.isAvailable(c.game.id, G.world?.map || G.player.origin)) {
+      const requiredCity = Minigames.GAMES[c.game.id]?.city;
+      toast(requiredCity
+        ? `Este desafío está en ${requiredCity === 'piltover' ? 'Piltover' : 'Zaun'}. Viaja allí y vuelve a elegirlo.`
+        : 'Este desafío no forma parte del catálogo disponible.', 'warn');
+      return;
+    }
     if (!silent) Audio2.sfx.choice();
     if (c.__next) return nextChapter();
     if (!silent) {
