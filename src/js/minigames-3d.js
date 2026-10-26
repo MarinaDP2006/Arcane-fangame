@@ -129,6 +129,7 @@
       let objectCount = 0, worldSpeed = 0, currentRound = 0, actionUsed = false;
       let attack = 'izquierda', attackWait = 2.2, runnerLane = 0, jump = 0, jumpV = 0, progress = 0;
       let currentNeed = 0, bargainRounds = 0, bargainDeals = 0;
+      let stealthLane = 0, stealthSpawn = 0;
       const interactive = [], moving = [], projectiles = [];
       const disposables = new Set();
       const keys = new Set();
@@ -322,11 +323,13 @@
           } else {
             const move = k.includes('left') ? -1 : k.includes('right') ? 1 : 0;
             runnerLane = Math.max(-1, Math.min(1, runnerLane + move));
-            jump = k.includes('up') ? 1 : 0;
-            if (Math.random() > .3) { score++; labelMessage('Has avanzado sin activar la alarma.', 'good'); }
-            else { mistakes++; labelMessage('Una cámara te ha detectado. Cambia de ruta.', 'bad'); }
-            if (score >= def.quota) finish(true);
-            if (mistakes >= 3) finish(false);
+            if (k.includes('up')) {
+              jump = jump ? 0 : 1; // En sigilo, ↑ alterna entre ir erguido y agacharse.
+              if (player) player.scale.y = jump ? .62 : 1;
+              labelMessage(jump ? 'Agachada: el haz alto no te alcanza.' : 'Te has levantado. Observa el próximo barrido.', 'hint');
+            } else if (move) {
+              labelMessage(`Te has desplazado al carril ${runnerLane + 2}. Vigila el haz rojo.`, 'hint');
+            }
           }
         }
       }
@@ -382,6 +385,17 @@
             { label: 'Cubrirte · Espacio', run: () => pressAction('Space') },
             { label: 'Esquivar →', run: () => pressAction('ArrowRight') },
           ]);
+        } else if (mode === 'stealth') {
+          player = playerMesh();
+          worldSpeed = 7;
+          stealthSpawn = 1.0;
+          spawnStealthBeam();
+          labelMessage('Cruza sin que el haz rojo te detecte: cambia de carril o agáchate antes del barrido.', 'hint');
+          addActionButtons([
+            { label: '← Cambiar carril', run: () => pressAction('ArrowLeft') },
+            { label: 'Agacharse · ↑', run: () => pressAction('ArrowUp') },
+            { label: 'Cambiar carril →', run: () => pressAction('ArrowRight') },
+          ]);
         } else if (mode === 'runner') {
           player = playerMesh();
           worldSpeed = def.variant === 'chase' ? 13.5 : def.variant === 'hover' ? 10.5 : 8.5;
@@ -427,6 +441,14 @@
           };
           controls.append(b);
         }
+      }
+      function spawnStealthBeam() {
+        stealthLane = Math.floor(rand(-1, 2));
+        const beam = cube(1.95, .07, .1, '#e74b68', [stealthLane * 2.5, 1.55, -20], '#ff4267');
+        beam.userData.kind = 'scan';
+        beam.userData.lane = stealthLane;
+        beam.userData.judged = false;
+        moving.push(beam);
       }
       function spawnObstacle() {
         const lane = Math.floor(rand(-1, 2));
@@ -515,6 +537,22 @@
         });
         for (const o of moving) {
           if (o.userData?.phase != null) o.rotation.y += dt * 1.25;
+          if (o.userData?.kind === 'scan' && def.mode === 'stealth') {
+            o.position.z += worldSpeed * dt;
+            if (!o.userData.judged && o.position.z >= 2.5) {
+              o.userData.judged = true;
+              if (runnerLane === o.userData.lane && !jump) {
+                mistakes++;
+                labelMessage('¡Te ha detectado la cámara! Cambia de carril o agáchate antes del próximo barrido.', 'bad');
+                if (mistakes >= 3) finish(false);
+              } else {
+                score++;
+                labelMessage('Barrido superado: has evitado la vigilancia.', 'good');
+                if (score >= def.quota) finish(true);
+              }
+            }
+            if (o.position.z > 5) o.visible = false;
+          }
           if (o.userData?.kind === 'obstacle' || o.userData?.kind === 'charge') {
             o.position.z += worldSpeed * dt;
             if (!o.userData.scored && o.position.z > 3.3) {
@@ -558,9 +596,10 @@
           }
         }
         if (def.mode === 'stealth') {
-          progress += dt * 9;
-          if (progress > 100) finish(score >= def.quota);
-          if (Math.random() < dt * .25) { const beam = cube(4.8, .08, .08, '#e74b68', [rand(-.8, .8), .8, -4], '#ff4267'); beam.userData.temporary = true; }
+          progress += dt * 4.5;
+          stealthSpawn += dt;
+          if (stealthSpawn > 2.15) { stealthSpawn = 0; spawnStealthBeam(); }
+          if (progress >= 100) finish(score >= def.quota);
         }
         if (elapsed > def.secs) finish(score >= def.quota);
       }
