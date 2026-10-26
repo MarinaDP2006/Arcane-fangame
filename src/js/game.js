@@ -870,7 +870,7 @@
             el('span', {}, `${allMissions.filter((m) => G.flags?.[m.reward.flag]).length}/${allMissions.length}`)),
           el('p', { class: 'muted' }, 'Las misiones se desbloquean al conocer personajes y avanzar de parte. La afinidad, el tiempo compartido y las decisiones abren nuevos vínculos y recompensas.'),
           ...side),
-        sideQuestSection()))));
+        sideQuestSection())));
   }
 
   // ---------------- Historias secundarias jugables ----------------
