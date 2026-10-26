@@ -172,8 +172,8 @@
         if (scene) {
           scene.traverse((obj) => {
             obj.geometry?.dispose?.();
-            if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose?.());
-            else obj.material?.dispose?.();
+            const materials = Array.isArray(obj.material) ? obj.material : obj.material ? [obj.material] : [];
+            materials.forEach((m) => { m.map?.dispose?.(); m.dispose?.(); });
           });
           scene.clear();
         }
@@ -239,6 +239,26 @@
         const floorMat = material(zaun ? '#132d2a' : '#2a2c31', zaun ? '#0a4b3c' : '#5a471f', { metalness: .6, roughness: .65 });
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(90, 90), floorMat);
         floor.rotation.x = -Math.PI / 2; floor.position.y = -0.16; floor.receiveShadow = true; scene.add(floor);
+        // Fondo de localización de Arcane a modo de telón 3D: el escenario conserva profundidad,
+        // luces y colisiones propias, pero deja de parecer un prototipo abstracto sin ciudad.
+        const season = window.CustomArt?.season?.() || 's1';
+        const artUrl = window.CustomArt?.image?.('lugares', def.scene)
+          || window.ART_BUNDLED?.[`lugares/${season}`]?.[def.scene]
+          || window.ART_BUNDLED?.[`lugares/${zaun ? 'zaun' : 'piltover'}`]?.[zaun ? 'zaun' : 'piltover']
+          || window.ART_BUNDLED?.['lugares/s1']?.[zaun ? 'zaun' : 'piltover'];
+        if (artUrl && THREE.TextureLoader) {
+          new THREE.TextureLoader().load(artUrl, (texture) => {
+            if (done || !scene) { texture.dispose?.(); return; }
+            if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+            const backdrop = new THREE.Mesh(
+              new THREE.PlaneGeometry(64, 38),
+              new THREE.MeshBasicMaterial({ map: texture, color: 0x849397, transparent: true, opacity: .64, side: THREE.DoubleSide, depthWrite: false })
+            );
+            backdrop.position.set(0, -1.5, -38);
+            backdrop.renderOrder = -10;
+            scene.add(backdrop);
+          }, undefined, () => { /* el escenario geométrico sigue disponible si falla el recurso */ });
+        }
         // Plataformas geométricas y arquitectura estilizada, siempre con volumen 3D real.
         for (let i = 0; i < 7; i++) {
           const x = (i % 2 ? -1 : 1) * rand(6, 11);
