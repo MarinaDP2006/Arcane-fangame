@@ -54,3 +54,22 @@ El mapa exterior ahora añade siluetas 3D específicas para los principales hito
 - No se ha generado ni validado una compilación nueva de Windows en esta tarea.
 
 **Pruebas recomendadas en Windows:** `npm ci`, `npm run check`, `npm start`, después iniciar una partida de Piltover, visitar los cinco escenarios, salir con Esc y regresar, activar objetivo y comprobar su continuación.
+
+
+## Referencias de arte y relación con Zaun
+
+Referencias:
+- Universo oficial de Piltover: https://universe.leagueoflegends.com/en_US/region/piltover/
+- Wiki en español: https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver
+- Universo oficial de Zaun: https://universe.leagueoflegends.com/en_US/region/zaun/
+- Wiki en español: https://leagueoflegends.fandom.com/es/wiki/Zaun
+- Análisis del diseño de ambas ciudades: https://80.lv/articles/riot-games-on-designing-arcane-s-piltover-zaun
+- Tablero visual de la autora: https://neta.art/w/b2a0b258-f552-4a6d-9392-e1ff1557f298 (si no abre en el navegador del agente, solicitar una captura).
+
+Piltover debe leerse como metrópolis costera elevada sobre acantilados: avenidas, plazas, comercio marítimo, piedra marfil, oro/latón, cobre patinado, torres, agujas, balcones, cúpulas, Academia, Consejo, talleres y Hexpuertas. La Hextech debe parecer refinada y precisa, con cristales y energía mágica integrados en aparatos construidos con cuidado; no usar runas aleatorias como decoración.
+
+La cultura se expresa con instituciones visibles, casas de comerciantes, talleres, academias, Ejecutores y celebraciones del progreso. Evitar que cada barrio sea igual de lujoso: representar diferencias de función, riqueza y acceso.
+
+Piltover y Zaun deben ser dos ciudades interdependientes separadas por altura, riqueza y política, no dos mapas sin conexión. El horizonte de Piltover debe sugerir la profundidad bajo sus acantilados. Los accesos a Zaun deben llevar a ascensores, puentes, pasarelas, descensores o estaciones identificables. El Puente del Progreso es un hito espacial y narrativo.
+
+Este documento define dirección artística y recorridos previstos; no certifica que todos los interiores y modelos se hayan inspeccionado visualmente en la compilación actual. Para generar escenarios completos con IA, usar Marble y SpAItial y corregir/exportar la malla desde Blender según src/models/maps/README.md.
