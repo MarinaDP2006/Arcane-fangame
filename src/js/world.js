@@ -1757,8 +1757,33 @@
               webglWarned = true;
             }
           }, { once: true });
-          r3d.setMap(map, paintBackground(true));
-          if (!map.bg) paintBackground();
+          const renderer = r3d;
+          const requestedCity = mapId;
+          renderer.setMap(map).then((loaded) => {
+            // No activar un GLB antiguo si el jugador ya ha viajado a otra ciudad.
+            if (renderer !== r3d || requestedCity !== mapId) return;
+            if (!loaded) {
+              G.world.view = '2d';
+              use3d(false);
+              resize();
+              if (!webglWarned) {
+                toast(`No existe un escenario GLB válido para ${requestedCity}. Se mantiene el mapa ilustrado 2D; añade models/maps/${requestedCity}.glb exportado desde Blender para activar el 3D.`, 'warn');
+                webglWarned = true;
+              }
+              return;
+            }
+            clampView();
+          }).catch((err) => {
+            console.error('No se pudo cargar el escenario 3D:', err);
+            if (renderer !== r3d || requestedCity !== mapId) return;
+            G.world.view = '2d';
+            use3d(false);
+            resize();
+            if (!webglWarned) {
+              toast('No se pudo cargar el escenario GLB. Se mantiene el mapa ilustrado 2D.', 'warn');
+              webglWarned = true;
+            }
+          });
         } else if (!webglWarned) {
           toast('WebGL no está disponible en este equipo. Se mostrará el mapa ilustrado 2D.', 'warn');
           webglWarned = true;
