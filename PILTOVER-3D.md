@@ -73,3 +73,24 @@ La cultura se expresa con instituciones visibles, casas de comerciantes, tallere
 Piltover y Zaun deben ser dos ciudades interdependientes separadas por altura, riqueza y política, no dos mapas sin conexión. El horizonte de Piltover debe sugerir la profundidad bajo sus acantilados. Los accesos a Zaun deben llevar a ascensores, puentes, pasarelas, descensores o estaciones identificables. El Puente del Progreso es un hito espacial y narrativo.
 
 Este documento define dirección artística y recorridos previstos; no certifica que todos los interiores y modelos se hayan inspeccionado visualmente en la compilación actual. Para generar escenarios completos con IA, usar Marble y SpAItial y corregir/exportar la malla desde Blender según src/models/maps/README.md.
+
+
+## Dirección artística ampliada para IA y Freebuff
+
+### Identidad visual y cultura
+Piltover es la **Ciudad del Progreso**: metrópolis costera sobre los acantilados y pasos que la conectan con Zaun. Debe comunicar comercio, artesanía, investigación, prestigio y optimismo tecnológico, pero también desigualdad y poder de los clanes mercantiles. La arquitectura combina piedra y mármol claros, marfil, bronce trabajado, vidrio brillante, torres acanaladas, cúpulas, pasarelas elegantes y puertas marítimas monumentales. La hextech se presenta como tecnología refinada y controlada: cristales azules, mecanismos precisos, laboratorios ordenados, iluminación azul-dorada y símbolos de prestigio.
+
+### Relación y accesos a Zaun
+Piltover y Zaun son sociedades distintas pero conectadas. La ciudad debe tener rutas legibles hacia el Puente del Progreso, los accesos industriales y las zonas de transición. Desde la vista general deben entenderse las alturas, los acantilados, el canal/puertas marítimas y la ciudad que se extiende hacia abajo. El puente es un hito narrativo: para Piltover representa progreso; para muchos zaunitas recuerda abandono y control. No crear un portal mágico genérico ni un teletransporte sin explicación.
+
+### Prompt visual específico
+> Escenario 3D navegable de Piltover para un RPG narrativo de fantasía industrial pictórica. Gran ciudad costera construida sobre acantilados, por encima de los niveles de Zaun. Composición vertical legible desde un mapa 2D cenital y desde cámara de juego: avenidas, plazas, escalinatas, puentes entre mesetas, canales y accesos identificables. Arquitectura de mármol y piedra marfil, latón y bronce envejecido, vidrio, torres acanaladas, cúpulas, ornamento art nouveau, monumentos y edificios mercantiles de escala variada. Hextech refinada con cristales azules y luz dorada, laboratorios limpios, Academia, Consejo, Hexpuertas y Puente del Progreso como siluetas reconocibles. Luz diurna cálida, cielo azul y nubes bajo los acantilados; materiales ricos y pictóricos, no plástico brillante ni edificios repetidos. Calles y plazas deben ser realmente transitables, con suelo continuo y espacio para personajes. Sin HUD, texto falso ni personajes pegados a la arquitectura. Generar una malla 3D convencional editable/exportable, no solo una panorámica o Gaussian Splat.
+
+### Referencias para investigar
+- [Universo oficial de Piltover](https://universe.leagueoflegends.com/en_US/region/piltover/)
+- [Galería oficial de Piltover](https://universe.leagueoflegends.com/en_US/region/piltover/?mv=image-gallery)
+- [Wiki Fandom en español: Piltóver](https://leagueoflegends.fandom.com/es/wiki/Pilt%C3%B3ver)
+- [Referencia visual de avenida dorada](https://cdn.oneesports.gg/cdn-data/2023/09/LeagueofLegends_Piltover_VisionsofProgress.jpg)
+- [Referencia visual del puente](https://img.4gamers.com.tw/ckfinder-th/image2/auto/2023-09/Arcane%20Piltover-230907-054726.jpg?versionId=9v8bFRByVg3MUaAam7AMxlCueivwNvPN)
+
+Las imágenes externas se usan como referencias de análisis; no se deben empaquetar en el juego sin revisar derechos y procedencia. El aspecto final debe ser coherente, no una copia literal de una única imagen.
