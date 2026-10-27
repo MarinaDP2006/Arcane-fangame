@@ -82,7 +82,7 @@
     if (!root) return;
     root.innerHTML = '';
     const card = (id, label) => el('button', {
-      class: `city-choice city-choice-${id}`, type: 'button', 'aria-label': `Elegir ${label}`,
+      class: `city-choice city-choice-${id}`, style: `--city-art:url("${window.CustomArt.image('lugares', id) || `img/arte/lugares/${id}.webp`}")`, type: 'button', 'aria-label': `Elegir ${label}`,
       onclick: async () => {
         try {
           const slots = await store.listSlots();
