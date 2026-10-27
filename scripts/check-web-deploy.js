@@ -107,8 +107,8 @@ const index = path.join(out, 'index.html');
 if (fs.existsSync(index)) {
   const html = fs.readFileSync(index, 'utf8');
   if (/<figure class="portada-personajes"/.test(html)) fail('la portada todavía muestra los retratos de Vi/Jinx en el inicio');
-  if (!/rel="icon" href="icono-arcane\\.svg"/.test(html)) fail('el favicon no usa icono-arcane.svg, el icono único del proyecto');
-  if (/icono\\.png/.test(html)) fail('index.html aún referencia el icono alternativo icono.png');
+  if (!html.includes('rel="icon" href="icono-arcane.svg"')) fail('el favicon no usa icono-arcane.svg, el icono único del proyecto');
+  if (html.includes('icono.png')) fail('index.html aún referencia el icono alternativo icono.png');
   for (const token of ['{{VERSION}}', '{{PERSONAJES}}', '{{LUGARES}}', '{{CAPTURAS}}']) {
     if (html.includes(token)) fail('quedó una plantilla sin reemplazar: ' + token);
   }
