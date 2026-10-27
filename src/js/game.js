@@ -10,7 +10,7 @@
   let busy = false; // reproduciendo líneas de la historia
   let skipping = false;
   // Atajo de teclado entre corchetes (en móvil no hay teclado, así que no se muestra).
-  const keyHint = (k) => (U.touch ? '' : `  [${k}]`);
+  const keyHint = () => ''; // Los atajos se consultan en Ajustes; no se repiten en pantalla.
   let tab = 'historia';
   let contact = null; // personaje del chat libre seleccionado
 
@@ -595,7 +595,6 @@
         el('button', { class: 'btn', onclick: async () => { await persist(); toast('Partida guardada', 'good'); } }, 'Guardar partida'),
         el('button', { class: 'btn', onclick: () => openArcade() }, 'Salón de minijuegos'),
         el('button', { class: 'btn', onclick: () => openSettingsOverlay() }, 'Ajustes'),
-        el('button', { class: 'btn', onclick: () => { closeOverlay(); showHelp(); } }, 'Controles'),
         el('button', { class: 'btn', onclick: () => showGuide(guideKind()) }, 'Guía de personajes'),
         el('button', { class: 'btn ghost', onclick: async () => { if (window.App.settings.confirmExit !== false && !confirm('¿Salir al menú principal? La partida se guarda.')) return; await persist(); exitToTitle(); } }, '↩ Salir al menú principal'),
         U.desktop ? el('button', { class: 'btn ghost', onclick: async () => { await persist(); window.arcane.quit(); } }, '✕ Salir del juego') : null));
