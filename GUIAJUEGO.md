@@ -93,31 +93,28 @@ La importancia de cada habilidad o aptitud depende de las reglas de la versión 
 El juego dispone de datos para una guía rápida sin spoilers. El contenido cambia según el origen: quien empieza en Zaun conoce primero a las personas de esa ciudad; quien empieza en Piltover recibe contexto sobre sus inventores y autoridades. En una fase posterior puede aparecer un repaso con personajes nuevos. Si conoces poco el universo, lee esas fichas sin prisa. Si ya conoces la serie, puedes usarlas como referencia rápida.
 
 ### Paso 5. Lee y decide
-La historia se presenta en escenas y conversaciones. En esta fase se priorizan los diálogos escritos y el mapa 2D ilustrado. Lee el texto, revisa las opciones disponibles y selecciona la respuesta que mejor encaje con tu protagonista. Las decisiones pueden influir en relaciones o eventos posteriores.
+La historia se presenta en escenas y conversaciones escritas. El mapa principal es 2D y conecta Piltover con Zaun; los minijuegos abren escenas 3D separadas. Lee las opciones disponibles y selecciona la respuesta que mejor encaje con tu protagonista: las decisiones pueden afectar a relaciones, reputación y eventos posteriores.
 
 ### Paso 6. Explora el mapa
 ![Mapa de Zaun](capturasjuego/07-version-actual-mapa-3d-de-zaun.webp)
 
-> Esta captura es histórica: la versión de trabajo de esta rama prioriza el mapa 2D. No la uses como prueba de que el modo 3D sigue activo.
+> Esta captura es histórica y muestra una versión anterior. La versión actual explora las ciudades en 2D; el 3D se reserva para los minijuegos.
 
-El mapa permite recorrer visualmente una ciudad y localizar puntos de interés. En función del dispositivo:
+El mapa 2D permite recorrer Piltover y Zaun y localizar puntos de interés. En función del dispositivo:
 - En ordenador puedes utilizar ratón y teclado.
 - En pantalla táctil puedes arrastrar, tocar los puntos de interés y utilizar gestos de zoom cuando estén disponibles.
-- Esta rama prioriza la vista 2D ilustrada; los controles o capturas antiguos de la vista 3D pueden no corresponder a la versión actual.
+- El Puente del Progreso permite viajar entre ambas ciudades. Los minijuegos 3D se abren por separado desde los retos disponibles en la ciudad o localización correspondiente.
 
 **Importante:** tocar un lugar del mapa puede abrir primero un menú contextual con acciones como historia, conversación, explorar, minijuego o viajar. No presupongas que un toque siempre lleva directamente a otra pantalla. Lee las opciones del lugar.
 
 ### Paso 7. Conversa con los personajes
-En esta fase, utiliza las conversaciones y los diálogos escritos. La integración de IA está aplazada y no forma parte del flujo de prueba.
-
-- **Diálogo escrito:** selecciona respuestas preparadas por la historia. No requiere instalar un modelo.
-- No instales ni configures modelos para probar esta rama. La prioridad es comprobar el flujo narrativo sin conexión a un proveedor de IA.
+En la versión actual, utiliza el comunicador y los árboles de diálogo escritos. No hace falta instalar ni configurar un modelo de IA para jugar. La interfaz narrativa debe funcionar de manera autónoma, con las respuestas y decisiones incluidas en los datos del juego.
 
 ### Paso 8. Prueba el Salón de minijuegos
 
 ![Salón de minijuegos](capturasjuego/06-salon-de-minijuegos-con-los-10-juegos.webp)
 
-El proyecto incluye una pantalla de actividades/minijuegos. Entra, lee las reglas que se muestran en cada uno y prueba más de una actividad. Los controles pueden variar según el minijuego y la plataforma. En pantalla táctil, los minijuegos de teclado muestran botones grandes. En **Pelea en el foso** y **Regateo en el mercado** también puedes deslizar el dedo: un deslizamiento de unos 32 píxeles o más hacia un lado equivale a la flecha de esa dirección, y un toque corto sigue siendo un toque normal. Con ratón y teclado no cambia nada. No des por hecho que la captura antigua representa la lista exacta de actividades de la versión descargada. Úsala para reconocer visualmente la sección.
+El Salón de minijuegos actual tiene hasta 15 retos 3D: 7 disponibles en Piltover y 8 en Zaun. El catálogo cambia con la ciudad en la que te encuentres; viaja al otro lado para ver sus retos. Abre un desafío, lee el objetivo y usa los controles en pantalla, el ratón o el teclado. En móvil deben aparecer controles táctiles adaptados al modo de juego. La captura incluida más abajo es histórica y todavía muestra el antiguo listado de 10 minijuegos; no representa el catálogo actual.
 
 ### Paso 9. Guarda tu progreso
 Abre el menú de partidas y usa la ranura disponible. Para comprobar el guardado:
@@ -137,9 +134,9 @@ En Android, la partida se almacena dentro de la app salvo que se exporte. Sigue 
 ## 5. Ajustes recomendados para empezar
 No hay una configuración perfecta para todos los dispositivos. Como base:
 - **Sonido:** deja un volumen cómodo y prueba música, ambiente y efectos por separado si aparecen esas opciones.
-- **Gráficos:** si el mapa 3D va lento, selecciona opciones de calidad inferiores o la vista alternativa disponible.
+- **Gráficos:** el mapa de ciudad es 2D. Los minijuegos usan WebGL/3D y pueden exigir más al dispositivo; si un reto no se puede iniciar, vuelve al mapa y registra el dispositivo y el error.
 - **Accesibilidad:** comprueba tamaño de pantalla, legibilidad, movimiento reducido y controles táctiles cuando existan.
-- **IA:** déjala desactivada en la primera partida si lo que quieres es aprender el mundo y comprobar la historia sin instalaciones adicionales.
+- **IA:** la integración no forma parte de la partida actual; no se requiere configurarla.
 - **Partidas:** crea una ranura de prueba y conserva el guardado principal sin tocar.
 
 ## 6. Qué probar: plan de testing
@@ -195,7 +192,9 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 - [ ] Arrastrar el mapa y hacer zoom no bloquea el resto de la interfaz.
 - [ ] Tocar un punto abre las acciones esperadas.
 - [ ] Las acciones de historia, conversación, explorar o viajar que estén disponibles responden.
-- [ ] El mapa sigue usable si la vista 3D no está disponible o se elige la alternativa 2D.
+- [ ] El mapa 2D sigue usable aunque WebGL no esté disponible para los minijuegos.
+- [ ] Viajar por el Puente del Progreso lleva a la otra ciudad.
+- [ ] El Salón solo muestra los desafíos de la ciudad actual.
 
 **Resultado esperado:** se puede localizar y seleccionar un punto, leer sus opciones y volver al mapa.
 
@@ -203,9 +202,7 @@ Este plan sirve para probar una compilación sin editar el código. Haz una prue
 - [ ] Los personajes que la historia ha presentado pueden seleccionarse cuando corresponde.
 - [ ] Los diálogos escritos muestran opciones y continúan.
 - [ ] La IA desactivada no provoca un error que impida usar los diálogos escritos.
-- [ ] Con IA habilitada, la configuración indica proveedor, dirección y modelo.
-- [ ] Si el servidor está apagado, aparece un mensaje comprensible y el juego se mantiene utilizable.
-- [ ] La respuesta del modelo no crea botones rotos, código ejecutable ni saltos arbitrarios de estado.
+- [ ] El juego no requiere un servidor de IA para mostrar opciones y continuar los diálogos escritos.
 
 **Resultado esperado:** el sistema de conversación responde o falla de forma controlada, sin bloquear la partida.
 
@@ -278,7 +275,7 @@ Antes de publicar una captura, elimina nombres reales, archivos personales, conv
 | No puedes continuar | Comprueba si existe una ranura guardada; inicia una partida de prueba aparte para comparar. |
 | El mapa va lento | Baja la calidad disponible y comprueba si la vista alternativa ayuda. |
 | Un personaje no aparece | Continúa la historia hasta que se presente; si debería estar disponible, registra la ubicación y la versión. |
-| No hay respuestas de IA | Usa el diálogo escrito y verifica servidor/modelo después; la IA es opcional. |
+| No hay respuesta al elegir una opción | Cierra el panel si es posible, guarda el progreso y registra la escena y la elección. No se necesita un proveedor de IA. |
 | No hay sonido | Revisa volumen, silencio y ajustes; prueba después de interactuar con la pantalla. |
 | No carga una partida | No la borres ni la reemplaces. Copia la carpeta o el archivo antes de probar una recuperación. |
 | La pantalla táctil no responde | Cierra y vuelve a abrir; registra dispositivo, orientación y pantalla afectada. |
@@ -290,15 +287,15 @@ Las capturas siguientes son reales y están guardadas en <code>capturasjuego/</c
 |---|---|
 | ![Menú principal](capturasjuego/02-menu-inicial-grieta-entre-piltover-y-zaun.webp) | Reconocer la pantalla inicial. |
 | ![Creador](capturasjuego/03-creador-de-personaje-eleccion-de-retrato.webp) | Orientarse en la creación. |
-| ![Mapa 3D](capturasjuego/07-version-actual-mapa-3d-de-zaun.webp) | Reconocer la vista 3D. |
+| ![Mapa 3D histórico](capturasjuego/07-version-actual-mapa-3d-de-zaun.webp) | Captura histórica; el mapa jugable actual es 2D. |
 | ![Mapa interactivo](capturasjuego/05-mapa-interactivo-de-zaun-camino-al-objetivo.webp) | Reconocer puntos de interés y navegación. |
-| ![Minijuegos](capturasjuego/06-salon-de-minijuegos-con-los-10-juegos.webp) | Encontrar el área de actividades. |
+| ![Minijuegos antiguos](capturasjuego/06-salon-de-minijuegos-con-los-10-juegos.webp) | Captura histórica del menú de minijuegos; el catálogo actual tiene 15 retos 3D por ciudad. |
 
 Para ver el historial de imágenes y su versión de origen, abre [capturasjuego/README.md](capturasjuego/README.md).
 
 ## 11. Si quieres continuar después de la primera partida
 - Para mover o recuperar guardados: [partidas-guardadas-guia.md](partidas-guardadas-guia.md).
-- Para habilitar el chat libre actual (KoboldCpp; Ollama aún no está integrado en la aplicación): [GUIA-KOBOLDCPP.md](GUIA-KOBOLDCPP.md).
+- La integración de IA está fuera del alcance de la versión actual; usa el comunicador de diálogos escritos.
 - Para entender cómo está programado el juego: [Guía técnica](Guía%20técnica.md).
 - Para probar modelos 3D personales: [GUIA-MODELOS-3D-Y-PRUEBAS.md](GUIA-MODELOS-3D-Y-PRUEBAS.md).
 
