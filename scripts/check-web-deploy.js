@@ -9,7 +9,7 @@ const required = [
   'privacidad.html',
   'icono-arcane.svg',
   'icono.png',
-  'assets/img/arte/portada-ia.webp',
+  'assets/img/arte/portada-ia.svg',
   'menu.js',
   'css/estilos.css',
   'assets/img/ciudades/piltover/panorama-t1.webp',
