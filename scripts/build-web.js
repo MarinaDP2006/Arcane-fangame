@@ -206,6 +206,11 @@ function build() {
       fs.writeFileSync(path.join(out, f), txt);
     } else copy(src, path.join(out, f));
   }
+  // Usa exactamente el icono de la aplicación de escritorio también como favicon web.
+  const gameIcon = path.join(root, 'build', 'icon.png');
+  if (!fs.existsSync(gameIcon)) throw new Error('Falta build/icon.png, el icono oficial del juego.');
+  copy(gameIcon, path.join(out, 'icono.png'));
+
   // Publicar los mapas mentales originales del diario de desarrollo.
   const notas = path.join(root, 'web', 'notas-desarrollo');
   if (fs.existsSync(notas)) {
