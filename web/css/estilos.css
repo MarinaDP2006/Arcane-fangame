@@ -666,6 +666,8 @@ body { background: var(--tinta-nueva); }
 
 /* Portada de la web: arte original generado con IA, sin retratos de personajes existentes. */
 .portada.portada-inicio {
+  position: relative;
+  isolation: isolate;
   width: 100%;
   max-width: none;
   min-height: min(790px, calc(100svh - 68px));
@@ -673,15 +675,28 @@ body { background: var(--tinta-nueva); }
 }
 
 .portada-inicio .portada-fondo {
-background: #080d18 url("../assets/img/portada-piltover-zaun.webp") center 45% / cover no-repeat;
-   opacity: 1;
+  z-index: 0;
+  background: #080d18;
+  opacity: 1;
 }
+.portada-inicio .portada-imagen {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 45%;
+}
+.portada-inicio .portada-fondo::after { z-index: 1; }
 .portada-inicio .portada-fondo::after {
   background:
     linear-gradient(90deg, rgba(7,9,16,.08) 0%, rgba(7,9,16,.16) 34%, rgba(7,9,16,.62) 59%, rgba(7,9,16,.9) 100%),
     linear-gradient(0deg, rgba(7,9,16,.82) 0%, transparent 42%);
 }
 .portada-inicio .portada-texto {
+  position: relative;
+  z-index: 2;
   width: min(56%, 680px);
   max-width: 680px;
   margin-left: auto;
