@@ -56,7 +56,7 @@ function createWindow() {
     backgroundColor: '#0d0b14',
     title: 'Arcane-fangame',
     show: false,
-    icon: path.join(__dirname, 'build', 'icon.png'),
+    icon: path.join(__dirname, 'web', 'icono-arcane.svg'),
     autoHideMenuBar: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
