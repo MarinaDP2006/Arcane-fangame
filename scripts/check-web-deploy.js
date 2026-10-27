@@ -9,6 +9,7 @@ const required = [
   'privacidad.html',
   'icono-arcane.svg',
   'icono.png',
+  'assets/img/arte/portada-ia.webp',
   'menu.js',
   'css/estilos.css',
   'assets/img/ciudades/piltover/panorama-t1.webp',
@@ -106,6 +107,8 @@ if (fs.existsSync(out)) scanPublic(out);
 const index = path.join(out, 'index.html');
 if (fs.existsSync(index)) {
   const html = fs.readFileSync(index, 'utf8');
+  if (/<figure class="portada-personajes"/.test(html)) fail('la portada todavía muestra los retratos de Vi/Jinx en el inicio');
+  if (!/rel="icon" href="icono\.png"/.test(html)) fail('el favicon no usa icono.png, el icono oficial del juego');
   for (const token of ['{{VERSION}}', '{{PERSONAJES}}', '{{LUGARES}}', '{{CAPTURAS}}']) {
     if (html.includes(token)) fail('quedó una plantilla sin reemplazar: ' + token);
   }
