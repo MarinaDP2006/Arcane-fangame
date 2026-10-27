@@ -82,7 +82,7 @@ function copyWebAssets() {
       const to = path.join(target, name);
       const stat = fs.statSync(from);
       if (stat.isDirectory()) copyImageTree(from, to);
-      else if (stat.isFile() && /\\.(?:svg|png|jpe?g|webp|gif|avif)$/i.test(name)) copy(from, to);
+      else if (stat.isFile() && /\.(?:svg|png|jpe?g|webp|gif|avif)$/i.test(name)) copy(from, to);
     }
   }
   copyImageTree(imageRoot, path.join(out, 'assets', 'img'));
