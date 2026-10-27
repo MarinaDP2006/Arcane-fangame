@@ -191,8 +191,8 @@ em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240
 .retrato-jinx { right: 0; width: min(70%, 520px); }
 @media (max-width: 760px) { .retrato-ciudad { right: -10%; width: 74%; height: 60%; opacity: .58; } .retrato-jinx { right: -16%; width: 84%; } }
 /* Fondos locales: concept art de Arcane documentado en arcaneData/arte/FUENTES.json. */
-.lado-piltover { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .7)), url("../arte-oficial/lugares/piltover-s1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #1c2033, #0b0d14); }
-.lado-zaun { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .72)), url("../arte-oficial/lugares/zaun-s1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #0e1a17, #0b0d14); }
+.lado-piltover { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .7)), url("../assets/img/ciudades/piltover/panorama-t1.webp") center 44% / cover no-repeat, linear-gradient(180deg, #1c2033, #0b0d14); }
+.lado-zaun { background: linear-gradient(180deg, rgba(11, 13, 20, .08), rgba(11, 13, 20, .72)), url("../assets/img/ciudades/zaun/centro.jpg") center 44% / cover no-repeat, linear-gradient(180deg, #0e1a17, #0b0d14); }
 .portada-fondo::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11, 13, 20, .92) 0%, rgba(11, 13, 20, .55) 55%, rgba(11, 13, 20, .2) 100%), repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, .015) 3px 4px); }
 .portada-fondo .lado-zaun::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(var(--laton), var(--reso)); box-shadow: 0 0 18px var(--reso); }
 
@@ -248,10 +248,10 @@ em { color: var(--reso); font-style: normal; text-shadow: 0 0 22px rgba(124, 240
 .ciudad-arte { min-height: clamp(250px, 32vw, 410px); background-size: cover !important; background-position: center !important; position: relative; }
 .ciudad-arte::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(5,8,15,.75), transparent 72%), linear-gradient(90deg, rgba(5,8,15,.14), transparent); }
 .ciudad-piltover .ciudad-arte {
-  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("../arte-oficial/lugares/piltover-s1.webp") !important;
+  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("../assets/img/ciudades/piltover/panorama-t1.webp") !important;
 }
 .ciudad-zaun .ciudad-arte {
-  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("../arte-oficial/lugares/zaun-s1.webp") !important;
+  background-image: linear-gradient(0deg, rgba(5,8,15,.18), rgba(5,8,15,.12)), url("../assets/img/ciudades/zaun/centro.jpg") !important;
 }
 .ciudad { border-radius: 3px; background: linear-gradient(160deg, rgba(20,25,37,.98), rgba(7,9,16,.98)); }
 .ficha { border-radius: 3px; background: linear-gradient(160deg, rgba(20,25,37,.94), rgba(7,9,16,.98)); }
@@ -361,10 +361,10 @@ body { background: var(--tinta-nueva); }
 .portada-inicio .lado-piltover,
 .portada-inicio .lado-zaun { background-size:cover; background-position:center; }
 .portada-inicio .lado-piltover {
-  background-image: linear-gradient(180deg,rgba(13,19,31,.12),rgba(7,10,16,.42)),url("../arte-oficial/lugares/piltover-s1.webp"),linear-gradient(135deg,#283447,#11151e);
+  background-image: linear-gradient(180deg,rgba(13,19,31,.12),rgba(7,10,16,.42)),url("../assets/img/ciudades/piltover/panorama-t1.webp"),linear-gradient(135deg,#283447,#11151e);
 }
 .portada-inicio .lado-zaun {
-  background-image: linear-gradient(180deg,rgba(8,18,17,.15),rgba(6,12,13,.54)),url("../arte-oficial/lugares/zaun-s1.webp"),linear-gradient(135deg,#1b3431,#10141a);
+  background-image: linear-gradient(180deg,rgba(8,18,17,.15),rgba(6,12,13,.54)),url("../assets/img/ciudades/zaun/centro.jpg"),linear-gradient(135deg,#1b3431,#10141a);
 }
 .portada-inicio .portada-fondo::after {
   background:linear-gradient(90deg,rgba(7,9,15,.95) 0%,rgba(7,9,15,.82) 34%,rgba(7,9,15,.4) 68%,rgba(7,9,15,.27)),linear-gradient(0deg,rgba(7,9,15,.8),transparent 48%),repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px);
@@ -412,8 +412,8 @@ body { background: var(--tinta-nueva); }
 .ciudad { border-radius:2px; background:linear-gradient(155deg,#171b25,#0d1017); }
 .ciudad-arte { min-height:clamp(250px,34vw,440px); aspect-ratio:16/9; position:relative; background-size:cover !important; background-position:center !important; }
 .ciudad-arte::after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(6,9,14,.5),transparent 62%); }
-.ciudad-vista-piltover { background-image:linear-gradient(120deg,rgba(8,13,24,.08),rgba(8,13,24,.15)),url("../arte-oficial/lugares/piltover-s1.webp") !important; }
-.ciudad-vista-zaun { background-image:linear-gradient(120deg,rgba(8,13,24,.06),rgba(8,13,24,.18)),url("../arte-oficial/lugares/zaun-s1.webp") !important; }
+.ciudad-vista-piltover { background-image:linear-gradient(120deg,rgba(8,13,24,.08),rgba(8,13,24,.15)),url("../assets/img/ciudades/piltover/panorama-t1.webp") !important; }
+.ciudad-vista-zaun { background-image:linear-gradient(120deg,rgba(8,13,24,.06),rgba(8,13,24,.18)),url("../assets/img/ciudades/zaun/centro.jpg") !important; }
 .ciudad-texto { padding:1.5rem 1.6rem 1.8rem; }
 .ciudad-texto h3 { font-size:2rem; }
 .ciudad-piltover .etiqueta,.ciudad-piltover h3 { color:#e1bd78; }
