@@ -48,6 +48,33 @@ for (const file of htmlFiles) {
   }
 }
 
+// Comprueba también los url(...) del CSS; la mayoría de fondos se resuelven desde css/estilos.css.
+const cssFiles = [];
+function findCss(dir) {
+  for (const name of fs.readdirSync(dir)) {
+    const full = path.join(dir, name);
+    const st = fs.statSync(full);
+    if (st.isDirectory()) findCss(full);
+    else if (st.isFile() && /\.css$/i.test(name)) cssFiles.push(full);
+  }
+}
+if (fs.existsSync(out)) findCss(out);
+for (const file of cssFiles) {
+  const body = fs.readFileSync(file, 'utf8');
+  for (const match of body.matchAll(/url\(\s*(['"]?)(.*?)\1\s*\)/gi)) {
+    const raw = match[2].trim();
+    if (!raw || raw.startsWith('#') || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(raw)) continue;
+    const clean = decodeURIComponent(raw.split(/[?#]/, 1)[0]);
+    if (!clean) continue;
+    const resolved = path.resolve(path.dirname(file), clean);
+    if (resolved !== out && !resolved.startsWith(out + path.sep)) {
+      fail(path.relative(out, file) + ' intenta salir de web-dist por CSS: ' + raw);
+      continue;
+    }
+    localRefs.add({ file: resolved, from: path.relative(out, file), raw });
+  }
+}
+
 // Set con objetos no elimina duplicados por valor, por lo que verificamos cada referencia.
 for (const ref of localRefs) {
   if (!fs.existsSync(ref.file) || !fs.statSync(ref.file).isFile()) {
@@ -65,9 +92,9 @@ function scanPublic(dir) {
       scanPublic(full);
     } else if (st.isFile()) {
       if (/^demo(?:$|[-_.])/i.test(name)) fail('archivo de demo no autorizado en web-dist: ' + path.relative(out, full));
-      if (/\\.(?:html|css|js)$/i.test(name)) {
+      if (/\.(?:html|css|js)$/i.test(name)) {
         const body = fs.readFileSync(full, 'utf8');
-        if (/(?:href|src)\\s*=\\s*["'][^"']*demo(?:\\.html|[-_/])/i.test(body)) {
+        if (/(?:href|src)\s*=\s*["'][^"']*demo(?:\.html|[-_/])/i.test(body)) {
           fail(path.relative(out, full) + ' contiene un enlace a una demo');
         }
       }
