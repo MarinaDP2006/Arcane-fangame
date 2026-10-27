@@ -742,3 +742,43 @@ body { background: var(--tinta-nueva); }
     background: rgba(6,9,17,.56);
   }
 }
+
+
+/* Corrección de despliegue: portada realmente a pantalla completa, sin límites del contenedor. */
+main#contenido { width:100%; max-width:none; margin:0; padding:0; }
+main#contenido > .portada.portada-inicio {
+  position:relative !important;
+  box-sizing:border-box !important;
+  width:100% !important;
+  max-width:none !important;
+  height:calc(100vh - 68px) !important;
+  height:calc(100svh - 68px) !important;
+  min-height:620px !important;
+  margin:0 !important;
+  overflow:hidden !important;
+  isolation:isolate;
+}
+main#contenido > .portada.portada-inicio > .portada-fondo {
+  position:absolute !important;
+  inset:0 !important;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+}
+main#contenido > .portada.portada-inicio .portada-imagen {
+  position:absolute !important;
+  inset:0 !important;
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  max-width:none !important;
+  object-fit:cover !important;
+  object-position:center 45% !important;
+}
+@media(max-width:760px) {
+  main#contenido > .portada.portada-inicio {
+    height:calc(100vh - 60px) !important;
+    height:calc(100svh - 60px) !important;
+    min-height:560px !important;
+  }
+}
