@@ -3,7 +3,7 @@ services:
     name: rifts-gears-arcane
     runtime: node
     plan: free
-    buildCommand: node scripts/build-web.js
+    buildCommand: npm run check:web
     startCommand: node server/roleplay-server.js
     healthCheckPath: /api/health
     autoDeployTrigger: commit
