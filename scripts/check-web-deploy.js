@@ -8,7 +8,6 @@ const required = [
   'index.html',
   'privacidad.html',
   'icono-arcane.svg',
-  'icono.png',
   'assets/img/arte/portada-ia.svg',
   'menu.js',
   'css/estilos.css',
