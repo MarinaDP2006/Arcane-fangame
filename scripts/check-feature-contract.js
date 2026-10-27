@@ -66,7 +66,7 @@ for (const id of ids) {
 }
 
 // The city-selection action must pass the selected city into the actual character-creation flow.
-ensure(srcApp.includes("App.go('city-select')"), 'El botón Jugar no abre el selector de ciudad.');
+ensure(srcApp.includes("Game.newGame()") && srcGame.includes("window.App.go('city-select')"), 'El botón Jugar no abre el selector de ciudad.');
 ensure(srcApp.includes("Game.newGame(slot, id)"), 'Elegir ciudad no pasa la ciudad elegida a Game.newGame.');
 ensure(srcGame.includes('Creator.start('), 'No se encontró el paso de creación de personaje.');
 ensure(srcGame.includes("window.App.go('creator')"), 'Elegir ciudad no lleva al creador de personaje.');
