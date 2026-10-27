@@ -8,7 +8,7 @@ const required = [
   'index.html',
   'privacidad.html',
   'icono-arcane.svg',
-  'assets/img/arte/portada-piltover-zaun.webp',
+  'assets/img/portada-piltover-zaun.webp',
   'menu.js',
   'css/estilos.css',
   'assets/img/ciudades/piltover/panorama-t1.webp',
