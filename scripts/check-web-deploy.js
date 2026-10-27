@@ -11,6 +11,12 @@ const required = [
   'icono.png',
   'menu.js',
   'css/estilos.css',
+  'assets/img/ciudades/piltover/panorama-t1.webp',
+  'assets/img/ciudades/piltover/academia-fachada.webp',
+  'assets/img/ciudades/zaun/centro.jpg',
+  'assets/img/ciudades/zaun/mercado.png',
+  'assets/img/personajes/vi.webp',
+  'assets/img/interfaz/icono-arcane.svg',
 ];
 
 function fail(message) {
@@ -48,6 +54,27 @@ for (const ref of localRefs) {
     fail(ref.from + ' enlaza un recurso local que no existe: ' + ref.raw);
   }
 }
+
+// La publicación es informativa: no debe desplegar una demo jugable o restos de páginas de prueba.
+function scanPublic(dir) {
+  for (const name of fs.readdirSync(dir)) {
+    const full = path.join(dir, name);
+    const st = fs.statSync(full);
+    if (st.isDirectory()) {
+      if (/^demo(?:$|[-_.])/i.test(name)) fail('directorio de demo no autorizado en web-dist: ' + path.relative(out, full));
+      scanPublic(full);
+    } else if (st.isFile()) {
+      if (/^demo(?:$|[-_.])/i.test(name)) fail('archivo de demo no autorizado en web-dist: ' + path.relative(out, full));
+      if (/\\.(?:html|css|js)$/i.test(name)) {
+        const body = fs.readFileSync(full, 'utf8');
+        if (/(?:href|src)\\s*=\\s*["'][^"']*demo(?:\\.html|[-_/])/i.test(body)) {
+          fail(path.relative(out, full) + ' contiene un enlace a una demo');
+        }
+      }
+    }
+  }
+}
+if (fs.existsSync(out)) scanPublic(out);
 
 const index = path.join(out, 'index.html');
 if (fs.existsSync(index)) {
