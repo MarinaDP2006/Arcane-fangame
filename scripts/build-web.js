@@ -179,7 +179,6 @@ function build() {
   copyWebAssets();
   copyOfficialArt();
   const personajes = WIKI.personajes;
-  copy(path.join(root, 'build', 'icon.png'), path.join(out, 'icono.png'));
   const lugares = ATLAS.places.map((l) => `<li class="lugar-${esc(l.city)}">${esc(l.name)}</li>`).join('');
   const dialogos = Object.values(CHAT).reduce((n, c) => n + Object.keys(c.nodes || {}).length, 0);
 
@@ -206,10 +205,6 @@ function build() {
       fs.writeFileSync(path.join(out, f), txt);
     } else copy(src, path.join(out, f));
   }
-  // Usa exactamente el icono de la aplicación de escritorio también como favicon web.
-  const gameIcon = path.join(root, 'build', 'icon.png');
-  if (!fs.existsSync(gameIcon)) throw new Error('Falta build/icon.png, el icono oficial del juego.');
-  copy(gameIcon, path.join(out, 'icono.png'));
 
   // Publicar los mapas mentales originales del diario de desarrollo.
   const notas = path.join(root, 'web', 'notas-desarrollo');
