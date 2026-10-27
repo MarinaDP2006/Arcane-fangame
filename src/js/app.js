@@ -47,132 +47,69 @@
   function tiltAll() { /* Desactivado por preferencia visual: sin inclinación al mover el ratón. */ }
   App.tiltAll = tiltAll;
 
-  // Menú principal: Piltover (cielo) y Zaun (cueva) pintadas a la vez, separadas por una grieta
-  // de luz que sigue al ratón o al dedo. Los efectos viven en js/title-fx.js.
-  const TITLE_ART = {
-    pilt: [['piltover', '50% 40%'], ['hexpuertas', '50% 30%'], ['academia', '50% 35%'], ['consejo', '50% 30%']],
-    zaun: [['zaun', '50% 45%'], ['comuna-viktor', '50% 50%'], ['ultima-gota', '50% 45%'], ['stillwater', '50% 50%']],
-  };
+  // Menú principal estático: ilustración de Jinx, sin animaciones ni fondos cambiantes.
   let stopTitleFx = null;
-
-  /** Dibuja el menú principal y sus botones. */
   async function renderTitle() {
     const root = $('#view-home');
-    if (stopTitleFx) stopTitleFx();
+    if (stopTitleFx) { stopTitleFx(); stopTitleFx = null; }
     root.innerHTML = '';
     const slots = await store.listSlots();
     const hasSave = slots.some((s) => !s.empty);
-    const btn = (label, fn, cls = '') => el('button', { class: `home-btn ${cls}`, onclick: () => { Audio2.sfx.choice(); fn(); } }, el('i', { class: 'home-gem' }), el('span', {}, label));
-    const layer = (side) => {
-      const slides = TITLE_ART[side].map(([id, pos], i) => el('div', {
-        class: `home-slide${i ? '' : ' on'}`,
-        style: `background-image:url("${window.CustomArt.image('lugares', id) || `img/arte/lugares/${id}.webp`}");background-position:${pos}`,
-      }));
-      // El recorte va por fuera y el parallax por dentro, para que el borde coincida con la grieta.
-      return el('div', { class: `home-art ${side}` }, el('div', { class: 'home-art-in' }, ...slides));
-    };
-    const pilt = layer('pilt');
-    const zaun = layer('zaun');
-    // Título letra a letra; el «&» lleva detrás un engranaje que gira al mover el cursor.
-    const letters = (word, from) => [...word].map((ch, i) => el('span', { class: 'home-letter', style: `--i:${from + i}` }, ch));
-    const amp = el('span', { class: 'home-amp', style: '--i:5' }, el('span', { class: 'home-gear', html: window.TitleFX.GEAR_SVG }), el('b', {}, '&'));
-    const city = (id, label) => el('button', {
-      class: `home-city${(document.body.dataset.ciudad || document.body.dataset.city) === id ? ' active' : ''}`,
-      'data-city': id, type: 'button', 'aria-pressed': String((document.body.dataset.ciudad || document.body.dataset.city) === id),
-      title: `Usar el tema de ${label}`,
-      onclick: () => {
-        App.setCity(id);
-        root.querySelectorAll('.home-city').forEach((b) => {
-          const active = b.dataset.city === id;
-          b.classList.toggle('active', active);
-          b.setAttribute('aria-pressed', String(active));
-        });
+    const btn = (label, fn, cls = '') => el('button', {
+      class: `home-btn ${cls}`, type: 'button',
+      onclick: async () => {
+        try { await fn(); }
+        catch (error) { console.error('Error en el menú principal:', error); toast('No se pudo completar la acción. Vuelve al menú e inténtalo otra vez.', 'warn'); }
       },
-    }, el('img', { src: `img/arte/simbolos/${id}.png`, alt: '' }), el('span', {}, label));
-    const s = App.settings;
-    const home = el('div', { class: 'home' },
-      pilt, zaun,
-      el('div', { class: 'home-rift', 'aria-hidden': 'true',
-        html: '<svg viewBox="0 0 1000 1000" preserveAspectRatio="none"><polyline class="glow"/><path class="glow"/><polyline class="mid"/><path class="core"/><polyline class="core"/></svg>' }),
-      el('canvas', { class: 'home-fx', 'aria-hidden': 'true' }),
-      el('div', { class: 'home-grain' }),
-      el('div', { class: 'home-shade' }),
-      el('div', { class: 'home-panel' },
-        el('div', { class: 'home-logo' },
-          el('h1', { class: 'home-title', 'aria-label': 'Rifts & Gears' }, el('span', { class: 'home-word' }, ...letters('RIFTS', 0)), el('span', { class: 'home-amp', style: '--i:5' }, el('span', { class: 'home-gear', html: window.TitleFX.GEAR_SVG }), el('b', {}, '&')), el('span', { class: 'home-word' }, ...letters('GEARS', 6))),
-          el('div', { class: 'home-cities' }, city('piltover', 'Piltover'), el('b', {}), city('zaun', 'Zaun'))),
-        el('nav', { class: 'home-menu' },
-          hasSave ? btn('Continuar', async () => { if (!(await Game.continueLatest())) toast('No hay partidas', 'warn'); }, 'primary') : null,
+    }, el('span', {}, label));
+    const home = el('div', { class: 'home home-static' },
+      el('img', { class: 'home-jinx-image', src: 'img/arte/personajes/jinx.png', alt: 'Jinx', draggable: 'false' }),
+      el('div', { class: 'home-panel home-panel-centered' },
+        el('h1', { class: 'home-title-static' }, 'RIFTS & GEARS'),
+        el('nav', { class: 'home-menu home-menu-static', 'aria-label': 'Menú principal' },
+          hasSave ? btn('Continuar', async () => { if (!(await Game.continueLatest())) toast('No hay partidas guardadas.', 'warn'); }, 'primary') : null,
           btn('Nueva partida', () => Game.newGame(), hasSave ? '' : 'primary'),
           btn('Cargar partida', () => App.go('game')),
           btn('Ajustes', () => App.go('settings')),
-          U.desktop ? btn('Salir', () => window.arcane.quit(), 'quiet') : null)),
-      el('div', { class: 'home-hint' }, 'Piltover y Zaun: dos ciudades del mismo mundo'));
+          U.desktop ? btn('Salir', () => window.arcane.quit(), 'quiet') : null)));
     root.append(home);
-    Audio2.playMusic('wiki');
-    stopTitleFx = window.TitleFX.mount(home, { reduce: false, particles: true, low: false }); // Grieta viva, partículas ambientales y respuesta al movimiento.
-    // Cada ciudad cambia de ilustración a su ritmo, desfasadas para que nunca cambien a la vez.
-    [pilt, zaun].forEach((layerEl, n) => {
-      const slides = [...layerEl.firstElementChild.children];
-      let k = 0;
-      setTimeout(function next() {
-        if (!layerEl.isConnected) return;
-        slides[k].classList.remove('on');
-        k = (k + 1) % slides.length;
-        slides[k].classList.add('on');
-        setTimeout(next, 12000);
-      }, 7000 + n * 6000);
-    });
+    // No se inicializan partículas, movimiento de fondo ni engranajes animados.
   }
 
-  /** Selector cinematográfico de ciudad: ocupa la pantalla completa y precede al creador. */
+  /** Selector de ciudad sencillo; cada tarjeta inicia el creador de personaje. */
   function renderCitySelection() {
     const root = $('#view-city-select');
     if (!root) return;
     root.innerHTML = '';
-    const card = (id, label, motto, detail) => {
-      const art = window.CustomArt.image('lugares', id) || `img/arte/lugares/${id}.webp`;
-      return el('button', {
-        class: `city-choice city-choice-${id}`,
-        style: `--city-art:url("${art}")`,
-        type: 'button',
-        'aria-label': `Comenzar una partida en ${label}`,
-        onclick: async () => {
-          Audio2.sfx.choice();
-          App.setCity(id);
-          let slot = App.pendingSlot;
+    const card = (id, label) => el('button', {
+      class: `city-choice city-choice-${id}`, type: 'button', 'aria-label': `Elegir ${label}`,
+      onclick: async () => {
+        try {
+          const slots = await store.listSlots();
+          const slot = App.pendingSlot || slots.find((s) => s.empty)?.slot || null;
           if (!slot) {
-            const slots = await store.listSlots();
-            slot = slots.find((s) => s.empty)?.slot || null;
-          }
-          if (!slot) {
-            toast('Las tres ranuras están ocupadas. Entra en «Cargar partida» y elige una ranura.', 'warn');
+            toast('Las tres ranuras están ocupadas. Abre «Cargar partida» y libera una ranura.', 'warn');
+            App.go('game');
             return;
           }
           App.pendingSlot = null;
+          App.setCity(id);
           Game.newGame(slot, id);
-        },
+        } catch (error) {
+          console.error('No se pudo iniciar una partida desde el selector de ciudad:', error);
+          toast('No se pudo iniciar la partida. Vuelve al menú e inténtalo otra vez.', 'warn');
+        }
       },
-        el('span', { class: 'city-choice-art', 'aria-hidden': 'true' }),
-        el('span', { class: 'city-choice-content' },
-          el('img', { class: 'city-choice-emblem', src: `img/arte/simbolos/${id}.png`, alt: '' }),
-          el('span', { class: 'city-choice-kicker' }, id === 'piltover' ? 'LA CIUDAD DEL PROGRESO' : 'LA CIUDAD SUBTERRÁNEA'),
-          el('strong', { class: 'city-choice-title' }, label),
-          el('span', { class: 'city-choice-motto' }, motto),
-          el('span', { class: 'city-choice-detail' }, detail),
-          el('span', { class: 'city-choice-enter' }, 'Elegir ciudad  ↗')));
-    };
-    root.append(el('div', { class: 'city-select-screen' },
-      el('header', { class: 'city-select-heading' },
-        el('p', { class: 'eyebrow' }, 'RIFTS & GEARS · NUEVA PARTIDA'),
-        el('h1', {}, '¿Dónde comienza tu historia?'),
-        el('p', {}, 'Elige una ciudad. Tu decisión abre el editor y determina tu barrio, tus primeros vínculos y el aspecto de tu mundo.')),
-      el('div', { class: 'city-choice-grid' },
-        card('piltover', 'Piltover', 'Progreso · Ciencia · Orden', 'Torres hextech, academias y salones dorados.'),
-        card('zaun', 'Zaun', 'Resistencia · Libertad · Vida', 'Tuberías, callejones, neón y humo verde.')),
+    },
+      el('span', { class: 'city-choice-art', 'aria-hidden': 'true' }),
+      el('span', { class: 'city-choice-content' },
+        el('strong', { class: 'city-choice-title' }, label),
+        el('span', { class: 'city-choice-enter' }, 'Elegir ciudad')));
+    root.append(el('div', { class: 'city-select-screen city-select-simple' },
+      el('header', { class: 'city-select-heading' }, el('h1', {}, '¿Dónde comienza tu historia?')),
+      el('div', { class: 'city-choice-grid' }, card('piltover', 'Piltover'), card('zaun', 'Zaun')),
       el('div', { class: 'city-select-footer' },
-        el('span', {}, 'DOS CIUDADES · UNA MISMA HISTORIA'),
-        el('button', { class: 'btn ghost', onclick: () => { App.pendingSlot = null; App.go('home'); } }, '← Volver al menú'))));
+        el('button', { class: 'btn ghost', type: 'button', onclick: () => { App.pendingSlot = null; App.go('home'); } }, 'Volver al menú'))));
   }
 
   // La interfaz de ajustes no expone IA en esta fase; su integración queda aplazada.
