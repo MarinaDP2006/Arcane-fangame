@@ -2420,5 +2420,5 @@
     return true;
   }
 
-  window.Game = { mount, current: () => G, save: persist, continueLatest, newGame: () => store.listSlots().then((sl) => { const free = sl.find((x) => x.empty); if (free) newGame(free.slot); else { toast('Las 3 ranuras están ocupadas: borra una partida.', 'warn'); window.App.go('game'); } }) };
+  window.Game = { mount, current: () => G, save: persist, continueLatest, newGame: (saveSlot = null, origin = null) => { if (origin) return newGame(saveSlot, origin); return store.listSlots().then((sl) => { const free = saveSlot || sl.find((x) => x.empty)?.slot; if (free) newGame(free); else { toast('Las 3 ranuras están ocupadas: borra una partida.', 'warn'); window.App.go('game'); } }); } };
 })();
