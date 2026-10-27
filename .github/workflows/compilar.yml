@@ -74,6 +74,12 @@ jobs:
         run: npm ci
       - name: Sincronizar arte canónico y manifiesto
         run: node scripts/art-manifest.js
+      - name: Generar icono PNG de Windows desde el icono oficial de la web
+        shell: pwsh
+        run: |
+          npm install --no-save --package-lock=false @resvg/resvg-js
+          node -e "const fs=require('fs'); const {Resvg}=require('@resvg/resvg-js'); const svg=fs.readFileSync('web/icono-arcane.svg'); const png=new Resvg(svg,{fitTo:{mode:'width',value:256}}).render().asPng(); fs.mkdirSync('build',{recursive:true}); fs.writeFileSync('build/icon.png',png);"
+          if (!(Test-Path build/icon.png) -or (Get-Item build/icon.png).Length -lt 1000) { throw 'No se pudo generar el icono de Windows' }
       - name: Compilar instalador y portable de Windows
         run: npm run dist:win -- --publish never
         env:
