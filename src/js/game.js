@@ -2050,7 +2050,7 @@
     const bgId = CHAT_BACKDROPS[id] || (info?.origin === 'zaun' ? 'zaun' : info?.origin === 'noxus' ? 'noxus' : 'piltover');
     const bgFallback = {
       'ultima-gota': 'img/arte/lugares/ultima-gota.webp', fabrica: 'img/arte/lugares/fabrica.png', arbol: 'img/arte/lugares/arbol.png',
-      ejecutores: 'img/arte/lugares/ejecutores.png', 'mansion-kiramman': 'img/arte/lugares/mansion-kiramman.png',
+      ejecutores: 'img/arte/lugares/ejecutores.png', 'mansion-kiramman': 'img/arte/lugares/s2/mansion-kiramman.webp',
       'taller-jayce': 'img/arte/lugares/taller-jayce.webp', 'comuna-viktor': 'img/arte/lugares/comuna-viktor.webp',
       academia: 'img/arte/lugares/academia.webp', consejo: 'img/arte/lugares/consejo.webp', noxus: 'img/arte/lugares/noxus.png',
       zaun: 'img/arte/lugares/zaun.webp', piltover: 'img/arte/lugares/piltover.webp',
