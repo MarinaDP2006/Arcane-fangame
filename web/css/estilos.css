@@ -673,8 +673,8 @@ body { background: var(--tinta-nueva); }
 }
 
 .portada-inicio .portada-fondo {
-  background: #080d18 url("../assets/img/arte/portada-web.png") center 45% / cover no-repeat;
-  opacity: 1;
+background: #080d18 url("../assets/img/arte/portada-piltover-zaun.webp") center 45% / cover no-repeat;
+   opacity: 1;
 }
 .portada-inicio .portada-fondo::after {
   background:
