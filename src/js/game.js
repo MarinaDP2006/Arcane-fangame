@@ -1193,11 +1193,7 @@
       el('div', { id: 'overlay', class: 'overlay' })));
     World.start(G, worldCallbacks(), canvas, mini);
     updateHud();
-    const help = () => {
-      if (G.flags.__help) return;
-      G.flags.__help = true;
-      showHelp();
-    };
+    const help = () => {}; // Los controles se consultan en Ajustes; nunca se abre ayuda automáticamente.
     // Al empezar una partida, antes del primer capítulo: quién es quién en tu ciudad.
     if (!G.flags.__guia && !G.progress.started && G.progress.season !== 2) {
       G.flags.__guia = true;
