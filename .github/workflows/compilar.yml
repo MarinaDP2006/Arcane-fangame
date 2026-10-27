@@ -77,9 +77,9 @@ jobs:
       - name: Generar icono PNG de Windows desde el icono oficial de la web
         shell: pwsh
         run: |
-          npm install --no-save --package-lock=false @resvg/resvg-js
-          node -e "const fs=require('fs'); const {Resvg}=require('@resvg/resvg-js'); const svg=fs.readFileSync('web/icono-arcane.svg'); const png=new Resvg(svg,{fitTo:{mode:'width',value:256}}).render().asPng(); fs.mkdirSync('build',{recursive:true}); fs.writeFileSync('build/icon.png',png);"
-          if (!(Test-Path build/icon.png) -or (Get-Item build/icon.png).Length -lt 1000) { throw 'No se pudo generar el icono de Windows' }
+          npm install --no-save --package-lock=false @resvg/resvg-js png-to-ico
+          node -e "const fs=require('fs'); const {Resvg}=require('@resvg/resvg-js'); const pngToIco=require('png-to-ico'); const svg=fs.readFileSync('web/icono-arcane.svg'); const png=new Resvg(svg,{fitTo:{mode:'width',value:256}}).render().asPng(); fs.mkdirSync('build',{recursive:true}); fs.writeFileSync('build/icon.png',png); pngToIco(png).then(ico=>fs.writeFileSync('build/icon.ico',ico)).catch(e=>{console.error(e);process.exit(1)});"
+          if (!(Test-Path build/icon.png) -or (Get-Item build/icon.png).Length -lt 1000 -or !(Test-Path build/icon.ico) -or (Get-Item build/icon.ico).Length -lt 1000) { throw 'No se pudieron generar los iconos PNG e ICO de Windows' }
       - name: Compilar instalador y portable de Windows
         run: npm run dist:win -- --publish never
         env:
