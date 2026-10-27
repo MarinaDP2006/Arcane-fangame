@@ -665,3 +665,43 @@ body { background: var(--tinta-nueva); }
 .captura figcaption { padding:.65rem .95rem; color:var(--suave); font:.72rem var(--mono); letter-spacing:.06em; text-transform:uppercase; border-top:1px solid var(--linea); }
 .galeria-vacia { margin:0; padding:1.6rem 1.4rem; color:var(--suave); font:.8rem/1.6 var(--mono); border:1px dashed var(--linea); background:rgba(255,255,255,.015); }
 @media (max-width:560px) { .galeria-capturas { grid-template-columns:1fr; } }
+
+
+/* Portada de la web: arte original generado con IA, sin retratos de personajes existentes. */
+.portada.portada-inicio {
+  width: 100%;
+  max-width: none;
+  min-height: min(790px, calc(100svh - 68px));
+  padding: clamp(3rem, 7vw, 6rem) max(24px, calc((100% - var(--ancho)) / 2));
+}
+.portada-inicio .portada-fondo {
+  background: #080d18 url("../assets/img/arte/portada-ia.webp") center 44% / cover no-repeat;
+  opacity: 1;
+}
+.portada-inicio .portada-fondo::after {
+  background:
+    linear-gradient(90deg, rgba(7,9,16,.08) 0%, rgba(7,9,16,.16) 34%, rgba(7,9,16,.62) 59%, rgba(7,9,16,.9) 100%),
+    linear-gradient(0deg, rgba(7,9,16,.82) 0%, transparent 42%);
+}
+.portada-inicio .portada-texto {
+  width: min(56%, 680px);
+  max-width: 680px;
+  margin-left: auto;
+  padding: clamp(1rem, 3vw, 2rem);
+  background: linear-gradient(135deg, rgba(6,9,17,.42), rgba(6,9,17,.12));
+  border-left: 2px solid rgba(227,182,91,.72);
+  backdrop-filter: blur(2px);
+}
+.portada-inicio .portada-texto h1 { text-wrap: balance; }
+.portada-inicio .sellos-portada { display:flex; flex-wrap:wrap; gap:.5rem; padding:0; list-style:none; }
+.portada-inicio .sellos-portada li { padding:.35rem .6rem; border:1px solid rgba(227,182,91,.28); background:rgba(5,8,15,.58); color:#f0e7d0; font:.68rem var(--mono); }
+.logo-sello { display:grid; place-items:center; flex:none; width:44px; height:44px; padding:0; border:0; border-radius:0; box-shadow:none; background:transparent; }
+.logo-sello img { display:block; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 0 8px rgba(87,199,255,.2)); }
+@media (max-width:760px) {
+  .portada.portada-inicio { min-height: auto; padding:5rem 16px 2.5rem; }
+  .portada-inicio .portada-fondo { background-position: 42% center; }
+  .portada-inicio .portada-fondo::after {
+    background: linear-gradient(90deg, rgba(7,9,16,.55), rgba(7,9,16,.76)), linear-gradient(0deg, rgba(7,9,16,.82), transparent 65%);
+  }
+  .portada-inicio .portada-texto { width:100%; margin:0; padding:1.1rem; background:rgba(6,9,17,.54); }
+}
