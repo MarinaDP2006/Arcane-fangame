@@ -47,7 +47,7 @@
   function tiltAll() { /* Desactivado por preferencia visual: sin inclinación al mover el ratón. */ }
   App.tiltAll = tiltAll;
 
-  // Menú principal estático: ilustración de Jinx, sin animaciones ni fondos cambiantes.
+  // Menú principal estático: sin logotipo, símbolos, subtítulos ni efectos animados.
   let stopTitleFx = null;
   async function renderTitle() {
     const root = $('#view-home');
@@ -62,18 +62,24 @@
         catch (error) { console.error('Error en el menú principal:', error); toast('No se pudo completar la acción. Vuelve al menú e inténtalo otra vez.', 'warn'); }
       },
     }, el('span', {}, label));
+    const showCredits = () => {
+      root.innerHTML = '';
+      root.append(el('div', { class: 'home home-static credits-screen' },
+        el('section', { class: 'credits-panel' },
+          el('h2', {}, 'Créditos'),
+          el('p', {}, 'Arcane Fangame · Proyecto independiente de fans.'),
+          btn('Volver', () => renderTitle(), 'primary'))));
+    };
     const home = el('div', { class: 'home home-static' },
-      el('img', { class: 'home-jinx-image', src: 'img/arte/personajes/jinx.png', alt: 'Jinx', draggable: 'false' }),
-      el('div', { class: 'home-panel home-panel-centered' },
-        el('h1', { class: 'home-title-static' }, 'RIFTS & GEARS'),
-        el('nav', { class: 'home-menu home-menu-static', 'aria-label': 'Menú principal' },
-          hasSave ? btn('Continuar', async () => { if (!(await Game.continueLatest())) toast('No hay partidas guardadas.', 'warn'); }, 'primary') : null,
-          btn('Nueva partida', () => Game.newGame(), hasSave ? '' : 'primary'),
-          btn('Cargar partida', () => App.go('game')),
-          btn('Ajustes', () => App.go('settings')),
-          U.desktop ? btn('Salir', () => window.arcane.quit(), 'quiet') : null)));
+      el('img', { class: 'home-jinx-image', src: 'img/arte/personajes/jinx.png', alt: '', 'aria-hidden': 'true', draggable: 'false' }),
+      el('nav', { class: 'home-menu home-menu-static', 'aria-label': 'Menú principal' },
+        btn('Jugar', () => Game.newGame(), 'primary'),
+        hasSave ? btn('Continuar', async () => { if (!(await Game.continueLatest())) toast('No hay partidas guardadas.', 'warn'); }) : null,
+        btn('Cargar partida', () => App.go('game')),
+        btn('Ajustes', () => App.go('settings')),
+        btn('Créditos', showCredits),
+        U.desktop ? btn('Salir', () => window.arcane.quit(), 'quiet') : null));
     root.append(home);
-    // No se inicializan partículas, movimiento de fondo ni engranajes animados.
   }
 
   /** Selector de ciudad sencillo; cada tarjeta inicia el creador de personaje. */
