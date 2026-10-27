@@ -81,11 +81,11 @@ if (mansion) {
 }
 
 // Local scripts and the canonical shared icon must be present for the shipped desktop app.
-for (const m of html.matchAll(/<script\\s+src="([^"]+)"\\s*><\\/script>/g)) {
-  const url = m[1];
+for (const url of html.split('<script src="').slice(1).map(part => part.split('"')[0])) {
   if (/^https?:/.test(url)) continue;
   ensure(fs.existsSync(path.join(root, 'src', url)), `Falta el script/recurso cargado por el juego: ${url}.`);
 }
+
 ensure(html.includes('href="icono-arcane.svg"'), 'El juego no enlaza el icono compartido con la web.');
 ensure(fs.existsSync(path.join(root, 'src/icono-arcane.svg')), 'Falta src/icono-arcane.svg.');
 
