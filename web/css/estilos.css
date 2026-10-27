@@ -675,7 +675,7 @@ body { background: var(--tinta-nueva); }
   padding: clamp(3rem, 7vw, 6rem) max(24px, calc((100% - var(--ancho)) / 2));
 }
 .portada-inicio .portada-fondo {
-  background: #080d18 url("../assets/img/arte/portada-ia.webp") center 44% / cover no-repeat;
+  background: #080d18 url("../assets/img/arte/portada-ia.svg") center 44% / cover no-repeat;
   opacity: 1;
 }
 .portada-inicio .portada-fondo::after {
