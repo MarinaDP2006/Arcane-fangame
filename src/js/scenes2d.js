@@ -242,7 +242,7 @@
     'muelle-stillwater': ['piltover', A + 'lugares/stillwater.webp', [0.2, 0.8], [0.48, 0.3], 'La prisión sobre el agua, de noche.', 'Una orden de traslado está firmada por alguien que no debería estar aquí.'],
     ejecutores: ['piltover', A + 'lugares/ejecutores.png', [0.2, 0.75], [0.6, 0.45], 'Uniformes azules, expedientes y celdas.', 'Un expediente tiene páginas arrancadas justo donde empieza tu caso.'],
     puente: ['piltover', A + 'lugares/piltover.webp', [0.25, 0.8], [0.62, 0.45], 'El Puente del Progreso, entre el oro y la niebla.', 'Un sello desgastado en una caseta indica quién controlaba el paso.'],
-    'mansion-kiramman': ['piltover', A + 'lugares/mansion-kiramman.png', [0.8, 0.75], [0.35, 0.4], 'Jardines, retratos y secretos de familia.', 'Una carta sin enviar habla de un trato con el Consejo.'],
+    'mansion-kiramman': ['piltover', A + 'lugares/s2/mansion-kiramman.webp', [0.8, 0.75], [0.35, 0.4], 'Jardines, retratos y secretos de familia.', 'Una carta sin enviar habla de un trato con el Consejo.'],
   };
   /**
    * Imagen del lugar para la temporada que se está jugando (lugares/s1 o lugares/s2, que vienen
