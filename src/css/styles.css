@@ -3563,7 +3563,7 @@ h1, h2, h3, .title-arcane, .menu > h1 { text-wrap: balance; }
 .home-static > .home-jinx-image {
   position:absolute;
   inset:0;
-  z-index:-1;
+  z-index:0;
   display:block;
   width:100%;
   height:100%;
