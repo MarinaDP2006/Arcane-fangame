@@ -24,6 +24,12 @@ La web pública es informativa (no contiene una demo jugable) y se publica en Re
 
 Render ejecuta `node scripts/build-web.js` durante la compilación y `node server/roleplay-server.js` al iniciar el servicio. Si cambias archivos públicos, comprueba primero `npm run check:web`.
 
+## Recursos de la web
+
+La web no reutiliza rutas internas del ejecutable. Sus imágenes públicas están ordenadas en `web/assets/img/ciudades/piltover/`, `web/assets/img/ciudades/zaun/`, `web/assets/img/personajes/` y `web/assets/img/interfaz/`. Las dos carpetas de ciudades contienen las referencias de `PILTOVER.zip` y `ZAUN.zip`; el generador las publica en `web-dist/assets/img/`.
+
+El favicon canónico es `web/icono-arcane.svg`. `scripts/art-manifest.js` sincroniza el mismo icono con `src/icono-arcane.svg` antes de empaquetar el juego.
+
 ## Descargar y ejecutar en Windows
 
 Los instaladores no se guardan en el repositorio como archivos fuente. GitHub Actions compila dos paquetes de Windows x64 (instalador y portable) y los publica como artefactos temporales del workflow. Para obtener la versión más reciente:
