@@ -3605,6 +3605,8 @@ h1, h2, h3, .title-arcane, .menu > h1 { text-wrap: balance; }
   text-shadow:0 2px 8px #000;
 }
 .home-menu-static {
+  position:relative;
+  z-index:2;
   display:flex;
   flex-direction:column;
   align-items:stretch;
@@ -3655,3 +3657,16 @@ h1, h2, h3, .title-arcane, .menu > h1 { text-wrap: balance; }
 @media (prefers-reduced-motion:reduce) {
   .home.home-static *, .city-select-simple * { animation:none !important; transition:none !important; }
 }
+
+
+/* Menú de inicio sin emblemas, logotipo, subtítulos, degradados ni animaciones. */
+.home.home-static { display:grid !important; place-items:center !important; background:#070b12; }
+.home-static > .home-jinx-image { z-index:0 !important; object-position:center center !important; }
+.home-static .home-menu-static { position:relative !important; z-index:2 !important; width:min(290px,calc(100% - 36px)) !important; gap:8px !important; margin:0 !important; padding:0 !important; }
+.home-static .home-menu-static .home-btn { min-height:44px !important; background:rgba(7,12,20,.84) !important; border:1px solid rgba(215,226,241,.7) !important; border-radius:0 !important; box-shadow:none !important; color:#fff !important; text-shadow:none !important; }
+.home-static .home-menu-static .home-btn:hover,.home-static .home-menu-static .home-btn:focus-visible { background:#182b40 !important; border-color:#fff !important; }
+.home-static .home-title-static,.home-static .home-logo,.home-static .home-gear,.home-static .home-hint,.home-static .home-subtitle,.home-static .home-cities,.home-static .home-rift,.home-static .home-fx,.home-static .home-grain,.home-static .home-shade { display:none !important; }
+.credits-screen { background:transparent !important; }
+.credits-panel { position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:14px; max-width:min(520px,calc(100% - 32px)); padding:28px; color:#fff; text-align:center; }
+.credits-panel h2 { margin:0; font-size:clamp(1.6rem,4vw,2.5rem); }
+.credits-panel p { margin:0; }
