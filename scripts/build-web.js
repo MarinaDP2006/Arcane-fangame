@@ -69,6 +69,23 @@ function copyWebAssets() {
   const menu = path.join(root, 'web', 'menu.js');
   if (!fs.existsSync(menu)) throw new Error('Falta web/menu.js, requerido por la navegación móvil.');
   copy(menu, path.join(out, 'menu.js'));
+
+  // Publica la estructura documentada de imágenes de web/assets/img.
+  // Se excluyen los README de organización: solo se sirven recursos visuales.
+  const imageRoot = path.join(root, 'web', 'assets', 'img');
+  if (!fs.existsSync(imageRoot)) throw new Error('Falta web/assets/img/: no se pueden publicar las imágenes de la web.');
+  function copyImageTree(source, target) {
+    fs.mkdirSync(target, { recursive: true });
+    for (const name of fs.readdirSync(source)) {
+      if (name === 'README.md' || name.startsWith('.')) continue;
+      const from = path.join(source, name);
+      const to = path.join(target, name);
+      const stat = fs.statSync(from);
+      if (stat.isDirectory()) copyImageTree(from, to);
+      else if (stat.isFile() && /\.(?:svg|png|jpe?g|webp|gif|avif)$/i.test(name)) copy(from, to);
+    }
+  }
+  copyImageTree(imageRoot, path.join(out, 'assets', 'img'));
 }
 
 // Copia una selección del arte oficial de Arcane que ya está documentado en arcaneData/arte/FUENTES.json.

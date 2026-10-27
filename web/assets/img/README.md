@@ -1,5 +1,12 @@
 # Imágenes de la web
 
-> **En pocas palabras:** Aquí se explica cómo ordenar las imágenes utilizadas por la web. Usa nombres claros, texto alternativo y tamaños razonables; conserva la procedencia y los permisos de cada recurso. Después de mover una imagen, busca y corrige todas las rutas que la referencian.
+La web pública organiza sus recursos por ciudad, personajes e interfaz:
 
-Clasifica las imágenes por `ciudades/`, `personajes/` e `interfaz/`. Usa nombres descriptivos, texto alternativo y formatos optimizados. Las carpetas artísticas heredadas se mantienen hasta migrar sus referencias.
+- `ciudades/piltover/`: recursos de `PILTOVER.zip`, con referencias de lugares por temporada.
+- `ciudades/zaun/`: recursos de `ZAUN.zip`.
+- `personajes/`: retratos WebP sincronizados desde el juego.
+- `interfaz/`: favicon canónico e icono rasterizado.
+
+El generador `npm run web` copia estos archivos a `web-dist/assets/img/`; los enlaces del sitio deben apuntar a esa estructura pública, nunca a una ruta local del repositorio que no se publique.
+
+Consulta `web/assets/img/ciudades/README.md`, `web/assets/img/personajes/README.md` y `web/assets/img/interfaz/README.md` para detalles y créditos.

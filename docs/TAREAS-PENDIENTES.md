@@ -1,31 +1,29 @@
-# Tareas pendientes — Arcane-fangame
+# Tareas pendientes — Arcane-fangame (versión actual)
 
-> **En pocas palabras:** Esta es la lista de trabajo pendiente con más detalle que el resumen de la raíz. Sirve para decidir qué conviene abordar después y para no confundir una idea con una función terminada. Marca las tareas solo cuando se hayan comprobado en el repositorio o en una compilación real, y anota qué falta cuando una tarea esté a medias.
+Revisión: 27 de octubre de 2026. La hoja completa está en [`PENDIENTES.md`](../PENDIENTES.md).
 
-Documento de seguimiento. Marca una tarea como completada solo tras verificarla en el repositorio o en una ejecución real.
+## En ejecución
 
-## Pendientes prioritarias
+- [ ] Integrar la estructura pública de imágenes procedentes de `PILTOVER.zip` y `ZAUN.zip` en `web/assets/img/ciudades/`, servirlas desde `web-dist/` y validar las rutas en Render.
+- [ ] Verificar el despliegue real de Render después de fusionar; el éxito de GitHub Actions no prueba que el dominio sirva el nuevo build.
+- [ ] Probar manualmente Windows: inicio, mapa 2D, conversaciones, decisiones, misiones, vínculos, guardado y continuación.
+- [ ] Probar los 15 minijuegos 3D (7 Piltover / 8 Zaun) y comprobar que se bloquean fuera de su ciudad, con controles de ratón/teclado/táctil.
+- [ ] Completar pruebas visuales del rediseño de interfaz en distintas resoluciones y verificar foco de teclado/contraste.
+- [ ] Actualizar capturas actuales y retirar el uso de capturas históricas como prueba de la interfaz final.
 
-> **Alcance actual:** juego 2D ilustrado, diálogos escritos, sin integración de IA. Las tareas de mapas 3D, GLB y Blender quedan aplazadas; antes de eliminar sus archivos, comprobar referencias y dependencias.
-- [ ] Implementar y probar opciones de diálogo seleccionables sin depender de una IA.
-- [ ] Verificar que las elecciones afectan a la conversación y que se puede continuar con acciones libres.
-- [ ] Guardar y cargar por separado el estado de partida y el historial de esta historia.
-- [ ] Probar inicio, diálogo, elección, guardado, recarga y continuación.
-- [ ] Revisar la corrección del parallax del título (PR #36) y mantener la navegación por clic.
-- [ ] Probar escritorio y móvil, rutas de recursos, consola y compilación.
-- [ ] Aplazado: validar visualmente el mapa exterior 3D. No es requisito para la fase 2D.
-- [ ] Prioridad actual: validar que cada ubicación del mapa 2D tenga ilustración y que las rutas de arte existan.
-- [ ] Tras los cambios de empaquetado, verificar una nueva ejecución de Actions y probar los instaladores de Windows, los paquetes macOS y el APK en dispositivos reales antes de anunciar una Release estable.
-- [ ] Limpiar documentación obsoleta y comprobar que la web generada tiene una portada válida.
-- [ ] Aplazado: integración de IA/Ollama. Mantener diálogos escritos y no presentar el proveedor como una función disponible.
-- [ ] Revisar el PR #38 del modelo personalizado, si sigue abierto; no asumir que el modelo está integrado en la app.
+## En progreso / requiere más contenido
 
-## Completadas desde la creación
-- [x] Definida la identidad del fangame y el contexto de Piltover y Zaun.
-- [x] Preparados `config/ollama.json` y `config/mundo.json`; no se cargan automáticamente.
-- [x] Preparados archivos de perfil y Modelfile para el narrador local `arcane-narrador`.
-- [x] Disponible el modo de rol libre mediante texto escrito por el jugador.
-- [x] Documentados los comandos de desarrollo y la compilación/publicación.
+- [ ] Añadir escenas y consecuencias específicas donde el diario todavía presente solo objetivos.
+- [ ] Profundizar los arcos de relaciones con escenas y reacciones persistentes.
+- [ ] Añadir recursos de arte/sonido únicamente cuando mejoren una función real; no inflar artificialmente el instalador.
 
-## Regla de verificación
-La configuración o documentación no demuestra que una función esté integrada. No marcar diálogos con opciones, guardado/carga ni integración de Ollama como terminados hasta probarlos en el juego.
+## Comprobaciones de referencia
+
+```bash
+npm ci
+npm run check
+npm run check:web
+npm run dist:win
+```
+
+Al marcar una tarea como completada, anotar cómo fue probada. La configuración de Render y un build exitoso no sustituyen una visita real a la web ni una prueba jugada.
