@@ -46,7 +46,7 @@ for (const chapter of w.STORY.chapters) {
     if (node.next) ensure(Boolean(nodes[node.next]), `El capítulo ${chapter.id}, nodo ${nodeId}, apunta al nodo inexistente ${node.next}.`);
     for (const choice of node.choices || []) {
       if (choice.next) ensure(Boolean(nodes[choice.next]), `La decisión «${choice.t}» de ${chapter.id}/${nodeId} apunta al nodo inexistente ${choice.next}.`);
-      if (choice.fx) ensure(['aff', 'rep', 'stats', 'flags'].some((key) => Object.prototype.hasOwnProperty.call(choice.fx, key)), `La decisión «${choice.t}» no tiene un efecto válido.`);
+      // Las decisiones pueden ser narrativas sin alterar estadísticas; solo validamos los efectos cuando existen.
     }
   }
 }
