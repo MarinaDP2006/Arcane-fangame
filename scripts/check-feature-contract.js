@@ -71,6 +71,10 @@ ensure(srcApp.includes("Game.newGame(slot, id)"), 'Elegir ciudad no pasa la ciud
 ensure(srcGame.includes('Creator.start('), 'No se encontró el paso de creación de personaje.');
 ensure(srcGame.includes("window.App.go('creator')"), 'Elegir ciudad no lleva al creador de personaje.');
 ensure(srcApp.includes("btn('Ajustes', () => App.go('settings'))"), 'Falta el acceso a Ajustes desde el menú.');
+const miniHtml = read('src/index.html');
+ensure(miniHtml.indexOf('js/minigames-2d.js') > miniHtml.indexOf('js/minigames-3d.js'), 'El motor 2D debe sobrescribir el motor 3D antiguo antes de iniciar el juego.');
+ensure(read('src/js/minigames-2d.js').includes("renderer:'2d-html'"), 'El catálogo debe utilizar el motor interactivo 2D.');
+ensure(srcApp.includes('Minijuego 2D'), 'La interfaz todavía anuncia minijuegos 3D.');
 
 // Verify the canonical Season 2 mansion artwork is actually used and packaged.
 const mansion = sceneCtx.window.Scenes2D?.PLACES?.['mansion-kiramman'];
