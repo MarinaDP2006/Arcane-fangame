@@ -90,7 +90,7 @@
         } else if (mode === 'circuit' || mode === 'runes') {
           const length = (hard ? 6 : easy ? 3 : 4) + (id === 'calibracion-hexgate' ? 1 : 0);
           const seq = Array.from({ length }, () => 1 + rand(4));
-          const p = document.createElement('p'); p.className = 'mg2d-instruction'; p.textContent = 'Memoriza la secuencia: ' + seq.join(' · ') + '. Después, repítela en orden.'; area.append(p);
+          const p = document.createElement('p'); p.className = 'mg2d-instruction'; p.textContent = 'Memoriza la secuencia: ' + seq.join(' · ') + '. Después, repítela en orden.'; area.append(p); setTimeout(() => { if (!done && p.isConnected) p.textContent = 'Ahora repite la secuencia de memoria, en el mismo orden.'; }, 1800);
           const nodes = document.createElement('div'); nodes.className = 'mg2d-grid'; area.append(nodes);
           let entered = [];
           const redraw = () => { nodes.replaceChildren(); for (let n = 1; n <= 4; n++) { const b = document.createElement('button'); b.type = 'button'; b.className = 'mg2d-btn'; b.textContent = 'NODO ' + n; b.onclick = () => {
@@ -102,7 +102,7 @@
         } else if (mode === 'bargain') {
           score = 0; const next = () => {
             if (score >= 3) return win();
-            const fair = rand(3); options('Trato ' + (score + 1) + ' de 3: el precio justo es el que beneficia a ambas partes.', ['Ofrecer un precio razonable', 'Imponer el precio con amenazas', 'Aceptar cualquier precio'], fair, () => { score++; progress('Tratos justos'); next(); });
+            options('Trato ' + (score + 1) + ' de 3: elige la oferta que beneficia a ambas partes.', ['Ofrecer un precio razonable', 'Imponer el precio con amenazas', 'Aceptar cualquier precio'], 0, () => { score++; progress('Tratos justos'); next(); });
           }; next();
         } else if (mode === 'assembly') {
           const steps = [
@@ -127,7 +127,7 @@
         } else if (mode === 'stealth') {
           const next = () => { if (round >= quota) return win(); const gap = rand(2) === 0; options('Patrulla ' + (round + 1) + '/' + quota + ': ' + (gap ? 'los guardias se alejan y dejan un hueco' : 'la pasarela sigue vigilada') + '.', ['Cruzar ahora', 'Esperar oculto'], gap ? 0 : 1, () => { round++; score++; progress('Tramos sin alarma'); next(); }); }; next();
         } else if (mode === 'contain') {
-          const next = () => { if (score >= quota) return win(); const leak = rand(3); options('Fuga ' + (score + 1) + '/' + quota + ': identifica la válvula que vibra y desprende vapor.', ['Válvula A', 'Válvula B', 'Válvula C'], leak, () => { score++; progress('Fugas contenidas'); next(); }); }; next();
+          const next = () => { if (score >= quota) return win(); const leak = rand(3); options('Fuga ' + (score + 1) + '/' + quota + ': el sensor marca vibración y vapor en la válvula ' + ['A', 'B', 'C'][leak] + '.', ['Válvula A', 'Válvula B', 'Válvula C'], leak, () => { score++; progress('Fugas contenidas'); next(); }); }; next();
         } else {
           options('Analiza la situación antes de actuar.', ['Examinar pistas y actuar con seguridad', 'Ignorar el riesgo', 'Forzar el mecanismo'], 0, win);
         }
@@ -142,6 +142,6 @@
     ...base, GAMES: G, CATALOG: C, CITY_GAMES: CG, PLACE_GAMES: PG, play, list,
     forCity: (city) => list(CG[city] || []),
     forPlace: (id) => list((PG[id] || []).filter((key) => C[key]?.city === cityOfPlace(id))),
-    isAvailable: available, activeCity, maxGames: Object.keys(C).length, renderer: '2d-html',
+    isAvailable: available, activeCity, maxGames: Object.keys(C).length, renderer:'2d-html',
   };
 })();
