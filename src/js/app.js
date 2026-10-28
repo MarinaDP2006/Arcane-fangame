@@ -1,6 +1,6 @@
 // Menú principal del juego, ajustes y cambio de pantallas.
 (function () {
-  const { $, $, el, store, toast } = U;
+  const { $, $$, el, store, toast } = U;
   // El nuevo acabado visual se limita a la aplicación de escritorio; la web no cambia.
   if (window.arcane?.isDesktop) document.body.classList.add('arcane-desktop-game');
 
