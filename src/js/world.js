@@ -1738,7 +1738,7 @@
 
   /** Activa la escena 3D (si hay WebGL) o vuelve a la carta 2D. */
   function use3d(on) {
-    if (false && on && window.World3D) { // Desactivado: el juego utiliza el mapa 2D de forma predeterminada.
+    if (on && !window.arcane?.isDesktop && window.World3D) { // En el juego de escritorio se fuerza el mapa 2D.
       try {
         if (!r3d) r3d = window.World3D.create(canvas.parentElement);
         if (r3d) {
