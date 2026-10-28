@@ -3793,3 +3793,16 @@ body.arcane-desktop-game .mg2d-overlay.mg2d-zaun { --mg2d-accent: #4bd599; }
 body.arcane-desktop-game .mg2d-panel { border-color: var(--mg2d-accent, #a7a08e); }
 body.arcane-desktop-game .mg2d-head { border-color: var(--mg2d-accent, #777366); }
 body.arcane-desktop-game .mg2d-btn:focus-visible { outline-color: var(--mg2d-accent, #e8e0d0); }
+
+/* Fondos reales por ciudad para los ajustes del juego de escritorio. */
+body.arcane-desktop-game[data-city="piltover"] #view-settings {
+  background: linear-gradient(90deg, rgba(5,10,18,.72), rgba(5,10,18,.58)), url("../img/arte/lugares/s2/piltover.webp") center / cover fixed;
+}
+body.arcane-desktop-game[data-city="zaun"] #view-settings {
+  background: linear-gradient(90deg, rgba(3,12,11,.82), rgba(3,12,11,.62)), url("../img/arte/lugares/s2/zaun.webp") center / cover fixed;
+}
+body.arcane-desktop-game[data-city="piltover"] #view-settings > .settings,
+body.arcane-desktop-game[data-city="zaun"] #view-settings > .settings {
+  background: rgba(6, 12, 20, .93);
+  backdrop-filter: blur(4px);
+}
