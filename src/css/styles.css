@@ -3729,3 +3729,67 @@ body.arcane-desktop-game[data-city="piltover"] .slot {
     width: min(280px, calc(100vw - 32px)); padding: 14px;
   }
 }
+
+
+/* Identidad por ciudad SOLO en la aplicación de escritorio; la web no se altera. */
+body.arcane-desktop-game[data-city="piltover"] #view-settings,
+body.arcane-desktop-game[data-city="piltover"] #view-game,
+body.arcane-desktop-game[data-city="piltover"] #view-creator {
+  --font: "Alegreya Sans", sans-serif;
+  --display: "Cinzel", serif;
+}
+body.arcane-desktop-game[data-city="piltover"] .settings,
+body.arcane-desktop-game[data-city="piltover"] .settings-page,
+body.arcane-desktop-game[data-city="piltover"] .settings-tabs,
+body.arcane-desktop-game[data-city="piltover"] .settings-tabs .tab,
+body.arcane-desktop-game[data-city="piltover"] .switch-row,
+body.arcane-desktop-game[data-city="piltover"] .field {
+  font-family: "Alegreya Sans", sans-serif;
+}
+body.arcane-desktop-game[data-city="piltover"] .settings h2,
+body.arcane-desktop-game[data-city="piltover"] .settings h3,
+body.arcane-desktop-game[data-city="piltover"] .settings-tabs .tab {
+  font-family: "Cinzel", serif;
+  letter-spacing: .035em;
+}
+body.arcane-desktop-game[data-city="zaun"] #view-settings,
+body.arcane-desktop-game[data-city="zaun"] #view-game,
+body.arcane-desktop-game[data-city="zaun"] #view-creator {
+  --font: "Alegreya Sans", sans-serif;
+  --display: "Alegreya Sans", sans-serif;
+}
+body.arcane-desktop-game[data-city="zaun"] .settings,
+body.arcane-desktop-game[data-city="zaun"] .settings-page,
+body.arcane-desktop-game[data-city="zaun"] .settings-tabs,
+body.arcane-desktop-game[data-city="zaun"] .settings-tabs .tab,
+body.arcane-desktop-game[data-city="zaun"] .switch-row,
+body.arcane-desktop-game[data-city="zaun"] .field,
+body.arcane-desktop-game[data-city="zaun"] .settings h2,
+body.arcane-desktop-game[data-city="zaun"] .settings h3 {
+  font-family: "Alegreya Sans", sans-serif;
+  letter-spacing: .01em;
+}
+body.arcane-desktop-game #view-home .home-title-static {
+  display: block !important;
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: clamp(22px, 9vh, 90px);
+  width: min(92vw, 760px);
+  margin: 0;
+  transform: translateX(-50%);
+  color: #f3e8ce !important;
+  font: 900 clamp(2rem, 5vw, 4rem)/1.05 "Cinzel Decorative", "Cinzel", serif;
+  letter-spacing: .12em;
+  text-align: center;
+  text-shadow: 0 3px 12px rgba(0,0,0,.9);
+  pointer-events: none;
+}
+body.arcane-desktop-game #view-home .home-menu-static {
+  top: 58%;
+}
+body.arcane-desktop-game .mg2d-overlay.mg2d-piltover { --mg2d-accent: #d5b979; }
+body.arcane-desktop-game .mg2d-overlay.mg2d-zaun { --mg2d-accent: #4bd599; }
+body.arcane-desktop-game .mg2d-panel { border-color: var(--mg2d-accent, #a7a08e); }
+body.arcane-desktop-game .mg2d-head { border-color: var(--mg2d-accent, #777366); }
+body.arcane-desktop-game .mg2d-btn:focus-visible { outline-color: var(--mg2d-accent, #e8e0d0); }
