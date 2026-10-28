@@ -73,7 +73,14 @@ ensure(srcGame.includes("window.App.go('creator')"), 'Elegir ciudad no lleva al 
 ensure(srcApp.includes("btn('Ajustes', () => App.go('settings'))"), 'Falta el acceso a Ajustes desde el menú.');
 const miniHtml = read('src/index.html');
 ensure(miniHtml.indexOf('js/minigames-2d.js') > miniHtml.indexOf('js/minigames-3d.js'), 'El motor 2D debe sobrescribir el motor 3D antiguo antes de iniciar el juego.');
-ensure(read('src/js/minigames-2d.js').includes("renderer:'2d-html'"), 'El catálogo debe utilizar el motor interactivo 2D.');
+const min2d = read('src/js/minigames-2d.js');
+ensure(min2d.includes("renderer:'2d-html'"), 'El catálogo debe utilizar el motor interactivo 2D.');
+const supportedModes = new Set(['shoot', 'precision', 'throw', 'circuit', 'runes', 'bargain', 'assembly', 'arena', 'runner', 'scrap', 'stealth', 'contain']);
+for (const [id, def] of Object.entries(catalog)) {
+  ensure(supportedModes.has(def.mode), `El minijuego ${id} no tiene una mecánica 2D soportada (${def.mode}).`);
+}
+ensure(min2d.includes('Recompensa desbloqueada al continuar.'), 'Los minijuegos deben confirmar la recompensa antes de devolver la victoria.');
+ensure(min2d.includes('settings.difficulty'), 'La dificultad configurada debe afectar a los minijuegos 2D.');
 ensure(read('web/index.html').includes('minijuegos 2D'), 'La web todavía no anuncia los minijuegos 2D.');
 
 // Verify the canonical Season 2 mansion artwork is actually used and packaged.
