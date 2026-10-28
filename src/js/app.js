@@ -74,6 +74,7 @@
     };
     const home = el('div', { class: 'home home-static' },
       el('img', { class: 'home-jinx-image', src: 'img/arte/personajes/jinx.png', alt: '', 'aria-hidden': 'true', draggable: 'false', decoding: 'async' }),
+      U.desktop ? el('h1', { class: 'home-title-static' }, 'Rifts & Gears') : null,
       el('nav', { class: 'home-menu home-menu-static', 'aria-label': 'Menú principal' },
         btn('Jugar', () => Game.newGame(), 'primary'),
         hasSave ? btn('Continuar', async () => { if (!(await Game.continueLatest())) toast('No hay partidas guardadas.', 'warn'); }) : null,
