@@ -359,11 +359,11 @@
       else rows.push(act(tag, a.label, done ? 'Ya lo hiciste en este capítulo.' : `${stat} ya está al máximo.`, () => {}, { disabled: true }));
     }
 
-    // Retos 3D disponibles en este lugar: Minigames.forPlace ya filtra por ciudad.
+    // Retos 2D disponibles en este lugar: Minigames.forPlace ya filtra por ciudad.
     // Si el lugar ya ofrece el minijuego de su actividad, no repetimos la misma tarjeta.
     const linked3D = (Minigames.forPlace?.(loc.id) || []).filter((g) => g.id !== loc.activity?.game);
     linked3D.forEach((g) => {
-      rows.push(act('Minijuego 3D', g.title, g.goal, async () => {
+      rows.push(act('Minijuego 2D', g.title, g.goal, async () => {
         World.pause(true);
         try {
           const won = await Minigames.play(g.id, { bonus: mgBonus(g.id), place: loc.id, city: loc.map || G.world.map });
@@ -628,7 +628,7 @@
     box.append(el('div', { class: `panel action-menu arcade arcade-3d arcade-${city}` },
       el('header', { class: 'arcade-header' },
         el('div', {}, el('span', { class: 'eyebrow' }, `SALÓN HEXTECH · ${cityLabel.toUpperCase()}`),
-          el('h2', {}, 'Desafíos 3D'),
+          el('h2', {}, 'Desafíos 2D'),
           el('p', { class: 'muted' }, `Solo aparecen los minijuegos disponibles en ${cityLabel}. Viaja a la otra ciudad para desbloquear sus desafíos.`)),
         el('span', { class: 'arcade-count' }, `${available.length}/15`)),
       el('div', { class: 'arcade-grid arcade-grid-3d' }, available.map((game) => {
