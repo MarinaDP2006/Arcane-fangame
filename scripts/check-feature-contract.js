@@ -71,6 +71,10 @@ ensure(srcApp.includes("Game.newGame(slot, id)"), 'Elegir ciudad no pasa la ciud
 ensure(srcGame.includes('Creator.start('), 'No se encontró el paso de creación de personaje.');
 ensure(srcGame.includes("window.App.go('creator')"), 'Elegir ciudad no lleva al creador de personaje.');
 ensure(srcApp.includes("btn('Ajustes', () => App.go('settings'))"), 'Falta el acceso a Ajustes desde el menú.');
+const miniHtml = read('src/index.html');
+ensure(miniHtml.indexOf('js/minigames-2d.js') > miniHtml.indexOf('js/minigames-3d.js'), 'El motor 2D debe sobrescribir el motor 3D antiguo antes de iniciar el juego.');
+ensure(read('src/js/minigames-2d.js').includes("renderer:'2d-html'"), 'El catálogo debe utilizar el motor interactivo 2D.');
+ensure(read('web/index.html').includes('minijuegos 2D'), 'La web todavía no anuncia los minijuegos 2D.');
 
 // Verify the canonical Season 2 mansion artwork is actually used and packaged.
 const mansion = sceneCtx.window.Scenes2D?.PLACES?.['mansion-kiramman'];
@@ -93,4 +97,4 @@ if (errors.length) {
   console.error(`✗ Contrato de funciones: ${errors.length} problema(s):\\n - ${errors.join('\\n - ')}`);
   process.exit(1);
 }
-console.log(`✓ Contrato de funciones: ${w.STORY.chapters.length} capítulos, ${worldPlaces.length} ubicaciones, ${w.MISSIONS.length} misiones, ${w.SIDE_QUESTS.length} historias secundarias y ${ids.length} minijuegos 3D.`);
+console.log(`✓ Contrato de funciones: ${w.STORY.chapters.length} capítulos, ${worldPlaces.length} ubicaciones, ${w.MISSIONS.length} misiones, ${w.SIDE_QUESTS.length} historias secundarias y ${ids.length} minijuegos 2D.`);
