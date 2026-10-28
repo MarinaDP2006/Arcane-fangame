@@ -39,6 +39,25 @@ for (const [route, ids] of Object.entries(w.STORY.routes)) {
   for (const id of ids) ensure(chapterIds.has(id), `La ruta ${route} apunta al capítulo inexistente ${id}.`);
 }
 ensure((w.STORY.endings?.length || 0) + (w.STORY.endings2?.length || 0) >= 2, 'Faltan finales narrativos.');
+// Comprueba los enlaces de cada grafo narrativo: ninguna decisión debe apuntar a una escena inexistente.
+for (const chapter of w.STORY.chapters) {
+  const nodes = chapter.nodes || {};
+  for (const [nodeId, node] of Object.entries(nodes)) {
+    if (node.next) ensure(Boolean(nodes[node.next]), `El capítulo ${chapter.id}, nodo ${nodeId}, apunta al nodo inexistente ${node.next}.`);
+    for (const choice of node.choices || []) {
+      if (choice.next) ensure(Boolean(nodes[choice.next]), `La decisión «${choice.t}» de ${chapter.id}/${nodeId} apunta al nodo inexistente ${choice.next}.`);
+      if (choice.fx) ensure(['aff', 'rep', 'stats', 'flags'].some((key) => Object.prototype.hasOwnProperty.call(choice.fx, key)), `La decisión «${choice.t}» no tiene un efecto válido.`);
+    }
+  }
+}
+for (const quest of w.SIDE_QUESTS || []) {
+  const steps = quest.steps || {};
+  ensure(Boolean(steps[quest.start]), `La historia secundaria ${quest.id} no tiene una escena inicial válida.`);
+  for (const [stepId, step] of Object.entries(steps)) for (const choice of step.choices || []) {
+    if (choice.next) ensure(Boolean(steps[choice.next]), `La decisión «${choice.label}» de ${quest.id}/${stepId} apunta a una escena inexistente ${choice.next}.`);
+  }
+}
+ensure(srcGame.includes('function applyFx(fx = {})') && srcGame.includes('applyFx(c.fx)'), 'Las decisiones de la historia deben aplicar sus consecuencias al estado de partida.');
 
 // Missions, side stories, bonds, atlas and exploration need to be present and connected.
 ensure(Array.isArray(w.MISSIONS) && w.MISSIONS.length >= 10, 'El catálogo de misiones persistentes está vacío o demasiado reducido.');
