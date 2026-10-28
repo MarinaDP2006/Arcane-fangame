@@ -1,6 +1,5 @@
-// Mapa interactivo de Piltover y Zaun. Con WebGL, la ciudad es una escena 3D (world3d.js:
-// Piltover bajo el cielo, Zaun en una caverna) que se puede inclinar y girar; sin WebGL, o con
-// la vista 2D elegida, es una carta ilustrada (arte de Arcane de la temporada de fondo, barrios,
+// Mapa interactivo 2D de Piltover y Zaun. La vista 3D queda desactivada para evitar fallos gráficos;
+// el mapa ilustrado conserva barrios, calles, canales y edificios.
 // calles, canales y edificios). En las dos se arrastra, se amplía con la rueda o pellizcando y se toca.
 // Encima, siempre en 2D, van los lugares, las caras y los rótulos. Los lugares son medallones con su imagen: al
 // pulsar uno NO se entra, se abre su menú (historia, conversar, minijuego, explorar, viajar).
@@ -1739,7 +1738,7 @@
 
   /** Activa la escena 3D (si hay WebGL) o vuelve a la carta 2D. */
   function use3d(on) {
-    if (on && window.World3D) {
+    if (on && !window.arcane?.isDesktop && window.World3D) { // En el juego de escritorio se fuerza el mapa 2D.
       try {
         if (!r3d) r3d = window.World3D.create(canvas.parentElement);
         if (r3d) {
