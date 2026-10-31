@@ -39,8 +39,8 @@
       <div class="portada-texto">
       <h1 id="titulo-principal">Elige de qué lado <em>cambiarás</em> el destino.</h1>
         <div class="acciones">
-          <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Descargar el juego <span aria-hidden="true">↗</span></a>
-          <a class="btn btn-borde" href="#juego">Ver qué incluye <span aria-hidden="true">↓</span></a>
+          <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Ver versiones publicadas <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-borde" href="https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml">Compilaciones de prueba <span aria-hidden="true">↗</span></a>
         </div>
         <ul class="sellos-portada" aria-label="Características principales">
           <li>Versión {{VERSION}}</li>
@@ -72,7 +72,7 @@
         </article>
         <article class="caracteristica">
           <h3>Explora las Dos Ciudades</h3>
-          <p>Piltover y Zaun completas, con sus barrios, lugares y actividades: la Academia, el Consejo, los Callejones, el Sumidero y muchos más.</p>
+          <p>Recorre los barrios y lugares incluidos en los mapas ilustrados de Piltover y Zaun: la Academia, el Consejo, los Callejones, el Sumidero y más.</p>
         </article>
         <article class="caracteristica">
           <h3>Capítulos y finales</h3>
@@ -83,8 +83,8 @@
           <p>Recorre Piltover y Zaun en mapas 2D ilustrados, viaja entre ambas ciudades y recoge fragmentos del Códice para descubrir personajes, lugares y tecnología.</p>
         </article>
         <article class="caracteristica">
-          <h3>15 minijuegos 2D</h3>
-          <p>Siete retos de Piltover y ocho de Zaun, con escenarios WebGL y controles para ratón, teclado y pantalla táctil. El catálogo aparece según la ciudad en la que te encuentres.</p>
+          <h3>15 minijuegos 3D</h3>
+          <p>Siete retos de Piltover y ocho de Zaun, con escenarios WebGL y controles para ratón, teclado y pantalla táctil. Son actividades separadas del mapa principal, que sigue siendo 2D.</p>
         </article>
       </div>
 
@@ -147,7 +147,7 @@
 
       <div class="misiones-grid">
         <article class="mision-card"><span class="mision-cifra">{{CAPITULOS}}</span><h3>Misión principal</h3><p>Los capítulos de la Parte I y la Parte II, con decisiones que piden Ingenio, Carisma, Valor o Sigilo y afinidad mínima.</p></article>
-        <article class="mision-card"><span class="mision-cifra">15</span><h3>Minijuegos 2D por ciudad</h3><p>7 en Piltover y 8 en Zaun: precisión, circuitos hextech, runas, duelos, aerotabla, Chompers y más. Son retos interactivos accesibles, sin escenas tridimensionales ni controles complejos.</p></article>
+        <article class="mision-card"><span class="mision-cifra">15</span><h3>Minijuegos 3D por ciudad</h3><p>7 en Piltover y 8 en Zaun: precisión, circuitos hextech, runas, duelos, aerotabla, Chompers y más. Son retos WebGL separados del mapa de exploración 2D.</p></article>
         <article class="mision-card"><span class="mision-cifra">23</span><h3>Fragmentos del Códice</h3><p>Piezas escondidas por las dos ciudades que desbloquean entradas de lore: hextec, quimtec, personajes y facciones.</p></article>
         <article class="mision-card"><span class="mision-cifra">{{FINALES}}</span><h3>Finales posibles</h3><p>Tus decisiones, tus estadísticas y tu afinidad abren y cierran el final de cada parte.</p></article>
       </div>
@@ -401,7 +401,7 @@
       </div>
       <ol class="pasos-juego">
         <li><div><h3>Imagina tu personaje</h3><p>Elige nombre, pronombres, ciudad, barrio, oficio y trasfondo. Puede llevar familia conocida… o ninguna.</p></div></li>
-        <li><div><h3>Elige y explora</h3><p>Selecciona respuestas en los diálogos, sigue objetivos, explora localizaciones 2D y prueba los minijuegos 2D disponibles en esa ciudad.</p></div></li>
+        <li><div><h3>Elige y explora</h3><p>Selecciona respuestas en los diálogos, sigue objetivos y recorre el mapa 2D. En las localizaciones, prueba los minijuegos 3D WebGL disponibles para esa ciudad.</p></div></li>
         <li><div><h3>Mira cómo cambia el destino</h3><p>Las decisiones abren capítulos y finales distintos. Guarda la partida en tu dispositivo y vuelve cuando quieras.</p></div></li>
       </ol>
 
@@ -423,9 +423,10 @@
     <section class="cierre" aria-labelledby="titulo-cierre">
       <p class="kicker">El puente sigue abierto</p>
       <h2 id="titulo-cierre">Tu historia empieza con una decisión.</h2>
-      <p>Descarga la última versión, revisa las notas y empieza a escribir.</p>
+      <p>Busca una versión estable en Releases o, si aún no hay una publicada, una compilación temporal en Actions.</p>
       <div class="acciones acciones-centradas">
-        <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Ver descargas <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-primario" href="https://github.com/MarinaDP2006/Arcane-fangame/releases">Versiones publicadas <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-borde" href="https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml">Compilaciones de prueba <span aria-hidden="true">↗</span></a>
         <a class="btn btn-borde" href="https://github.com/MarinaDP2006/Arcane-fangame/issues">Proponer ideas <span aria-hidden="true">↗</span></a>
       </div>
     </section>

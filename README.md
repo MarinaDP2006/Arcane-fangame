@@ -13,7 +13,7 @@ Fangame narrativo gratuito y no oficial ambientado en **Arcane**, temporadas 1 y
 
 ## Web pública y Render
 
-La web pública es informativa (no contiene una demo jugable) y se publica en Render desde `main`. El juego completo se distribuye como aplicación de escritorio para Windows. El mapa de exploración sigue siendo 2D; los escenarios 3D se usan en los minijuegos.
+La web pública es informativa (no contiene una demo jugable) y se publica en Render desde `main`. El juego de escritorio actual es una aplicación Electron con mapa de exploración 2D y minijuegos WebGL 3D; **no** es todavía un juego hecho en Godot ni un mundo 3D continuo de Piltover y Zaun. Los datos de Ollama están preparados en la configuración, pero la conexión está desactivada: la historia y los diálogos no dependen de un modelo local.
 
 - URL pública: https://arcane-fangame.onrender.com/
 - Configuración de Render: `render.yaml`.
@@ -32,14 +32,12 @@ El favicon canónico es `web/icono-arcane.svg`. `scripts/art-manifest.js` sincro
 
 ## Descargar y ejecutar en Windows
 
-Los instaladores no se guardan en el repositorio como archivos fuente. GitHub Actions compila dos paquetes de Windows x64 (instalador y portable) y los publica como artefactos temporales del workflow. Para obtener la versión más reciente:
+Los instaladores no se guardan como archivos fuente en el repositorio. El workflow compila Windows x64 y adjunta los ejecutables como artefactos temporales; una compilación de Actions no es automáticamente una versión publicada.
 
-1. Abre [Actions · Compilar Arcane](https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml).
-2. Entra en la ejecución más reciente de la rama `main` que haya terminado correctamente.
-3. En la sección **Artifacts**, descarga el paquete `arcane-fangame-1.30.3-windows-x64` (el nombre cambia al actualizar la versión).
-4. Descomprime el artefacto ZIP y ejecuta el archivo `Arcane-fangame-1.30.3-Setup.exe` para instalar, o `Arcane-fangame-1.30.3-portable.exe` para usarlo sin instalación.
+- **Versiones permanentes:** mira [Releases](https://github.com/MarinaDP2006/Arcane-fangame/releases). Si la página no muestra una versión, todavía no hay una Release publicada para descargar.
+- **Compilación de prueba:** abre [Compilar Arcane · Actions](https://github.com/MarinaDP2006/Arcane-fangame/actions/workflows/compilar.yml), elige la ejecución más reciente de `main` que haya terminado correctamente y baja el artefacto `arcane-fangame-<versión>-windows-x64`. Descomprime el ZIP para encontrar el instalador `Arcane-fangame-<versión>-Setup.exe` y el portable `Arcane-fangame-<versión>-portable.exe`.
 
-Los artefactos se conservan durante un periodo limitado. Las versiones publicadas de forma permanente se enlazan en [Releases](https://github.com/MarinaDP2006/Arcane-fangame/releases). Si no aparece ningún artefacto en una ejecución, la compilación aún no ha terminado o ha fallado.
+Los artefactos de Actions caducan según el periodo de retención de esa ejecución. Comprueba que la compilación terminó correctamente antes de instalarla; no uses una descarga temporal como sustituto de una Release estable.
 
 ## Desarrollo
 
