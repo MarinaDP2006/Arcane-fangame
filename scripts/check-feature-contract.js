@@ -97,6 +97,9 @@ ensure(miniHtml.includes('js/minigames-3d.js'), 'El juego debe cargar el motor d
 ensure(!miniHtml.includes('js/minigames-2d.js'), 'El motor 2D no debe sustituir la experiencia 3D que anuncia el catálogo.');
 ensure(min.renderer === 'three-js-webgl', 'El motor 3D debe ser el renderer activo del catálogo.');
 ensure(min.GAMES && Object.values(min.GAMES).every((game) => game.mode3d === true), 'Todos los minijuegos publicados deben usar definiciones 3D.');
+const mini3d = read('src/js/minigames-3d.js');
+ensure(mini3d.includes('new THREE.TubeGeometry(pipe') && mini3d.includes("material('#263b39'") && mini3d.includes('new THREE.CylinderGeometry(.32, .32, .12, 6)'), 'Los escenarios 3D deben conservar sus motivos ambientales diferenciados de tubería zaunita y medallón hexagonal de Piltover.');
+ensure(mini3d.includes("if (zaun) {") && mini3d.includes("const marble = material('#b4b6a9'") && mini3d.includes("const brass = material('#c69b4e'"), 'Los motivos de ciudad deben distinguir Zaun de la arquitectura pétrea y de latón de Piltover.');
 ensure(miniHtml.indexOf('vendor/three.min.js') < miniHtml.indexOf('js/minigames-3d.js'), 'Three.js debe cargarse antes del motor de minijuegos 3D.');
 ensure(miniHtml.indexOf('js/minigames-3d.js') < miniHtml.indexOf('js/game.js'), 'El motor 3D debe estar disponible antes de iniciar el juego.');
 ensure(read('web/index.html').includes('minijuegos 3D'), 'La web todavía no anuncia los minijuegos 3D.');

@@ -270,8 +270,42 @@
             cube(.12, h * .8, .12, zaun ? '#42d6b5' : '#68c9ff', [x, h / 2, z + 1.55], zaun ? '#42d6b5' : '#68c9ff');
           }
         }
+        // Siluetas de ciudad, no bloques intercambiables: Piltover se reconoce por
+        // piedra clara y herrajes de latón; Zaun por conducciones de hierro remendadas.
+        if (zaun) {
+          const iron = material('#263b39', '#172b28', { metalness: .82, roughness: .48 });
+          const verdigris = material('#58796c', '#245648', { metalness: .7, roughness: .4 });
+          for (const side of [-1, 1]) {
+            const x = side * 4.8;
+            const pipe = new THREE.CatmullRomCurve3([
+              new THREE.Vector3(x, 4.8, 3), new THREE.Vector3(x, 4.8, -1),
+              new THREE.Vector3(x + side * .8, 3.7, -4), new THREE.Vector3(x + side * .8, 3.7, -12),
+            ]);
+            mesh(new THREE.TubeGeometry(pipe, 20, .16, 8, false), iron);
+            for (const z of [-1, -6, -11]) {
+              const joint = mesh(new THREE.CylinderGeometry(.27, .27, .16, 10), verdigris, [x + (z < -2 ? side * .8 : 0), z < -2 ? 3.7 : 4.8, z]);
+              joint.rotation.x = Math.PI / 2;
+            }
+          }
+        } else {
+          const marble = material('#b4b6a9', '#615b45', { metalness: .22, roughness: .7 });
+          const brass = material('#c69b4e', '#9a7130', { metalness: .78, roughness: .28 });
+          for (const x of [-5.1, 5.1]) {
+            for (const z of [-7, -16]) {
+              const column = mesh(new THREE.CylinderGeometry(.48, .62, 6.4, 12), marble, [x, 3.05, z]);
+              column.castShadow = true;
+              for (const y of [.28, 5.72]) {
+                const capital = mesh(new THREE.CylinderGeometry(.72, .72, .22, 12), brass, [x, y, z]);
+                capital.castShadow = true;
+              }
+              // Medallón hexagonal: alusión sobria a la arquitectura hextech de la ciudad alta.
+              const medallion = mesh(new THREE.CylinderGeometry(.32, .32, .12, 6), brass, [x, 3.4, z + .56]);
+              medallion.rotation.x = Math.PI / 2;
+            }
+          }
+        }
         for (let i = 0; i < 45; i++) {
-          const p = sphere(rand(.025, .09), zaun ? '#60eac5' : '#e8c56f', [rand(-12, 12), rand(.4, 6), rand(-30, 7)], zaun ? '#30ddad' : '#ffcc65');
+                const p = sphere(rand(.025, .09), zaun ? '#60eac5' : '#e8c56f', [rand(-12, 12), rand(.4, 6), rand(-30, 7)], zaun ? '#30ddad' : '#ffcc65');
           p.userData.floating = true; p.userData.phase = rand(0, Math.PI * 2); p.userData.baseY = p.position.y;
         }
         torus(2.3, .08, zaun ? '#2bd4ab' : '#e5c06d', [0, .02, -2], 0);
