@@ -2121,7 +2121,7 @@
     showDialog(id);
   }
 
-  /** La IA está aplazada: cualquier ajuste guardado de chat libre vuelve al diálogo escrito. */
+  /** El chat escrito sigue disponible como modo explícito de reserva. */
   /** Presenta las líneas de una conversación con personaje. */
   function showDialog(id) {
     const box = $('#dlg-choices');

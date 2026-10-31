@@ -282,7 +282,7 @@
       ],
       juego: () => [
         el('h3', {}, 'Partida'),
-        el('p', { class: 'muted small' }, 'La historia mantiene sus diálogos escritos. Si activas Ollama, el modo de escena libre puede pedir respuestas a un modelo que se ejecuta en este ordenador; solo se conecta a 127.0.0.1 y puedes desactivarlo aquí.'),
+        el('p', { class: 'muted small' }, 'La historia principal y el comunicador escrito siguen funcionando sin IA. Si activas Ollama, puedes usar respuestas generadas opcionales en el chat de personajes; la historia, las relaciones y el progreso no cambian por lo que genere el modelo.'),
         row('Ollama local (opcional)', 'Requiere Ollama abierto y el modelo qwen3:4b descargado. Desactivado, la partida conserva sus opciones y diálogos escritos.',
           el('input', { type: 'checkbox', checked: s.ai?.provider === 'ollama' && s.ai?.enabled === true, onchange: (e) => set({ ai: { provider: e.target.checked ? 'ollama' : 'off', enabled: e.target.checked, model: 'qwen3:4b' } }) })),
         select('storyMode', 'Modo de historia', 'Usa los diálogos escritos disponibles.', [['opciones', 'Diálogos escritos']]),
