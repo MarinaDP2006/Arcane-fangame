@@ -8,12 +8,12 @@ Fangame narrativo gratuito y no oficial ambientado en **Arcane**, temporadas 1 y
 - Capítulos, escenas y decisiones narrativas.
 - Dos ciudades conectadas mediante el mapa 2D.
 - Personajes, códice, relaciones y misiones secundarias.
-- Catálogo de 15 minijuegos 2D por ciudad: 7 en Piltover y 8 en Zaun, accesibles desde sus localizaciones.
+- Catálogo de 15 minijuegos 3D por ciudad: 7 en Piltover y 8 en Zaun, accesibles desde sus localizaciones.
 - Aplicación de escritorio para Windows (instalador y versión portable).
 
 ## Web pública y Render
 
-La web pública es informativa (no contiene una demo jugable) y se publica en Render desde `main`. El juego de escritorio actual es una aplicación Electron con mapa de exploración 2D y minijuegos interactivos 2D; **no** es todavía un juego hecho en Godot ni un mundo 3D continuo de Piltover y Zaun. Los datos de Ollama están preparados en la configuración, pero la conexión está desactivada: la historia y los diálogos no dependen de un modelo local.
+La web pública es informativa (no contiene una demo jugable) y se publica en Render desde `main`. El juego de escritorio actual es una aplicación Electron con mapa de exploración 2D y minijuegos interactivos 3D WebGL; **no** es todavía un juego hecho en Godot ni un mundo 3D continuo de Piltover y Zaun. Los datos de Ollama están preparados en la configuración, pero la conexión está desactivada: la historia y los diálogos no dependen de un modelo local.
 
 - URL pública: https://arcane-fangame.onrender.com/
 - Configuración de Render: `render.yaml`.

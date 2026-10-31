@@ -57,7 +57,7 @@
       <div class="seccion-cabeza">
         <p class="kicker">Un fangame gratuito y no oficial</p>
         <h2 id="titulo-juego-seccion">Todo el juego, de un vistazo.</h2>
-        <p>Una aventura narrativa con diálogos escritos, rutas de Piltover y Zaun, relaciones que progresan, seis historias secundarias ramificadas y un catálogo de quince minijuegos distribuidos por ciudad.</p>
+        <p>Crea tu personaje y vive tu propia historia entre Piltover y Zaun. Elige qué decir, explora lugares de Arcane y descubre cómo cambian tus vínculos y el destino de quienes conoces.</p>
       </div>
 
       <!-- Seis tarjetas con los sistemas del juego. -->
@@ -69,6 +69,10 @@
         <article class="caracteristica">
           <h3>Diálogos y decisiones</h3>
           <p>Avanza por escenas escritas, elige respuestas y descubre consecuencias. Las decisiones afectan a afinidad, confianza, rutas narrativas y desenlaces.</p>
+        </article>
+        <article class="caracteristica">
+          <h3>Dos formas de conversar</h3>
+          <p>Sigue la aventura con opciones escritas o, si activas el chat local opcional, escribe a los personajes con tus propias palabras. El chat no sustituye las decisiones de la historia.</p>
         </article>
         <article class="caracteristica">
           <h3>Explora las Dos Ciudades</h3>
@@ -83,8 +87,8 @@
           <p>Recorre Piltover y Zaun en mapas 2D ilustrados, viaja entre ambas ciudades y recoge fragmentos del Códice para descubrir personajes, lugares y tecnología.</p>
         </article>
         <article class="caracteristica">
-          <h3>15 minijuegos 2D</h3>
-          <p>Siete retos de Piltover y ocho de Zaun, con controles para ratón, teclado y pantalla táctil. El catálogo aparece según la ciudad en la que te encuentres.</p>
+          <h3>15 minijuegos 3D</h3>
+          <p>Siete retos de Piltover y ocho de Zaun, con escenarios WebGL, geometría 3D y arte local de cada lugar. El mapa principal sigue siendo 2D; cada reto se abre desde sus localizaciones.</p>
         </article>
       </div>
 
@@ -146,25 +150,12 @@
       </div>
 
       <div class="misiones-grid">
-        <article class="mision-card"><span class="mision-cifra">{{CAPITULOS}}</span><h3>Misión principal</h3><p>Los capítulos de la Parte I y la Parte II, con decisiones que piden Ingenio, Carisma, Valor o Sigilo y afinidad mínima.</p></article>
-        <article class="mision-card"><span class="mision-cifra">15</span><h3>Minijuegos 2D por ciudad</h3><p>7 en Piltover y 8 en Zaun: precisión, circuitos hextech, runas, duelos, aerotabla, Chompers y más. Son retos interactivos 2D accesibles desde las localizaciones.</p></article>
-        <article class="mision-card"><span class="mision-cifra">23</span><h3>Fragmentos del Códice</h3><p>Piezas escondidas por las dos ciudades que desbloquean entradas de lore: hextec, quimtec, personajes y facciones.</p></article>
-        <article class="mision-card"><span class="mision-cifra">{{FINALES}}</span><h3>Finales posibles</h3><p>Tus decisiones, tus estadísticas y tu afinidad abren y cierran el final de cada parte.</p></article>
+        <article class="mision-card"><span class="mision-cifra">{{CAPITULOS}}</span><h3>Misión principal</h3><p>Vive la historia, toma decisiones y descubre qué cambia según la persona que has creado.</p></article>
+        <article class="mision-card"><span class="mision-cifra">15</span><h3>Minijuegos 3D por ciudad</h3><p>Prueba puntería, circuitos hextech, duelos, aerotabla y más en retos 3D independientes del mapa.</p></article>
+        <article class="mision-card"><span class="mision-cifra">23</span><h3>Fragmentos del Códice</h3><p>Encuentra pistas sobre los personajes, las ciudades y sus tecnologías.</p></article>
+        <article class="mision-card"><span class="mision-cifra">{{FINALES}}</span><h3>Finales posibles</h3><p>Lo que eliges puede cambiar quién llega al final y cómo acaba tu historia.</p></article>
       </div>
 
-      <h3 class="subtitulo-zona">Ejemplos de secundarias</h3>
-      <ul class="ejemplos-misiones">
-        <li>Descifrar runas con Heimerdinger</li>
-        <li>Ajustar un circuito hextec con Jayce</li>
-        <li>Descargar barcos en el muelle</li>
-        <li>Seguir a un contrabandista</li>
-        <li>Pelear en el foso</li>
-        <li>Carrera por los tejados</li>
-        <li>Desactivar una Chomper de Jinx</li>
-        <li>Atender la barra de La Última Gota</li>
-        <li>Persecución en aerodeslizador con las Luciérnagas</li>
-        <li>Clasificar chatarra con Benzo</li>
-      </ul>
     </section>
 
     <!-- ======================= AFINIDAD Y CONFIANZA ======================= -->
@@ -178,18 +169,15 @@
 
       <!-- Escalera de relaciones con los requisitos reales del juego. -->
       <div class="escalera">
-        <article class="escalera-paso"><h3>Amistad</h3><p class="escalera-requisitos">Afinidad 4 · Confianza 2</p><p>Todo empieza aquí: nadie pasa de desconocido a pareja o familia de golpe.</p></article>
-        <article class="escalera-paso"><h3>Mejor amig@</h3><p class="escalera-requisitos">Afinidad 8 · Confianza 6</p><p>La persona a la que llamas primero cuando hay un problema.</p></article>
-        <article class="escalera-paso rel-romantica"><h3>Pareja</h3><p class="escalera-requisitos">Afinidad 8 · Confianza 6</p><p>Solo entre adultos que os atraigáis y nunca con quien es tu familia o tu herman@ de corazón.</p></article>
-        <article class="escalera-paso"><h3>Familia elegida</h3><p class="escalera-requisitos">Afinidad 7 · Confianza 5</p><p>Padre, madre, abuelo o mentor: quien se convierte en tu familia si te faltan.</p></article>
-        <article class="escalera-paso"><h3>Herman@ de corazón</h3><p class="escalera-requisitos">Afinidad 7 · Confianza 5</p><p>Un lazo de hermandad sin parentesco de por medio.</p></article>
+        <article class="escalera-paso"><h3>Amistad</h3><p>Conoce a los personajes y gana su confianza con lo que dices y haces.</p></article>
+        <article class="escalera-paso"><h3>Mejor amig@</h3><p>Una amistad que puede crecer con cada conversación y decisión.</p></article>
+        <article class="escalera-paso rel-romantica"><h3>Pareja</h3><p>Puede surgir entre personajes adultos cuando la historia y el vínculo lo permiten.</p></article>
+        <article class="escalera-paso"><h3>Familia elegida</h3><p>Alguien que acaba siendo parte de tu familia elegida.</p></article>
+        <article class="escalera-paso"><h3>Herman@ de corazón</h3><p>Un lazo de familia construido durante la aventura.</p></article>
       </div>
 
       <div class="reglas-rel">
-        <p><strong>Cómo sube la afinidad:</strong> las decisiones de la historia (+1 o −1), las charlas del comunicador (el cumplido sube afinidad; los secretos piden afinidad 3 y hablar de miedos, afinidad 2) y pasar la tarde con alguien.</p>
-        <p><strong>Cómo sube la confianza:</strong> tiempo compartido real, una vez por capítulo y por tipo de rato. Por eso una relación seria lleva varios capítulos.</p>
-        <p><strong>Cuándo hay romance:</strong> se abre tras el salto de «Siete años después» (capítulo 3) de la Parte I o en la Parte II. Si en la creación elegiste familia —hij@ de Vander, criad@ por Silco, herman@ de Jayce, Viktor o Mel— con ellos nunca hay romance: ahí el vínculo es de familia y de hermandad.</p>
-        <p><strong>Desde la creación:</strong> puedes empezar ya con un parentesco (afinidad inicial y escenas familiares propias) o sin familia famosa y construir todos los vínculos jugando.</p>
+        <p>Tus respuestas y el tiempo que compartes con cada personaje influyen en cómo te trata y en qué escenas se desbloquean. La familia nunca se convierte en romance.</p>
       </div>
     </section>
 
@@ -347,7 +335,7 @@
       <div class="seccion-cabeza">
         <p class="kicker">Un mapa, dos formas de recorrerlo</p>
         <h2 id="titulo-mapa">El mapa del Códice.</h2>
-        <p>En el juego, el mapa de exploración es 2D, ilustrado y navegable por los barrios de Piltover y Zaun. Los minijuegos se abren desde las localizaciones correspondientes y utilizan controles sencillos; el mapa ilustrado continúa siendo navegable.</p>
+        <p>Recorre el mapa ilustrado de Piltover y Zaun y elige adónde ir. En algunas localizaciones podrás entrar en retos 3D inspirados en la actividad de cada zona.</p>
       </div>
       <figure class="mapa-codice">
         <img src="arte-oficial/mapa/mapa-piltover-zaun.webp" alt="Mapa ilustrado de Piltover y Zaun con sus lugares" loading="lazy">
@@ -401,23 +389,9 @@
       </div>
       <ol class="pasos-juego">
         <li><div><h3>Imagina tu personaje</h3><p>Elige nombre, pronombres, ciudad, barrio, oficio y trasfondo. Puede llevar familia conocida… o ninguna.</p></div></li>
-        <li><div><h3>Elige y explora</h3><p>Selecciona respuestas en los diálogos, sigue objetivos y recorre el mapa 2D. En las localizaciones, prueba los minijuegos 2D disponibles para esa ciudad.</p></div></li>
+        <li><div><h3>Elige y explora</h3><p>Selecciona respuestas en los diálogos, sigue objetivos y recorre el mapa 2D. En algunas localizaciones, prueba los retos 3D de Piltover y Zaun.</p></div></li>
         <li><div><h3>Mira cómo cambia el destino</h3><p>Las decisiones abren capítulos y finales distintos. Guarda la partida en tu dispositivo y vuelve cuando quieras.</p></div></li>
       </ol>
-
-    <!-- ======================= CAPTURAS DEL JUEGO ======================= -->
-    <!-- Sección reservada para las capturas de pantalla del juego: ahora queda vacía
-         a propósito. El compilador la rellena con las imágenes colocadas en
-         web/capturas/ (inicio, creacion, comunicador, mapa, codice) y con las de la
-         carpeta raíz capturasjuego/; mientras no haya ninguna muestra un aviso. -->
-    <section class="seccion seccion-capturas" id="capturas" aria-labelledby="titulo-capturas">
-      <div class="seccion-cabeza">
-        <p class="kicker">Capturas del juego</p>
-        <h2 id="titulo-capturas">El juego, pantalla a pantalla.</h2>
-        <p>Aquí se publicarán las capturas oficiales de las pantallas del juego.</p>
-      </div>
-      <div class="galeria-capturas">{{CAPTURAS}}</div>
-    </section>
 
     <!-- ======================= LLAMADA FINAL ======================= -->
     <section class="cierre" aria-labelledby="titulo-cierre">
