@@ -61,6 +61,11 @@ for (const quest of w.SIDE_QUESTS || []) {
   for (const [stepId, step] of Object.entries(steps)) for (const choice of step.choices || []) {
     if (choice.next) ensure(Boolean(steps[choice.next]), `La decisión «${choice.label}» de ${quest.id}/${stepId} apunta a una escena inexistente ${choice.next}.`);
   }
+  if (quest.id === 'puente-dos-ciudades-historia') {
+    ensure(steps.negociacion?.choices?.every((choice) => choice.next === 'acuerdo-negociado'), 'La ruta de negociación del puente debe conservar su desenlace propio.');
+    ensure(steps.evacuacion?.choices?.every((choice) => choice.next === 'acuerdo-evacuacion'), 'La ruta de evacuación del puente debe conservar su desenlace propio.');
+    ensure(Boolean(steps['acuerdo-negociado']) && Boolean(steps['acuerdo-evacuacion']), 'Falta uno de los desenlaces diferenciados del puente.');
+  }
 }
 ensure(srcGame.includes('function applyFx(fx = {})') && srcGame.includes('applyFx(c.fx)'), 'Las decisiones de la historia deben aplicar sus consecuencias al estado de partida.');
 ensure(srcGame.includes('quest.location === loc.id') && srcGame.includes('Historia secundaria'), 'Las historias secundarias disponibles deben iniciarse desde su localización del mapa.');

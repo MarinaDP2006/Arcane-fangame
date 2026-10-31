@@ -323,8 +323,8 @@ window.SIDE_QUESTS = [
           { s: 'caitlyn', t: 'Lo pondremos por escrito y dejaremos un registro que ninguna ciudad pueda borrar en secreto.' }
         ],
         choices: [
-          { id: 'registro-publico', label: 'Crear un registro público de incidentes y decisiones', response: 'La transparencia permite exigir responsabilidades a ambos lados.', next: 'acuerdo', fx: { rep: { piltover: 1, zaun: 1 } } },
-          { id: 'mediadores', label: 'Designar mediadores que no pertenezcan a ninguna autoridad', response: 'Nadie debe ser juez de su propio comportamiento.', next: 'acuerdo', fx: { aff: { sevika: 1 }, stats: { carisma: 1 } } }
+          { id: 'registro-publico', label: 'Crear un registro público de incidentes y decisiones', response: 'La transparencia permite exigir responsabilidades a ambos lados.', next: 'acuerdo-negociado', fx: { rep: { piltover: 1, zaun: 1 } } },
+          { id: 'mediadores', label: 'Designar mediadores que no pertenezcan a ninguna autoridad', response: 'Nadie debe ser juez de su propio comportamiento.', next: 'acuerdo-negociado', fx: { aff: { sevika: 1 }, stats: { carisma: 1 } } }
         ]
       },
       evacuacion: {
@@ -334,19 +334,31 @@ window.SIDE_QUESTS = [
           { s: 'sevika', t: 'Esto no soluciona las deudas entre las ciudades. Pero demuestra que por una vez alguien ha puesto a la gente por delante de la bandera.' }
         ],
         choices: [
-          { id: 'acompanar-grupos', label: 'Organizar grupos pequeños y reunificación familiar', response: 'Cada persona debe poder saber dónde están los suyos.', next: 'acuerdo', fx: { aff: { sevika: 1 }, rep: { zaun: 1 } } },
-          { id: 'revisar-acceso', label: 'Mantener el acceso abierto y revisar la seguridad juntos', response: 'La seguridad ha de ser una responsabilidad compartida.', next: 'acuerdo', fx: { aff: { caitlyn: 1 }, rep: { piltover: 1 } } }
+          { id: 'acompanar-grupos', label: 'Organizar grupos pequeños y reunificación familiar', response: 'Cada persona debe poder saber dónde están los suyos.', next: 'acuerdo-evacuacion', fx: { aff: { sevika: 1 }, rep: { zaun: 1 } } },
+          { id: 'revisar-acceso', label: 'Mantener el acceso abierto y revisar la seguridad juntos', response: 'La seguridad ha de ser una responsabilidad compartida.', next: 'acuerdo-evacuacion', fx: { aff: { caitlyn: 1 }, rep: { piltover: 1 } } }
         ]
       },
-      acuerdo: {
-        heading: 'La primera regla compartida',
+      'acuerdo-negociado': {
+        heading: 'Un paso bajo vigilancia',
         lines: [
-          { s: 'caitlyn', t: 'No llamaría paz a esto todavía. Pero hemos encontrado una forma de discrepar sin convertir a todo el mundo en enemigo.' },
-          { s: 'sevika', t: 'La próxima vez mediré el acuerdo por lo que cambie en la calle, no por lo bien que suene en una sala.' }
+          { s: 'caitlyn', t: 'El registro ya está abierto y los mediadores pueden comprobar cada cierre. No es confianza ciega: es una forma de exigir cuentas.' },
+          { s: 'sevika', t: 'El paso seguirá siendo frágil. Si alguien incumple, la gente de ambos lados tendrá pruebas y una voz para reclamar.' }
         ],
         choices: [
-          { id: 'control-comun', label: 'Crear un comité ciudadano con representantes de las dos ciudades', response: 'El puente pertenece a quienes necesitan cruzarlo.', complete: true, fx: { aff: { caitlyn: 1, sevika: 1 }, rep: { piltover: 1, zaun: 1 }, flags: ['sidequest_puente_comite'] } },
-          { id: 'pacto-publico', label: 'Publicar un pacto temporal con fechas de revisión', response: 'Un acuerdo debe poder revisarse si deja de proteger a la gente.', complete: true, fx: { stats: { carisma: 1 }, rep: { piltover: 1, zaun: 1 }, flags: ['sidequest_puente_pacto'] } }
+          { id: 'negociacion-comite', label: 'Dar a representantes vecinales de ambas ciudades poder para revisar el registro', response: 'Quienes cruzan el puente deben poder señalar cuándo falla el acuerdo.', complete: true, fx: { aff: { caitlyn: 1, sevika: 1 }, rep: { piltover: 1, zaun: 1 }, flags: ['sidequest_puente_comite', 'sidequest_puente_negociacion'] } },
+          { id: 'negociacion-revision', label: 'Publicar el pacto con una fecha próxima para renegociarlo', response: 'Una promesa temporal debe poder cambiar si no protege a la gente.', complete: true, fx: { stats: { carisma: 1 }, rep: { piltover: 1, zaun: 1 }, flags: ['sidequest_puente_pacto', 'sidequest_puente_negociacion'] } }
+        ]
+      },
+      'acuerdo-evacuacion': {
+        heading: 'Después del cruce',
+        lines: [
+          { s: 'narrador', t: 'Las familias ya están reunidas al otro lado. El paso queda abierto mientras los voluntarios cuentan a quienes han llegado y buscan a los que faltan.' },
+          { s: 'caitlyn', t: 'Evacuar primero no resuelve quién controla el puente. Pero ahora podemos hablar sin pedir a las familias que esperen en medio del peligro.' },
+          { s: 'sevika', t: 'Que esto no se convierta en otra fotografía para los de arriba. La gente tendrá que poder volver a cruzar cuando lo necesite.' }
+        ],
+        choices: [
+          { id: 'evacuacion-comite', label: 'Mantener un comité ciudadano para organizar los próximos cruces', response: 'La ayuda de hoy puede convertirse en una responsabilidad compartida mañana.', complete: true, fx: { aff: { caitlyn: 1, sevika: 1 }, rep: { piltover: 1, zaun: 1 }, flags: ['sidequest_puente_comite', 'sidequest_puente_evacuacion'] } },
+          { id: 'evacuacion-revision', label: 'Acordar una ruta de paso y revisarla con civiles antes de cada apertura', response: 'La seguridad debe responder a quienes realmente usan el puente.', complete: true, fx: { stats: { carisma: 1 }, rep: { piltover: 1, zaun: 1 }, flags: ['sidequest_puente_pacto', 'sidequest_puente_evacuacion'] } }
         ]
       }
     }
