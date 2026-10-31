@@ -56,3 +56,22 @@ test('la posición a igual tiempo es igual con 30, 60 y 120 FPS', () => {
     for (const axis of ['x', 'y', 'z']) nearly(p[axis], expected[axis]);
   }
 });
+
+test('la dificultad elegida cambia ventajas concretas de los retos 3D', () => {
+  const profile = motion.difficultyProfile;
+  const easy = profile('facil'), normal = profile('normal'), hard = profile('dificil');
+  assert.ok(easy.timeScale > normal.timeScale && normal.timeScale > hard.timeScale);
+  assert.ok(easy.mistakeDelta > normal.mistakeDelta && normal.mistakeDelta > hard.mistakeDelta);
+  assert.ok(easy.targetScale > normal.targetScale && normal.targetScale > hard.targetScale);
+  assert.ok(easy.motionScale < normal.motionScale && normal.motionScale < hard.motionScale);
+  assert.deepEqual(Object.keys(profile('invalid')).sort(), Object.keys(normal).sort());
+  assert.equal(profile('invalid').mode, 'normal');
+});
+
+test('la dificultad modifica la tolerancia al negociar sin eliminar opciones razonables', () => {
+  const accept = motion.bargainAcceptable;
+  assert.equal(accept(42, 50, 'facil'), true);
+  assert.equal(accept(42, 50, 'normal'), true);
+  assert.equal(accept(42, 50, 'dificil'), false);
+  assert.equal(accept(54, 50, 'dificil'), true);
+});
