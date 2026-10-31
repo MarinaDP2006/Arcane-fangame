@@ -52,6 +52,10 @@ for (const chapter of w.STORY.chapters) {
 }
 for (const quest of w.SIDE_QUESTS || []) {
   const steps = quest.steps || {};
+  for (const [stepId, step] of Object.entries(steps)) for (const line of step.lines || []) {
+    if (line.s !== 'narrador' && w.STORY.deaths?.[line.s]) ensure((quest.requiresAlive || []).includes(line.s), `La historia secundaria ${quest.id} usa a ${line.s} en ${stepId}, pero no impide continuar tras su muerte.`);
+  }
+  for (const id of quest.requiresAlive || []) ensure(Boolean(w.STORY.cast.includes(id)), `La historia secundaria ${quest.id} exige que siga presente un personaje fuera del reparto: ${id}.`);
   ensure(Boolean(quest.location) && Object.values(w.WORLD?.maps || {}).some((m) => (m.locations || []).some((loc) => loc.id === quest.location)), `La historia secundaria ${quest.id} no está conectada a un lugar existente del mapa.`);
   ensure(Boolean(steps[quest.start]), `La historia secundaria ${quest.id} no tiene una escena inicial válida.`);
   for (const [stepId, step] of Object.entries(steps)) for (const choice of step.choices || []) {
@@ -60,6 +64,7 @@ for (const quest of w.SIDE_QUESTS || []) {
 }
 ensure(srcGame.includes('function applyFx(fx = {})') && srcGame.includes('applyFx(c.fx)'), 'Las decisiones de la historia deben aplicar sus consecuencias al estado de partida.');
 ensure(srcGame.includes('quest.location === loc.id') && srcGame.includes('Historia secundaria'), 'Las historias secundarias disponibles deben iniciarse desde su localización del mapa.');
+ensure(srcGame.includes('quest.requiresAlive') && srcGame.includes('INTERRUMPIDA'), 'Las historias secundarias deben respetar las muertes y rescates de esta partida e indicar si se interrumpen.');
 
 // Missions, side stories, bonds, atlas and exploration need to be present and connected.
 ensure(Array.isArray(w.MISSIONS) && w.MISSIONS.length >= 10, 'El catálogo de misiones persistentes está vacío o demasiado reducido.');
