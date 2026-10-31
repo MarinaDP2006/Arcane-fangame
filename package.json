@@ -9,13 +9,14 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "node scripts/asegurar-electron.js",
-    "check": "node scripts/check.js && node scripts/check-runtime.js && node scripts/check-feature-contract.js",
+    "check": "node scripts/check.js && node scripts/check-runtime.js && node scripts/check-feature-contract.js && node --test scripts/world-motion.test.js",
     "dist": "electron-builder --win",
     "dist:win": "electron-builder --win",
     "serve:web": "node server/roleplay-server.js",
     "web": "node scripts/build-web.js",
     "check:web": "npm run web && node scripts/check-web-deploy.js",
-    "test:ollama": "node --test scripts/ollama.test.js"
+    "test:ollama": "node --test scripts/ollama.test.js",
+    "test:side-quests": "node --test scripts/side-quests.test.js"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.3",

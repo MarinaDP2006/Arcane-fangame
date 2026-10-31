@@ -61,6 +61,11 @@ for (const quest of w.SIDE_QUESTS || []) {
   for (const [stepId, step] of Object.entries(steps)) for (const choice of step.choices || []) {
     if (choice.next) ensure(Boolean(steps[choice.next]), `La decisión «${choice.label}» de ${quest.id}/${stepId} apunta a una escena inexistente ${choice.next}.`);
   }
+  if (quest.id === 'puente-dos-ciudades-historia') {
+    ensure(steps.negociacion?.choices?.every((choice) => choice.next === 'acuerdo-negociado'), 'La ruta de negociación del puente debe conservar su desenlace propio.');
+    ensure(steps.evacuacion?.choices?.every((choice) => choice.next === 'acuerdo-evacuacion'), 'La ruta de evacuación del puente debe conservar su desenlace propio.');
+    ensure(Boolean(steps['acuerdo-negociado']) && Boolean(steps['acuerdo-evacuacion']), 'Falta uno de los desenlaces diferenciados del puente.');
+  }
 }
 ensure(srcGame.includes('function applyFx(fx = {})') && srcGame.includes('applyFx(c.fx)'), 'Las decisiones de la historia deben aplicar sus consecuencias al estado de partida.');
 ensure(srcGame.includes('quest.location === loc.id') && srcGame.includes('Historia secundaria'), 'Las historias secundarias disponibles deben iniciarse desde su localización del mapa.');
@@ -122,6 +127,9 @@ for (const url of html.split('<script src="').slice(1).map(part => part.split('"
 
 ensure(html.includes('href="icono-arcane.svg"'), 'El juego no enlaza el icono compartido con la web.');
 ensure(fs.existsSync(path.join(root, 'src/icono-arcane.svg')), 'Falta src/icono-arcane.svg.');
+
+ensure(html.indexOf('js/world-motion.js') < html.indexOf('js/world.js'), 'La animación visual del marcador debe cargar antes del mapa.');
+ensure(read('src/js/world.js').includes('WorldMotion?.markerPose(t, moving, size)'), 'El marcador del jugador debe animarse al caminar sin alterar su posición lógica.');
 
 if (errors.length) {
   console.error(`✗ Contrato de funciones: ${errors.length} problema(s):\\n - ${errors.join('\\n - ')}`);

@@ -697,13 +697,15 @@
     const size = Math.max(18, Math.min(34, 22 * Math.sqrt(zoom / Math.max(0.2, fit))));
     const img = loadImg(`player-marker:${G.player.photo || G.player.name}`, Portrait.playerURL(G.player, 128));
     const x = p.x;
-    const y = p.y;
+    const groundY = p.y;
+    const pose = window.WorldMotion?.markerPose(t, moving, size) || { bob: 0, shadowScale: 1 };
+    const y = groundY - pose.bob;
     const r = size * 0.58;
     ctx.save();
-    // Sombra neutra anclada al suelo.
+    // Sombra anclada al suelo, con una variación mínima al caminar.
     ctx.fillStyle = 'rgba(0,0,0,0.45)';
     ctx.beginPath();
-    ctx.ellipse(x, y + r * 0.65, r * 0.92, r * 0.28, 0, 0, Math.PI * 2);
+    ctx.ellipse(x, groundY + r * 0.65, r * 0.92 * pose.shadowScale, r * 0.28, 0, 0, Math.PI * 2);
     ctx.fill();
     // Marco blanco neutro: no codifica género, clase ni facción.
     ctx.beginPath();
