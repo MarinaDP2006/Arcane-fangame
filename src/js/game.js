@@ -347,12 +347,13 @@
       const active = state?.status === 'active';
       const completed = state?.status === 'completed';
       if (!state && !sideQuestAvailable(quest)) continue;
-      const progress = active
+      const blocked = state?.status !== 'completed' && !sideQuestAvailable(quest);
+      const progress = blocked ? sideQuestLockReason(quest) : active
         ? `Continuar · escena ${(state.history || []).length + 1} · progreso guardado`
         : completed ? `Volver a ver el desenlace · ${state.outcome || 'historia completada'}`
           : quest.intro;
-      rows.push(act('Historia secundaria', active ? `Continuar «${quest.title}»` : completed ? `Desenlace: «${quest.title}»` : quest.title,
-        progress, () => openOverlay('sidequest', quest.id), { cls: active ? 'gold' : '' }));
+      rows.push(act('Historia secundaria', blocked ? `Interrumpida: «${quest.title}»` : active ? `Continuar «${quest.title}»` : completed ? `Desenlace: «${quest.title}»` : quest.title,
+        progress, () => openOverlay('sidequest', quest.id), { cls: active && !blocked ? 'gold' : '', disabled: blocked }));
     }
 
     // Conversar con quien está aquí
@@ -940,7 +941,8 @@
     const season = Number(G.progress.season || 1);
     if (quest.seasonMin && season < quest.seasonMin) return false;
     if (quest.seasonMax && season > quest.seasonMax) return false;
-    return (quest.requiresMet || []).every((id) => G.met.includes(id) || G.unlocked.includes(id));
+    if (!(quest.requiresMet || []).every((id) => G.met.includes(id) || G.unlocked.includes(id))) return false;
+    return !(quest.requiresAlive || []).some((id) => (G.fallen || []).includes(id));
   }
 
   function sideQuestLockReason(quest) {
@@ -949,6 +951,8 @@
     if (quest.seasonMax && season > quest.seasonMax) return 'Esta historia pertenece a una parte anterior';
     const missing = (quest.requiresMet || []).find((id) => !G.met.includes(id) && !G.unlocked.includes(id));
     if (missing) return `Conoce a ${charName(missing)} en la historia principal`;
+    const absent = (quest.requiresAlive || []).find((id) => (G.fallen || []).includes(id));
+    if (absent) return `La historia queda interrumpida: ${charName(absent)} ya no está en esta partida`;
     return 'Disponible';
   }
 
@@ -959,10 +963,11 @@
       const state = G.sideQuests?.[quest.id];
       const done = state?.status === 'completed';
       const active = state?.status === 'active';
-      const available = sideQuestAvailable(quest) || active || done;
+      const available = sideQuestAvailable(quest) || done;
+      const interrupted = active && !available;
       const lock = sideQuestLockReason(quest);
-      const status = done ? 'COMPLETADA' : active ? 'EN CURSO' : available ? 'DISPONIBLE' : 'BLOQUEADA';
-      return el('article', { class: `mission-card side-quest-card ${done ? 'is-done' : active ? 'is-ready' : !available ? 'is-locked' : ''}` },
+      const status = done ? 'COMPLETADA' : interrupted ? 'INTERRUMPIDA' : active ? 'EN CURSO' : available ? 'DISPONIBLE' : 'BLOQUEADA';
+      return el('article', { class: `mission-card side-quest-card ${done ? 'is-done' : active && !interrupted ? 'is-ready' : !available ? 'is-locked' : ''}` },
         el('div', { class: 'mission-card-top' },
           el('span', { class: 'mission-kicker' }, `${quest.city === 'ambas' ? 'PILTOVER + ZAUN' : quest.city.toUpperCase()} · ${quest.seasonMin === 2 ? 'PARTE II' : 'PARTE I'}`),
           el('span', { class: 'mission-status' }, status)),
@@ -970,7 +975,7 @@
         el('p', {}, quest.intro),
         el('div', { class: 'mission-progress' }, done
           ? `Final: ${state.outcome || 'Tu decisión ha quedado registrada.'}`
-          : active ? `Escena ${(state.history || []).length + 1} · Progreso guardado` : available ? `Lugar relacionado: ${quest.location || 'las dos ciudades'}` : lock),
+          : interrupted ? lock : active ? `Escena ${(state.history || []).length + 1} · Progreso guardado` : available ? `Lugar relacionado: ${quest.location || 'las dos ciudades'}` : lock),
         el('div', { class: 'row gap wrap mission-actions' },
           available
             ? el('button', { class: `btn ${done ? 'ghost' : 'primary'} small`, onclick: () => openOverlay('sidequest', quest.id) },
@@ -989,7 +994,7 @@
     const quest = (window.SIDE_QUESTS || []).find((q) => q.id === id);
     if (!quest) return toast('No se ha encontrado esta historia secundaria.', 'warn');
     const state = G.sideQuests?.[id];
-    if (!state && !sideQuestAvailable(quest)) return toast(sideQuestLockReason(quest), 'warn');
+    if (state?.status !== 'completed' && !sideQuestAvailable(quest)) return toast(sideQuestLockReason(quest), 'warn');
     openOverlay('sidequest', id);
   }
 
@@ -997,6 +1002,10 @@
     const quest = (window.SIDE_QUESTS || []).find((q) => q.id === id);
     if (!quest) return openOverlay('misiones');
     G.sideQuests = G.sideQuests || {};
+    if (G.sideQuests[id]?.status !== 'completed' && !sideQuestAvailable(quest)) {
+      toast(sideQuestLockReason(quest), 'warn');
+      return openOverlay('misiones');
+    }
     if (!G.sideQuests[id]) {
       if (!sideQuestAvailable(quest)) {
         toast(sideQuestLockReason(quest), 'warn');
