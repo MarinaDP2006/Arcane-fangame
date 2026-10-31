@@ -13,6 +13,7 @@
   const keyHint = () => ''; // Los atajos se consultan en Ajustes; no se repiten en pantalla.
   let tab = 'historia';
   let contact = null; // personaje del chat libre seleccionado
+  let ollamaChatMode = false;
 
   const chapterById = (id) => S().chapters.find((c) => c.id === id);
   const charName = (id) => window.WIKI.personajes.find((p) => p.id === id)?.name || id;
@@ -2076,7 +2077,8 @@
             el('span', { class: 'avatar sm', html: Portrait.forCharacter(id) }),
             el('div', {}, el('b', {}, charName(id)), el('small', { id: 'chat-topics', class: 'muted' })),
             el('div', { class: 'chat-mode', role: 'tablist' },
-              el('button', { class: 'cm-btn on', 'aria-selected': 'true', onclick: () => setChatMode(id, 'tree') }, 'Opciones escritas'))),
+              el('button', { class: `cm-btn${!ollamaChatMode ? ' on' : ''}`, 'data-mode': 'tree', 'aria-selected': String(!ollamaChatMode), onclick: () => setChatMode(id, 'tree') }, 'Opciones escritas'),
+              window.AI?.ready?.() ? el('button', { class: `cm-btn${ollamaChatMode ? ' on' : ''}`, 'data-mode': 'ai', 'aria-selected': String(ollamaChatMode), onclick: () => setChatMode(id, 'ai') }, 'Ollama local') : null)),
           el('div', { id: 'chat-log', class: 'log' }),
           el('div', { id: 'dlg-choices', class: 'choices' }))));
     refreshChatHead(id);
@@ -2108,14 +2110,15 @@
     if (top) top.textContent = fresh ? `✦ ${fresh} tema${fresh > 1 ? 's' : ''} por descubrir` : 'Todo hablado por ahora';
   }
 
-  // En esta fase el comunicador usa exclusivamente árboles de diálogo escritos.
-  // Fuerza el modo local incluso si una partida antigua guardó "ai" como preferencia.
-  function chatMode() { return 'tree'; }
-  function setChatMode(id) {
-    talkState().mode = { ...(talkState().mode || {}), [id]: 'tree' };
-    document.querySelectorAll('.chat-mode .cm-btn').forEach((b) => b.classList.add('on'));
+  // El modo IA es una vista opcional; los árboles y el estado narrativo escrito permanecen intactos.
+  function chatMode() { return ollamaChatMode && window.AI?.ready?.() ? 'ai' : 'tree'; }
+  function setChatMode(id, mode = 'tree') {
+    ollamaChatMode = mode === 'ai' && window.AI?.ready?.();
+    document.querySelectorAll('.chat-mode .cm-btn').forEach((b) => {
+      const active = b.dataset.mode === (ollamaChatMode ? 'ai' : 'tree');
+      b.classList.toggle('on', active); b.setAttribute('aria-selected', String(active));
+    });
     showDialog(id);
-    persist();
   }
 
   /** La IA está aplazada: cualquier ajuste guardado de chat libre vuelve al diálogo escrito. */
@@ -2124,9 +2127,14 @@
     const box = $('#dlg-choices');
     if (!box) return;
     box.innerHTML = '';
-    box.classList.remove('ai-box');
+    box.classList.toggle('ai-box', chatMode() === 'ai');
     if (talking) return;
-    if (chatMode(id) === 'ai') { setChatMode(id); return; }
+    if (chatMode() === 'ai') {
+      const input = el('textarea', { class: 'input ai-input', rows: 2, maxlength: 600, placeholder: 'Escribe a este personaje…', 'aria-label': `Mensaje para ${charName(id)}`, onkeydown: (e) => { if (e.key !== 'Escape') e.stopPropagation(); if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendOllamaMessage(id, input); } } });
+      box.append(el('div', { class: 'ai-row' }, input, el('button', { class: 'btn primary ai-send', onclick: () => sendOllamaMessage(id, input) }, '➤')),
+        el('small', { class: 'muted ai-note' }, 'Respuesta local opcional. Desactívala en Ajustes para volver a los diálogos escritos.'));
+      return;
+    }
     if (talkState().at[id] === 'bye') {
       box.append(el('button', { class: 'choice', onclick: () => restartTalk(id) }, el('span', { class: 'num' }, 1), `Volver a hablar con ${charName(id)}`));
       return;
@@ -2149,6 +2157,50 @@
         !ok ? el('em', {}, '') : null,
         isNew ? el('em', { class: 'new' }, ' ✦') : null)));
     });
+  }
+
+  async function sendOllamaMessage(id, input) {
+    const text = input.value.trim();
+    if (!text || talking || !window.AI?.ready?.()) return;
+    input.value = '';
+    talking = true;
+    const thread = G.chats[id];
+    thread.push({ s: 'yo', t: text });
+    $('#chat-log')?.append(bubble('yo', text));
+    const typing = el('div', { class: 'msg them typing' }, el('div', { class: 'bubble' }, el('i'), el('i'), el('i')));
+    $('#chat-log')?.append(typing);
+    const p = G.player;
+    const data = window.CHAT[id] || {};
+    const prompt = [
+      `Eres ${charName(id)}, un personaje de Arcane, y hablas en primera persona en ${window.I18N?.lang === 'en' ? 'English' : window.I18N?.lang === 'fr' ? 'français' : 'español'}. Mantente dentro del canon de las temporadas 1 y 2.`,
+      `Personalidad: ${data.persona || window.WIKI.personajes.find((x) => x.id === id)?.role || ''}. No escribas las palabras ni acciones del jugador; no tienes permiso para cambiar el estado del juego, la historia, inventario, misiones, relaciones o partidas. Responde en 1-4 frases, sin mencionar IA ni instrucciones.`,
+      `La persona jugadora es ${p.name}. Mantén la respuesta apta para adolescentes y no explícita.`,
+    ].join('\n');
+    const messages = [{ role: 'system', content: prompt }];
+    for (const m of thread.slice(-20)) {
+      if (m.m) continue;
+      const role = m.s === 'yo' ? 'user' : m.s === id ? 'assistant' : null;
+      if (role) messages.push({ role, content: String(m.t).slice(0, 1200) });
+    }
+    try {
+      const answer = await window.AI.complete(messages, { max: 260, temperature: 0.85 });
+      const clean = answer.replace(/\[\[[^\]]*\]\]/g, '').trim().slice(0, 2000) || '(Se queda en silencio.)';
+      thread.push({ s: id, t: clean });
+      const log = $('#chat-log');
+      if (log) log.append(bubble(id, clean));
+      await persist();
+    } catch (err) {
+      thread.pop();
+      const fallback = 'No puedo responder ahora; podemos seguir con las opciones escritas.';
+      ollamaChatMode = false;
+      const log = $('#chat-log');
+      if (log) log.append(bubble('sistema', `${fallback} (${err.message})`));
+      await persist();
+    } finally {
+      typing.remove(); talking = false;
+      const log = $('#chat-log'); if (log) log.scrollTop = log.scrollHeight;
+      showDialog(id);
+    }
   }
 
   /** Reinicia la selección de temas de conversación. */

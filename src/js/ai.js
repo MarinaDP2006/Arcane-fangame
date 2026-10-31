@@ -25,7 +25,7 @@
 
   function cfg() {
     const a = window.App?.settings?.ai || {};
-    if (a.provider === 'off') return { provider: 'off', url: '', model: '' };
+    if (!a.provider || a.provider === 'off' || (a.provider === 'ollama' && a.enabled !== true)) return { provider: 'off', url: '', model: '' };
     const provider = a.provider === 'ollama' ? 'ollama' : 'koboldcpp';
     const d = PROVIDERS[provider];
     const mine = a.provider === provider;
@@ -43,12 +43,18 @@
   function ready() {
     const c = cfg();
     if (c.provider === 'off' || !c.url || !c.model) return false;
+    if (c.provider === 'ollama' && (!window.arcane?.isDesktop || !window.arcane?.ollamaChat || c.url !== 'http://127.0.0.1:11434/v1/chat/completions')) return false;
     return !(onDevice() && isLocalhost(c.url));
   }
 
   // Envía la petición por el camino que no tenga problemas de CORS: el proceso
   // principal en escritorio, el HTTP nativo en Android y fetch en el navegador.
   async function post(url, headers, body) {
+    if (cfg().provider === 'ollama') {
+      const r = await window.arcane.ollamaChat(body?.model, body?.messages, { maxTokens: body?.max_tokens, temperature: body?.temperature, stop: body?.stop });
+      if (r.error) throw new Error(r.error);
+      return r;
+    }
     if (window.arcane?.ai) {
       const r = await window.arcane.ai(url, headers, body);
       if (r.error) throw new Error(r.error);
@@ -264,6 +270,7 @@
 
   // scene: { chapter, intro, cast: [ids], beat: [líneas del canon], paths: [{ t }], turn, mustMove }
   async function direct(G, scene, userText) {
+    if (cfg().provider === 'ollama') throw new Error('Ollama local solo está disponible para el chat opcional; la historia conserva sus opciones escritas.');
     const p = G.player;
     const name = (s) => (s === 'yo' ? p.name : s === 'narrador' || s === 'sistema' ? 'Narración' : nameOf(s));
     const log = (G.log || []).filter((m) => m.s !== 'sistema').slice(-24)
@@ -307,6 +314,7 @@ vi: ¿Y tú quién demonios eres?
   // jugador ha dicho de verdad: mismos hechos y mismo desenlace del canon, pero con diálogos
   // que reaccionan a sus palabras y sin poner frases en su boca.
   async function adapt(G, scene) {
+    if (cfg().provider === 'ollama') throw new Error('Ollama local no modifica escenas ni progreso.');
     const p = G.player;
     const name = (s) => (s === 'yo' ? p.name : s === 'narrador' || s === 'sistema' ? 'Narración' : nameOf(s));
     const log = (G.log || []).filter((m) => m.s !== 'sistema').slice(-14)
@@ -365,5 +373,5 @@ vi: ¿Y tú quién demonios eres?
     return { text: text.trim(), secs: (performance.now() - t0) / 1000 };
   }
 
-  window.AI = { PROVIDERS, LOCAL, cfg, ready, reply, direct, adapt, test, warm, models };
+  window.AI = { PROVIDERS, LOCAL, cfg, ready, complete, reply, direct, adapt, test, warm, models };
 })();

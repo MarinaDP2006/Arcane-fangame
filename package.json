@@ -14,7 +14,8 @@
     "dist:win": "electron-builder --win",
     "serve:web": "node server/roleplay-server.js",
     "web": "node scripts/build-web.js",
-    "check:web": "npm run web && node scripts/check-web-deploy.js"
+    "check:web": "npm run web && node scripts/check-web-deploy.js",
+    "test:ollama": "node --test scripts/ollama.test.js"
   },
   "devDependencies": {
     "@capacitor/android": "^8.5.3",
@@ -31,6 +32,7 @@
     "productName": "Arcane-fangame",
     "files": [
       "main.js",
+      "ollama.js",
       "modelos.js",
       "preload.js",
       "src/**/*",

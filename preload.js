@@ -27,6 +27,7 @@ contextBridge.exposeInMainWorld('arcane', {
   },
   ai: (url, headers, body) => ipcRenderer.invoke('ai:chat', url, headers, body),
   aiGet: (url, headers) => ipcRenderer.invoke('ai:get', url, headers),
+  ollamaChat: (model, messages, options) => ipcRenderer.invoke('ollama:chat', model, messages, options),
   lanIps: () => ipcRenderer.invoke('net:ips'),
   settings: {
     get: () => ipcRenderer.invoke('settings:get'),

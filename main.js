@@ -18,6 +18,7 @@ const { pathToFileURL } = require('url');
 // GRIETAS_DATOS permite probar el juego con otra carpeta sin tocar las partidas reales.
 app.setPath('userData', process.env.GRIETAS_DATOS || path.join(app.getPath('appData'), 'Arcane Piltover y Zaun'));
 const Modelos = require('./modelos');
+const Ollama = require('./ollama');
 
 const SAVE_DIR = () => path.join(app.getPath('userData'), 'partidas');
 // Solo metadatos de las partidas. No se guardan decisiones, chats ni estadísticas aquí.
@@ -337,6 +338,13 @@ ipcMain.handle('map:images', (_e, region) => {
 // La petición sale desde aquí para no chocar con CORS.
 const LAN_HOST = /^(localhost|127\.0\.0\.1|\[::1\]|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+|[\w-]+\.local)$/i;
 const NOT_LAN = 'KoboldCpp tiene que estar en este ordenador o en otro de tu red de casa';
+
+// Optional desktop-only Ollama bridge. The renderer cannot choose a URL, headers,
+// or arbitrary request body: chat stays on this machine and returns text only.
+ipcMain.handle('ollama:chat', async (_e, model, messages, options = {}) => {
+  const config = readJSON(SETTINGS_FILE(), {}).ai || {};
+  return Ollama.chat({ enabled: config.enabled, provider: config.provider, model, messages, options });
+});
 
 ipcMain.handle('ai:chat', async (_e, url, headers, body) => {
   try {
