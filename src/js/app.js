@@ -282,9 +282,7 @@
       ],
       juego: () => [
         el('h3', {}, 'Partida'),
-        el('p', { class: 'muted small' }, 'La historia principal y el comunicador escrito siguen funcionando sin IA. Si activas Ollama, puedes usar respuestas generadas opcionales en el chat de personajes; la historia, las relaciones y el progreso no cambian por lo que genere el modelo.'),
-        row('Ollama local (opcional)', 'Requiere Ollama abierto y el modelo qwen3:4b descargado. Desactivado, la partida conserva sus opciones y diálogos escritos.',
-          el('input', { type: 'checkbox', checked: s.ai?.provider === 'ollama' && s.ai?.enabled === true, onchange: (e) => set({ ai: { provider: e.target.checked ? 'ollama' : 'off', enabled: e.target.checked, model: 'qwen3:4b' } }) })),
+        el('p', { class: 'muted small' }, 'El mapa de las ciudades es 2D; los minijuegos de sus localizaciones se juegan en 3D. La historia funciona con opciones escritas.'),
         select('storyMode', 'Modo de historia', 'Usa los diálogos escritos disponibles.', [['opciones', 'Diálogos escritos']]),
         select('difficulty', 'Dificultad de los minijuegos', 'Fácil te da una ventaja extra; Difícil te la quita.',
           [['facil', 'Fácil'], ['normal', 'Normal'], ['dificil', 'Difícil']]),
@@ -333,7 +331,7 @@
       arte: () => [artSettings(root, onBack)],
       acerca: () => [
         el('h3', {}, 'Acerca de'),
-        el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. Todas las imágenes y datos vienen dentro del juego y la música se sintetiza en tiempo real: no necesita internet. La integración de IA es opcional y solo se conecta a Ollama local cuando la activas en Ajustes.'),
+        el('p', { class: 'muted small' }, 'Juego de fans gratuito y sin ánimo de lucro: no se vende, no tiene anuncios ni compras. El mapa 2D, los minijuegos 3D, sus recursos y la música se incluyen en el juego; para jugar no hace falta internet.'),
         el('p', { class: 'muted small' }, 'Este juego se creó según la política «Legal Jibber Jabber» de Riot Games usando recursos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto. Arcane y League of Legends son marcas de Riot Games, Inc.'),
         el('p', { class: 'muted small' }, 'Privacidad: el juego no recoge ni envía datos personales. Tus partidas y ajustes se guardan solo en tu dispositivo.'),
       ],

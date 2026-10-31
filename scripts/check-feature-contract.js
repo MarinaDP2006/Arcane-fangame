@@ -52,12 +52,14 @@ for (const chapter of w.STORY.chapters) {
 }
 for (const quest of w.SIDE_QUESTS || []) {
   const steps = quest.steps || {};
+  ensure(Boolean(quest.location) && Object.values(w.WORLD?.maps || {}).some((m) => (m.locations || []).some((loc) => loc.id === quest.location)), `La historia secundaria ${quest.id} no está conectada a un lugar existente del mapa.`);
   ensure(Boolean(steps[quest.start]), `La historia secundaria ${quest.id} no tiene una escena inicial válida.`);
   for (const [stepId, step] of Object.entries(steps)) for (const choice of step.choices || []) {
     if (choice.next) ensure(Boolean(steps[choice.next]), `La decisión «${choice.label}» de ${quest.id}/${stepId} apunta a una escena inexistente ${choice.next}.`);
   }
 }
 ensure(srcGame.includes('function applyFx(fx = {})') && srcGame.includes('applyFx(c.fx)'), 'Las decisiones de la historia deben aplicar sus consecuencias al estado de partida.');
+ensure(srcGame.includes('quest.location === loc.id') && srcGame.includes('Historia secundaria'), 'Las historias secundarias disponibles deben iniciarse desde su localización del mapa.');
 
 // Missions, side stories, bonds, atlas and exploration need to be present and connected.
 ensure(Array.isArray(w.MISSIONS) && w.MISSIONS.length >= 10, 'El catálogo de misiones persistentes está vacío o demasiado reducido.');
@@ -91,16 +93,13 @@ ensure(srcGame.includes('Creator.start('), 'No se encontró el paso de creación
 ensure(srcGame.includes("window.App.go('creator')"), 'Elegir ciudad no lleva al creador de personaje.');
 ensure(srcApp.includes("btn('Ajustes', () => App.go('settings'))"), 'Falta el acceso a Ajustes desde el menú.');
 const miniHtml = read('src/index.html');
-ensure(miniHtml.indexOf('js/minigames-2d.js') > miniHtml.indexOf('js/minigames-3d.js'), 'El motor 2D debe sobrescribir el motor 3D antiguo antes de iniciar el juego.');
-const min2d = read('src/js/minigames-2d.js');
-ensure(min2d.includes("renderer:'2d-html'"), 'El catálogo debe utilizar el motor interactivo 2D.');
-const supportedModes = new Set(['shoot', 'precision', 'throw', 'circuit', 'runes', 'bargain', 'assembly', 'arena', 'runner', 'scrap', 'stealth', 'contain']);
-for (const [id, def] of Object.entries(catalog)) {
-  ensure(supportedModes.has(def.mode), `El minijuego ${id} no tiene una mecánica 2D soportada (${def.mode}).`);
-}
-ensure(min2d.includes('Recompensa desbloqueada al continuar.'), 'Los minijuegos deben confirmar la recompensa antes de devolver la victoria.');
-ensure(min2d.includes('settings.difficulty'), 'La dificultad configurada debe afectar a los minijuegos 2D.');
-ensure(read('web/index.html').includes('minijuegos 2D'), 'La web todavía no anuncia los minijuegos 2D.');
+ensure(miniHtml.includes('js/minigames-3d.js'), 'El juego debe cargar el motor de minijuegos 3D.');
+ensure(!miniHtml.includes('js/minigames-2d.js'), 'El motor 2D no debe sustituir la experiencia 3D que anuncia el catálogo.');
+ensure(min.renderer === 'three-js-webgl', 'El motor 3D debe ser el renderer activo del catálogo.');
+ensure(min.GAMES && Object.values(min.GAMES).every((game) => game.mode3d === true), 'Todos los minijuegos publicados deben usar definiciones 3D.');
+ensure(miniHtml.indexOf('vendor/three.min.js') < miniHtml.indexOf('js/minigames-3d.js'), 'Three.js debe cargarse antes del motor de minijuegos 3D.');
+ensure(miniHtml.indexOf('js/minigames-3d.js') < miniHtml.indexOf('js/game.js'), 'El motor 3D debe estar disponible antes de iniciar el juego.');
+ensure(read('web/index.html').includes('minijuegos 3D'), 'La web todavía no anuncia los minijuegos 3D.');
 
 // Verify the canonical Season 2 mansion artwork is actually used and packaged.
 const mansion = sceneCtx.window.Scenes2D?.PLACES?.['mansion-kiramman'];
@@ -123,4 +122,4 @@ if (errors.length) {
   console.error(`✗ Contrato de funciones: ${errors.length} problema(s):\\n - ${errors.join('\\n - ')}`);
   process.exit(1);
 }
-console.log(`✓ Contrato de funciones: ${w.STORY.chapters.length} capítulos, ${worldPlaces.length} ubicaciones, ${w.MISSIONS.length} misiones, ${w.SIDE_QUESTS.length} historias secundarias y ${ids.length} minijuegos 2D.`);
+console.log(`✓ Contrato de funciones: ${w.STORY.chapters.length} capítulos, ${worldPlaces.length} ubicaciones, ${w.MISSIONS.length} misiones, ${w.SIDE_QUESTS.length} historias secundarias y ${ids.length} minijuegos 3D.`);
