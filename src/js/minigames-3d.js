@@ -67,6 +67,28 @@
     return list((PLACE_GAMES[placeId] || []).filter((id) => CATALOG[id]?.city === city));
   }
 
+  // Trayectoria absoluta: la altura no se acumula por fotograma y depende solo
+  // del tiempo transcurrido. El destino queda fijado al seleccionar el blanco.
+  function projectilePosition(from, to, progress, arcHeight = .6) {
+    const t = Math.max(0, Math.min(1, progress));
+    return {
+      x: from.x + (to.x - from.x) * t,
+      y: from.y + (to.y - from.y) * t + 4 * arcHeight * t * (1 - t),
+      z: from.z + (to.z - from.z) * t,
+    };
+  }
+
+  // Oscilación absoluta alrededor del centro del blanco. Los límites dejan margen
+  // para que el modelo no desaparezca de los bordes ni derive por integrar cada frame.
+  function targetPosition(base, timeSeconds, phase, precision = false) {
+    const amplitude = precision ? 0.55 : 0.32;
+    return {
+      x: Math.max(-4.55, Math.min(4.55, base.x + Math.sin(timeSeconds * 1.4 + phase) * amplitude)),
+      y: Math.max(1.05, Math.min(3.95, base.y + Math.cos(timeSeconds * 1.7 + phase) * 0.2)),
+      z: base.z,
+    };
+  }
+
   function play(id, opts = {}) {
     const def = CATALOG[id];
     if (!def) {
@@ -295,7 +317,7 @@
         core.castShadow = true; group.add(core);
         const ring = new THREE.Mesh(new THREE.TorusGeometry((opts.size || .42) * 1.6, .035, 8, 28), material(opts.ring || '#f1d990', opts.ring || '#f1d990'));
         group.add(ring);
-        scene.add(group); group.userData.targetIndex = i; group.userData.phase = rand(0, 8);
+        scene.add(group); group.userData.targetIndex = i; group.userData.phase = rand(0, 8); group.userData.base = group.position.clone();
         moving.push(group); return group;
       }
       function makeNode(i, x, z, color = '#68ccff', glyph = '') {
@@ -494,12 +516,12 @@
         if (data.kind === 'target') {
           if (def.mode === 'throw') {
             const projectile = sphere(.16, '#ef6c9b', [0, 1.4, 4], '#ff9dbf');
-            projectile.userData.flight = { to: data.parent.position.clone(), t: 0 };
+            projectile.userData.flight = { from: projectile.position.clone(), to: data.parent.position.clone(), t: 0 };
             projectiles.push(projectile);
           }
           score++;
           labelMessage(def.mode === 'throw' ? '¡Chomper al blanco!' : 'Impacto confirmado.', 'good');
-          const root = data.parent; root.position.set(rand(-4.4, 4.4), rand(1.2, 3.9), rand(-10, -4));
+          const root = data.parent; root.position.set(rand(-4.2, 4.2), rand(1.35, 3.65), rand(-10, -4)); root.userData.base.copy(root.position); root.userData.phase = rand(0, Math.PI * 2);
           root.children[0].material.color.set(def.city === 'zaun' ? '#f06498' : '#70d8ff');
           if (score >= def.quota) finish(true);
         } else if (data.kind === 'node' || data.kind === 'rune' || data.kind === 'part') {
@@ -587,7 +609,10 @@
           }
         }
         for (const p of projectiles) {
-          const f = p.userData.flight; f.t += dt * 2.5; p.position.lerp(f.to, Math.min(1, f.t)); p.position.y += Math.sin(f.t * Math.PI) * .6;
+          const f = p.userData.flight;
+          f.t = Math.min(1, f.t + dt * 2.5);
+          const position = projectilePosition(f.from, f.to, f.t);
+          p.position.set(position.x, position.y, position.z);
         }
         for (let i = projectiles.length - 1; i >= 0; i--) if (projectiles[i].userData.flight.t >= 1) { const p = projectiles.splice(i, 1)[0]; p.parent?.remove(p); p.geometry?.dispose(); p.material?.dispose(); }
         player?.position && (player.position.x += (runnerLane * 2.5 - player.position.x) * Math.min(1, dt * 7));
@@ -627,7 +652,7 @@
         const dt = Math.min(.04, Math.max(0, (now - (last || now)) / 1000)); last = now; elapsed += dt;
         if (def.mode === 'runes' && elapsed > 2.8 && seqIndex === 0 && message.textContent.includes('Memoriza')) labelMessage('La secuencia se ha ocultado. Repítela con los nodos luminosos.', 'hint');
         if (def.mode === 'shoot' || def.mode === 'precision' || def.mode === 'throw') {
-          moving.forEach((o) => { o.position.x += Math.sin(elapsed * 1.4 + o.userData.phase) * dt * (def.mode === 'precision' ? 1.25 : .45); o.position.y += Math.cos(elapsed * 1.7 + o.userData.phase) * dt * .35; });
+          moving.forEach((o) => { const pos = targetPosition(o.userData.base, elapsed, o.userData.phase, def.mode === 'precision'); o.position.set(pos.x, pos.y, pos.z); });
         }
         animate(dt);
         if (renderer && scene) renderer.render(scene, camera);
@@ -671,6 +696,7 @@
     activeCity,
     emblem,
     maxGames: Object.keys(CATALOG).length,
+    motion: { projectilePosition, targetPosition },
     renderer: 'three-js-webgl',
   };
 })();
