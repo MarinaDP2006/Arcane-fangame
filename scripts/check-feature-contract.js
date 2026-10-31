@@ -128,6 +128,9 @@ for (const url of html.split('<script src="').slice(1).map(part => part.split('"
 ensure(html.includes('href="icono-arcane.svg"'), 'El juego no enlaza el icono compartido con la web.');
 ensure(fs.existsSync(path.join(root, 'src/icono-arcane.svg')), 'Falta src/icono-arcane.svg.');
 
+ensure(html.indexOf('js/world-motion.js') < html.indexOf('js/world.js'), 'La animación visual del marcador debe cargar antes del mapa.');
+ensure(read('src/js/world.js').includes('WorldMotion?.markerPose(t, moving, size)'), 'El marcador del jugador debe animarse al caminar sin alterar su posición lógica.');
+
 if (errors.length) {
   console.error(`✗ Contrato de funciones: ${errors.length} problema(s):\\n - ${errors.join('\\n - ')}`);
   process.exit(1);
