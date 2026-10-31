@@ -3,6 +3,7 @@
 window.SIDE_QUESTS = [
   {
     id: 'ultima-gota-historia',
+    requiresAlive: ['vander', 'vi'],
     title: 'Lo que sostiene un hogar',
     city: 'zaun',
     seasonMin: 1,
@@ -61,6 +62,7 @@ window.SIDE_QUESTS = [
   },
   {
     id: 'rumores-callejones-historia',
+    requiresAlive: ['vi'],
     title: 'El precio de un rumor',
     city: 'zaun',
     seasonMin: 1,
@@ -118,6 +120,7 @@ window.SIDE_QUESTS = [
   },
   {
     id: 'promesa-hexgate-historia',
+    requiresAlive: ['jayce', 'viktor'],
     title: 'El progreso tiene testigos',
     city: 'piltover',
     seasonMin: 1,
@@ -176,6 +179,7 @@ window.SIDE_QUESTS = [
   },
   {
     id: 'refugio-luciernagas-historia',
+    requiresAlive: ['ekko'],
     title: 'Una luz que no se compra',
     city: 'zaun',
     seasonMin: 1,
@@ -232,6 +236,7 @@ window.SIDE_QUESTS = [
   },
   {
     id: 'comuna-viktor-historia',
+    requiresAlive: ['viktor'],
     title: 'La paz que exige preguntas',
     city: 'zaun',
     seasonMin: 2,
@@ -289,6 +294,7 @@ window.SIDE_QUESTS = [
   },
   {
     id: 'puente-dos-ciudades-historia',
+    requiresAlive: ['caitlyn', 'sevika'],
     title: 'Un puente no es un acuerdo',
     city: 'ambas',
     seasonMin: 2,
