@@ -67,6 +67,17 @@
     return list((PLACE_GAMES[placeId] || []).filter((id) => CATALOG[id]?.city === city));
   }
 
+  // Trayectoria absoluta: la altura no se acumula por fotograma y depende solo
+  // del tiempo transcurrido. El destino queda fijado al seleccionar el blanco.
+  function projectilePosition(from, to, progress, arcHeight = .6) {
+    const t = Math.max(0, Math.min(1, progress));
+    return {
+      x: from.x + (to.x - from.x) * t,
+      y: from.y + (to.y - from.y) * t + 4 * arcHeight * t * (1 - t),
+      z: from.z + (to.z - from.z) * t,
+    };
+  }
+
   function play(id, opts = {}) {
     const def = CATALOG[id];
     if (!def) {
@@ -528,7 +539,7 @@
         if (data.kind === 'target') {
           if (def.mode === 'throw') {
             const projectile = sphere(.16, '#ef6c9b', [0, 1.4, 4], '#ff9dbf');
-            projectile.userData.flight = { to: data.parent.position.clone(), t: 0 };
+            projectile.userData.flight = { from: projectile.position.clone(), to: data.parent.position.clone(), t: 0 };
             projectiles.push(projectile);
           }
           score++;
@@ -621,7 +632,10 @@
           }
         }
         for (const p of projectiles) {
-          const f = p.userData.flight; f.t += dt * 2.5; p.position.lerp(f.to, Math.min(1, f.t)); p.position.y += Math.sin(f.t * Math.PI) * .6;
+          const f = p.userData.flight;
+          f.t = Math.min(1, f.t + dt * 2.5);
+          const position = projectilePosition(f.from, f.to, f.t);
+          p.position.set(position.x, position.y, position.z);
         }
         for (let i = projectiles.length - 1; i >= 0; i--) if (projectiles[i].userData.flight.t >= 1) { const p = projectiles.splice(i, 1)[0]; p.parent?.remove(p); p.geometry?.dispose(); p.material?.dispose(); }
         player?.position && (player.position.x += (runnerLane * 2.5 - player.position.x) * Math.min(1, dt * 7));
@@ -705,6 +719,7 @@
     activeCity,
     emblem,
     maxGames: Object.keys(CATALOG).length,
+    motion: { projectilePosition },
     renderer: 'three-js-webgl',
   };
 })();
