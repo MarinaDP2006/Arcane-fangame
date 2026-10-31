@@ -9,7 +9,7 @@
   "scripts": {
     "start": "electron .",
     "postinstall": "node scripts/asegurar-electron.js",
-    "check": "node scripts/check.js && node scripts/check-runtime.js && node scripts/check-feature-contract.js && node --test scripts/world-motion.test.js",
+    "check": "node scripts/check.js && node scripts/check-runtime.js && node scripts/check-feature-contract.js && node --test scripts/world-motion.test.js scripts/minigames-motion.test.js",
     "dist": "electron-builder --win",
     "dist:win": "electron-builder --win",
     "serve:web": "node server/roleplay-server.js",

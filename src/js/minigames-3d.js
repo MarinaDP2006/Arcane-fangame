@@ -89,6 +89,24 @@
     };
   }
 
+  // Dificultad compartida con Ajustes: modifica tiempo, margen de errores,
+  // tamaño y velocidad de objetivos en 3D sin alterar las rutas ni el catálogo.
+  function difficultyProfile(value = 'normal') {
+    const mode = ['facil', 'normal', 'dificil'].includes(value) ? value : 'normal';
+    return {
+      mode,
+      timeScale: mode === 'facil' ? 1.25 : mode === 'dificil' ? 0.85 : 1,
+      mistakeDelta: mode === 'facil' ? 1 : mode === 'dificil' ? -1 : 0,
+      targetScale: mode === 'facil' ? 1.22 : mode === 'dificil' ? 0.82 : 1,
+      motionScale: mode === 'facil' ? 0.78 : mode === 'dificil' ? 1.28 : 1,
+    };
+  }
+
+  function bargainAcceptable(offer, need, mode = 'normal') {
+    const spread = mode === 'facil' ? 12 : mode === 'dificil' ? 4 : 8;
+    return offer >= need - spread && offer <= need + 5;
+  }
+
   function play(id, opts = {}) {
     const def = CATALOG[id];
     if (!def) {
@@ -104,6 +122,10 @@
       window.U?.toast?.('Tu dispositivo no ha podido iniciar la vista 3D de este minijuego.', 'warn');
       return Promise.resolve(false);
     }
+    const tuning = difficultyProfile(opts.difficulty || window.App?.settings?.difficulty || 'normal');
+    const durationSecs = Math.max(10, Math.round(def.secs * tuning.timeScale));
+    const mistakeLimit = (base) => Math.max(1, base + tuning.mistakeDelta);
+    const targetSize = (size) => size * tuning.targetScale;
     return new Promise((resolve) => {
       const THREE = window.THREE;
       const box = document.createElement('div');
@@ -174,7 +196,7 @@
       const addInteractive = (obj, data) => { obj.userData = { ...(obj.userData || {}), ...data }; interactive.push(obj); return obj; };
       const updateHud = () => {
         scoreEl.innerHTML = `<small>MARCADOR</small><strong>${score}<i> / ${scoreMax}</i></strong>`;
-        timeEl.innerHTML = `<small>TIEMPO</small><strong>${Math.max(0, Math.ceil(def.secs - elapsed))}<i>s</i></strong>`;
+        timeEl.innerHTML = `<small>TIEMPO</small><strong>${Math.max(0, Math.ceil(durationSecs - elapsed))}<i>s</i></strong>`;
         progressEl.innerHTML = `<small>ESTADO</small><strong>${def.mode === 'bargain' ? `${bargainDeals}/3 tratos` : def.mode === 'arena' ? `${rounds}/4 asaltos` : def.mode === 'runner' ? `${Math.floor(progress)}% de ruta` : def.mode === 'runes' ? `${Math.min(score, scoreMax)}/${scoreMax} símbolos` : `${Math.min(score, scoreMax)}/${scoreMax} objetivos`}</strong>`;
       };
       const disposeScene = () => {
@@ -313,9 +335,10 @@
         const group = new THREE.Group();
         group.position.set(opts.x ?? rand(-4.2, 4.2), opts.y ?? rand(1.2, 3.7), opts.z ?? rand(-9, -4));
         const color = opts.color || (def.city === 'zaun' ? '#e04b83' : '#68ccff');
-        const core = new THREE.Mesh(new THREE.IcosahedronGeometry(opts.size || .42, 1), material(color, color, { emissiveIntensity: 1.5 }));
+        const size = targetSize(opts.size || .42);
+        const core = new THREE.Mesh(new THREE.IcosahedronGeometry(size, 1), material(color, color, { emissiveIntensity: 1.5 }));
         core.castShadow = true; group.add(core);
-        const ring = new THREE.Mesh(new THREE.TorusGeometry((opts.size || .42) * 1.6, .035, 8, 28), material(opts.ring || '#f1d990', opts.ring || '#f1d990'));
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(size * 1.6, .035, 8, 28), material(opts.ring || '#f1d990', opts.ring || '#f1d990'));
         group.add(ring);
         scene.add(group); group.userData.targetIndex = i; group.userData.phase = rand(0, 8); group.userData.base = group.position.clone();
         moving.push(group); return group;
@@ -474,7 +497,7 @@
           const b = document.createElement('button'); b.className = 'mg3d-control'; b.textContent = `Ofrecer ${offer}`;
           b.onclick = () => {
             bargainRounds++;
-            if (offer >= currentNeed - 8 && offer <= currentNeed + 5) bargainDeals++;
+            if (bargainAcceptable(offer, currentNeed, tuning.mode)) bargainDeals++;
             currentNeed = Math.floor(rand(38, 58));
             if (bargainRounds >= 4) { score = bargainDeals; finish(score >= def.quota); }
             else showBargainOptions();
@@ -537,20 +560,20 @@
             mistakes++; score = Math.max(0, score - 1); seqIndex = 0;
             interactive.forEach((o) => { const p = o.parent; if (p?.userData) p.userData.completed = false; });
             labelMessage('Secuencia incorrecta. Vuelve al primer nodo.', 'bad');
-            if (mistakes >= 4) finish(false);
+            if (mistakes >= mistakeLimit(4)) finish(false);
           }
         } else if (data.kind === 'scrap') {
           if (data.good) { score++; labelMessage('Pieza recuperada y clasificada.', 'good'); }
           else { mistakes++; labelMessage('Esa pieza está contaminada. Déjala aparte.', 'bad'); }
           if (data.part) data.part.visible = false;
           if (score >= def.quota) finish(true);
-          if (mistakes >= 3) finish(false);
+          if (mistakes >= mistakeLimit(3)) finish(false);
         } else if (data.kind === 'leak' || data.kind === 'safe') {
           if (data.kind === 'leak') { score++; labelMessage('Fuga cerrada.', 'good'); }
           else { mistakes++; labelMessage('Regulador estable: no lo manipules.', 'bad'); }
           const parent = data.parent; if (parent) parent.visible = false;
           if (score >= def.quota) finish(true);
-          if (mistakes >= 3) finish(false);
+          if (mistakes >= mistakeLimit(3)) finish(false);
         }
         updateHud();
       }
@@ -585,7 +608,7 @@
               if (runnerLane === o.userData.lane && !jump) {
                 mistakes++;
                 labelMessage('¡Te ha detectado la cámara! Cambia de carril o agáchate antes del próximo barrido.', 'bad');
-                if (mistakes >= 3) finish(false);
+                if (mistakes >= mistakeLimit(3)) finish(false);
               } else {
                 score++;
                 labelMessage('Barrido superado: has evitado la vigilancia.', 'good');
@@ -601,7 +624,7 @@
               if (o.userData.lane === runnerLane && (o.userData.kind === 'obstacle' ? jump < .55 : true)) {
                 if (o.userData.kind === 'charge') { score++; labelMessage('Carga hextech recogida.', 'good'); }
                 else { mistakes++; labelMessage('Choque. Cambia de carril o salta la próxima barrera.', 'bad'); }
-                if (mistakes >= 3) finish(false);
+                if (mistakes >= mistakeLimit(3)) finish(false);
                 if (score >= def.quota) finish(true);
               }
             }
@@ -634,7 +657,7 @@
           if (attackWait <= 0) {
             if (!actionUsed) { mistakes++; rounds++; labelMessage('No has reaccionado a tiempo.', 'bad'); }
             actionUsed = false;
-            if (mistakes >= 2) finish(false);
+            if (mistakes >= mistakeLimit(2)) finish(false);
             attack = choose(['izquierda', 'derecha']); attackWait = 2.0;
             if (rounds >= 4) finish(score >= 3);
           }
@@ -645,14 +668,14 @@
           if (stealthSpawn > 2.15) { stealthSpawn = 0; spawnStealthBeam(); }
           if (progress >= 100) finish(score >= def.quota);
         }
-        if (elapsed > def.secs) finish(score >= def.quota);
+        if (elapsed > durationSecs) finish(score >= def.quota);
       }
       function loop(now) {
         if (!running || done || !renderer) return;
         const dt = Math.min(.04, Math.max(0, (now - (last || now)) / 1000)); last = now; elapsed += dt;
         if (def.mode === 'runes' && elapsed > 2.8 && seqIndex === 0 && message.textContent.includes('Memoriza')) labelMessage('La secuencia se ha ocultado. Repítela con los nodos luminosos.', 'hint');
         if (def.mode === 'shoot' || def.mode === 'precision' || def.mode === 'throw') {
-          moving.forEach((o) => { const pos = targetPosition(o.userData.base, elapsed, o.userData.phase, def.mode === 'precision'); o.position.set(pos.x, pos.y, pos.z); });
+          moving.forEach((o) => { const pos = targetPosition(o.userData.base, elapsed * tuning.motionScale, o.userData.phase, def.mode === 'precision'); o.position.set(pos.x, pos.y, pos.z); });
         }
         animate(dt);
         if (renderer && scene) renderer.render(scene, camera);
@@ -696,7 +719,7 @@
     activeCity,
     emblem,
     maxGames: Object.keys(CATALOG).length,
-    motion: { projectilePosition, targetPosition },
+    motion: { projectilePosition, targetPosition, difficultyProfile, bargainAcceptable },
     renderer: 'three-js-webgl',
   };
 })();

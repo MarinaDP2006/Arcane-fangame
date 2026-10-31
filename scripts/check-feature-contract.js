@@ -129,6 +129,7 @@ ensure(html.includes('href="icono-arcane.svg"'), 'El juego no enlaza el icono co
 ensure(fs.existsSync(path.join(root, 'src/icono-arcane.svg')), 'Falta src/icono-arcane.svg.');
 
 ensure(html.indexOf('js/world-motion.js') < html.indexOf('js/world.js'), 'La animación visual del marcador debe cargar antes del mapa.');
+ensure(read('src/js/minigames-3d.js').includes('window.App?.settings?.difficulty'), 'El motor 3D debe aplicar la dificultad elegida en Ajustes.');
 ensure(read('src/js/world.js').includes('WorldMotion?.markerPose(t, moving, size)'), 'El marcador del jugador debe animarse al caminar sin alterar su posición lógica.');
 
 if (errors.length) {
