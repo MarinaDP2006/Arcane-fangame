@@ -339,6 +339,22 @@
       rows.push(act('Historia', `La historia sigue en ${objectiveName()}`, 'Te lo señalo en el mapa.', () => World.focus?.(objectiveId()), { cls: 'muted-act' }));
     }
 
+    // Historias secundarias: aparecen en su localización del mapa, no solo en el diario.
+    // Las ya iniciadas/completadas siguen visibles aunque cambien los requisitos de temporada.
+    const localStories = (window.SIDE_QUESTS || []).filter((quest) => quest.location === loc.id);
+    for (const quest of localStories) {
+      const state = G.sideQuests?.[quest.id];
+      const active = state?.status === 'active';
+      const completed = state?.status === 'completed';
+      if (!state && !sideQuestAvailable(quest)) continue;
+      const progress = active
+        ? `Continuar · escena ${(state.history || []).length + 1} · progreso guardado`
+        : completed ? `Volver a ver el desenlace · ${state.outcome || 'historia completada'}`
+          : quest.intro;
+      rows.push(act('Historia secundaria', active ? `Continuar «${quest.title}»` : completed ? `Desenlace: «${quest.title}»` : quest.title,
+        progress, () => openOverlay('sidequest', quest.id), { cls: active ? 'gold' : '' }));
+    }
+
     // Conversar con quien está aquí
     const here = talkable().filter((id) => window.WORLD.homes[id] === loc.id && !(window.WORLD.absent[id] || []).includes(G.progress.chapterId));
     here.forEach((id) => {
@@ -360,11 +376,11 @@
       else rows.push(act(tag, a.label, done ? 'Ya lo hiciste en este capítulo.' : `${stat} ya está al máximo.`, () => {}, { disabled: true }));
     }
 
-    // Retos 2D disponibles en este lugar: Minigames.forPlace ya filtra por ciudad.
+    // Retos 3D disponibles en este lugar: Minigames.forPlace ya filtra por ciudad.
     // Si el lugar ya ofrece el minijuego de su actividad, no repetimos la misma tarjeta.
     const linked3D = (Minigames.forPlace?.(loc.id) || []).filter((g) => g.id !== loc.activity?.game);
     linked3D.forEach((g) => {
-      rows.push(act('Minijuego 2D', g.title, g.goal, async () => {
+      rows.push(act('Minijuego 3D', g.title, g.goal, async () => {
         World.pause(true);
         try {
           const won = await Minigames.play(g.id, { bonus: mgBonus(g.id), place: loc.id, city: loc.map || G.world.map });

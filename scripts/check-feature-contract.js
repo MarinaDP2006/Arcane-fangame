@@ -52,12 +52,14 @@ for (const chapter of w.STORY.chapters) {
 }
 for (const quest of w.SIDE_QUESTS || []) {
   const steps = quest.steps || {};
+  ensure(Boolean(quest.location) && Object.values(w.WORLD?.maps || {}).some((m) => (m.locations || []).some((loc) => loc.id === quest.location)), `La historia secundaria ${quest.id} no está conectada a un lugar existente del mapa.`);
   ensure(Boolean(steps[quest.start]), `La historia secundaria ${quest.id} no tiene una escena inicial válida.`);
   for (const [stepId, step] of Object.entries(steps)) for (const choice of step.choices || []) {
     if (choice.next) ensure(Boolean(steps[choice.next]), `La decisión «${choice.label}» de ${quest.id}/${stepId} apunta a una escena inexistente ${choice.next}.`);
   }
 }
 ensure(srcGame.includes('function applyFx(fx = {})') && srcGame.includes('applyFx(c.fx)'), 'Las decisiones de la historia deben aplicar sus consecuencias al estado de partida.');
+ensure(srcGame.includes('quest.location === loc.id') && srcGame.includes('Historia secundaria'), 'Las historias secundarias disponibles deben iniciarse desde su localización del mapa.');
 
 // Missions, side stories, bonds, atlas and exploration need to be present and connected.
 ensure(Array.isArray(w.MISSIONS) && w.MISSIONS.length >= 10, 'El catálogo de misiones persistentes está vacío o demasiado reducido.');
